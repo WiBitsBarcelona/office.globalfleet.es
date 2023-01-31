@@ -33,3 +33,14 @@ yarn build
 ## Documentation
 
 The Documentation folder inside the project.
+
+
+## Access main
+
+```sh 
+
+Rol: Admin
+Email: webmaster@globalfleet.es
+Pass: Fleet2022
+
+```
