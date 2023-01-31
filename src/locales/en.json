@@ -1,0 +1,33 @@
+{
+  "auth_footer":{
+    "all_rights": "All rights reserved.",
+    "developed": "Developed by"
+  },
+  "login": {
+    "title": "Login",
+    "subtitle": "Welcome to the GlobalFleet Office platform, your platform for travel management, telematics, communications and much more.",
+    "email_placeholder": "Email",
+    "password_placeholder": "Password",
+    "remember": "Remember me",
+    "forgot": "¿Forgot your password?",
+    "btn_login": "Login",
+    "terms_txt1": "By accessing you agree to our ",
+    "terms_txt2": "Terms and Conditions",
+    "terms_txt3": "and our",
+    "terms_txt4": "Privacy Policy"
+  },
+  "forgot": {
+    "title": "Did you forget your password?",
+    "subtitle": "Inform your account and we will send you an email with which you can reset your password.",
+    "email_placeholder": "Email",
+    "btn_send": "Send",
+    "btn_back": "Return"
+  },
+  "newpassword": {
+    "title": "New password",
+    "subtitle": "Inform your new password to access our platform.",
+    "password_placeholder": "Password",
+    "password_repeat_placeholder": "Repeat Password",
+    "btn_save": "save"
+  }
+}
