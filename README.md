@@ -24,6 +24,6 @@ Compile to production use
 
 ```sh 
 
- yarn build
+yarn build
 
- ```
+```
