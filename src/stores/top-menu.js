@@ -28,11 +28,6 @@ export const useTopMenuStore = defineStore("topMenu", {
         pageName: "chat",
         title: "Chat",
       },
-      {
-        icon: "AlertTriangleIcon",
-        pageName: "incidences",
-        title: "Incidencias",
-      },
     ],
   }),
 });

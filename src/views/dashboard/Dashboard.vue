@@ -5,7 +5,7 @@
     <!-- BEGIN: Page Layout -->
     <div class="intro-y box p-5 mt-5">
 
-      <!-- BEGIN: Weekly Top Products -->
+      <!-- BEGIN table -->
       <div class="col-span-12 mt-6">
           <div class="intro-y block sm:flex items-center h-10">
             <h2 class="text-lg font-medium truncate mr-5">
@@ -30,7 +30,12 @@
             <table class="table table-report sm:mt-2">
               <thead>
                 <tr>
-                  <th class="whitespace-nowrap">Viaje</th>
+                  <th class="whitespace-nowrap">Nombre</th>
+                  <th class="whitespace-nowrap">Referencia</th>
+                  <th class="whitespace-nowrap">Fecha</th>
+                  <th class="whitespace-nowrap">Vehículo</th>
+                  <th class="whitespace-nowrap">Etapas</th>
+                  <th class="whitespace-nowrap">Estatus</th>
                   <th class="text-center whitespace-nowrap">Acciones</th>
                 </tr>
               </thead>
@@ -41,12 +46,19 @@
                   :key="trip.id"
                   class="intro-x"
                 >
+                  <td>{{ trip.name }}</td>
                   <td>
                     <a href="" class="font-medium whitespace-nowrap">
                       {{ trip.reference_number}}
                     </a>
                   </td>
-                  
+                  <td>{{ trip.started_at }}</td>
+                  <td>{{ trip.vehicle.plate }}</td>
+                  <td>
+                    {{ formatStages(trip.stages) }}
+                  </td>
+                  <td>{{ trip.status.name }}</td>
+
                   <!-- <td class="w-40">
                     <div
                       class="flex items-center justify-center"
@@ -132,7 +144,7 @@
             </select>
           </div>
       </div>
-      <!-- END: Weekly Top Products -->
+      <!-- END table -->
 
     </div>
     <!-- END: Page Layout -->
@@ -142,7 +154,6 @@
 <script setup>
   import { ref } from 'vue';
   import { useTripStore } from "../../stores/trips/useTripStore";
-  import ReportMap from "@/components/report-map/Main.vue";
 
 
   
@@ -208,6 +219,17 @@
 
   
   findData();
+
+
+
+  const formatStages = (stage) => {
+    let str = '';
+    stage.forEach(element => {
+      str += ' ' + element.name; 
+    });
+    return str;
+  }
+
 
 
 </script>

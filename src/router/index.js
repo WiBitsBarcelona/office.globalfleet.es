@@ -62,11 +62,6 @@ const routes = [
         name: "chat",
         component: () => import('@/views/chat/Main.vue'),
       },
-      {
-        path: "incidences",
-        name: "incidences",
-        component: () => import('@/views/incidences/Incidences.vue'),
-      },
     ],
   },
   { 
