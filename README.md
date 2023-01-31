@@ -1,14 +1,29 @@
-# Vue 3 + Vite
+# Project Office Globalfleet
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Vue 3 + Vite
 
-## Recommended IDE Setup
+## Installation
 
-- [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar)
+Package install
 
+```sh 
+
+yarn install
+
+```
+
+Run development 
 
 ```sh 
 
 yarn run dev --port 3010
 
 ```
+
+Compile to production use
+
+```sh 
+
+ yarn build
+
+ ```
