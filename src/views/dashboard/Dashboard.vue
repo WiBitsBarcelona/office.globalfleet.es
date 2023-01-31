@@ -5,33 +5,6 @@
     <!-- BEGIN: Page Layout -->
     <div class="intro-y box p-5 mt-5">
 
-
-      <!-- BEGIN: Official Store -->
-      <div class="col-span-12 lg:col-span-8 mt-6">
-          <div class="intro-y block sm:flex items-center h-10">
-            <h2 class="text-lg font-medium truncate mr-5">Official Store</h2>
-            <div class="sm:ml-auto mt-3 sm:mt-0 relative text-slate-500">
-              <MapPinIcon
-                class="w-4 h-4 z-10 absolute my-auto inset-y-0 ml-3 left-0"
-              />
-              <input
-                type="text"
-                class="form-control sm:w-56 box pl-10"
-                placeholder="Filter by city"
-              />
-            </div>
-          </div>
-          <div class="intro-y box p-5 mt-12 sm:mt-5">
-            <div>
-              250 Official stores in 21 countries, click the marker to see
-              location details.
-            </div>
-            <ReportMap class="report-maps mt-5 bg-slate-200 rounded-md" />
-          </div>
-      </div>
-      <!-- END: Official Store -->
-
-
       <!-- BEGIN: Weekly Top Products -->
       <div class="col-span-12 mt-6">
           <div class="intro-y block sm:flex items-center h-10">
@@ -58,14 +31,6 @@
               <thead>
                 <tr>
                   <th class="whitespace-nowrap">Viaje</th>
-                  <th class="whitespace-nowrap">Date</th>
-                  <th class="whitespace-nowrap">Origen</th>
-                  <th class="whitespace-nowrap">Destino</th>
-                  <th class="whitespace-nowrap">Estado viaje</th>
-                  <th class="whitespace-nowrap">Estado actividad</th>
-                  <th class="whitespace-nowrap">Conductor</th>
-                  <th class="whitespace-nowrap">Telemática</th>
-                  <th class="whitespace-nowrap">Seguimiento</th>
                   <th class="text-center whitespace-nowrap">Acciones</th>
                 </tr>
               </thead>
@@ -81,32 +46,6 @@
                       {{ trip.reference_number}}
                     </a>
                   </td>
-                  <td>{{ trip.date }}</td>
-                  <td>
-                    <a href="" class="font-medium whitespace-nowrap">
-                      {{ trip.origin_country.common_name}}
-                    </a>
-                    <div
-                      class="text-slate-500 text-xs whitespace-nowrap mt-0.5"
-                    >
-                      {{ trip.origin_address }} / {{ trip.origin_postal_code }}
-                    </div>
-                  </td>
-                  <td>
-                    <a href="" class="font-medium whitespace-nowrap">
-                      {{ trip.destination_country.common_name}}
-                    </a>
-                    <div
-                      class="text-slate-500 text-xs whitespace-nowrap mt-0.5"
-                    >
-                      {{ trip.destination_address }} / {{ trip.destination_postal_code }}
-                    </div>
-                  </td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>{{ trip.provider_telematic.name }}</td>
-                  <td>{{ trip.trip_tracking.name }}</td>
                   
                   <!-- <td class="w-40">
                     <div

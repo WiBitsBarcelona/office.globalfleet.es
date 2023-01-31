@@ -30,14 +30,6 @@
               <thead>
                 <tr>
                   <th class="whitespace-nowrap">Viaje</th>
-                  <th class="whitespace-nowrap">Date</th>
-                  <th class="whitespace-nowrap">Origen</th>
-                  <th class="whitespace-nowrap">Destino</th>
-                  <th class="whitespace-nowrap">Estado viaje</th>
-                  <th class="whitespace-nowrap">Estado actividad</th>
-                  <th class="whitespace-nowrap">Conductor</th>
-                  <th class="whitespace-nowrap">Telemática</th>
-                  <th class="whitespace-nowrap">Seguimiento</th>
                   <th class="text-center whitespace-nowrap">Acciones</th>
                 </tr>
               </thead>
@@ -53,32 +45,6 @@
                       {{ trip.reference_number}}
                     </a>
                   </td>
-                  <td>{{ trip.date }}</td>
-                  <td>
-                    <a href="" class="font-medium whitespace-nowrap">
-                      {{ trip.origin_country.common_name}}
-                    </a>
-                    <div
-                      class="text-slate-500 text-xs whitespace-nowrap mt-0.5"
-                    >
-                      {{ trip.origin_address }} / {{ trip.origin_postal_code }}
-                    </div>
-                  </td>
-                  <td>
-                    <a href="" class="font-medium whitespace-nowrap">
-                      {{ trip.destination_country.common_name}}
-                    </a>
-                    <div
-                      class="text-slate-500 text-xs whitespace-nowrap mt-0.5"
-                    >
-                      {{ trip.destination_address }} / {{ trip.destination_postal_code }}
-                    </div>
-                  </td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>{{ trip.provider_telematic.name }}</td>
-                  <td>{{ trip.trip_tracking.name }}</td>
                   
                   <!-- <td class="w-40">
                     <div
