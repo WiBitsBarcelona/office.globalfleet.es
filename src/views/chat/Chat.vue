@@ -6,6 +6,7 @@
     <div class="w-1/4">
       <input type="text" name="username" id="username" placeholder="Usuari" />
       <button type="submit" v-on:click="createUser()">Accedir</button>
+      <button v-on:click="logout()">Sortir</button>
     </div>
     <div class="flex flex-col w-full h-screen justify-between items-center box">
       <div id="messages" class="h-5/6 w-full"></div>
@@ -56,6 +57,19 @@ CometChat.init(appID, appSetting).then(
   }
 );
 
+// Funcion para cerrar la sesion del chat
+const logout = () => {
+  CometChat.logout().then(
+    () => {
+      console.log("S'ha sortit");
+      removeMsgListener();
+    },
+    (error) => {
+      console.log("Error al sortir:", { error });
+    }
+  );
+};
+
 const createUser = () => {
   const username = document.getElementById("username").value;
   console.log("username", username);
@@ -82,16 +96,17 @@ const createUser = () => {
 const logUserIn = (user, authKey, UID) => {
   CometChat.login(UID, authKey).then(
     (user) => {
-      createMsgListener();
       console.log("Login Successful:", { user });
       const GUID = "global";
       const password = "";
       const groupType = CometChat.GROUP_TYPE.PUBLIC;
+      createMsgListener();
 
       CometChat.joinGroup(GUID, groupType, password).then(
         (group) => {
           console.log("Se ha accedido al grupo:", group);
         },
+
         (error) => {
           console.log("Error al entrar al grupo:", error);
         }
@@ -110,9 +125,7 @@ const createMsgListener = () => {
     listenerID,
     new CometChat.MessageListener({
       onTextMessageRecieved: (textMessage) => {
-        document.getElementById(
-          "messages"
-        ).innerHTML += `<div class="message">${textMessage.sender.name}: ${textMessage.text}</div>`;
+        document.getElementById('messages').innerHTML += `<div class="message">${textMessage.sender.name}: ${textMessage.text}</div>`;
         console.log("Mensaje de text recivido:", textMessage);
       },
       onMediaMessageRecieved: (mediaMessage) => {
@@ -143,6 +156,9 @@ const sendMessage = (msg) => {
 
   CometChat.sendMessage(textMessage).then(
     (message) => {
+      document.getElementById(
+        "messages"
+      ).innerHTML += `<div class="message">${message.sender.name}: ${message.text}</div>`;
       console.log("Mensaje enviado correctamente:", message);
     },
     (error) => {
