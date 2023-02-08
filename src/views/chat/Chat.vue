@@ -1,11 +1,33 @@
 <template>
   <div class="flex w-full h-14 items-center justify-start">
-    <h2 class="text-lg font-medium mr-auto">Chat</h2>
-    <input type="text" name="username" id="username" placeholder="Usuari" />
-    <button type="submit" v-on:click="createUser()">Accedir</button>
+    <h2 class="text-lg font-medium mr-auto w-1/4">Chat</h2>
+    <div class="flex w-full">
+      <h2 id="group-name">
+      </h2>
+      <div class="flex justify-between w-full">
+        <input type="text" name="username" id="username" placeholder="Usuari" />
+        <button type="submit" class="box mr-4 p-3" v-on:click="createUser()">
+          Accedir
+        </button>
+      </div>
+    </div>
   </div>
-  <div class="flex">
-    <div id="group-list" class="flex flex-col gap-5 w-1/4"></div>
+  <div id="app" class="flex">
+    <div id="group-list" class="flex flex-col gap-5 w-1/4">
+      <button
+        class="flex p-3 box h-24 w-[17rem] cursor-pointer"
+        @click="loadGroup('supergroup')"
+      >
+        <b>Super</b>
+      </button>
+      <button
+        class="flex p-3 box h-24 w-[17rem] cursor-pointer"
+        @click="loadGroup('global')"
+      >
+        <b>Global</b>
+      </button>
+      <!-- <button v-for="prop in props">{{ prop }}</button> -->
+    </div>
     <div class="flex flex-col w-full h-[85vh] justify-between items-center box">
       <div
         id="messages"
@@ -43,6 +65,8 @@ const appID = "23195116ca7e245f";
 const region = "eu";
 
 let userData;
+let actualGroup;
+let allGroups;
 
 const appSetting = new CometChat.AppSettingsBuilder()
   .subscribePresenceForAllUsers()
@@ -69,13 +93,13 @@ const getGroupsList = () => {
   groupsRequest.fetchNext().then(
     (groupList) => {
       console.log("Lista de grupos:", groupList);
-      groupList.map((group) => {
-        document.getElementById(
-          "group-list"
-        ).innerHTML += `<button class="flex p-3 box h-24 w-[17rem] cursor-pointer" @click="loadGroup('${group.guid}')">
-            <b>${group.name}</b>
-          </button>`;
-      });
+      // groupList.map((group) => {
+      //   document.getElementById(
+      //     "group-list"
+      //   ).innerHTML += `<button class="flex p-3 box h-24 w-[17rem] cursor-pointer" @click="loadGroup('${group.guid}')">
+      //       <b>${group.name}</b>
+      //     </button>`;
+      // });
     },
     (error) => {
       console.log("Error al obtener la lista de grupos:", error);
@@ -85,7 +109,6 @@ const getGroupsList = () => {
 
 const createUser = () => {
   const username = document.getElementById("username").value;
-  console.log("username", username);
 
   const authKey = "b1809c12cf23a929539a2ac076b68277f7a4df9b";
   const UID = username;
@@ -109,10 +132,10 @@ const createUser = () => {
 };
 
 const logUserIn = (authKey, UID) => {
+  getGroupsList();
   CometChat.login(UID, authKey).then(
     (user) => {
       console.log("Login Successful:", { user });
-      loadGroup("global");
     },
     (error) => {
       console.log("Login failed with exception:", { error });
@@ -127,17 +150,19 @@ const loadGroup = (GID) => {
   const password = "";
   const groupType = CometChat.GROUP_TYPE.PUBLIC;
 
-  getGroupsList();
-  getMessageHistory(user);
+  actualGroup = GID;
+
+  getMessageHistory(user, GUID);
   createMsgListener();
 
   CometChat.joinGroup(GUID, groupType, password).then(
     (group) => {
       console.log("Se ha accedido al grupo:", group);
+      document.getElementById("group-name").innerHTML = group.name;
     },
-
     (error) => {
       console.log("Error al entrar al grupo:", error);
+      // document.getElementById("group-name").innerHTML = group.name;
     }
   );
 };
@@ -164,15 +189,15 @@ const createMsgListener = () => {
   );
 };
 
-const getMessageHistory = (user) => {
-  console.log("Usuari: ", user);
-
-  const GUID = "global";
+const getMessageHistory = (user, GID) => {
+  const GUID = GID;
   const limit = 30;
   const messagesRequest = new CometChat.MessagesRequestBuilder()
     .setGUID(GUID)
     .setLimit(limit)
     .build();
+
+  document.getElementById("messages").innerHTML = "";
 
   messagesRequest.fetchPrevious().then(
     (messages) => {
@@ -199,7 +224,7 @@ const getMessageHistory = (user) => {
 };
 
 const sendMessage = () => {
-  const receiverID = "Global";
+  const receiverID = actualGroup;
   const messageText = document.getElementById("message").value;
 
   document.getElementById("message").value = "";
@@ -223,5 +248,19 @@ const sendMessage = () => {
     }
   );
 };
+
+const props = [
+  {
+    nom: "jordi",
+    edat: 43,
+  },
+  {
+    nom: "pere",
+    edat: 52,
+  },
+  {
+    nom: "alex",
+    edat: 23,
+  },
+];
 </script>
-<style></style>
