@@ -1,29 +1,29 @@
 <template>
   <div class="flex w-full h-14 items-center justify-start">
     <h2 class="text-lg font-medium mr-auto">Chat</h2>
+    <input type="text" name="username" id="username" placeholder="Usuari" />
+    <button type="submit" v-on:click="createUser()">Accedir</button>
   </div>
   <div class="flex">
-    <div class="w-1/4">
-      <input type="text" name="username" id="username" placeholder="Usuari" />
-      <button type="submit" v-on:click="createUser()">Accedir</button>
-      <button v-on:click="logout()">Sortir</button>
-    </div>
-    <div class="flex flex-col w-full h-screen justify-between items-center box">
-      <div id="messages" class="h-5/6 w-full"></div>
+    <div id="group-list" class="flex flex-col gap-5 w-1/4"></div>
+    <div class="flex flex-col w-full h-[85vh] justify-between items-center box">
+      <div
+        id="messages"
+        class="flex flex-col gap-2 h-5/6 w-full p-5 overflow-y-scroll"
+      ></div>
       <div
         class="pt-4 sm:py-4 flex items-center border-t border-slate-200/60 dark:border-darkmode-400 w-full"
       >
-        <textarea
+        <input
           id="message"
-          rows="1"
-          class="w-5/6 chat__box__input form-control dark:bg-darkmode-600 resize-none border-transparent px-5 py-3 shadow-none focus:border-transparent focus:ring-0"
+          class="w-5/6 focus:outline-none chat__box__input form-control dark:bg-darkmode-600 resize-none border-transparent px-5 py-3 shadow-none focus:border-transparent focus:ring-0"
           placeholder="Escribe el mensaje..."
-        ></textarea>
+        />
         <div
           class="flex items-center justify-center w-1/6 text-2xl text-center"
         >
           <button
-            type="submit"
+            id="sendMsgBtn"
             v-on:click="sendMessage()"
             class="w-8 h-8 sm:w-10 sm:h-10 bg-primary text-white rounded-full flex-none flex items-center justify-center"
           >
@@ -42,6 +42,8 @@ import { CometChat } from "@cometchat-pro/chat";
 const appID = "23195116ca7e245f";
 const region = "eu";
 
+let userData;
+
 const appSetting = new CometChat.AppSettingsBuilder()
   .subscribePresenceForAllUsers()
   .setRegion(region)
@@ -57,15 +59,26 @@ CometChat.init(appID, appSetting).then(
   }
 );
 
-// Funcion para cerrar la sesion del chat
-const logout = () => {
-  CometChat.logout().then(
-    () => {
-      console.log("S'ha sortit");
-      removeMsgListener();
+// Funció per rebre la llista de grups
+const getGroupsList = () => {
+  const limit = 30;
+  const groupsRequest = new CometChat.GroupsRequestBuilder()
+    .setLimit(limit)
+    .build();
+
+  groupsRequest.fetchNext().then(
+    (groupList) => {
+      console.log("Lista de grupos:", groupList);
+      groupList.map((group) => {
+        document.getElementById(
+          "group-list"
+        ).innerHTML += `<button class="flex p-3 box h-24 w-[17rem] cursor-pointer" @click="loadGroup('${group.guid}')">
+            <b>${group.name}</b>
+          </button>`;
+      });
     },
     (error) => {
-      console.log("Error al sortir:", { error });
+      console.log("Error al obtener la lista de grupos:", error);
     }
   );
 };
@@ -81,39 +94,50 @@ const createUser = () => {
   const user = new CometChat.User(UID);
   user.setName(name);
 
+  userData = user;
+
   CometChat.createUser(user, authKey).then(
     (user) => {
-      logUserIn(user, authKey, UID);
+      logUserIn(authKey, UID);
     },
     (error) => {
       if (error.code === "ERR_UID_ALREADY_EXISTS") {
-        logUserIn(user, authKey, UID);
+        logUserIn(authKey, UID);
       }
     }
   );
 };
 
-const logUserIn = (user, authKey, UID) => {
+const logUserIn = (authKey, UID) => {
   CometChat.login(UID, authKey).then(
     (user) => {
       console.log("Login Successful:", { user });
-      const GUID = "global";
-      const password = "";
-      const groupType = CometChat.GROUP_TYPE.PUBLIC;
-      createMsgListener();
-
-      CometChat.joinGroup(GUID, groupType, password).then(
-        (group) => {
-          console.log("Se ha accedido al grupo:", group);
-        },
-
-        (error) => {
-          console.log("Error al entrar al grupo:", error);
-        }
-      );
+      loadGroup("global");
     },
     (error) => {
       console.log("Login failed with exception:", { error });
+    }
+  );
+};
+
+const loadGroup = (GID) => {
+  const user = userData;
+
+  const GUID = GID;
+  const password = "";
+  const groupType = CometChat.GROUP_TYPE.PUBLIC;
+
+  getGroupsList();
+  getMessageHistory(user);
+  createMsgListener();
+
+  CometChat.joinGroup(GUID, groupType, password).then(
+    (group) => {
+      console.log("Se ha accedido al grupo:", group);
+    },
+
+    (error) => {
+      console.log("Error al entrar al grupo:", error);
     }
   );
 };
@@ -124,8 +148,10 @@ const createMsgListener = () => {
   CometChat.addMessageListener(
     listenerID,
     new CometChat.MessageListener({
-      onTextMessageRecieved: (textMessage) => {
-        document.getElementById('messages').innerHTML += `<div class="message">${textMessage.sender.name}: ${textMessage.text}</div>`;
+      onTextMessageReceived: (textMessage) => {
+        document.getElementById(
+          "messages"
+        ).innerHTML += `<div class="message flex flex-col gap-1 rounded-3xl w-fit py-2 px-5 bg-gray-200"><b>${message.sender.name}</b><p>${message.text}</p></div>`;
         console.log("Mensaje de text recivido:", textMessage);
       },
       onMediaMessageRecieved: (mediaMessage) => {
@@ -138,15 +164,46 @@ const createMsgListener = () => {
   );
 };
 
-const removeMsgListener = () => {
-  const listenerID = "GLOBAL_LISTENER_ID";
+const getMessageHistory = (user) => {
+  console.log("Usuari: ", user);
 
-  CometChat.removeMessageListener(listenerID);
+  const GUID = "global";
+  const limit = 30;
+  const messagesRequest = new CometChat.MessagesRequestBuilder()
+    .setGUID(GUID)
+    .setLimit(limit)
+    .build();
+
+  messagesRequest.fetchPrevious().then(
+    (messages) => {
+      messages = messages.filter((message) => message.type === "text");
+      console.log("Mensajes anteriores: ", messages);
+      messages.map((message) => {
+        if (message.text !== undefined) {
+          if (user.name === message.sender.name) {
+            document.getElementById(
+              "messages"
+            ).innerHTML += `<div class="message flex gap-1 justify-end"><p class="py-2 px-7 bg-blue-600 rounded-3xl text-white">${message.text}</p></div>`;
+          } else {
+            document.getElementById(
+              "messages"
+            ).innerHTML += `<div class="message flex flex-col gap-1 rounded-3xl w-fit py-2 px-5 bg-gray-200"><b>${message.sender.name}</b><p>${message.text}</p></div>`;
+          }
+        }
+      });
+    },
+    (error) => {
+      console.log("Message fetching failed with error:", error);
+    }
+  );
 };
 
-const sendMessage = (msg) => {
+const sendMessage = () => {
   const receiverID = "Global";
   const messageText = document.getElementById("message").value;
+
+  document.getElementById("message").value = "";
+
   const receiverType = CometChat.RECEIVER_TYPE.GROUP;
   const textMessage = CometChat.TextMessage(
     receiverID,
@@ -158,7 +215,7 @@ const sendMessage = (msg) => {
     (message) => {
       document.getElementById(
         "messages"
-      ).innerHTML += `<div class="message">${message.sender.name}: ${message.text}</div>`;
+      ).innerHTML += `<div class="message flex gap-1 justify-end"><p class="py-2 px-7 bg-blue-600 rounded-3xl text-white">${message.text}</p></div>`;
       console.log("Mensaje enviado correctamente:", message);
     },
     (error) => {
