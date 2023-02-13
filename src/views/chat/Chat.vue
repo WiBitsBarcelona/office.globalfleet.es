@@ -14,9 +14,21 @@
     <div id="group-list" class="flex flex-col gap-5 w-1/4">
       <button
         v-for="group in allGroups.data"
-        class="flex p-3 box h-24 w-[17rem] cursor-pointer"
+        class="flex gap-5 p-3 box h-24 w-[17rem] cursor-pointer"
         @click="loadGroup(group.guid)"
       >
+        <div class="h-full w-14 flex items-center justify-center">
+          <img
+            :src="
+              group.icon
+                ? group.icon
+                : `https://ui-avatars.com/api/?name=${group.name.charAt(
+                    0
+                  )}&color=7F9CF5&background=EBF4FF`
+            "
+            class="w-14 h-14 rounded-full"
+          />
+        </div>
         <b>{{ group.name }}</b>
       </button>
     </div>
@@ -200,6 +212,7 @@ const createMsgListener = () => {
 const convertStringToDate = (strTime) => {
   const timestamp = Number(strTime) * 1000;
   const date = new Date(timestamp);
+
   var hours = date.getHours();
   var minutes = date.getMinutes();
   // const ampm = hours >= 12 ? "pm" : "am";
@@ -209,6 +222,38 @@ const convertStringToDate = (strTime) => {
   var timeStr = hours + ":" + minutes;
 
   return timeStr.toString();
+};
+
+const getMessageDate = (strTime) => {
+  const timestamp = Number(strTime) * 1000;
+  const date = new Date(timestamp);
+
+  const curdate = new Date();
+
+  if (
+    date.getFullYear() === curdate.getFullYear() &&
+    date.getMonth() === curdate.getMonth()
+  ) {
+    if (date.getDate() === curdate.getDate()) {
+      return "Hoy";
+    } else if (date.getDate() === curdate.getDate() - 1) {
+      return "Ayer";
+    } else {
+      return (
+        (date.getDate() < 10 ? "0" + date.getDate() : date.getDate()) +
+        "/" +
+        (date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth())
+      );
+    }
+  } else {
+    return (
+      (date.getDate() < 10 ? "0" + date.getDate() : date.getDate()) +
+      "/" +
+      (date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth()) +
+      "/" +
+      date.getFullYear
+    );
+  }
 };
 
 // Obtener la lista de mensajes de un grupo
@@ -221,6 +266,9 @@ const getMessageHistory = (user, GID) => {
     .build();
 
   document.getElementById("messages").innerHTML = "";
+
+  let messageDate;
+  let missatgeAnterior = "";
 
   messagesRequest.fetchPrevious().then(
     (messages) => {
@@ -241,6 +289,16 @@ const getMessageHistory = (user, GID) => {
         "current-chat"
       ).innerHTML += `<h2 class="w-full font-bold text-2xl">${messages[0].receiver.name}</h2>`;
       messages.map((message) => {
+        // Comprovem la data
+        messageDate = getMessageDate(message.sentAt);
+
+        if (missatgeAnterior !== messageDate) {
+          document.getElementById(
+            "messages"
+          ).innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-300">${messageDate}</p></div>`;
+        }
+        missatgeAnterior = messageDate;
+
         if (message.text !== undefined) {
           if (user.name === message.sender.name) {
             document.getElementById(
@@ -318,5 +376,4 @@ const sendMessage = () => {
     }
   );
 };
-
 </script>
