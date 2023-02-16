@@ -32,9 +32,7 @@ yarn build
 
 ## Documentation
 
-The Documentation folder inside the project.
-
-http://enigma-vue.left4code.com/
+The Documentation folder inside the project. **[Link](http://enigma-vue.left4code.com/)**
 
 
 ## Access main
