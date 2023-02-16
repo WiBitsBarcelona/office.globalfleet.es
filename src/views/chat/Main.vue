@@ -4,11 +4,11 @@
     <div class="w-full sm:w-auto flex mt-4 sm:mt-0">
       <button class="btn btn-primary shadow-md mr-2">Nuevo Chat</button>
       <Dropdown class="ml-auto sm:ml-0">
-        <DropdownToggle class="btn px-2 box text-slate-500">
+        <!-- <DropdownToggle class="btn px-2 box text-slate-500">
           <span class="w-5 h-5 flex items-center justify-center">
             <PlusIcon class="w-4 h-4" />
           </span>
-        </DropdownToggle>
+        </DropdownToggle> -->
         <DropdownMenu class="w-40">
           <DropdownContent>
             <DropdownItem>

@@ -34,7 +34,8 @@ const routes = [
   {
     path: "/",
     name: "main",
-    component: () => import('@/layouts/top-menu/Main.vue'),
+    component: () => import('@/layouts/simple-menu/Main.vue'),
+    //component: () => import('@/layouts/top-menu/Main.vue'),
     beforeEnter: requireAuth,
     children: [
       {
