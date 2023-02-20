@@ -1,7 +1,8 @@
 /* Default colors */
 :root {
     /* --color-primary: theme("colors.rgb.cyan.200"); */
-    --color-primary: 0 211 193;
+    /* --color-primary: 0 211 193; COLOR VERDE CLARO */
+    --color-primary: 0 150 178; /* NUEVO COLOR PARA PROVAR */
     --color-secondary: theme("colors.rgb.slate.200");
     --color-success: theme("colors.rgb.teal.600");
     --color-info: theme("colors.rgb.cyan.500");

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <LocaleSelect/>
+    <!-- <LocaleSelect/> -->
     <AuthFooter/>
     <div class="container sm:px-10">
       <div class="block xl:grid grid-cols-2 gap-4">

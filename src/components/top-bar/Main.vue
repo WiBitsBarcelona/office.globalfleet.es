@@ -11,19 +11,28 @@
           class="logo__image w-6"
           src="@/assets/images/fleet-logo.svg"
         />
-        <span class="logo__text text-white text-lg ml-3"> Office </span>
+        <span class="logo__text text-white text-lg ml-3" style="display:block"> Office </span>
       </a>
       <!-- END: Logo -->
       <!-- BEGIN: Breadcrumb -->
       <nav aria-label="breadcrumb" class="-intro-x h-[45px] mr-auto">
-<!--         <ol class="breadcrumb breadcrumb-light">
+         <ol class="breadcrumb breadcrumb-light">
           <li class="breadcrumb-item"><a href="#">Application</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
-        </ol> -->
+          <li class="breadcrumb-item active" aria-current="page" style="text-transform: capitalize">{{ $route.name }}</li>
+          <li>
+            <Tippy tag="button" class="tooltip primary ml-4 mr-2" content="Desacoplar Ventana" :options="{
+                    theme: 'light',
+                  }"><ExternalLinkIcon/></Tippy>
+          </li>
+        </ol> 
       </nav>
+
+
+
       <!-- END: Breadcrumb -->
       <!-- BEGIN: Search -->
       <div class="intro-x relative mr-3 sm:mr-6">
+        
 <!--         <div class="search hidden sm:block">
           <input
             type="text"
@@ -34,6 +43,7 @@
           />
           <SearchIcon class="search__icon dark:text-slate-500" />
         </div> -->
+        
         <a class="notification notification--light sm:hidden" href="">
           <SearchIcon class="notification__icon dark:text-slate-500" />
         </a>
@@ -114,7 +124,60 @@
         </div>
       </div>
       <!-- END: Search -->
+
+
+      <FleetModeSwitcher />
+
+
+
       <!-- BEGIN: Notifications -->
+
+      <Dropdown class="intro-x mr-4 sm:mr-6">
+        <DropdownToggle
+          tag="div"
+          role="button"
+          class="notification notification--bullet cursor-pointer"
+        >
+          <MessageCircleIcon class="notification__icon dark:text-slate-500" />
+        </DropdownToggle>
+        <DropdownMenu class="notification-content pt-2">
+          <DropdownContent tag="div" class="notification-content__box">
+            <div class="notification-content__title">Notifications</div>
+            <div
+              v-for="(faker, fakerKey) in $_.take($f(), 5)"
+              :key="fakerKey"
+              class="cursor-pointer relative flex items-center"
+              :class="{ 'mt-5': fakerKey }"
+            >
+              <div class="w-12 h-12 flex-none image-fit mr-1">
+                <img
+                  alt="Enigma Tailwind HTML Admin Template"
+                  class="rounded-full"
+                  :src="faker.photos[0]"
+                />
+                <div
+                  class="w-3 h-3 bg-success absolute right-0 bottom-0 rounded-full border-2 border-white"
+                ></div>
+              </div>
+              <div class="ml-2 overflow-hidden">
+                <div class="flex items-center">
+                  <a href="javascript:;" class="font-medium truncate mr-5">{{
+                    faker.users[0].name
+                  }}</a>
+                  <div class="text-xs text-slate-400 ml-auto whitespace-nowrap">
+                    {{ faker.times[0] }}
+                  </div>
+                </div>
+                <div class="w-full truncate text-slate-500 mt-0.5">
+                  {{ faker.news[0].shortContent }}
+                </div>
+              </div>
+            </div>
+          </DropdownContent>
+        </DropdownMenu>
+      </Dropdown>
+
+
       <Dropdown class="intro-x mr-4 sm:mr-6">
         <DropdownToggle
           tag="div"
@@ -167,8 +230,8 @@
           role="button"
           class="w-8 h-8 rounded-full overflow-hidden shadow-lg image-fit zoom-in scale-110"
         >
-          <img
-            alt="Enigma Tailwind HTML Admin Template"
+        <img
+            alt="{{ useAuthentication.user.name }}"
             :src="$f()[9].photos[0]"
           />
         </DropdownToggle>
@@ -186,20 +249,20 @@
             </DropdownHeader>
             <DropdownDivider class="border-white/[0.08]" />
             <DropdownItem class="dropdown-item hover:bg-white/5">
-              <UserIcon class="w-4 h-4 mr-2" /> Profile</DropdownItem
+              <UserIcon class="w-4 h-4 mr-2" /> Perfil</DropdownItem
             >
             <!-- <DropdownItem class="dropdown-item hover:bg-white/5">
               <EditIcon class="w-4 h-4 mr-2" /> Add Account</DropdownItem
             > -->
             <DropdownItem class="dropdown-item hover:bg-white/5">
-              <LockIcon class="w-4 h-4 mr-2" /> Reset Password</DropdownItem
+              <LockIcon class="w-4 h-4 mr-2" /> Resetear Password</DropdownItem
             >
             <DropdownItem class="dropdown-item hover:bg-white/5">
-              <HelpCircleIcon class="w-4 h-4 mr-2" /> Help</DropdownItem
+              <HelpCircleIcon class="w-4 h-4 mr-2" /> Ayuda</DropdownItem
             >
             <DropdownDivider class="border-white/[0.08]" />
             <DropdownItem class="dropdown-item hover:bg-white/5" @click="logout">
-              <ToggleRightIcon class="w-4 h-4 mr-2" /> Logout</DropdownItem
+              <ToggleRightIcon class="w-4 h-4 mr-2" /> Cerrar Sesión</DropdownItem
             >
           </DropdownContent>
         </DropdownMenu>
@@ -214,7 +277,8 @@
   import { ref } from "vue";
   import {useAuthenticationStore} from '@/stores/auth/authentications';
   import { useRouter } from "vue-router";
-
+  import FleetModeSwitcher from "@/components/fleet-dark-mode/Main.vue";
+  
 
   const useAuthentication = useAuthenticationStore();
   const route = useRouter();
