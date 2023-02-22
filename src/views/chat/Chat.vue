@@ -70,14 +70,18 @@
     </div>
   </div>
   <div id="app" class="flex">
-    <div id="group-list" class="flex flex-col gap-5 w-1/4">
+    <div id="group-list" class="flex flex-col w-1/4">
       <button
         v-for="group in allGroups"
-        class="flex gap-3 p-3 box h-24 w-[17rem] cursor-pointer"
+        class="flex gap-3 p-3 h-16 w-[98%] cursor-pointer border-b bg-white"
         @click="loadGroup(group.conversationWith.guid)"
       >
-        <div class="h-full w-14 flex items-center justify-center">
-          <img
+        <div
+          :id="group.conversationWith.guid + '-image'"
+          class="h-full w-14 flex items-center justify-center"
+        >
+          <!-- ACTUAL -->
+          <!-- <img
             :src="
               group.conversationWith.icon
                 ? group.conversationWith.icon
@@ -86,10 +90,10 @@
                   )}&color=7F9CF5&background=EBF4FF`
             "
             class="w-14 h-14 rounded-full"
-          />
+          /> -->
         </div>
-        <div class="flex flex-col justify-between h-full">
-          <b>{{ group.conversationWith.name }}</b>
+        <div class="flex flex-col justify-between h-full text-left">
+          <b :id="group.conversationWith.guid"></b>
           <p :id="'last-message-' + group.conversationWith.guid"></p>
         </div>
       </button>
@@ -164,9 +168,10 @@ CometChat.init(appID, appSetting).then(
 // Función para crear un usuario en caso de que el nuevo no exista
 const createUser = () => {
   const username = document.getElementById("username").value;
+  const userInfo = users.filter((user) => username === user.name);
 
   const authKey = "b1809c12cf23a929539a2ac076b68277f7a4df9b";
-  const UID = username;
+  const UID = userInfo[0].uid;
   const name = username;
 
   const user = new CometChat.User(UID);
@@ -191,7 +196,6 @@ const logUserIn = (authKey, UID) => {
   CometChat.login(UID, authKey).then(
     (user) => {
       console.log("Login Successful:", { user });
-      // getGroupsList(user.uid);
       getConversationsList(user.uid);
     },
     (error) => {
@@ -217,10 +221,14 @@ const getConversationsList = (user) => {
   )
     .then((response) => response.json())
     .then((response) => {
-      console.log(response);
       allGroups.value = response.data;
       response.data.map((chat) => {
-        console.log(chat.conversationWith);
+        getGroupMembers(
+          chat.conversationWith.guid,
+          chat.conversationWith.type,
+          chat.conversationWith.name,
+          false
+        );
         getLastMessage(user, chat.conversationWith.guid);
       });
     })
@@ -231,6 +239,8 @@ const getConversationsList = (user) => {
 const getLastMessage = (user, GID) => {
   const GUID = GID;
   const limit = 1;
+  let lastMessage = "";
+
   const messagesRequest = new CometChat.MessagesRequestBuilder()
     .setGUID(GUID)
     .setLimit(limit)
@@ -238,7 +248,9 @@ const getLastMessage = (user, GID) => {
 
   messagesRequest.fetchPrevious().then((messages) => {
     messages = messages.filter((message) => message.type === "text");
-    const lastMessage = messages[0].data.text;
+    if (messages.length != 0) {
+      lastMessage = messages[0].data.text;
+    }
 
     if (lastMessage.length > 19) {
       document.getElementById(`last-message-${GUID}`).innerHTML =
@@ -260,8 +272,10 @@ const loadGroup = (GID) => {
 
   actualGroup = GID;
 
+  const chatName = document.getElementById(GID).textContent;
+
   // Llamamos a la función de cargar el historial de mensajes del grupo en cuestión
-  getMessageHistory(user, GUID);
+  getMessageHistory(user, GUID, chatName);
 
   // Llamamos a la función para preparar un listener de recibir y enviar mensajes
   createMsgListener();
@@ -332,9 +346,9 @@ const getMessageDate = (strTime) => {
 };
 
 // Obtener la lista de mensajes de un grupo
-const getMessageHistory = (user, GID, lim) => {
+const getMessageHistory = (user, GID, chatName) => {
   const GUID = GID;
-  const limit = lim ? lim : 100;
+  const limit = 100;
   const messagesRequest = new CometChat.MessagesRequestBuilder()
     .setGUID(GUID)
     .setLimit(limit)
@@ -356,13 +370,14 @@ const getMessageHistory = (user, GID, lim) => {
       if (messages[0].receiver.getIcon() === undefined) {
         document.getElementById(
           "current-chat"
-        ).innerHTML = `<img class="rounded-full" src="https://ui-avatars.com/api/?name=${messages[0].receiver.name.charAt(
+        ).innerHTML = `<img class="rounded-full" src="https://ui-avatars.com/api/?name=${chatName.charAt(
           0
         )}&color=7F9CF5&background=EBF4FF" class="w-12 h-12" />`;
       }
+
       document.getElementById(
         "current-chat"
-      ).innerHTML += `<h2 class="w-full font-bold text-2xl">${messages[0].receiver.name}</h2>`;
+      ).innerHTML += `<h2 id="chat-name-${messages[0].receiver.guid}" class="w-full font-bold text-2xl">${chatName}</h2>`;
       messages.map((message) => {
         // Comprovem la data
         messageDate = getMessageDate(message.sentAt);
@@ -465,12 +480,10 @@ const newChat = (tipo) => {
   }
 };
 
+// Crear un nuevo chat o grupo
 const createNewChat = () => {
   // En cas de ser un grup
   let newChatName;
-  if (chatTag.value === "grupo") {
-    newChatName = document.getElementById("new-chat-input").value;
-  }
 
   // Variable on guardarem els usuaris seleccionats
   const select = document.getElementById("new-chat-select");
@@ -479,7 +492,10 @@ const createNewChat = () => {
     .filter((option) => option.selected)
     .map((option) => option.value);
 
-  if (selected.length === 1) {
+  if (chatTag.value === "grupo") {
+    newChatName = document.getElementById("new-chat-input").value;
+    newChatName = newChatName.replaceAll(" ", "_");
+  } else {
     newChatName = selected[0] + "_" + userData.name + "_chat";
   }
 
@@ -508,6 +524,7 @@ const createNewChat = () => {
     .catch((err) => console.error(err));
 };
 
+// Obtener lista de usuarios registrados
 const getUsersList = () => {
   const options = {
     method: "GET",
@@ -523,9 +540,156 @@ const getUsersList = () => {
   )
     .then((response) => response.json())
     .then((response) => {
-      let data = response.data;
-      data = data.filter((user) => user.name != userData.name);
-      usersList.value = data;
+      const data = response.data;
+      const otherUsers = data.filter((user) => user.name != userData.name);
+      const myUser = data.filter((user) => user.uid === userData.uid);
+      const role = myUser[0].role;
+      let possibleChats;
+
+      // Controlamos el rol del usuario a la hora de buscar la llista de xats disponibles per començar
+      if (role === "admin") {
+        possibleChats = otherUsers;
+      } else if (role === "gerente") {
+        // En caso de ser gerente podrà obrir un xat amb els jefes de tràfic
+        possibleChats = otherUsers.filter((user) => user.role !== "admin");
+      } else if (role === "jefe_trafico") {
+        // En caso de ser jefe de trafico solo podra abrir un chat con uno de sus conductores
+        possibleChats = otherUsers.filter(
+          (user) => user.role !== "admin" && user.role !== "gerente"
+        );
+      } else if (role === "conductor") {
+        // En caso de ser conductor solo va a poder abrir un chat con otro conductor
+        possibleChats = otherUsers.filter((user) => user.role === "conductor");
+      } else {
+        console.log("Rol default");
+      }
+
+      usersList.value = possibleChats;
+    })
+    .catch((err) => console.error(err));
+};
+
+// Funcion para obtener lista de miembros de un grupo
+const getGroupMembers = (guid, type, name, currentChatName) => {
+  const options = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      apikey: "a76fca94f28c87446b3de6dd7785355fbc9d8d78",
+    },
+  };
+
+  fetch(
+    `https://23195116ca7e245f.api-eu.cometchat.io/v3/groups/${guid}/members?perPage=100&page=1`,
+    options
+  )
+    .then((response) => response.json())
+    .then((response) => {
+      let otherUser;
+      let otherUserAvatar;
+      response.data.map((usr) => {
+        // En cas de ser un grup
+        if (type === "public") {
+          // Definim l'icona del grup
+          const options = {
+            method: "GET",
+            headers: {
+              accept: "application/json",
+              apikey: "a76fca94f28c87446b3de6dd7785355fbc9d8d78",
+            },
+          };
+
+          fetch(
+            `https://23195116ca7e245f.api-eu.cometchat.io/v3/groups/${guid}`,
+            options
+          )
+            .then((response) => response.json())
+            .then((response) => {
+              if (response.data.icon) {
+                otherUserAvatar = response.data.icon;
+                const imgTemplate = `
+                      <img
+                            src="${otherUserAvatar}"
+                            class="w-14 h-14 rounded-full"
+                          />
+                      `;
+
+                document.getElementById(`${guid}-image`).innerHTML =
+                  imgTemplate;
+              } else {
+                const imgTemplate = `
+                      <img
+                            src="https://ui-avatars.com/api/?name=${usr.name.charAt(
+                              0
+                            )}&color=7F9CF5&background=EBF4FF"
+                            class="w-14 h-14 rounded-full"
+                          />
+                      `;
+
+                document.getElementById(`${guid}-image`).innerHTML =
+                  imgTemplate;
+              }
+            })
+            .catch((err) => console.error(err));
+
+          // Definim el nom del grup
+          if (name.includes("_")) {
+            otherUser = name.replaceAll("_", " ");
+          } else {
+            otherUser = name;
+          }
+          // En cas de ser un chat
+        } else {
+          if (usr.name != userData.name) {
+            // Definim l'icona del xat
+            const options = {
+              method: "GET",
+              headers: {
+                accept: "application/json",
+                apikey: "a76fca94f28c87446b3de6dd7785355fbc9d8d78",
+              },
+            };
+
+            fetch(
+              `https://23195116ca7e245f.api-eu.cometchat.io/v3/users/${usr.uid}`,
+              options
+            )
+              .then((response) => response.json())
+              .then((response) => {
+                if (response.data.avatar) {
+                  otherUserAvatar = response.data.avatar;
+                  const imgTemplate = `
+                      <img
+                            src="${otherUserAvatar}"
+                            class="w-14 h-14 rounded-full"
+                          />
+                      `;
+
+                  document.getElementById(`${guid}-image`).innerHTML =
+                    imgTemplate;
+                } else {
+                  const imgTemplate = `
+                      <img
+                            src="https://ui-avatars.com/api/?name=${usr.name.charAt(
+                              0
+                            )}&color=7F9CF5&background=EBF4FF"
+                            class="w-14 h-14 rounded-full"
+                          />
+                      `;
+
+                  document.getElementById(`${guid}-image`).innerHTML =
+                    imgTemplate;
+                }
+              })
+              .catch((err) => console.error(err));
+
+            // Definim el nom que apareixerà a la llista de xats
+            otherUser = usr.name;
+          }
+        }
+      });
+      // ACTUAL
+      document.getElementById(guid).innerHTML = otherUser;
     })
     .catch((err) => console.error(err));
 };
@@ -570,4 +734,23 @@ const toggleModal = () => {
     modal.classList.add("flex");
   }
 };
+
+const users = [
+  {
+    name: "Alex",
+    uid: "admin_1_alex",
+  },
+  {
+    name: "Jordi",
+    uid: "g_1_jordi",
+  },
+  {
+    name: "Marc",
+    uid: "jc_1_marc",
+  },
+  {
+    name: "Pere",
+    uid: "c_1_jc_1_pere",
+  },
+];
 </script>
