@@ -735,6 +735,11 @@
   dependencies:
     vue-demi "^0.13.11"
 
+"@webzlodimir/vue-avatar@^0.0.8":
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/@webzlodimir/vue-avatar/-/vue-avatar-0.0.8.tgz#e260c2fdbf9bdb09ffb78d7ca7c81ec47580abd8"
+  integrity sha512-4UAMDMpzakYKwJt5POj/6QUcDQT3TbIGcbR2Aq3JdcuA1T/VBvhKbHhccoTdE6FgUomk7PaWDTIcgWiRSO1cJA==
+
 abbrev@^1.0.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"

@@ -1,7 +1,6 @@
 <template>
   <div class="py-5 md:py-0">
-    <DarkModeSwitcher />
-    <MainColorSwitcher />
+    <!-- <FleetModeSwitcher /> -->
     <MobileMenu />
     <TopBar class="top-bar-boxed--simple-menu" />
     <div class="flex overflow-hidden">
@@ -152,6 +151,7 @@ import { helper as $h } from "@/utils/helper";
 import TopBar from "@/components/top-bar/Main.vue";
 import MobileMenu from "@/components/mobile-menu/Main.vue";
 import DarkModeSwitcher from "@/components/dark-mode-switcher/Main.vue";
+import FleetModeSwitcher from "@/components/fleet-dark-mode/Main.vue";
 import MainColorSwitcher from "@/components/main-color-switcher/Main.vue";
 import { linkTo, nestedMenu, enter, leave } from "@/layouts/side-menu";
 import dom from "@left4code/tw-starter/dist/js/dom";
