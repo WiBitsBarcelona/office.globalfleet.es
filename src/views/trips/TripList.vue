@@ -28,7 +28,7 @@
         <div class="flex items-center sm:ml-auto mt-3 sm:mt-0">
           <button class="btn box flex items-center text-slate-600 dark:text-slate-300">
             <FileTextIcon class="hidden sm:block w-4 h-4 mr-2" />
-            Export to Excel
+            {{ $t("export") }}
           </button>
         </div>
       </div>
