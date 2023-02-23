@@ -79,19 +79,7 @@
         <div
           :id="group.conversationWith.guid + '-image'"
           class="h-full w-14 flex items-center justify-center"
-        >
-          <!-- ACTUAL -->
-          <!-- <img
-            :src="
-              group.conversationWith.icon
-                ? group.conversationWith.icon
-                : `https://ui-avatars.com/api/?name=${group.conversationWith.name.charAt(
-                    0
-                  )}&color=7F9CF5&background=EBF4FF`
-            "
-            class="w-14 h-14 rounded-full"
-          /> -->
-        </div>
+        ></div>
         <div class="flex flex-col justify-between h-full text-left">
           <b :id="group.conversationWith.guid"></b>
           <p :id="'last-message-' + group.conversationWith.guid"></p>
@@ -364,36 +352,46 @@ const getMessageHistory = (user, GID, chatName) => {
       messages = messages.filter((message) => message.type === "text");
       console.log("Mensajes anteriores: ", messages);
 
-      document.getElementById(
-        "current-chat"
-      ).innerHTML = `<img src="${messages[0].receiver.getIcon()}" class="w-12 h-12" />`;
-      if (messages[0].receiver.getIcon() === undefined) {
+      // En cas d'haver algun missatge
+      if (messages.length != 0) {
+
+        // Primer colocarem l'icona del xat
         document.getElementById(
           "current-chat"
-        ).innerHTML = `<img class="rounded-full" src="https://ui-avatars.com/api/?name=${chatName.charAt(
-          0
-        )}&color=7F9CF5&background=EBF4FF" class="w-12 h-12" />`;
-      }
-
-      document.getElementById(
-        "current-chat"
-      ).innerHTML += `<h2 id="chat-name-${messages[0].receiver.guid}" class="w-full font-bold text-2xl">${chatName}</h2>`;
-      messages.map((message) => {
-        // Comprovem la data
-        messageDate = getMessageDate(message.sentAt);
-
-        if (missatgeAnterior !== messageDate) {
+        ).innerHTML = `<img src="${messages[0].receiver.getIcon()}" class="w-12 h-12" />`;
+        if (messages[0].receiver.getIcon() === undefined) {
           document.getElementById(
-            "messages"
-          ).innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-300">${messageDate}</p></div>`;
+            "current-chat"
+          ).innerHTML = `<img class="rounded-full" src="https://ui-avatars.com/api/?name=${chatName.charAt(
+            0
+          )}&color=7F9CF5&background=EBF4FF" class="w-12 h-12" />`;
         }
-        missatgeAnterior = messageDate;
 
-        if (message.text !== undefined) {
-          if (user.name === message.sender.name) {
+        // Imprimim el nom del xat seleccionat
+        document.getElementById(
+          "current-chat"
+        ).innerHTML += `<h2 id="chat-name-${messages[0].receiver.guid}" class="w-full font-bold text-2xl">${chatName}</h2>`;
+
+        // Recorrem els missatges
+        messages.map((message) => {
+          // Comprovem la data
+          messageDate = getMessageDate(message.sentAt);
+
+          // En cas de ser la data de dies diferents, la mostrarem al xat
+          if (missatgeAnterior !== messageDate) {
             document.getElementById(
               "messages"
-            ).innerHTML += `<div class="message flex gap-1 justify-end">
+            ).innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-300">${messageDate}</p></div>`;
+          }
+          missatgeAnterior = messageDate;
+
+          // Comprovem que hi hagi text al missatge enviat
+          if (message.text !== undefined) {
+            // En cas d'haver enviat nosaltres el missatge, el mostrarem amb uns estils
+            if (user.name === message.sender.name) {
+              document.getElementById(
+                "messages"
+              ).innerHTML += `<div class="message flex gap-1 justify-end">
                               <div class="flex gap-3 py-2 px-7 bg-[#8DF7F2] rounded-lg max-w-md">
                                 <p>
                                   ${message.text}
@@ -405,10 +403,11 @@ const getMessageHistory = (user, GID, chatName) => {
                                 </div>
                               </div>
                             </div>`;
-          } else {
-            document.getElementById(
-              "messages"
-            ).innerHTML += `<div class="message flex gap-3 rounded-lg w-fit py-2 px-5 bg-gray-200 max-w-md">
+            // En cas d'haver enviat el missatge una persona diferent a nosaltres, mostrarem el missatge amb uns altres estils
+            } else {
+              document.getElementById(
+                "messages"
+              ).innerHTML += `<div class="message flex gap-3 rounded-lg w-fit py-2 px-5 bg-gray-200 max-w-md">
                               <div class="flex flex-col">
                                 <b>${message.sender.name}</b>
                                 <p>${message.text}</p>
@@ -419,9 +418,15 @@ const getMessageHistory = (user, GID, chatName) => {
                                 )}</p>
                               </div>
                             </div>`;
+            }
           }
-        }
-      });
+        });
+      // En cas de no haver cap missatge encara a la conversa
+      } else {
+        // Carregarem l'imatge
+
+        // Carregarem el nom del xat
+      }
     },
     (error) => {
       console.log("Message fetching failed with error:", error);
@@ -579,12 +584,14 @@ const getGroupMembers = (guid, type, name, currentChatName) => {
     },
   };
 
+  // Petició a la API per obtenir la llista de membres d'un grup
   fetch(
     `https://23195116ca7e245f.api-eu.cometchat.io/v3/groups/${guid}/members?perPage=100&page=1`,
     options
   )
     .then((response) => response.json())
     .then((response) => {
+      // Variable per definir quin nom e icona apareixeràn a la llista de xats
       let otherUser;
       let otherUserAvatar;
       response.data.map((usr) => {
@@ -599,12 +606,14 @@ const getGroupMembers = (guid, type, name, currentChatName) => {
             },
           };
 
+          // Petició a la API per obtenir les dades d'un grup en concret
           fetch(
             `https://23195116ca7e245f.api-eu.cometchat.io/v3/groups/${guid}`,
             options
           )
             .then((response) => response.json())
             .then((response) => {
+              // En cas de tenir icona definida, la mostrarem
               if (response.data.icon) {
                 otherUserAvatar = response.data.icon;
                 const imgTemplate = `
@@ -616,10 +625,11 @@ const getGroupMembers = (guid, type, name, currentChatName) => {
 
                 document.getElementById(`${guid}-image`).innerHTML =
                   imgTemplate;
+              // En cas de no tenir una icona definida, mostrarem la inicial del nom del grup
               } else {
                 const imgTemplate = `
                       <img
-                            src="https://ui-avatars.com/api/?name=${usr.name.charAt(
+                            src="https://ui-avatars.com/api/?name=${response.data.name.charAt(
                               0
                             )}&color=7F9CF5&background=EBF4FF"
                             class="w-14 h-14 rounded-full"
@@ -641,7 +651,6 @@ const getGroupMembers = (guid, type, name, currentChatName) => {
           // En cas de ser un chat
         } else {
           if (usr.name != userData.name) {
-            // Definim l'icona del xat
             const options = {
               method: "GET",
               headers: {
@@ -650,12 +659,14 @@ const getGroupMembers = (guid, type, name, currentChatName) => {
               },
             };
 
+            // Petició a la API per obtenir les dades d'un usuari en concret
             fetch(
               `https://23195116ca7e245f.api-eu.cometchat.io/v3/users/${usr.uid}`,
               options
             )
               .then((response) => response.json())
               .then((response) => {
+                // En cas de tenir icona definida, la mostrarem
                 if (response.data.avatar) {
                   otherUserAvatar = response.data.avatar;
                   const imgTemplate = `
@@ -667,6 +678,7 @@ const getGroupMembers = (guid, type, name, currentChatName) => {
 
                   document.getElementById(`${guid}-image`).innerHTML =
                     imgTemplate;
+                // En cas de no tenir una icona definida, mostrarem la inicial del nom del usuari
                 } else {
                   const imgTemplate = `
                       <img
@@ -688,7 +700,7 @@ const getGroupMembers = (guid, type, name, currentChatName) => {
           }
         }
       });
-      // ACTUAL
+      // Imprimim el nom de l'usuari
       document.getElementById(guid).innerHTML = otherUser;
     })
     .catch((err) => console.error(err));
