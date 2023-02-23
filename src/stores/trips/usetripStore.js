@@ -1,50 +1,5 @@
 import { defineStore } from "pinia";
 
-
-// export const useTripStore = defineStore("trips", () => {
-
-//   const trips = ref([]);
-//   const errors = ref(null);
-
-
-//   const getTrips = async() => {
-//     try {    
-//       const res = await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/list`, {
-//           method: "GET",
-//           headers: {
-//             "Content-Type": "application/json",
-//             'Authorization': `Bearer ${localStorage.getItem('token')}`
-//           },
-//         });
-
-//         const response = await res.json();
-//         if(response.success){
-//           //console.log(response.data);
-//           trips.value = response.data;
-//         }else{
-//           errors.value = response.errors;
-//         }
-      
-//     } catch (e) {
-//         console.log("Error", e);
-//         errors.value = e;
-//     }
-
-//   }
-
-//   return {
-//     trips,
-//     errors,
-//     getTrips,
-//   }
-// });
-
-
-
-
-
-
-
 export const useTripStore = defineStore("trips", {
     state: () => ({
         trips: [],
@@ -75,6 +30,8 @@ export const useTripStore = defineStore("trips", {
         async getTrips(){
 
             //console.log(localStorage.getItem('token'));
+
+            this.trips = [];
 
             try {
 

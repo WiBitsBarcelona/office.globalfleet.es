@@ -29,5 +29,10 @@
     "password_placeholder": "Contraseña",
     "password_repeat_placeholder": "Repite la contraseña",
     "btn_save": "Guardar"
-  }
+  },
+  "profile": "Perfil",
+  "reset_password": "Resetear Password",
+  "help": "Ayuda",
+  "logout": "Cerrar Sesión"
+
 }

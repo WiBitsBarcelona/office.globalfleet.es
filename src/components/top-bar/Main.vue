@@ -223,6 +223,9 @@
         </DropdownMenu>
       </Dropdown>
       <!-- END: Notifications -->
+
+
+
       <!-- BEGIN: Account Menu -->
       <Dropdown class="intro-x w-8 h-8">
         <DropdownToggle
@@ -249,20 +252,21 @@
             </DropdownHeader>
             <DropdownDivider class="border-white/[0.08]" />
             <DropdownItem class="dropdown-item hover:bg-white/5">
-              <UserIcon class="w-4 h-4 mr-2" /> Perfil</DropdownItem
+              <UserIcon class="w-4 h-4 mr-2" /> 
+              <router-link to="/profile">{{ $t("profile") }}</router-link></DropdownItem
             >
             <!-- <DropdownItem class="dropdown-item hover:bg-white/5">
               <EditIcon class="w-4 h-4 mr-2" /> Add Account</DropdownItem
             > -->
+            <!-- <DropdownItem class="dropdown-item hover:bg-white/5">
+              <LockIcon class="w-4 h-4 mr-2" /> {{  $t("reset_password") }}</DropdownItem
+            > -->
             <DropdownItem class="dropdown-item hover:bg-white/5">
-              <LockIcon class="w-4 h-4 mr-2" /> Resetear Password</DropdownItem
-            >
-            <DropdownItem class="dropdown-item hover:bg-white/5">
-              <HelpCircleIcon class="w-4 h-4 mr-2" /> Ayuda</DropdownItem
+              <HelpCircleIcon class="w-4 h-4 mr-2" /> {{ $t("help") }}</DropdownItem
             >
             <DropdownDivider class="border-white/[0.08]" />
             <DropdownItem class="dropdown-item hover:bg-white/5" @click="logout">
-              <ToggleRightIcon class="w-4 h-4 mr-2" /> Cerrar Sesión</DropdownItem
+              <ToggleRightIcon class="w-4 h-4 mr-2" /> {{ $t("logout") }}</DropdownItem
             >
           </DropdownContent>
         </DropdownMenu>
@@ -275,8 +279,8 @@
 
 <script setup>
   import { ref } from "vue";
-  import {useAuthenticationStore} from '@/stores/auth/authentications';
   import { useRouter } from "vue-router";
+  import {useAuthenticationStore} from '@/stores/auth/authentications';
   import FleetModeSwitcher from "@/components/fleet-dark-mode/Main.vue";
   
 
@@ -287,6 +291,7 @@
   const showSearchDropdown = () => {
     searchDropdown.value = true;
   };
+
   const hideSearchDropdown = () => {
     searchDropdown.value = false;
   };

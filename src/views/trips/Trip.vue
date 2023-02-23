@@ -6,6 +6,8 @@
     <!-- BEGIN: Page Layout -->
     <div class="intro-y box p-5 mt-5">
 
+
+
 <!-- BEGIN table -->
 <div class="col-span-12 mt-6">
     <div class="intro-y block sm:flex items-center h-10">
@@ -43,7 +45,7 @@
         <tbody>
 
           <tr
-            v-for="trip in tripStore.trips.slice(current_page, last_page)"
+            v-for="trip in trips"
             :key="trip.id"
             class="intro-x"
           >
@@ -60,18 +62,6 @@
             </td>
             <td>{{ trip.status.name }}</td>
 
-            <!-- <td class="w-40">
-              <div
-                class="flex items-center justify-center"
-                :class="{
-                  'text-success': trip.destination_address,
-                  'text-danger': !trip.destination_address,
-                }"
-              >
-                <CheckSquareIcon class="w-4 h-4 mr-2" />
-                {{ trip.destination_address ? "Active" : "Inactive" }}
-              </div>
-            </td> -->
             <td class="table-report__action w-56">
               <div class="flex justify-center items-center">
                 <a class="flex items-center mr-3" href="#">
@@ -93,11 +83,7 @@
     >
       <nav class="w-full sm:w-auto sm:mr-auto">
         <ul class="pagination">
-          <!-- <li class="page-item">
-            <a class="page-link" href="#">
-              <ChevronsLeftIcon class="w-4 h-4" />
-            </a>
-          </li> -->
+          
           <li class="page-item">
             <button class="page-link" @click.prevent="previus" :disabled="current_page === 0">
               <ChevronLeftIcon class="w-4 h-4" />
@@ -108,33 +94,12 @@
             <a class="page-link" href="javascript:void(0)">{{ pageSelected }} - {{ pageN }}</a>
           </li>
 
-          <!-- <li class="page-item" :class="pageSelected === page ? 'active':''" v-for="page in pageN" :key="page">
-            <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
-          </li> -->
-
-          <!-- <li class="page-item active">
-            <a class="page-link" href="#" @click.prevent="changePage">1</a>
-          </li>
           <li class="page-item">
-            <a class="page-link" href="#" @click.prevent="changePage">2</a>
-          </li>
-          <li class="page-item">
-            <a class="page-link" href="" @click.prevent="changePage">3</a>
-          </li>  -->
-
-          <!-- <li class="page-item">
-            <a class="page-link" href="#">...</a>
-          </li>-->
-          <li class="page-item">
-            <button class="page-link" @click.prevent="next" :disabled="last_page >= tripStore.trips.length">
+            <button class="page-link" @click.prevent="next" :disabled="last_page >= trips.length">
               <ChevronRightIcon class="w-4 h-4" />
             </button>
           </li>
-          <!-- <li class="page-item">
-            <a class="page-link" href="javascript:void(0)" @click="next">
-              <ChevronsRightIcon class="w-4 h-4" />
-            </a>
-          </li> -->
+          
         </ul>
       </nav>
       <select class="w-20 form-select box mt-3 sm:mt-0">
@@ -155,7 +120,8 @@
 
 <script setup>
   import { ref } from 'vue';
-  import { useTripStore } from "../../stores/trips/useTripStore";
+  //import { useTripStore } from "../../stores/trips/useTripStore";
+  import useTrips from "../../composables/trips";
 
 
   const postXpage = 10;
@@ -168,8 +134,26 @@
 
 
 
-  const tripStore = useTripStore();
-  //tripStore.getTripsFECTHHHH();
+  //const tripStore = useTripStore();
+
+  const { trips, getTrips, destroytrip, storeTrip, updateTrip } = useTrips();
+
+
+
+
+
+
+  // const onMounted = () => {
+  //   await getTrips();
+
+  //   console.log(trips);
+
+  //   if(trips.value.length > 0){
+  //     pageN.value = Math.ceil(trips.value.length / postXpage);
+  //   }
+
+  //   console.log(pageN);
+  // }
 
 
 
@@ -194,25 +178,6 @@
 
 
 
-  const findData = async() => {
-    await tripStore.getTrips();
-
-    // trips.value = tripStore.trips.value;
-    // console.log("vaaaaa" , toRefs(tripStore.trips));
-    // console.log("triiops" , trips);
-
-    const { trips } = tripStore;
-    console.log([ trips[0] ] );
-
-    if(trips.length > 0){
-      pageN.value = Math.ceil(trips.length / postXpage);
-    }
-
-
-  }
-
-  
-  findData();
 
 
   const formatStages = (stage) => {
@@ -223,6 +188,34 @@
     return str;
   }
 
+
+
+
+
+  const findData = async() => {
+
+    await getTrips();
+
+    console.log(trips);
+
+    if(trips.value.length > 0){
+      pageN.value = Math.ceil(trips.value.length / postXpage);
+    }
+
+    console.log(pageN);
+
+  }
+
+
+  findData();
+
+
+
+
+
+
+
+  
 
 
 </script>
