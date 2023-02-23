@@ -1,9 +1,29 @@
 <template>
 <!-- BEGIN: Page Layout -->
 
-  <div class="intro-y box mt-5">
+  <div class="intro-y box mt-5" >
+
+    <div v-if="isCreate">
+      <Create
+          @save="save"
+          @cancelCreate="cancelCreate"
+      />
+    </div>
+
+
+    <div v-if="isUpdate">
+      <Edit
+          :noteId="noteId"
+          @cancelEdit="cancelEdit"
+          @update="update"
+      />
+    </div>
+  
+
+
+    
     <!-- BEGIN table -->
-    <div class="col-span-12 mt-6">
+    <div class="col-span-12 mt-6" v-if="isList">
       <div class="intro-y block sm:flex items-center h-10">
         <div class="flex items-center sm:ml-auto mt-3 sm:mt-0">
           <button class="btn box flex items-center text-slate-600 dark:text-slate-300">
@@ -91,21 +111,24 @@
 
 <script setup>
 import { ref } from 'vue';
-//import { useTripStore } from "../../stores/trips/useTripStore";
 import useTrips from "../../composables/trips";
+
+import Create from "@/views/trips/TripCreate.vue";
+import Edit from "@/views/trips/TripEdit.vue";
+
+
+
+const isCreate = ref(false);
+const isUpdate = ref(false);
+const isList = ref(true);
 
 
 const postXpage = 10;
 const current_page = ref(0);
 const last_page = ref(postXpage);
-
-
 const pageN = ref(1);
 const pageSelected = ref(1);
 
-
-
-//const tripStore = useTripStore();
 
 const { trips, getTrips, destroytrip, storeTrip, updateTrip } = useTrips();
 
@@ -130,6 +153,73 @@ const previus = () => {
 
 
 
+const findData = async () => {  
+  await getTrips();
+  if (trips.value.length > 0) {
+    pageN.value = Math.ceil(trips.value.length / postXpage);
+  }
+}
+
+findData();
+
+
+
+//Store
+const create = () => {
+  isCreate.value = true
+  isViewList.value = false
+}
+const cancelCreate = () => {
+  isCreate.value = false
+  isViewList.value = true
+}
+
+const save = async (form) => {
+  await storeTrip({ ...form })
+  await getTrips()
+  isCreate.value = false
+  isViewList.value = true
+}
+
+
+
+
+
+//Edit
+const edit = (id) => {
+  isUpdate.value = true;
+  isViewList.value = false;
+  tripId.value = id;
+}
+
+const cancelEdit = () => {
+  isUpdate.value = false;
+  isViewList.value = true;
+}
+
+const update = async (trip) => {
+  await updateTrip(trip.id, trip);
+  await getTrips();
+  isUpdate.value = false;
+  isViewList.value = true;
+}
+
+
+
+
+// Delete
+const deleteTrip = async (id) => {
+  if(!window.confirm('¿Estas seguro?')){
+    return
+  }
+  await destroyTrip(id)
+  await getNotes()
+}
+
+
+
+
+//TOOD no va:
 const formatStages = (stage) => {
   let str = '';
   stage.forEach(element => {
@@ -138,21 +228,5 @@ const formatStages = (stage) => {
   return str;
 }
 
-
-const findData = async () => {
-
-  await getTrips();
-
-  console.log(trips);
-
-  if (trips.value.length > 0) {
-    pageN.value = Math.ceil(trips.value.length / postXpage);
-  }
-
-  console.log(pageN);
-
-}
-
-findData();
 
 </script>

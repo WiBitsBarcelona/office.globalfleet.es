@@ -1,4 +1,5 @@
 <template>
+  
   <div class="intro-y flex items-center mt-8">
     <h2 class="text-lg font-medium mr-auto">Vehículos</h2>
   </div>
@@ -141,7 +142,6 @@
 <script setup>
   import { ref } from 'vue';
   import { useVehicleStore } from "../../stores/vehicles/useVehicleStore";
-
 
   
   const postXpage = 10;

@@ -43,7 +43,6 @@ const routes = [
         name: "dashboard",
         component: () => import('@/views/dashboard/Dashboard.vue'),
       },
-
       {
         path: "profile",
         name: "profile",
@@ -52,7 +51,7 @@ const routes = [
       {
         path: "trips",
         name: "trips",
-        component: () => import('@/views/trips/Trip.vue'),
+        component: () => import('@/views/trips/TripList.vue'),
       },
       {
         path: "vehicles",
