@@ -3,16 +3,31 @@ import { defineStore } from "pinia";
 export const useSimpleMenuStore = defineStore("simpleMenu", {
   state: () => ({
     menu: [
-      // {
-      //   icon: "HomeIcon",
-      //   pageName: "simple-menu-page-1",
-      //   title: "Page 1",
-      // },
-      // {
-      //   icon: "HomeIcon",
-      //   pageName: "simple-menu-page-2",
-      //   title: "Page 2",
-      // },
+      {
+        icon: "HomeIcon",
+        pageName: "dashboard",
+        title: "Inicio",
+      },
+      {
+        icon: "NavigationIcon",
+        pageName: "trips",
+        title: "Viajes",
+      },
+      {
+        icon: "TruckIcon",
+        pageName: "vehicles",
+        title: "Vehículos",
+      },
+      {
+        icon: "FilesIcon",
+        pageName: "documents",
+        title: "Documentos",
+      },
+      {
+        icon: "MessageCircleIcon",
+        pageName: "chat",
+        title: "Chat",
+      },
     ],
   }),
 });

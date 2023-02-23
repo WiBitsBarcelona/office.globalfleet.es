@@ -1,30 +1,4 @@
 <template>
-  <div class="intro-y flex flex-col sm:flex-row items-center mt-8">
-    <h2 class="text-lg font-medium mr-auto">Chat</h2>
-    <div class="w-full sm:w-auto flex mt-4 sm:mt-0">
-      <button class="btn btn-primary shadow-md mr-2">Nuevo Chat</button>
-      <Dropdown class="ml-auto sm:ml-0">
-        <DropdownToggle class="btn px-2 box text-slate-500">
-          <span class="w-5 h-5 flex items-center justify-center">
-            <PlusIcon class="w-4 h-4" />
-          </span>
-        </DropdownToggle>
-        <DropdownMenu class="w-40">
-          <DropdownContent>
-            <DropdownItem>
-              <UsersIcon class="w-4 h-4 mr-2" /> Crear Grupo
-            </DropdownItem>
-            <DropdownItem>
-              <SettingsIcon class="w-4 h-4 mr-2" /> Ajustes
-            </DropdownItem>
-          </DropdownContent>
-        </DropdownMenu>
-      </Dropdown>
-      <Tippy tag="a" href="javascript:;" class="tooltip btn btn-secondary ml-2 mr-2" content="Desacoplar Ventana" :options="{
-                    theme: 'light',
-                  }"><ExternalLinkIcon/></Tippy>
-    </div>
-  </div>
   <div class="intro-y chat grid grid-cols-12 gap-5 mt-5">
     <!-- BEGIN: Chat Side Menu -->
     <TabGroup class="col-span-12 lg:col-span-4 2xl:col-span-3">
@@ -83,7 +57,7 @@
             class="chat__chat-list overflow-y-auto scrollbar-hidden pr-1 pt-1 mt-4"
           >
             <div
-              v-for="(faker, fakerKey) in $_.take($f(), 3)"
+              v-for="(faker, fakerKey) in $_.take($f(), 1)"
               :key="fakerKey"
               class="intro-x cursor-pointer box relative flex items-center p-5"
               :class="{ 'mt-5': fakerKey }"
@@ -691,7 +665,7 @@
               <div
                 class="bg-slate-100 dark:bg-darkmode-400 px-4 py-3 text-slate-500 rounded-r-md rounded-t-md"
               >
-                {{ $f()[0]["users"][0]["name"] }} is typing
+                {{ $f()[0]["users"][0]["name"] }} está escribiendo
                 <span class="typing-dots ml-1">
                   <span>.</span>
                   <span>.</span>
@@ -706,12 +680,12 @@
             <textarea
               class="chat__box__input form-control dark:bg-darkmode-600 h-16 resize-none border-transparent px-5 py-3 shadow-none focus:border-transparent focus:ring-0"
               rows="1"
-              placeholder="Type your message..."
+              placeholder="Escribe tu mensaje..."
             ></textarea>
             <div
               class="flex absolute sm:static left-0 bottom-0 ml-5 sm:ml-0 mb-5 sm:mb-0"
             >
-              <Dropdown class="mr-3 sm:mr-5">
+<!--               <Dropdown class="mr-3 sm:mr-5">
                 <DropdownToggle
                   tag="a"
                   href="javascript:;"
@@ -7441,7 +7415,7 @@
                     </TabGroup>
                   </DropdownContent>
                 </DropdownMenu>
-              </Dropdown>
+              </Dropdown> -->
               <div
                 class="w-4 h-4 sm:w-5 sm:h-5 relative text-slate-500 mr-3 sm:mr-5"
               >
@@ -7474,8 +7448,7 @@
             </div>
             <div class="mt-3">
               <div class="font-medium">
-                <!-- Hey, {{ $f()[0]["users"][0]["name"] }}! -->
-                Hola, Oscar Gutierrez
+                Hola, {{ useAuthentication.user.name }}
               </div>
               <div class="text-slate-500 mt-1">
                 Selecciona un usuario o grupo.
@@ -7492,9 +7465,12 @@
 
 <script setup>
 import { ref } from "vue";
+import {useAuthenticationStore} from '@/stores/auth/authentications';
 
 const chatBox = ref(false);
 const showChatBox = () => {
   chatBox.value = !chatBox.value;
 };
+
+const useAuthentication = useAuthenticationStore();
 </script>

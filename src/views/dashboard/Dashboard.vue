@@ -1,14 +1,11 @@
 <template>
-    <div class="intro-y flex items-center mt-8">
-      <h2 class="text-lg font-medium mr-auto">Dashboard</h2>
-    </div>
     <!-- BEGIN: Page Layout -->
-    <div class="intro-y box p-5 mt-5">
+    <div class="intro-y box mt-5">
 
       <!-- BEGIN table -->
       <div class="col-span-12 mt-6">
           <div class="intro-y block sm:flex items-center h-10">
-            <h2 class="text-lg font-medium truncate mr-5">
+            <h2 class="text-lg font-medium truncate ml-5">
               Viajes
             </h2>
             <div class="flex items-center sm:ml-auto mt-3 sm:mt-0">

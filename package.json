@@ -25,6 +25,7 @@
     "@popperjs/core": "^2.7.0",
     "@vuelidate/core": "^2.0.0-alpha.12",
     "@vuelidate/validators": "^2.0.0-alpha.11",
+    "@webzlodimir/vue-avatar": "^0.0.8",
     "axios": "^1.2.0",
     "chart.js": "^3.7.1",
     "dayjs": "^1.10.4",
