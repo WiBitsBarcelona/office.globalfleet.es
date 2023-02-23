@@ -33,6 +33,34 @@
   "profile": "Perfil",
   "reset_password": "Resetear Password",
   "help": "Ayuda",
-  "logout": "Cerrar Sesión"
+  "logout": "Cerrar Sesión",
+  "created_at": "Fecha creación",
+  "update_at": "Fecha actualiación",
+  "deleted_at": "Fecha eliminado",
+
+  "save": "Guardar",
+  "update": "Actualizar",
+  "edit": "Editar",
+  "show": "Ver",
+  "delete": "Eliminar",
+  "search": "Buscar",
+  "cancel": "Cancelar",
+  "results": "Resultados",
+  "export": "Exportar",
+  "actions": "Acciones",
+
+  "message": {
+      "yes": "Sí",
+      "no": "No",
+      "are_you_sure": "Estás seguro?",
+      "record_saved": "Registro guardado",
+      "record_deleted": "Registro eliminado",
+      "record_updated": "Registro actualizado",
+      "record_error": "Error de registro",
+      "select": "Seleccione",
+      "record_will_be_deleted": "El registro será borrado",
+      "operation_cancelled": "Operación cancelada",
+      "no_results_found": "No se encontró resultados"
+  }
 
 }

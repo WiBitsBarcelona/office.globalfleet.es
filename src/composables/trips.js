@@ -3,10 +3,6 @@ import axios from 'axios';
 import { useRouter } from 'vue-router';
 
 
-
-
-
-
 export default function useTrips(){
 
     const trip = ref([]);
@@ -16,25 +12,22 @@ export default function useTrips(){
     const router = useRouter();
 
 
-    const URL = ''
+    let config = {
+        headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    }
 
 
 
     const getTrips = async () => {
-
-        let config = {
-            headers: {
-                "Content-Type": "application/json",
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        }
-
         let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/list`, config);
         trips.value = response.data.data;
     }
 
     const getTrip = async (id) => {
-        let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/show/${id}`, )
+        let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/show/${id}`, config)
         trip.value = response.data.data
     }
 
@@ -42,7 +35,7 @@ export default function useTrips(){
     const storeTrip = async (data) => {
         errors.value = ''
         try {
-            await axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/store`, data)
+            await axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/store`, data, config)
             await router.push({ name: 'note.index' })
         } catch (e) {
             console.log(e)
@@ -58,7 +51,7 @@ export default function useTrips(){
     const updateTrip = async (id, note) => {
         errors.value = ''
         try {
-            await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/update/${id}`, note)
+            await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/update/${id}`, note, config)
             await router.push({ name: 'note.index' })
         } catch (e) {
             console.log(e)
@@ -72,7 +65,7 @@ export default function useTrips(){
 
 
     const destroyTrip = async (id) => {
-        await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/destroy/${id}`)
+        await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/destroy/${id}`, config)
     }
 
     
