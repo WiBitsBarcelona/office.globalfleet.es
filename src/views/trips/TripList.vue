@@ -20,7 +20,6 @@
     </div>
   
 
-
     
     <!-- BEGIN table -->
     <div class="col-span-12 mt-6" v-if="isList">
