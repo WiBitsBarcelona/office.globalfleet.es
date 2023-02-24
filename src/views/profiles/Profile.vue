@@ -1,5 +1,5 @@
 <template>
-<!-- BEGIN: Page Layout -->
+    <!-- BEGIN: Page Layout -->
     <div class="intro-y box p-5 mt-5">
 
         <div class="grid grid-cols-12 gap-6">
@@ -29,9 +29,9 @@
 
         </div>
 
+    <!-- END: Page Layout -->
     </div>
 
-<!-- END: Page Layout -->
 </template>
   
 <script setup>

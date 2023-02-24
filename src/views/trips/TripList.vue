@@ -1,11 +1,11 @@
 <template>
-<!-- BEGIN: Page Layout -->
-
+  
+  <!-- BEGIN: Page Layout -->
   <div class="intro-y box mt-5" >
 
     <div v-if="isCreate">
       <Create
-          @save="save"
+          @saveTripForm="saveTripForm"
           @cancelCreate="cancelCreate"
       />
     </div>
@@ -15,7 +15,7 @@
       <Edit
           :noteId="noteId"
           @cancelEdit="cancelEdit"
-          @update="update"
+          @updateTripForm="updateTripForm"
       />
     </div>
   
@@ -54,15 +54,15 @@
               <td>{{ trip.status.name }}</td>
               <td class="table-report__action w-10">
                 <div class="flex justify-center items-center">
-                  <a class="flex items-center mr-3" href="#">
+                  <button class="flex items-center mr-3" @click="editTrip(trip.id)">
                     <EditIcon class="w-4 h-4 mr-1" />
                     {{ $t("edit") }}
-                  </a>
+                  </button>
 
-                  <a class="flex items-center mr-3" href="#">
+                  <button class="flex items-center mr-3" @click="deleteTrip(trip.id)">
                     <Trash2Icon class="w-4 h-4 mr-1" />
                     {{ $t("delete") }}
-                  </a>
+                  </button>
 
                 </div>
               </td>
@@ -93,7 +93,7 @@
 
           </ul>
         </nav>
-        <select class="w-20 form-select box mt-3 sm:mt-0">
+        <select class="w-20 form-select box mt-3 sm:mt-0" @change="onChange($event)">
           <option>10</option>
           <option>25</option>
           <option>35</option>
@@ -164,20 +164,20 @@ findData();
 
 
 //Store
-const create = () => {
+const createTrip = () => {
   isCreate.value = true
-  isViewList.value = false
+  isList.value = false
 }
 const cancelCreate = () => {
   isCreate.value = false
-  isViewList.value = true
+  isList.value = true
 }
 
-const save = async (form) => {
+const saveTripForm = async (form) => {
   await storeTrip({ ...form })
   await getTrips()
   isCreate.value = false
-  isViewList.value = true
+  isList.value = true
 }
 
 
@@ -185,22 +185,22 @@ const save = async (form) => {
 
 
 //Edit
-const edit = (id) => {
+const editTrip = (id) => {
   isUpdate.value = true;
-  isViewList.value = false;
+  isList.value = false;
   tripId.value = id;
 }
 
 const cancelEdit = () => {
   isUpdate.value = false;
-  isViewList.value = true;
+  isList.value = true;
 }
 
-const update = async (trip) => {
+const updateTripForm = async (trip) => {
   await updateTrip(trip.id, trip);
   await getTrips();
   isUpdate.value = false;
-  isViewList.value = true;
+  isList.value = true;
 }
 
 
@@ -213,6 +213,13 @@ const deleteTrip = async (id) => {
   }
   await destroyTrip(id)
   await getNotes()
+}
+
+
+
+const onChange = (event) => {
+  console.log(event.target.value);
+  last_page.value = event.target.value;
 }
 
 
