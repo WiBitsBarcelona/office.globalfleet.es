@@ -14,7 +14,7 @@
               :key="menu + menuKey"
               class="side-nav__devider my-6"
             ></li>
-            <li v-else :key="menu + menuKey">
+            <li v-else :key="menu + menuKey" class="text-end">
               <Tippy
                 tag="a"
                 :content="menu.title"
@@ -33,7 +33,8 @@
                 }"
                 @click="linkTo(menu, router, $event)"
               >
-                <div class="side-menu__icon">
+                <div class="side-menu__icon mb-4">
+                  <span v-if="menu.pageName == 'chat'" class="ml-5 px-2 py-1 text-white rounded-full bg-primary relative z-50">3</span>
                   <component :is="menu.icon" />
                 </div>
                 <div class="side-menu__title">
@@ -44,6 +45,7 @@
                     :class="{ 'transform rotate-180': menu.activeDropdown }"
                   >
                     <ChevronDownIcon />
+                    
                   </div>
                 </div>
               </Tippy>
