@@ -148,30 +148,9 @@
 const findData = async() => {
   let dataArr = [];
   await getTrips();
-
   trips.value.forEach((elem)=>{
-    let e = toRaw(elem);
-
-    dataArr.push(e);
-
-    // let stages = '';
-    // elem.stages.forEach((stage) => {
-    //   //stages += ' / ' + stage.name;
-    //   stages += `<div class="flex items-center lg:justify-center text-success>
-    //     <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
-    //     </div>`;
-    // });
-    // dataArr.push(
-    //   {
-    //     name: e.name,
-    //     reference_number: e.reference_number,
-    //     comm: e.comm.name,
-    //     stages: stages,
-    //     status: e.status.name,
-    //   }
-    // );
+    dataArr.push(toRaw(elem));
   });
-
   return dataArr;
 }
 
@@ -224,11 +203,55 @@ const initTabulator = (data) => {
         print: false,
         download: false,
         formatter(cell) {
-          return `<div class="flex items-center lg:justify-center ${
-            cell.getData().comm.id === 1 ? "text-success" : "text-danger"}">
-                <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
-                ${cell.getData().comm.name}
-              </div>`;
+
+          console.log(cell.getData());
+
+          return `<div class="flex items-center lg:justify-center 
+          ${cell.getData().comm.id === 1 ? "text-success" : "text-danger"}"
+          >
+            <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
+              ${cell.getData().comm.name}
+          </div>`;
+        }
+      },
+      {
+        title: "Estados",
+        minWidth: 200,
+        responsive: 0,
+        field: "comm.name",
+        vertAlign: "middle",
+        print: false,
+        download: false,
+        formatter(cell) {
+
+          console.log(cell.getData());
+
+
+          let stages = cell.getData().stages;
+
+          let s = '';
+          stages.forEach((el) => {
+            s += el.name;
+          });
+
+          return s;
+        }
+      },
+      {
+        title: "Status",
+        minWidth: 200,
+        responsive: 0,
+        field: "comm.name",
+        vertAlign: "middle",
+        print: false,
+        download: false,
+        formatter(cell) {
+          return `<div class="flex items-center lg:justify-center 
+          ${cell.getData().status.id === 1 ? "text-success" : "text-danger"}"
+          >
+            <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
+              ${cell.getData().status.name}
+          </div>`;
         }
       },
 
