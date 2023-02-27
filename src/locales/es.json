@@ -51,6 +51,7 @@
   "results": "Resultados",
   "export": "Exportar",
   "actions": "Acciones",
+  "reset": "Limpiar",
 
   "message": {
       "yes": "Sí",
@@ -63,7 +64,9 @@
       "select": "Seleccione",
       "record_will_be_deleted": "El registro será borrado",
       "operation_cancelled": "Operación cancelada",
-      "no_results_found": "No se encontró resultados"
+      "no_results_found": "No se encontró resultados",
+      "export_excel": "Archivo XLSX",
+      "export_csv": "Archivo CSV"
   }
 
 

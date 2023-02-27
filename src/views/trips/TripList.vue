@@ -15,7 +15,7 @@
             class="form-select w-full sm:w-32 2xl:w-full mt-2 sm:mt-0 sm:w-auto"
           >
             <option value="name">Name</option>
-            <option value="category">Category</option>
+            <option value="reference_number">Referencia</option>
             <option value="remaining_stock">Remaining Stock</option>
           </select>
         </div>
@@ -55,7 +55,7 @@
             class="btn btn-primary w-full sm:w-16"
             @click="onFilter"
           >
-            {{ $t("search") }}
+            <SearchIcon class="w-4 h-4"></SearchIcon> 
           </button>
           <button
             id="tabulator-html-filter-reset"
@@ -63,7 +63,7 @@
             class="btn btn-secondary w-full sm:w-16 mt-2 sm:mt-0 sm:ml-1"
             @click="onResetFilter"
           >
-            {{ $t("delete") }}
+           <RotateCcwIcon class="w-4 h-4"></RotateCcwIcon>
           </button>
         </div>
       </form>
@@ -75,20 +75,20 @@
           class="btn btn-outline-secondary w-1/2 sm:w-auto mr-2"
           @click="onPrint"
         >
-          <PrinterIcon class="w-4 h-4 mr-2" /> Print
+          <PrinterIcon class="w-4 h-4 mr-2" />
         </button>
         <Dropdown class="w-1/2 sm:w-auto">
           <DropdownToggle class="btn btn-outline-secondary w-full sm:w-auto">
-            <FileTextIcon class="w-4 h-4 mr-2" /> Export
+            <FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("export") }}
             <ChevronDownIcon class="w-4 h-4 ml-auto sm:ml-2" />
           </DropdownToggle>
           <DropdownMenu class="w-40">
             <DropdownContent>
-              <DropdownItem @click="onExportCsv">
-                <FileTextIcon class="w-4 h-4 mr-2" /> Export CSV
-              </DropdownItem>
               <DropdownItem @click="onExportXlsx">
-                <FileTextIcon class="w-4 h-4 mr-2" /> Export XLSX
+                <FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("message.export_excel") }}
+              </DropdownItem>
+              <DropdownItem @click="onExportCsv"> 
+                <FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("message.export_csv") }}
               </DropdownItem>
             </DropdownContent>
           </DropdownMenu>
@@ -104,7 +104,6 @@
     </div>
   </div>
   <!-- END: HTML Table Data -->
-
 
 </template>
   
@@ -195,17 +194,31 @@ const initTabulator = (data) => {
         download: false,
       },
       {
-        title: "Comm",
+        title: "Estados",
         minWidth: 200,
         responsive: 0,
-        field: "comm.name",
+        field: "stages",
         vertAlign: "middle",
         print: false,
         download: false,
         formatter(cell) {
-
-          console.log(cell.getData());
-
+          let stages = cell.getData().stages;
+          let s = '';
+          stages.forEach((el) => {
+            s += el.name;
+          });
+          return s;
+        }
+      },
+      {
+        title: "Comm",
+        minWidth: 200,
+        responsive: 0,
+        field: "comm",
+        vertAlign: "middle",
+        print: false,
+        download: false,
+        formatter(cell) {
           return `<div class="flex items-center lg:justify-center 
           ${cell.getData().comm.id === 1 ? "text-success" : "text-danger"}"
           >
@@ -215,33 +228,10 @@ const initTabulator = (data) => {
         }
       },
       {
-        title: "Estados",
-        minWidth: 200,
-        responsive: 0,
-        field: "comm.name",
-        vertAlign: "middle",
-        print: false,
-        download: false,
-        formatter(cell) {
-
-          console.log(cell.getData());
-
-
-          let stages = cell.getData().stages;
-
-          let s = '';
-          stages.forEach((el) => {
-            s += el.name;
-          });
-
-          return s;
-        }
-      },
-      {
         title: "Status",
         minWidth: 200,
         responsive: 0,
-        field: "comm.name",
+        field: "status",
         vertAlign: "middle",
         print: false,
         download: false,
