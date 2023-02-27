@@ -1,4 +1,5 @@
-   
+import { ref } from 'vue'; 
+import axios from 'axios';
 
 export default function useTrips(){
 
@@ -6,7 +7,7 @@ export default function useTrips(){
     const trips = ref([]);
 
     const errors = ref('');
-    const router = useRouter();
+    //const router = useRouter();
 
 
     let config = {
