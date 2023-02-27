@@ -1,238 +1,560 @@
 <template>
-  
-  <!-- BEGIN: Page Layout -->
-  <div class="intro-y box mt-5" >
 
-    <div v-if="isCreate">
-      <Create
-          @saveTripForm="saveTripForm"
-          @cancelCreate="cancelCreate"
-      />
-    </div>
-
-
-    <div v-if="isUpdate">
-      <Edit
-          :noteId="noteId"
-          @cancelEdit="cancelEdit"
-          @updateTripForm="updateTripForm"
-      />
-    </div>
-  
-
-    
-    <!-- BEGIN table -->
-    <div class="col-span-12 mt-6" v-if="isList">
-      <div class="intro-y block sm:flex items-center h-10">
-        <div class="flex items-center sm:ml-auto mt-3 sm:mt-0">
-          <button class="btn box flex items-center text-slate-600 dark:text-slate-300">
-            <FileTextIcon class="hidden sm:block w-4 h-4 mr-2" />
-            {{ $t("export") }}
+   <!-- BEGIN: HTML Table Data -->
+   <div class="intro-y box p-5 mt-5">
+    <div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
+      <!-- <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
+        <div class="sm:flex items-center sm:mr-4">
+          <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2"
+            >Field</label
+          >
+          <select
+            id="tabulator-html-filter-field"
+            v-model="filter.field"
+            class="form-select w-full sm:w-32 2xl:w-full mt-2 sm:mt-0 sm:w-auto"
+          >
+            <option value="name">Name</option>
+            <option value="category">Category</option>
+            <option value="remaining_stock">Remaining Stock</option>
+          </select>
+        </div>
+        <div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
+          <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2"
+            >Type</label
+          >
+          <select
+            id="tabulator-html-filter-type"
+            v-model="filter.type"
+            class="form-select w-full mt-2 sm:mt-0 sm:w-auto"
+          >
+            <option value="like" selected>like</option>
+            <option value="=">=</option>
+            <option value="<">&lt;</option>
+            <option value="<=">&lt;=</option>
+            <option value=">">></option>
+            <option value=">=">>=</option>
+            <option value="!=">!=</option>
+          </select>
+        </div>
+        <div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
+          <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2"
+            >Value</label
+          >
+          <input
+            id="tabulator-html-filter-value"
+            v-model="filter.value"
+            type="text"
+            class="form-control sm:w-40 2xl:w-full mt-2 sm:mt-0"
+            placeholder="Search..."
+          />
+        </div>
+        <div class="mt-2 xl:mt-0">
+          <button
+            id="tabulator-html-filter-go"
+            type="button"
+            class="btn btn-primary w-full sm:w-16"
+            @click="onFilter"
+          >
+            Go
+          </button>
+          <button
+            id="tabulator-html-filter-reset"
+            type="button"
+            class="btn btn-secondary w-full sm:w-16 mt-2 sm:mt-0 sm:ml-1"
+            @click="onResetFilter"
+          >
+            Reset
           </button>
         </div>
-      </div>
-      <div class="intro-y overflow-auto lg:overflow-visible mt-8 sm:mt-0">
-        <table class="table table-report sm:mt-2">
-          <thead>
-            <tr>
-              <th class="whitespace-nowrap">Nombre</th>
-              <th class="whitespace-nowrap">Referencia</th>
-              <th class="whitespace-nowrap">Fecha</th>
-              <th class="whitespace-nowrap">Vehículo</th>
-              <th class="whitespace-nowrap">Etapas</th>
-              <th class="whitespace-nowrap">Estatus</th>
-              <th class="text-center whitespace-nowrap">{{ $t("actions") }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="trip in trips.slice(current_page, last_page)" :key="trip.id" class="intro-x">
-              <td>{{ trip.name }}</td>
-              <td>{{ trip.reference_number }}</td>
-              <td>{{ trip.started_at }}</td>
-              <td>{{ trip.vehicle.plate }}</td>
-              <td>{{ formatStages(trip.stages) }}</td>
-              <td>{{ trip.status.name }}</td>
-              <td class="table-report__action w-10">
-                <div class="flex justify-center items-center">
-                  <button class="flex items-center mr-3" @click="editTrip(trip.id)">
-                    <EditIcon class="w-4 h-4 mr-1" />
-                    {{ $t("edit") }}
-                  </button>
-
-                  <button class="flex items-center mr-3" @click="deleteTrip(trip.id)">
-                    <Trash2Icon class="w-4 h-4 mr-1" />
-                    {{ $t("delete") }}
-                  </button>
-
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="intro-y flex flex-wrap sm:flex-row sm:flex-nowrap items-center mt-3">
-        <nav class="w-full sm:w-auto sm:mr-auto">
-          <ul class="pagination">
-
-            <li class="page-item">
-              <button class="page-link" @click.prevent="previus" :disabled="current_page === 0">
-                <ChevronLeftIcon class="w-4 h-4" />
-              </button>
-            </li>
-
-            <li class="page-item active">
-              <a class="page-link" href="javascript:void(0)">{{ pageSelected }} - {{ pageN }}</a>
-            </li>
-
-            <li class="page-item">
-              <button class="page-link" @click.prevent="next" :disabled="last_page >= trips.length">
-                <ChevronRightIcon class="w-4 h-4" />
-              </button>
-            </li>
-
-          </ul>
-        </nav>
-        <select class="w-20 form-select box mt-3 sm:mt-0" @change="onChange($event)">
-          <option>10</option>
-          <option>25</option>
-          <option>35</option>
-          <option>50</option>
-        </select>
+      </form> -->
+      <div class="flex mt-5 sm:mt-0">
+        <button
+          id="tabulator-print"
+          class="btn btn-outline-secondary w-1/2 sm:w-auto mr-2"
+          @click="onPrint"
+        >
+          <PrinterIcon class="w-4 h-4 mr-2" /> Print
+        </button>
+        <Dropdown class="w-1/2 sm:w-auto">
+          <DropdownToggle class="btn btn-outline-secondary w-full sm:w-auto">
+            <FileTextIcon class="w-4 h-4 mr-2" /> Export
+            <ChevronDownIcon class="w-4 h-4 ml-auto sm:ml-2" />
+          </DropdownToggle>
+          <DropdownMenu class="w-40">
+            <DropdownContent>
+              <DropdownItem @click="onExportCsv">
+                <FileTextIcon class="w-4 h-4 mr-2" /> Export CSV
+              </DropdownItem>
+              <DropdownItem @click="onExportJson">
+                <FileTextIcon class="w-4 h-4 mr-2" /> Export JSON
+              </DropdownItem>
+              <DropdownItem @click="onExportXlsx">
+                <FileTextIcon class="w-4 h-4 mr-2" /> Export XLSX
+              </DropdownItem>
+              <DropdownItem @click="onExportHtml">
+                <FileTextIcon class="w-4 h-4 mr-2" /> Export HTML
+              </DropdownItem>
+            </DropdownContent>
+          </DropdownMenu>
+        </Dropdown>
       </div>
     </div>
-    <!-- END table -->
-
+    <div class="overflow-x-auto scrollbar-hidden">
+      <div
+        id="tabulator"
+        ref="tableRef"
+        class="mt-5 table-report table-report--tabulator"
+      ></div>
+    </div>
   </div>
-<!-- END: Page Layout -->
+  <!-- END: HTML Table Data -->
+
+
 </template>
   
 
 <script setup>
-import { ref } from 'vue';
-import useTrips from "../../composables/trips";
 
-import Create from "@/views/trips/TripCreate.vue";
-import Edit from "@/views/trips/TripEdit.vue";
-
-
-
-const isCreate = ref(false);
-const isUpdate = ref(false);
-const isList = ref(true);
+  import { ref, reactive, onMounted, toRaw } from "vue";
+  import xlsx from "xlsx";
+  import { createIcons, icons } from "lucide";
+  import Tabulator from "tabulator-tables";
+  import dom from "@left4code/tw-starter/dist/js/dom";
 
 
-const postXpage = 10;
-const current_page = ref(0);
-const last_page = ref(postXpage);
-const pageN = ref(1);
-const pageSelected = ref(1);
-
-
-const { trips, getTrips, destroytrip, storeTrip, updateTrip } = useTrips();
-
-
-
-/**
- * Paginate
- */
-
-const next = () => {
-  current_page.value = current_page.value + postXpage;
-  last_page.value = last_page.value + postXpage;
-  pageSelected.value = pageSelected.value + 1;
-}
-
-const previus = () => {
-  current_page.value = current_page.value - postXpage;
-  last_page.value = last_page.value - postXpage;
-  pageSelected.value = pageSelected.value - 1;
-
-}
-
-
-
-const findData = async () => {  
-  await getTrips();
-  if (trips.value.length > 0) {
-    pageN.value = Math.ceil(trips.value.length / postXpage);
-  }
-}
-
-findData();
-
-
-
-//Store
-const createTrip = () => {
-  isCreate.value = true
-  isList.value = false
-}
-const cancelCreate = () => {
-  isCreate.value = false
-  isList.value = true
-}
-
-const saveTripForm = async (form) => {
-  await storeTrip({ ...form })
-  await getTrips()
-  isCreate.value = false
-  isList.value = true
-}
+  import useTrips from "../../composables/trips";
+  import Create from "@/views/trips/TripCreate.vue";
+  import Edit from "@/views/trips/TripEdit.vue";
 
 
 
 
 
-//Edit
-const editTrip = (id) => {
-  isUpdate.value = true;
-  isList.value = false;
-  tripId.value = id;
-}
 
-const cancelEdit = () => {
-  isUpdate.value = false;
-  isList.value = true;
-}
-
-const updateTripForm = async (trip) => {
-  await updateTrip(trip.id, trip);
-  await getTrips();
-  isUpdate.value = false;
-  isList.value = true;
-}
+  const { trips, getTrips, destroyTrip, storeTrip, updatetrips } = useTrips();
 
 
+  //const data = ref();
 
-
-// Delete
-const deleteTrip = async (id) => {
-  if(!window.confirm('¿Estas seguro?')){
-    return
-  }
-  await destroyTrip(id)
-  await getNotes()
-}
-
-
-
-const onChange = (event) => {
-  console.log(event.target.value);
-  last_page.value = event.target.value;
-}
-
-
-
-
-//TOOD no va:
-const formatStages = (stage) => {
-  let str = '';
-  stage.forEach(element => {
-    str += ' ' + element.name;
+  const tableRef = ref();
+  const tabulator = ref();
+  const filter = reactive({
+    field: "name",
+    type: "like",
+    value: "",
   });
-  return str;
+
+
+
+const imageAssets = import.meta.globEager(
+  `/src/assets/images/*.{jpg,jpeg,png,svg}`
+);
+
+
+
+
+
+const findData = async() => {
+
+  let dataArr = [];
+
+  await getTrips();
+  //data.value = toRaw(trips.value);
+
+
+  //console.log(toRaw(trips.value));
+
+
+  trips.value.forEach((elem)=>{
+
+    //console.log(JSON.parse(JSON.stringify(elem[0])));
+    //console.log(toRaw(elem));
+
+    let e = toRaw(elem.id);
+    //let e = JSON.parse(JSON.stringify(elem.id));
+
+    //console.log(typeof e);
+    //data.push({id:e.id});
+    dataArr.push({id: e});
+  });
+
+  //console.log(arr);
+
+  //console.log(dataArr[0]);
+
+
+
+
+  // let tabledata = [
+  //   {id:1, name:"Billy Bob", age:12, gender:"male", height:95, col:"red", dob:"14/05/2010"},
+  //   {id:2, name:"Jenny Jane", age:42, gender:"female", height:142, col:"blue", dob:"30/07/1954"},
+  //   {id:3, name:"Steve McAlistaire", age:35, gender:"male", height:176, col:"green", dob:"04/11/1982"},
+  //   {id:1, name:"Billy Bob", age:12, gender:"male", height:95, col:"red", dob:"14/05/2010"},
+  //   {id:2, name:"Jenny Jane", age:42, gender:"female", height:142, col:"blue", dob:"30/07/1954"},
+  //   {id:3, name:"Steve McAlistaire", age:35, gender:"male", height:176, col:"green", dob:"04/11/1982"},
+  //   {id:1, name:"Billy Bob", age:12, gender:"male", height:95, col:"red", dob:"14/05/2010"},
+  //   {id:2, name:"Jenny Jane", age:42, gender:"female", height:142, col:"blue", dob:"30/07/1954"},
+  //   {id:3, name:"Steve McAlistaire", age:35, gender:"male", height:176, col:"green", dob:"04/11/1982"},
+  //   {id:1, name:"Billy Bob", age:12, gender:"male", height:95, col:"red", dob:"14/05/2010"},
+  //   {id:2, name:"Jenny Jane", age:42, gender:"female", height:142, col:"blue", dob:"30/07/1954"},
+  //   {id:3, name:"Steve McAlistaire", age:35, gender:"male", height:176, col:"green", dob:"04/11/1982"},
+  // ];
+
+
+
+
+  return dataArr;
+  
 }
+
+
+
+
+
+
+
+// Object.keys(this.$refs).forEach(el => {
+//   console.log( this.$refs[el][0] )
+// })
+
+
+
+
+
+// console.log(typeof dataArr);
+// console.log(dataArr);
+// console.log(typeof tabledata);
+// console.log(tabledata);
+
+
+
+
+// let tabledata = [
+//     {id:1, name:"Billy Bob", age:12, gender:"male", height:95, col:"red", dob:"14/05/2010"},
+//     {id:2, name:"Jenny Jane", age:42, gender:"female", height:142, col:"blue", dob:"30/07/1954"},
+//     {id:3, name:"Steve McAlistaire", age:35, gender:"male", height:176, col:"green", dob:"04/11/1982"},
+//     {id:1, name:"Billy Bob", age:12, gender:"male", height:95, col:"red", dob:"14/05/2010"},
+//     {id:2, name:"Jenny Jane", age:42, gender:"female", height:142, col:"blue", dob:"30/07/1954"},
+//     {id:3, name:"Steve McAlistaire", age:35, gender:"male", height:176, col:"green", dob:"04/11/1982"},
+//     {id:1, name:"Billy Bob", age:12, gender:"male", height:95, col:"red", dob:"14/05/2010"},
+//     {id:2, name:"Jenny Jane", age:42, gender:"female", height:142, col:"blue", dob:"30/07/1954"},
+//     {id:3, name:"Steve McAlistaire", age:35, gender:"male", height:176, col:"green", dob:"04/11/1982"},
+//     {id:1, name:"Billy Bob", age:12, gender:"male", height:95, col:"red", dob:"14/05/2010"},
+//     {id:2, name:"Jenny Jane", age:42, gender:"female", height:142, col:"blue", dob:"30/07/1954"},
+//     {id:3, name:"Steve McAlistaire", age:35, gender:"male", height:176, col:"green", dob:"04/11/1982"},
+//   ];
+
+
+
+
+const initTabulator = (data) => {
+  tabulator.value = new Tabulator(tableRef.value, {
+    //ajaxURL: "https://dummy-data.left4code.com",
+    //ajaxURL: `${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/list`,
+    // ajaxFiltering: true,
+    // ajaxSorting: true,
+    // printAsHtml: true,
+    // printStyled: true,
+    // ajaxContentType: {
+    //   headers: {
+    //         "Content-Type": "application/json",
+    //         'Authorization': `Bearer 21|cSzTBLx83sZRLyKdf2vPNEJreIrmqjfHwL8WURoJ`
+    //   }
+    // },
+    pagination: "local",
+    paginationSize: 10,
+    paginationSizeSelector: [10, 20, 30, 40],
+    layout: "fitColumns",
+    responsiveLayout: "collapse",
+    placeholder: "No matching records found",
+    data: data,
+    autoColumns:true,
+    // columns: [
+    //   {
+    //     formatter: "responsiveCollapse",
+    //     width: 40,
+    //     minWidth: 30,
+    //     hozAlign: "center",
+    //     resizable: false,
+    //     headerSort: false,
+    //   },
+    //   {
+    //     title: "NAME",
+    //     minWidth: 200,
+    //     responsive: 0,
+    //     field: "name",
+    //     vertAlign: "middle",
+    //     print: false,
+    //     download: false,
+    //   },
+    // ],
+    // columns: [
+    //   {
+    //     formatter: "responsiveCollapse",
+    //     width: 40,
+    //     minWidth: 30,
+    //     hozAlign: "center",
+    //     resizable: false,
+    //     headerSort: false,
+    //   },
+
+    //   // For HTML table
+    //   {
+    //     title: "Hola",
+    //     minWidth: 200,
+    //     responsive: 0,
+    //     field: "name",
+    //     vertAlign: "middle",
+    //     print: false,
+    //     download: false,
+    //     formatter(cell) {
+    //       return `<div>
+    //             <div class="font-medium whitespace-nowrap">${
+    //               cell.getData().name
+    //             }</div>
+    //             <div class="text-slate-500 text-xs whitespace-nowrap">${
+    //               cell.getData().category
+    //             }</div>
+    //           </div>`;
+    //     },
+    //   },
+    //   {
+    //     title: "IMAGES",
+    //     minWidth: 200,
+    //     field: "images",
+    //     hozAlign: "center",
+    //     vertAlign: "middle",
+    //     print: false,
+    //     download: false,
+    //     formatter(cell) {
+    //       return `<div class="flex lg:justify-center">
+    //               <div class="intro-x w-10 h-10 image-fit">
+    //                 <img alt="Midone Tailwind HTML Admin Template" class="rounded-full" src="${
+    //                   imageAssets[
+    //                     "/src/assets/images/" + cell.getData().images[0]
+    //                   ].default
+    //                 }">
+    //               </div>
+    //               <div class="intro-x w-10 h-10 image-fit -ml-5">
+    //                 <img alt="Midone Tailwind HTML Admin Template" class="rounded-full" src="${
+    //                   imageAssets[
+    //                     "/src/assets/images/" + cell.getData().images[1]
+    //                   ].default
+    //                 }">
+    //               </div>
+    //               <div class="intro-x w-10 h-10 image-fit -ml-5">
+    //                 <img alt="Midone Tailwind HTML Admin Template" class="rounded-full" src="${
+    //                   imageAssets[
+    //                     "/src/assets/images/" + cell.getData().images[2]
+    //                   ].default
+    //                 }">
+    //               </div>
+    //           </div>`;
+    //     },
+    //   },
+    //   {
+    //     title: "REMAINING STOCK",
+    //     minWidth: 200,
+    //     field: "remaining_stock",
+    //     hozAlign: "center",
+    //     vertAlign: "middle",
+    //     print: false,
+    //     download: false,
+    //   },
+    //   {
+    //     title: "STATUS",
+    //     minWidth: 200,
+    //     field: "status",
+    //     hozAlign: "center",
+    //     vertAlign: "middle",
+    //     print: false,
+    //     download: false,
+    //     formatter(cell) {
+    //       return `<div class="flex items-center lg:justify-center ${
+    //         cell.getData().status ? "text-success" : "text-danger"
+    //       }">
+    //             <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> ${
+    //               cell.getData().status ? "Active" : "Inactive"
+    //             }
+    //           </div>`;
+    //     },
+    //   },
+    //   {
+    //     title: "ACTIONS",
+    //     minWidth: 200,
+    //     field: "actions",
+    //     responsive: 1,
+    //     hozAlign: "center",
+    //     vertAlign: "middle",
+    //     print: false,
+    //     download: false,
+    //     formatter() {
+    //       const a = dom(`<div class="flex lg:justify-center items-center">
+    //             <a class="flex items-center mr-3" href="javascript:;">
+    //               <i data-lucide="check-square" class="w-4 h-4 mr-1"></i> Edit
+    //             </a>
+    //             <a class="flex items-center text-danger" href="javascript:;">
+    //               <i data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Delete
+    //             </a>
+    //           </div>`);
+    //       dom(a).on("click", function () {
+    //         // On click actions
+    //       });
+
+    //       return a[0];
+    //     },
+    //   },
+
+    //   // For print format
+    //   {
+    //     title: "PRODUCT NAME",
+    //     field: "name",
+    //     visible: false,
+    //     print: true,
+    //     download: true,
+    //   },
+    //   {
+    //     title: "CATEGORY",
+    //     field: "category",
+    //     visible: false,
+    //     print: true,
+    //     download: true,
+    //   },
+    //   {
+    //     title: "REMAINING STOCK",
+    //     field: "remaining_stock",
+    //     visible: false,
+    //     print: true,
+    //     download: true,
+    //   },
+    //   {
+    //     title: "STATUS",
+    //     field: "status",
+    //     visible: false,
+    //     print: true,
+    //     download: true,
+    //     formatterPrint(cell) {
+    //       return cell.getValue() ? "Active" : "Inactive";
+    //     },
+    //   },
+    //   {
+    //     title: "IMAGE 1",
+    //     field: "images",
+    //     visible: false,
+    //     print: true,
+    //     download: true,
+    //     formatterPrint(cell) {
+    //       return cell.getValue()[0];
+    //     },
+    //   },
+    //   {
+    //     title: "IMAGE 2",
+    //     field: "images",
+    //     visible: false,
+    //     print: true,
+    //     download: true,
+    //     formatterPrint(cell) {
+    //       return cell.getValue()[1];
+    //     },
+    //   },
+    //   {
+    //     title: "IMAGE 3",
+    //     field: "images",
+    //     visible: false,
+    //     print: true,
+    //     download: true,
+    //     formatterPrint(cell) {
+    //       return cell.getValue()[2];
+    //     },
+    //   },
+    // ],
+    renderComplete() {
+      createIcons({
+        icons,
+        "stroke-width": 1.5,
+        nameAttr: "data-lucide",
+      });
+    },
+  });
+};
+
+
+
+
+
+
+// Redraw table onresize
+const reInitOnResizeWindow = () => {
+  window.addEventListener("resize", () => {
+    tabulator.value.redraw();
+    createIcons({
+      icons,
+      "stroke-width": 1.5,
+      nameAttr: "data-lucide",
+    });
+  });
+};
+
+// Filter function
+const onFilter = () => {
+  tabulator.value.setFilter(filter.field, filter.type, filter.value);
+};
+
+
+
+// On reset filter
+const onResetFilter = () => {
+  filter.field = "name";
+  filter.type = "like";
+  filter.value = "";
+  onFilter();
+};
+
+
+
+
+
+// Export
+const onExportCsv = () => {
+  tabulator.value.download("csv", "data.csv");
+};
+
+const onExportJson = () => {
+  tabulator.value.download("json", "data.json");
+};
+
+const onExportXlsx = () => {
+  const win = window;
+  win.XLSX = xlsx;
+  tabulator.value.download("xlsx", "data.xlsx", {
+    sheetName: "Products",
+  });
+};
+
+const onExportHtml = () => {
+  tabulator.value.download("html", "data.html", {
+    style: true,
+  });
+};
+
+
+
+
+// Print
+const onPrint = () => {
+  tabulator.value.print();
+};
+
+
+
+
+onMounted(async() => {
+  let data = await findData();
+  initTabulator(data);
+  reInitOnResizeWindow();
+});
+
 
 
 </script>
+

@@ -1,197 +1,420 @@
 <template>
   
-  <div class="intro-y flex items-center mt-8">
-    <h2 class="text-lg font-medium mr-auto">Vehículos</h2>
-  </div>
-  <!-- BEGIN: Page Layout -->
+  <!-- BEGIN: HTML Table Data -->
   <div class="intro-y box p-5 mt-5">
-
-    <!-- BEGIN: Weekly Top Products -->
-    <div class="col-span-12 mt-6">
-          <div class="intro-y block sm:flex items-center h-10">
-            <h2 class="text-lg font-medium truncate mr-5">
-              Vehículos
-            </h2>
-            <div class="flex items-center sm:ml-auto mt-3 sm:mt-0">
-              <button
-                class="btn box flex items-center text-slate-600 dark:text-slate-300"
-              >
-                <FileTextIcon class="hidden sm:block w-4 h-4 mr-2" />
-                Export to Excel
-              </button>
-              <button
-                class="ml-3 btn box flex items-center text-slate-600 dark:text-slate-300"
-              >
-                <FileTextIcon class="hidden sm:block w-4 h-4 mr-2" />
-                Export to PDF
-              </button>
-            </div>
-          </div>
-          <div class="intro-y overflow-auto lg:overflow-visible mt-8 sm:mt-0">
-            <table class="table table-report sm:mt-2">
-              <thead>
-                <tr>
-                  <th class="whitespace-nowrap">Matrícula</th>
-                  <th class="whitespace-nowrap">Empresa</th>
-                  <th class="whitespace-nowrap">Empleado</th>
-                  <th class="whitespace-nowrap">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-
-                <tr
-                  v-for="vehicle in vehicleStore.vehicles.slice(current_page, last_page)"
-                  :key="vehicle.id"
-                  class="intro-x"
-                >
-                  <td>{{ vehicle.plate }}</td>
-                  <td>{{ vehicle.company.name }}</td>
-                  <td>{{ vehicle.employee.name }} {{ vehicle.employee.surname }}</td>
-
-                  <!-- <td class="w-40">
-                    <div
-                      class="flex items-center justify-center"
-                      :class="{
-                        'text-success': trip.destination_address,
-                        'text-danger': !trip.destination_address,
-                      }"
-                    >
-                      <CheckSquareIcon class="w-4 h-4 mr-2" />
-                      {{ trip.destination_address ? "Active" : "Inactive" }}
-                    </div>
-                  </td> -->
-                  <td class="table-report__action w-56">
-                    <div class="flex justify-center items-center">
-                      <a class="flex items-center mr-3" href="#">
-                        <CheckSquareIcon class="w-4 h-4 mr-1" />
-                        Ver
-                      </a>
-                    </div>
-                  </td>
-                </tr>
-
-
-                
-              </tbody>
-            </table>
-          </div>
-
-          <div
-            class="intro-y flex flex-wrap sm:flex-row sm:flex-nowrap items-center mt-3"
+    <div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
+      <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
+        <div class="sm:flex items-center sm:mr-4">
+          <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2"
+            >Field</label
           >
-            <nav class="w-full sm:w-auto sm:mr-auto">
-              <ul class="pagination">
-                <!-- <li class="page-item">
-                  <a class="page-link" href="#">
-                    <ChevronsLeftIcon class="w-4 h-4" />
-                  </a>
-                </li> -->
-                <li class="page-item">
-                  <button class="page-link" @click.prevent="previus" :disabled="current_page === 0">
-                    <ChevronLeftIcon class="w-4 h-4" />
-                  </button>
-                </li>
-
-                <li class="page-item active">
-                  <a class="page-link" href="javascript:void(0)">{{ pageSelected }} - {{ pageN }}</a>
-                </li>
-
-                <!-- <li class="page-item" :class="pageSelected === page ? 'active':''" v-for="page in pageN" :key="page">
-                  <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
-                </li> -->
-
-                <!-- <li class="page-item active">
-                  <a class="page-link" href="#" @click.prevent="changePage">1</a>
-                </li>
-                <li class="page-item">
-                  <a class="page-link" href="#" @click.prevent="changePage">2</a>
-                </li>
-                <li class="page-item">
-                  <a class="page-link" href="" @click.prevent="changePage">3</a>
-                </li>  -->
-
-                <!-- <li class="page-item">
-                  <a class="page-link" href="#">...</a>
-                </li>-->
-                <li class="page-item">
-                  <button class="page-link" @click.prevent="next" :disabled="last_page >= vehicleStore.vehicles.length">
-                    <ChevronRightIcon class="w-4 h-4" />
-                  </button>
-                </li>
-                <!-- <li class="page-item">
-                  <a class="page-link" href="javascript:void(0)" @click="next">
-                    <ChevronsRightIcon class="w-4 h-4" />
-                  </a>
-                </li> -->
-              </ul>
-            </nav>
-            <select class="w-20 form-select box mt-3 sm:mt-0">
-              <option>10</option>
-              <option>25</option>
-              <option>35</option>
-              <option>50</option>
-            </select>
-          </div>
+          <select
+            id="tabulator-html-filter-field"
+            v-model="filter.field"
+            class="form-select w-full sm:w-32 2xl:w-full mt-2 sm:mt-0 sm:w-auto"
+          >
+            <option value="name">Name</option>
+            <option value="category">Category</option>
+            <option value="remaining_stock">Remaining Stock</option>
+          </select>
+        </div>
+        <div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
+          <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2"
+            >Type</label
+          >
+          <select
+            id="tabulator-html-filter-type"
+            v-model="filter.type"
+            class="form-select w-full mt-2 sm:mt-0 sm:w-auto"
+          >
+            <option value="like" selected>like</option>
+            <option value="=">=</option>
+            <option value="<">&lt;</option>
+            <option value="<=">&lt;=</option>
+            <option value=">">></option>
+            <option value=">=">>=</option>
+            <option value="!=">!=</option>
+          </select>
+        </div>
+        <div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
+          <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2"
+            >Value</label
+          >
+          <input
+            id="tabulator-html-filter-value"
+            v-model="filter.value"
+            type="text"
+            class="form-control sm:w-40 2xl:w-full mt-2 sm:mt-0"
+            placeholder="Search..."
+          />
+        </div>
+        <div class="mt-2 xl:mt-0">
+          <button
+            id="tabulator-html-filter-go"
+            type="button"
+            class="btn btn-primary w-full sm:w-16"
+            @click="onFilter"
+          >
+            Go
+          </button>
+          <button
+            id="tabulator-html-filter-reset"
+            type="button"
+            class="btn btn-secondary w-full sm:w-16 mt-2 sm:mt-0 sm:ml-1"
+            @click="onResetFilter"
+          >
+            Reset
+          </button>
+        </div>
+      </form>
+      <div class="flex mt-5 sm:mt-0">
+        <button
+          id="tabulator-print"
+          class="btn btn-outline-secondary w-1/2 sm:w-auto mr-2"
+          @click="onPrint"
+        >
+          <PrinterIcon class="w-4 h-4 mr-2" /> Print
+        </button>
+        <Dropdown class="w-1/2 sm:w-auto">
+          <DropdownToggle class="btn btn-outline-secondary w-full sm:w-auto">
+            <FileTextIcon class="w-4 h-4 mr-2" /> Export
+            <ChevronDownIcon class="w-4 h-4 ml-auto sm:ml-2" />
+          </DropdownToggle>
+          <DropdownMenu class="w-40">
+            <DropdownContent>
+              <DropdownItem @click="onExportCsv">
+                <FileTextIcon class="w-4 h-4 mr-2" /> Export CSV
+              </DropdownItem>
+              <DropdownItem @click="onExportJson">
+                <FileTextIcon class="w-4 h-4 mr-2" /> Export JSON
+              </DropdownItem>
+              <DropdownItem @click="onExportXlsx">
+                <FileTextIcon class="w-4 h-4 mr-2" /> Export XLSX
+              </DropdownItem>
+              <DropdownItem @click="onExportHtml">
+                <FileTextIcon class="w-4 h-4 mr-2" /> Export HTML
+              </DropdownItem>
+            </DropdownContent>
+          </DropdownMenu>
+        </Dropdown>
       </div>
-      <!-- END: Weekly Top Products -->
-
+    </div>
+    <div class="overflow-x-auto scrollbar-hidden">
+      <div
+        id="tabulator"
+        ref="tableRef"
+        class="mt-5 table-report table-report--tabulator"
+      ></div>
+    </div>
   </div>
-  <!-- END: Page Layout -->
+  <!-- END: HTML Table Data -->
+
 </template>
 
 <script setup>
-  import { ref } from 'vue';
-  import { useVehicleStore } from "../../stores/vehicles/useVehicleStore";
+  import { ref, reactive, onMounted } from "vue";
+  import xlsx from "xlsx";
+  import { createIcons, icons } from "lucide";
+  import Tabulator from "tabulator-tables";
+  import dom from "@left4code/tw-starter/dist/js/dom";
+
 
   
-  const postXpage = 10;
-  const current_page = ref(0);
-  const last_page = ref(postXpage);
 
 
 
-  const pageN = ref(1);
-  const pageSelected = ref(1);
-
-
-  const vehicleStore = useVehicleStore();
-
-
-  /**
-   * Paginate
-   */
-
-   const next = () =>{
-    current_page.value = current_page.value + postXpage;
-    last_page.value = last_page.value + postXpage;
-    pageSelected.value = pageSelected.value+1;
-  }
-
-  const previus = () =>{
-    current_page.value = current_page.value - postXpage;
-    last_page.value = last_page.value - postXpage;
-    pageSelected.value = pageSelected.value-1;
-
-  }
-
-
-
-
-  const findData = async() => {
-    await vehicleStore.getVehicles();
-
-    const { vehicles } = vehicleStore;
-    console.log([ vehicles[0] ]);
-
-
-    if(vehicles.length > 0){
-      pageN.value = Math.ceil(vehicles.length / postXpage);
-    }
-
-  }
 
   
-  findData();
+
+
+  const tableRef = ref();
+  const tabulator = ref();
+  const filter = reactive({
+    field: "name",
+    type: "like",
+    value: "",
+  });
+
+
+
+const imageAssets = import.meta.globEager(
+  `/src/assets/images/*.{jpg,jpeg,png,svg}`
+);
+
+
+
+const initTabulator = () => {
+  tabulator.value = new Tabulator(tableRef.value, {
+    //ajaxURL: "https://dummy-data.left4code.com",
+    ajaxFiltering: true,
+    ajaxSorting: true,
+    printAsHtml: true,
+    printStyled: true,
+    pagination: "remote",
+    paginationSize: 10,
+    paginationSizeSelector: [10, 20, 30, 40],
+    layout: "fitColumns",
+    responsiveLayout: "collapse",
+    placeholder: "No matching records found",
+    columns: [
+      {
+        formatter: "responsiveCollapse",
+        width: 40,
+        minWidth: 30,
+        hozAlign: "center",
+        resizable: false,
+        headerSort: false,
+      },
+
+      // For HTML table
+      {
+        title: "Hola",
+        minWidth: 200,
+        responsive: 0,
+        field: "name",
+        vertAlign: "middle",
+        print: false,
+        download: false,
+        formatter(cell) {
+          return `<div>
+                <div class="font-medium whitespace-nowrap">${
+                  cell.getData().name
+                }</div>
+                <div class="text-slate-500 text-xs whitespace-nowrap">${
+                  cell.getData().category
+                }</div>
+              </div>`;
+        },
+      },
+      {
+        title: "IMAGES",
+        minWidth: 200,
+        field: "images",
+        hozAlign: "center",
+        vertAlign: "middle",
+        print: false,
+        download: false,
+        formatter(cell) {
+          return `<div class="flex lg:justify-center">
+                  <div class="intro-x w-10 h-10 image-fit">
+                    <img alt="Midone Tailwind HTML Admin Template" class="rounded-full" src="${
+                      imageAssets[
+                        "/src/assets/images/" + cell.getData().images[0]
+                      ].default
+                    }">
+                  </div>
+                  <div class="intro-x w-10 h-10 image-fit -ml-5">
+                    <img alt="Midone Tailwind HTML Admin Template" class="rounded-full" src="${
+                      imageAssets[
+                        "/src/assets/images/" + cell.getData().images[1]
+                      ].default
+                    }">
+                  </div>
+                  <div class="intro-x w-10 h-10 image-fit -ml-5">
+                    <img alt="Midone Tailwind HTML Admin Template" class="rounded-full" src="${
+                      imageAssets[
+                        "/src/assets/images/" + cell.getData().images[2]
+                      ].default
+                    }">
+                  </div>
+              </div>`;
+        },
+      },
+      {
+        title: "REMAINING STOCK",
+        minWidth: 200,
+        field: "remaining_stock",
+        hozAlign: "center",
+        vertAlign: "middle",
+        print: false,
+        download: false,
+      },
+      {
+        title: "STATUS",
+        minWidth: 200,
+        field: "status",
+        hozAlign: "center",
+        vertAlign: "middle",
+        print: false,
+        download: false,
+        formatter(cell) {
+          return `<div class="flex items-center lg:justify-center ${
+            cell.getData().status ? "text-success" : "text-danger"
+          }">
+                <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> ${
+                  cell.getData().status ? "Active" : "Inactive"
+                }
+              </div>`;
+        },
+      },
+      {
+        title: "ACTIONS",
+        minWidth: 200,
+        field: "actions",
+        responsive: 1,
+        hozAlign: "center",
+        vertAlign: "middle",
+        print: false,
+        download: false,
+        formatter() {
+          const a = dom(`<div class="flex lg:justify-center items-center">
+                <a class="flex items-center mr-3" href="javascript:;">
+                  <i data-lucide="check-square" class="w-4 h-4 mr-1"></i> Edit
+                </a>
+                <a class="flex items-center text-danger" href="javascript:;">
+                  <i data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Delete
+                </a>
+              </div>`);
+          dom(a).on("click", function () {
+            // On click actions
+          });
+
+          return a[0];
+        },
+      },
+
+      // For print format
+      {
+        title: "PRODUCT NAME",
+        field: "name",
+        visible: false,
+        print: true,
+        download: true,
+      },
+      {
+        title: "CATEGORY",
+        field: "category",
+        visible: false,
+        print: true,
+        download: true,
+      },
+      {
+        title: "REMAINING STOCK",
+        field: "remaining_stock",
+        visible: false,
+        print: true,
+        download: true,
+      },
+      {
+        title: "STATUS",
+        field: "status",
+        visible: false,
+        print: true,
+        download: true,
+        formatterPrint(cell) {
+          return cell.getValue() ? "Active" : "Inactive";
+        },
+      },
+      {
+        title: "IMAGE 1",
+        field: "images",
+        visible: false,
+        print: true,
+        download: true,
+        formatterPrint(cell) {
+          return cell.getValue()[0];
+        },
+      },
+      {
+        title: "IMAGE 2",
+        field: "images",
+        visible: false,
+        print: true,
+        download: true,
+        formatterPrint(cell) {
+          return cell.getValue()[1];
+        },
+      },
+      {
+        title: "IMAGE 3",
+        field: "images",
+        visible: false,
+        print: true,
+        download: true,
+        formatterPrint(cell) {
+          return cell.getValue()[2];
+        },
+      },
+    ],
+    renderComplete() {
+      createIcons({
+        icons,
+        "stroke-width": 1.5,
+        nameAttr: "data-lucide",
+      });
+    },
+  });
+};
+
+// Redraw table onresize
+const reInitOnResizeWindow = () => {
+  window.addEventListener("resize", () => {
+    tabulator.value.redraw();
+    createIcons({
+      icons,
+      "stroke-width": 1.5,
+      nameAttr: "data-lucide",
+    });
+  });
+};
+
+// Filter function
+const onFilter = () => {
+  tabulator.value.setFilter(filter.field, filter.type, filter.value);
+};
+
+
+
+// On reset filter
+const onResetFilter = () => {
+  filter.field = "name";
+  filter.type = "like";
+  filter.value = "";
+  onFilter();
+};
+
+
+
+
+
+// Export
+const onExportCsv = () => {
+  tabulator.value.download("csv", "data.csv");
+};
+
+const onExportJson = () => {
+  tabulator.value.download("json", "data.json");
+};
+
+const onExportXlsx = () => {
+  const win = window;
+  win.XLSX = xlsx;
+  tabulator.value.download("xlsx", "data.xlsx", {
+    sheetName: "Products",
+  });
+};
+
+const onExportHtml = () => {
+  tabulator.value.download("html", "data.html", {
+    style: true,
+  });
+};
+
+
+
+
+// Print
+const onPrint = () => {
+  tabulator.value.print();
+};
+
+
+
+
+onMounted(() => {
+  initTabulator();
+  reInitOnResizeWindow();
+});
 
 
 
