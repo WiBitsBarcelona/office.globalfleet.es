@@ -37,6 +37,9 @@
   "created_at": "Fecha creación",
   "update_at": "Fecha actualiación",
   "deleted_at": "Fecha eliminado",
+  "field": "Campo",
+  "filter": "Filtro",
+  "value": "Valor",
 
   "save": "Guardar",
   "update": "Actualizar",
@@ -48,7 +51,6 @@
   "results": "Resultados",
   "export": "Exportar",
   "actions": "Acciones",
-  "reset": "Restablecer",
 
   "message": {
       "yes": "Sí",

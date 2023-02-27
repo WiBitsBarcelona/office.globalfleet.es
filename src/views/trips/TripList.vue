@@ -6,7 +6,7 @@
       <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
         <div class="sm:flex items-center sm:mr-4">
           <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2"
-            >Field</label
+            >{{ $t("field") }}</label
           >
           <select
             id="tabulator-html-filter-field"
@@ -20,7 +20,7 @@
         </div>
         <div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
           <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2"
-            >Type</label
+            >{{ $t("filter") }}</label
           >
           <select
             id="tabulator-html-filter-type"
@@ -38,14 +38,13 @@
         </div>
         <div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
           <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2"
-            >Value</label
+            >{{ $t("value") }}</label
           >
           <input
             id="tabulator-html-filter-value"
             v-model="filter.value"
             type="text"
             class="form-control sm:w-40 2xl:w-full mt-2 sm:mt-0"
-            placeholder="Search..."
           />
         </div>
         <div class="mt-2 xl:mt-0">
@@ -63,10 +62,12 @@
             class="btn btn-secondary w-full sm:w-16 mt-2 sm:mt-0 sm:ml-1"
             @click="onResetFilter"
           >
-            Reset
+            {{ $t("delete") }}
           </button>
         </div>
       </form>
+
+
       <div class="flex mt-5 sm:mt-0">
         <button
           id="tabulator-print"
