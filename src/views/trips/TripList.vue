@@ -1,8 +1,28 @@
 <template>
-  
 
+    <div class="intro-y box p-5 mt-5" v-if="isCreate">
+     
+        <Create
+            @saveTrip="saveTrip"
+            @cancelCreate="cancelCreate"
+        />
+      
+    </div>
+
+
+    <div class="intro-y box p-5 mt-5" v-if="isUpdate">
+      <Edit
+        :tripId="tripId"
+        @cancelEdit="cancelEdit"
+        @updateTripForm="updateTripForm"
+      />
+      
+    </div>
+
+
+  
    <!-- BEGIN: HTML Table Data -->
-   <div class="intro-y box p-5 mt-5">
+   <div class="intro-y box p-5 mt-5" v-if="isList">
     <div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
       <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
         <div class="sm:flex items-center sm:mr-4">
@@ -14,9 +34,10 @@
             v-model="filter.field"
             class="form-select w-full sm:w-32 2xl:w-full mt-2 sm:mt-0 sm:w-auto"
           >
-            <option value="name">Name</option>
+            <option value="name">Nombre</option>
             <option value="reference_number">Referencia</option>
             <option value="remaining_stock">Remaining Stock</option>
+            <option value="comm.name">Comm</option>
           </select>
         </div>
         <div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
@@ -71,12 +92,12 @@
 
       <div class="flex mt-5 sm:mt-0">
         <button
-          id="tabulator-print"
-          class="btn btn-outline-secondary w-1/2 sm:w-auto mr-2"
-          @click="onPrint"
+          class="btn btn-primary w-1/2 sm:w-auto mr-2"
+          @click="createTrip"
         >
-          <PrinterIcon class="w-4 h-4 mr-2" />
+          <PlusCircleIcon class="w-4 h-4" />
         </button>
+
         <Dropdown class="w-1/2 sm:w-auto">
           <DropdownToggle class="btn btn-outline-secondary w-full sm:w-auto">
             <FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("export") }}
@@ -116,15 +137,26 @@
   import xlsx from "xlsx";
   import { createIcons, icons } from "lucide";
   import Tabulator from "tabulator-tables";
-  import dom from "@left4code/tw-starter/dist/js/dom";
-
+  import { useI18n } from "vue-i18n";  
 
   import useTrips from "../../composables/trips";
   import Create from "@/views/trips/TripCreate.vue";
   import Edit from "@/views/trips/TripEdit.vue";
 
 
-  const { trips, getTrips, destroyTrip, storeTrip, updatetrips } = useTrips();
+  const { trips, getTrips, destroyTrip, storeTrip, updateTrip } = useTrips();
+
+  const { t } = useI18n();
+
+  const isCreate = ref(false);
+  const isUpdate = ref(false);
+  const isList = ref(true);
+  const tripId = ref(0);
+
+
+  const tableData = reactive([]); //data for table to display
+  
+
 
   const tableRef = ref();
   const tabulator = ref();
@@ -133,16 +165,6 @@
     type: "like",
     value: "",
   });
-
-
-
-// const imageAssets = import.meta.globEager(
-//   `/src/assets/images/*.{jpg,jpeg,png,svg}`
-// );
-
-
-
-
 
 const findData = async() => {
   let dataArr = [];
@@ -155,17 +177,17 @@ const findData = async() => {
 
 
 
-
-const initTabulator = (data) => {
+// Table 
+const initTabulator = () => {
   tabulator.value = new Tabulator(tableRef.value, {
     pagination: "local",
     paginationSize: 10,
     paginationSizeSelector: [10, 20, 30, 40],
     layout: "fitColumns",
     responsiveLayout: "collapse",
-    placeholder: "No matching records found",
-    data: data,
-    //autoColumns:true,
+    placeholder: t("message.no_matching_records_found"),
+    reactiveData:true, //enable reactive data
+    data: tableData.value,
     columns: [
       {
         formatter: "responsiveCollapse",
@@ -181,8 +203,6 @@ const initTabulator = (data) => {
         responsive: 0,
         field: "name",
         vertAlign: "middle",
-        print: false,
-        download: false,
       },
       {
         title: "Referencia",
@@ -190,8 +210,6 @@ const initTabulator = (data) => {
         responsive: 0,
         field: "reference_number",
         vertAlign: "middle",
-        print: false,
-        download: false,
       },
       {
         title: "Estados",
@@ -199,11 +217,12 @@ const initTabulator = (data) => {
         responsive: 0,
         field: "stages",
         vertAlign: "middle",
-        print: false,
-        download: false,
         formatter(cell) {
           let stages = cell.getData().stages;
           let s = '';
+
+          //console.log(cell.getData().stages);
+
           stages.forEach((el) => {
             s += el.name;
           });
@@ -214,13 +233,19 @@ const initTabulator = (data) => {
         title: "Comm",
         minWidth: 200,
         responsive: 0,
-        field: "comm",
+        field: "comm.name",
         vertAlign: "middle",
-        print: false,
-        download: false,
         formatter(cell) {
+
+          let textColor = '';
+          if(cell.getData().comm.id === 1){
+            textColor = 'text-success';
+          }else{
+            textColor = 'text-danger';
+          }
+
           return `<div class="flex items-center lg:justify-center 
-          ${cell.getData().comm.id === 1 ? "text-success" : "text-danger"}"
+          ${textColor}"
           >
             <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
               ${cell.getData().comm.name}
@@ -233,8 +258,6 @@ const initTabulator = (data) => {
         responsive: 0,
         field: "status",
         vertAlign: "middle",
-        print: false,
-        download: false,
         formatter(cell) {
           return `<div class="flex items-center lg:justify-center 
           ${cell.getData().status.id === 1 ? "text-success" : "text-danger"}"
@@ -244,208 +267,42 @@ const initTabulator = (data) => {
           </div>`;
         }
       },
+      {
+        title: "ACTIONS",
+        minWidth: 200,
+        field: "actions",
+        responsive: 1,
+        hozAlign: "center",
+        vertAlign: "middle",
+        download: false,
+        formatter(cell) {
 
+          const a = dom(`<div class="flex lg:justify-center items-center">
+                <button class="flex items-center mr-3"
+                  
+                >
+                  <i data-lucide="check-square" class="w-4 h-4 mr-1"></i> ${t("edit")}
+                </button>
+                <button class="flex items-center text-danger"
+                  
+                >
+                  <i data-lucide="trash-2" class="w-4 h-4 mr-1"></i> ${t("delete")}
+                </button>
+              </div>`);
+          dom(a).on("click", function () {
+            // On click actions
+
+            //alert("hola: "  + cell.getData().id);
+
+            editTrip(cell.getData().id);
+
+
+          });
+
+          return a[0];
+        },
+      },
     ],
-
-    // columns: [
-    //   {
-    //     formatter: "responsiveCollapse",
-    //     width: 40,
-    //     minWidth: 30,
-    //     hozAlign: "center",
-    //     resizable: false,
-    //     headerSort: false,
-    //   },
-    //   {
-    //     title: "NAME",
-    //     minWidth: 200,
-    //     responsive: 0,
-    //     field: "name",
-    //     vertAlign: "middle",
-    //     print: false,
-    //     download: false,
-    //   },
-    // ],
-    // columns: [
-    //   {
-    //     formatter: "responsiveCollapse",
-    //     width: 40,
-    //     minWidth: 30,
-    //     hozAlign: "center",
-    //     resizable: false,
-    //     headerSort: false,
-    //   },
-
-    //   // For HTML table
-    //   {
-    //     title: "Hola",
-    //     minWidth: 200,
-    //     responsive: 0,
-    //     field: "name",
-    //     vertAlign: "middle",
-    //     print: false,
-    //     download: false,
-    //     formatter(cell) {
-    //       return `<div>
-    //             <div class="font-medium whitespace-nowrap">${
-    //               cell.getData().name
-    //             }</div>
-    //             <div class="text-slate-500 text-xs whitespace-nowrap">${
-    //               cell.getData().category
-    //             }</div>
-    //           </div>`;
-    //     },
-    //   },
-    //   {
-    //     title: "IMAGES",
-    //     minWidth: 200,
-    //     field: "images",
-    //     hozAlign: "center",
-    //     vertAlign: "middle",
-    //     print: false,
-    //     download: false,
-    //     formatter(cell) {
-    //       return `<div class="flex lg:justify-center">
-    //               <div class="intro-x w-10 h-10 image-fit">
-    //                 <img alt="Midone Tailwind HTML Admin Template" class="rounded-full" src="${
-    //                   imageAssets[
-    //                     "/src/assets/images/" + cell.getData().images[0]
-    //                   ].default
-    //                 }">
-    //               </div>
-    //               <div class="intro-x w-10 h-10 image-fit -ml-5">
-    //                 <img alt="Midone Tailwind HTML Admin Template" class="rounded-full" src="${
-    //                   imageAssets[
-    //                     "/src/assets/images/" + cell.getData().images[1]
-    //                   ].default
-    //                 }">
-    //               </div>
-    //               <div class="intro-x w-10 h-10 image-fit -ml-5">
-    //                 <img alt="Midone Tailwind HTML Admin Template" class="rounded-full" src="${
-    //                   imageAssets[
-    //                     "/src/assets/images/" + cell.getData().images[2]
-    //                   ].default
-    //                 }">
-    //               </div>
-    //           </div>`;
-    //     },
-    //   },
-    //   {
-    //     title: "REMAINING STOCK",
-    //     minWidth: 200,
-    //     field: "remaining_stock",
-    //     hozAlign: "center",
-    //     vertAlign: "middle",
-    //     print: false,
-    //     download: false,
-    //   },
-    //   {
-    //     title: "STATUS",
-    //     minWidth: 200,
-    //     field: "status",
-    //     hozAlign: "center",
-    //     vertAlign: "middle",
-    //     print: false,
-    //     download: false,
-    //     formatter(cell) {
-    //       return `<div class="flex items-center lg:justify-center ${
-    //         cell.getData().status ? "text-success" : "text-danger"
-    //       }">
-    //             <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> ${
-    //               cell.getData().status ? "Active" : "Inactive"
-    //             }
-    //           </div>`;
-    //     },
-    //   },
-    //   {
-    //     title: "ACTIONS",
-    //     minWidth: 200,
-    //     field: "actions",
-    //     responsive: 1,
-    //     hozAlign: "center",
-    //     vertAlign: "middle",
-    //     print: false,
-    //     download: false,
-    //     formatter() {
-    //       const a = dom(`<div class="flex lg:justify-center items-center">
-    //             <a class="flex items-center mr-3" href="javascript:;">
-    //               <i data-lucide="check-square" class="w-4 h-4 mr-1"></i> Edit
-    //             </a>
-    //             <a class="flex items-center text-danger" href="javascript:;">
-    //               <i data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Delete
-    //             </a>
-    //           </div>`);
-    //       dom(a).on("click", function () {
-    //         // On click actions
-    //       });
-
-    //       return a[0];
-    //     },
-    //   },
-
-    //   // For print format
-    //   {
-    //     title: "PRODUCT NAME",
-    //     field: "name",
-    //     visible: false,
-    //     print: true,
-    //     download: true,
-    //   },
-    //   {
-    //     title: "CATEGORY",
-    //     field: "category",
-    //     visible: false,
-    //     print: true,
-    //     download: true,
-    //   },
-    //   {
-    //     title: "REMAINING STOCK",
-    //     field: "remaining_stock",
-    //     visible: false,
-    //     print: true,
-    //     download: true,
-    //   },
-    //   {
-    //     title: "STATUS",
-    //     field: "status",
-    //     visible: false,
-    //     print: true,
-    //     download: true,
-    //     formatterPrint(cell) {
-    //       return cell.getValue() ? "Active" : "Inactive";
-    //     },
-    //   },
-    //   {
-    //     title: "IMAGE 1",
-    //     field: "images",
-    //     visible: false,
-    //     print: true,
-    //     download: true,
-    //     formatterPrint(cell) {
-    //       return cell.getValue()[0];
-    //     },
-    //   },
-    //   {
-    //     title: "IMAGE 2",
-    //     field: "images",
-    //     visible: false,
-    //     print: true,
-    //     download: true,
-    //     formatterPrint(cell) {
-    //       return cell.getValue()[1];
-    //     },
-    //   },
-    //   {
-    //     title: "IMAGE 3",
-    //     field: "images",
-    //     visible: false,
-    //     print: true,
-    //     download: true,
-    //     formatterPrint(cell) {
-    //       return cell.getValue()[2];
-    //     },
-    //   },
-    // ],
     renderComplete() {
       createIcons({
         icons,
@@ -509,11 +366,76 @@ const onPrint = () => {
 
 
 
+
+
 onMounted(async() => {
-  let data = await findData();
-  initTabulator(data);
+  // let data = await findData();
+  // initTabulator(data);
+  
+  tableData.value = await findData();
+  initTabulator();
   reInitOnResizeWindow();
 });
+
+
+
+
+//Store
+const createTrip = () => {
+  isCreate.value = true;
+  isList.value = false;
+}
+const cancelCreate = () => {
+  isCreate.value = false;
+  isList.value = true;
+}
+
+const saveTrip = async (form) => {
+  await storeTrip({ ...form });
+  await getTrips();
+  isCreate.value = false;
+  isList.value = true;
+}
+
+
+
+
+
+//Edit
+const editTrip = (id) => {
+  isUpdate.value = true;
+  isList.value = false;
+  tripId.value = id;
+}
+
+const cancelEdit = () => {
+  isUpdate.value = false;
+  isList.value = true;
+
+  initTabulator();
+  reInitOnResizeWindow();
+
+}
+
+const updateTripForm = async (trip) => {
+  await updateTrip(trip.id, trip);
+  await getTrips();
+  isUpdate.value = false;
+  isList.value = true;
+}
+
+
+
+
+
+// Delete
+const deleteNote = async (id) => {
+  if(!window.confirm('¿Estas seguro?')){
+    return
+  }
+  await destroyNote(id)
+  await getNotes()
+}
 
 
 
