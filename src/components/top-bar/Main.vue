@@ -43,7 +43,6 @@
           />
           <SearchIcon class="search__icon dark:text-slate-500" />
         </div> -->
-        
         <a class="notification notification--light sm:hidden" href="">
           <SearchIcon class="notification__icon dark:text-slate-500" />
         </a>
@@ -128,10 +127,7 @@
 
       <FleetModeSwitcher />
 
-
-
-
-      <Dropdown class="intro-x mr-4 sm:mr-6">
+      <!-- <Dropdown class="intro-x mr-4 sm:mr-6">
         <DropdownToggle
           tag="div"
           role="button"
@@ -174,9 +170,10 @@
             </div>
           </DropdownContent>
         </DropdownMenu>
-      </Dropdown>
+      </Dropdown> -->
       <!-- END: Notifications -->
       <!-- BEGIN: Account Menu -->
+
       <Dropdown class="intro-x ">
         <DropdownToggle
           tag="div"
