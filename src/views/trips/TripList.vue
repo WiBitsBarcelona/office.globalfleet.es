@@ -3,7 +3,7 @@
    <!-- BEGIN: HTML Table Data -->
    <div class="intro-y box p-5 mt-5">
     <div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
-      <!-- <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
+      <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
         <div class="sm:flex items-center sm:mr-4">
           <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2"
             >Field</label
@@ -55,7 +55,7 @@
             class="btn btn-primary w-full sm:w-16"
             @click="onFilter"
           >
-            Go
+            {{ $t("search") }}
           </button>
           <button
             id="tabulator-html-filter-reset"
@@ -66,7 +66,7 @@
             Reset
           </button>
         </div>
-      </form> -->
+      </form>
       <div class="flex mt-5 sm:mt-0">
         <button
           id="tabulator-print"
@@ -85,14 +85,8 @@
               <DropdownItem @click="onExportCsv">
                 <FileTextIcon class="w-4 h-4 mr-2" /> Export CSV
               </DropdownItem>
-              <DropdownItem @click="onExportJson">
-                <FileTextIcon class="w-4 h-4 mr-2" /> Export JSON
-              </DropdownItem>
               <DropdownItem @click="onExportXlsx">
                 <FileTextIcon class="w-4 h-4 mr-2" /> Export XLSX
-              </DropdownItem>
-              <DropdownItem @click="onExportHtml">
-                <FileTextIcon class="w-4 h-4 mr-2" /> Export HTML
               </DropdownItem>
             </DropdownContent>
           </DropdownMenu>
@@ -131,14 +125,7 @@
   import Edit from "@/views/trips/TripEdit.vue";
 
 
-
-
-
-
   const { trips, getTrips, destroyTrip, storeTrip, updatetrips } = useTrips();
-
-
-  //const data = ref();
 
   const tableRef = ref();
   const tabulator = ref();
@@ -150,121 +137,49 @@
 
 
 
-const imageAssets = import.meta.globEager(
-  `/src/assets/images/*.{jpg,jpeg,png,svg}`
-);
+// const imageAssets = import.meta.globEager(
+//   `/src/assets/images/*.{jpg,jpeg,png,svg}`
+// );
 
 
 
 
 
 const findData = async() => {
-
   let dataArr = [];
-
   await getTrips();
-  //data.value = toRaw(trips.value);
-
-
-  //console.log(toRaw(trips.value));
-
 
   trips.value.forEach((elem)=>{
+    let e = toRaw(elem);
 
-    //console.log(JSON.parse(JSON.stringify(elem[0])));
-    //console.log(toRaw(elem));
+    dataArr.push(e);
 
-    let e = toRaw(elem.id);
-    //let e = JSON.parse(JSON.stringify(elem.id));
-
-    //console.log(typeof e);
-    //data.push({id:e.id});
-    dataArr.push({id: e});
+    // let stages = '';
+    // elem.stages.forEach((stage) => {
+    //   //stages += ' / ' + stage.name;
+    //   stages += `<div class="flex items-center lg:justify-center text-success>
+    //     <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
+    //     </div>`;
+    // });
+    // dataArr.push(
+    //   {
+    //     name: e.name,
+    //     reference_number: e.reference_number,
+    //     comm: e.comm.name,
+    //     stages: stages,
+    //     status: e.status.name,
+    //   }
+    // );
   });
 
-  //console.log(arr);
-
-  //console.log(dataArr[0]);
-
-
-
-
-  // let tabledata = [
-  //   {id:1, name:"Billy Bob", age:12, gender:"male", height:95, col:"red", dob:"14/05/2010"},
-  //   {id:2, name:"Jenny Jane", age:42, gender:"female", height:142, col:"blue", dob:"30/07/1954"},
-  //   {id:3, name:"Steve McAlistaire", age:35, gender:"male", height:176, col:"green", dob:"04/11/1982"},
-  //   {id:1, name:"Billy Bob", age:12, gender:"male", height:95, col:"red", dob:"14/05/2010"},
-  //   {id:2, name:"Jenny Jane", age:42, gender:"female", height:142, col:"blue", dob:"30/07/1954"},
-  //   {id:3, name:"Steve McAlistaire", age:35, gender:"male", height:176, col:"green", dob:"04/11/1982"},
-  //   {id:1, name:"Billy Bob", age:12, gender:"male", height:95, col:"red", dob:"14/05/2010"},
-  //   {id:2, name:"Jenny Jane", age:42, gender:"female", height:142, col:"blue", dob:"30/07/1954"},
-  //   {id:3, name:"Steve McAlistaire", age:35, gender:"male", height:176, col:"green", dob:"04/11/1982"},
-  //   {id:1, name:"Billy Bob", age:12, gender:"male", height:95, col:"red", dob:"14/05/2010"},
-  //   {id:2, name:"Jenny Jane", age:42, gender:"female", height:142, col:"blue", dob:"30/07/1954"},
-  //   {id:3, name:"Steve McAlistaire", age:35, gender:"male", height:176, col:"green", dob:"04/11/1982"},
-  // ];
-
-
-
-
   return dataArr;
-  
 }
-
-
-
-
-
-
-
-// Object.keys(this.$refs).forEach(el => {
-//   console.log( this.$refs[el][0] )
-// })
-
-
-
-
-
-// console.log(typeof dataArr);
-// console.log(dataArr);
-// console.log(typeof tabledata);
-// console.log(tabledata);
-
-
-
-
-// let tabledata = [
-//     {id:1, name:"Billy Bob", age:12, gender:"male", height:95, col:"red", dob:"14/05/2010"},
-//     {id:2, name:"Jenny Jane", age:42, gender:"female", height:142, col:"blue", dob:"30/07/1954"},
-//     {id:3, name:"Steve McAlistaire", age:35, gender:"male", height:176, col:"green", dob:"04/11/1982"},
-//     {id:1, name:"Billy Bob", age:12, gender:"male", height:95, col:"red", dob:"14/05/2010"},
-//     {id:2, name:"Jenny Jane", age:42, gender:"female", height:142, col:"blue", dob:"30/07/1954"},
-//     {id:3, name:"Steve McAlistaire", age:35, gender:"male", height:176, col:"green", dob:"04/11/1982"},
-//     {id:1, name:"Billy Bob", age:12, gender:"male", height:95, col:"red", dob:"14/05/2010"},
-//     {id:2, name:"Jenny Jane", age:42, gender:"female", height:142, col:"blue", dob:"30/07/1954"},
-//     {id:3, name:"Steve McAlistaire", age:35, gender:"male", height:176, col:"green", dob:"04/11/1982"},
-//     {id:1, name:"Billy Bob", age:12, gender:"male", height:95, col:"red", dob:"14/05/2010"},
-//     {id:2, name:"Jenny Jane", age:42, gender:"female", height:142, col:"blue", dob:"30/07/1954"},
-//     {id:3, name:"Steve McAlistaire", age:35, gender:"male", height:176, col:"green", dob:"04/11/1982"},
-//   ];
 
 
 
 
 const initTabulator = (data) => {
   tabulator.value = new Tabulator(tableRef.value, {
-    //ajaxURL: "https://dummy-data.left4code.com",
-    //ajaxURL: `${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/list`,
-    // ajaxFiltering: true,
-    // ajaxSorting: true,
-    // printAsHtml: true,
-    // printStyled: true,
-    // ajaxContentType: {
-    //   headers: {
-    //         "Content-Type": "application/json",
-    //         'Authorization': `Bearer 21|cSzTBLx83sZRLyKdf2vPNEJreIrmqjfHwL8WURoJ`
-    //   }
-    // },
     pagination: "local",
     paginationSize: 10,
     paginationSizeSelector: [10, 20, 30, 40],
@@ -272,7 +187,53 @@ const initTabulator = (data) => {
     responsiveLayout: "collapse",
     placeholder: "No matching records found",
     data: data,
-    autoColumns:true,
+    //autoColumns:true,
+    columns: [
+      {
+        formatter: "responsiveCollapse",
+        width: 40,
+        minWidth: 30,
+        hozAlign: "center",
+        resizable: false,
+        headerSort: false,
+      },
+      {
+        title: "Name",
+        minWidth: 200,
+        responsive: 0,
+        field: "name",
+        vertAlign: "middle",
+        print: false,
+        download: false,
+      },
+      {
+        title: "Referencia",
+        minWidth: 200,
+        responsive: 0,
+        field: "reference_number",
+        vertAlign: "middle",
+        print: false,
+        download: false,
+      },
+      {
+        title: "Comm",
+        minWidth: 200,
+        responsive: 0,
+        field: "comm.name",
+        vertAlign: "middle",
+        print: false,
+        download: false,
+        formatter(cell) {
+          return `<div class="flex items-center lg:justify-center ${
+            cell.getData().comm.id === 1 ? "text-success" : "text-danger"}">
+                <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
+                ${cell.getData().comm.name}
+              </div>`;
+        }
+      },
+
+    ],
+
     // columns: [
     //   {
     //     formatter: "responsiveCollapse",
@@ -483,10 +444,6 @@ const initTabulator = (data) => {
 };
 
 
-
-
-
-
 // Redraw table onresize
 const reInitOnResizeWindow = () => {
   window.addEventListener("resize", () => {
@@ -516,15 +473,9 @@ const onResetFilter = () => {
 
 
 
-
-
 // Export
 const onExportCsv = () => {
   tabulator.value.download("csv", "data.csv");
-};
-
-const onExportJson = () => {
-  tabulator.value.download("json", "data.json");
 };
 
 const onExportXlsx = () => {
@@ -534,13 +485,6 @@ const onExportXlsx = () => {
     sheetName: "Products",
   });
 };
-
-const onExportHtml = () => {
-  tabulator.value.download("html", "data.html", {
-    style: true,
-  });
-};
-
 
 
 
