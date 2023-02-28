@@ -1,4 +1,6 @@
 <template>
+
+  <!-- Modal nou chat -->
   <div
     id="new-chat-modal"
     class="hidden items-center justify-center absolute z-10 top-0 bottom-80 left-0 right-0"
@@ -26,7 +28,7 @@
           name="newChatSelect"
           id="new-chat-select"
           :multiple="chatType === 'grupo' ? true : false"
-          class="w-48"
+          class="overflow-y-scroll scrollbar-hidden"
         >
           <option v-for="user in usersList" :value="user.uid">
             {{ user.name }}
@@ -36,58 +38,128 @@
       <button class="box p-2 font-bold" @click="createNewChat()">Crear</button>
     </div>
   </div>
+
+  <!-- Barra superior -->
   <div class="flex w-full h-14 items-center justify-start">
-    <h2 class="text-lg font-medium mr-auto w-1/4">Chat</h2>
+    <div class="text-lg font-medium mr-auto w-1/4"></div>
     <div class="flex w-full">
-      <div class="flex justify-between w-full">
+      <div class="flex justify-end w-full gap-4">
         <input type="text" name="username" id="username" placeholder="Usuari" />
         <div class="flex gap-1">
           <button type="submit" class="box mr-4 p-3" @click="createUser()">
             Accedir
           </button>
-          <button class="box w-[2.5rem] text-4xl" @click="toggleMenu()">
-            ⋮
-          </button>
-          <div
-            id="new-chat-menu"
-            class="hidden flex-col w-60 bg-white absolute z-10 right-6 top-12 border border-gray-100 rounded"
-          >
-            <div
-              class="pl-5 py-2 w-full cursor-pointer border border-bottom hover:bg-gray-200"
-              @click="newChat('grupo')"
-            >
-              <p>Nuevo grupo</p>
-            </div>
-            <div
-              class="pl-5 py-2 w-full cursor-pointer border border-bottom hover:bg-gray-200"
-              @click="newChat('chat')"
-            >
-              <p>Nuevo chat</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
   </div>
-  <div id="app" class="flex">
-    <div id="group-list" class="flex flex-col w-1/4">
-      <button
-        v-for="group in allGroups"
-        class="flex gap-3 p-3 h-16 w-[98%] cursor-pointer border-b bg-white"
-        @click="loadGroup(group.conversationWith.guid)"
+
+  <!-- Chat -->
+  <div id="app" class="flex gap-6 mt-5">
+    <div class="flex flex-col w-2/6 gap-4">
+      <!-- Botons menú -->
+      <div class="box p-2 grid grid-cols-3 justify-between">
+        <button
+          v-on:click="toggleActiveButtons"
+          id="chat-button"
+          class="py-2 w-full bg-[#0096b2] chat-button active text-white rounded-lg"
+        >
+          Chats
+        </button>
+        <button
+          v-on:click="toggleActiveButtons"
+          id="profile-button"
+          class="py-2 w-full chat-button"
+        >
+          Perfil
+        </button>
+        <button
+          v-on:click="toggleMenu()"
+          id="new-chat-button"
+          class="py-2 w-full chat-button text-xl font-bold"
+        >
+          ⋮
+        </button>
+        <div
+          id="new-chat-menu"
+          class="hidden flex-col w-60 bg-white absolute z-10 right-0 top-14 border border-gray-100 rounded"
+        >
+          <div
+            class="pl-5 py-2 w-full cursor-pointer border border-bottom hover:bg-gray-200"
+            @click="newChat('grupo')"
+          >
+            <p>Nuevo grupo</p>
+          </div>
+          <div
+            class="pl-5 py-2 w-full cursor-pointer border border-bottom hover:bg-gray-200"
+            @click="newChat('chat')"
+          >
+            <p>Nuevo chat</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Llista de xats -->
+      <div
+        v-if="currentActive === 'chat-button'"
+        id="group-list"
+        class="flex flex-col gap-4 overflow-y-scroll scrollbar-hidden"
+      >
+        <transition-group name="fade">
+          <button
+            v-for="group in allGroups"
+            :key="group.conversationWith.guid"
+            class="flex gap-3 p-3 h-16 box cursor-pointer border-b bg-white"
+            @click="loadGroup(group.conversationWith.guid)"
+          >
+            <div
+              :id="group.conversationWith.guid + '-image'"
+              class="h-full w-14 flex items-center justify-center"
+            ></div>
+            <div class="flex flex-col justify-between h-full text-left">
+              <b :id="group.conversationWith.guid"></b>
+              <p :id="'last-message-' + group.conversationWith.guid"></p>
+            </div>
+          </button>
+        </transition-group>
+      </div>
+
+      <!-- Perfil de l'usuari -->
+      <div
+        v-if="currentActive === 'profile-button'"
+        class="flex flex-col gap-8"
       >
         <div
-          :id="group.conversationWith.guid + '-image'"
-          class="h-full w-14 flex items-center justify-center"
+          id="profile-image"
+          class="flex flex-col box w-full py-10 items-center justify-center gap-3"
         ></div>
-        <div class="flex flex-col justify-between h-full text-left">
-          <b :id="group.conversationWith.guid"></b>
-          <p :id="'last-message-' + group.conversationWith.guid"></p>
+        <div
+          class="flex flex-col w-full h-80 box px-5 justify-between items-center"
+        >
+          <div
+            class="flex flex-col border-b w-full h-full items-left justify-center gap-2"
+          >
+            <p class="text-gray-400">Empresa</p>
+            <p>GlobalFleet</p>
+          </div>
+          <div
+            class="flex flex-col border-b w-full h-full items-left justify-center gap-2"
+          >
+            <p class="text-gray-400">Telefono</p>
+            <p>654875415</p>
+          </div>
+          <div
+            class="flex flex-col border-b w-full h-full items-left justify-center gap-2"
+          >
+            <p class="text-gray-400">Correo</p>
+            <p>webmaster@globalfleet.com</p>
+          </div>
         </div>
-      </button>
+      </div>
     </div>
+
     <div class="flex flex-col w-full h-[85vh] justify-between items-center box">
-      <div class="flex items-center border border-1 h-20 w-full">
+      <div id="current-chat-container" class="flex items-center h-20 w-full">
         <div
           id="current-chat"
           class="flex gap-5 items-center justify-center h-14 p-2"
@@ -95,7 +167,7 @@
       </div>
       <div
         id="messages"
-        class="flex flex-col gap-2 h-5/6 w-full p-5 overflow-y-scroll"
+        class="flex flex-col gap-2 h-5/6 w-full p-5 overflow-y-scroll scrollbar-hidden"
       ></div>
       <div
         class="pt-4 sm:py-4 flex items-center border-t border-slate-200/60 dark:border-darkmode-400 w-full"
@@ -119,6 +191,7 @@
       </div>
     </div>
   </div>
+
 </template>
 
 <script setup>
@@ -136,6 +209,7 @@ let allGroups = ref("");
 let chatType = ref("");
 let chatTag = ref("");
 let usersList = ref("");
+let currentActive = ref("chat-button");
 
 // Variable de configuración del chat
 const appSetting = new CometChat.AppSettingsBuilder()
@@ -190,6 +264,32 @@ const logUserIn = (authKey, UID) => {
       console.log("Login failed with exception:", { error });
     }
   );
+};
+
+const toggleActiveButtons = (e) => {
+  const elementId = e.target.getAttribute("id");
+  // Posem el tag de "chats" en Active
+  const activeElements = document.getElementsByClassName("active chat-button");
+  console.log(activeElements);
+
+  // Canviem els estils del botó que estigui en actiu
+  for (let i = 0; i < activeElements.length; i++) {
+    activeElements[i].classList = "py-2 w-full chat-button";
+  }
+
+  // Posem en actiu el nou botó seleccionat
+  document
+    .getElementById(elementId)
+    .classList.add("bg-[#0096b2]", "active", "rounded", "text-white");
+
+  // Segons el botó presionat, farem una cosa o una altre
+  if (elementId === "chat-button") {
+    getConversationsList(userData.uid);
+    currentActive.value = "chat-button";
+  } else if (elementId === "profile-button") {
+    loadProfile(userData.uid);
+    currentActive.value = "profile-button";
+  }
 };
 
 // Función para obtener lista de chats
@@ -261,6 +361,9 @@ const loadGroup = (GID) => {
   actualGroup = GID;
 
   const chatName = document.getElementById(GID).textContent;
+
+  document.getElementById("current-chat-container").className =
+    "flex items-center h-20 w-full border-b";
 
   // Llamamos a la función de cargar el historial de mensajes del grupo en cuestión
   getMessageHistory(user, GUID, chatName);
@@ -357,13 +460,13 @@ const getMessageHistory = (user, GID, chatName) => {
         // Primer colocarem l'icona del xat
         document.getElementById(
           "current-chat"
-        ).innerHTML = `<img src="${messages[0].receiver.getIcon()}" class="w-12 h-12" />`;
+        ).innerHTML = `<img src="${messages[0].receiver.getIcon()}" class="w-14 h-14" />`;
         if (messages[0].receiver.getIcon() === undefined) {
           document.getElementById(
             "current-chat"
-          ).innerHTML = `<img class="rounded-full" src="https://ui-avatars.com/api/?name=${chatName.charAt(
+          ).innerHTML = `<img class="rounded-full w-14 h-14" src="https://ui-avatars.com/api/?name=${chatName.charAt(
             0
-          )}&color=7F9CF5&background=EBF4FF" class="w-12 h-12" />`;
+          )}&color=7F9CF5&background=EBF4FF" />`;
         }
 
         // Imprimim el nom del xat seleccionat
@@ -422,7 +525,7 @@ const getMessageHistory = (user, GID, chatName) => {
         });
         // En cas de no haver cap missatge encara a la conversa
       } else {
-        getSingleChatData(GUID)
+        getSingleChatData(GUID);
       }
     },
     (error) => {
@@ -462,6 +565,8 @@ const sendMessage = () => {
                               </div>
                             </div>`;
       console.log("Mensaje enviado correctamente:", message);
+
+      getLastMessage(userData.uid, actualGroup)
     },
     (error) => {
       console.log("Error al enviar el mensaje:", error);
@@ -521,7 +626,9 @@ const createNewChat = () => {
     .then((response) => response.json())
     .then((response) => {
       toggleModal();
+      actualGroup = newChatName;
       getConversationsList(userData.uid);
+      getSingleChatData(newChatName);
     })
     .catch((err) => console.error(err));
 };
@@ -720,39 +827,93 @@ const getSingleChatData = (guid) => {
   )
     .then((response) => response.json())
     .then((response) => {
-
       // En cas de ser un grup
       if (response.data.type === "public") {
         let iconTemplate;
+        let nameTemplate;
+        let otherUser;
         // Mirem si te la icona definida
         if (response.data.icon) {
           iconTemplate = `
-              <img class="rounded-full" src="${response.data.icon}">
+              <img class="rounded-full w-14 h-14" src="${response.data.icon}">
             `;
         } else {
           iconTemplate = `
-            <img class="rounded-full w-12 h-12" src="https://ui-avatars.com/api/?name=${response.data.name.charAt(
+            <img class="rounded-full w-14 h-14" src="https://ui-avatars.com/api/?name=${response.data.name.charAt(
               0
             )}&color=7F9CF5&background=EBF4FF" />
             `;
         }
-        // Imprimim la icona
-        document.getElementById('current-chat').innerHTML += iconTemplate;
 
         // Definim el nom
+        if (response.data.name.includes("_")) {
+          otherUser = response.data.name.replaceAll("_", " ");
+        } else {
+          otherUser = response.data.name;
+        }
 
+        nameTemplate = `
+          <h2 id="chat-name-${response.data.guid}" class="w-full font-bold text-2xl">${otherUser}</h2>
+        `;
+
+        // Imprimim les dades
+        document.getElementById("current-chat").innerHTML =
+          iconTemplate + nameTemplate;
+
+        // En cas de ser un xat
+      } else {
+        let iconTemplate;
+        let nameTemplate;
+
+        // Obtenim els membres del xat
+        const options = {
+          method: "GET",
+          headers: {
+            accept: "application/json",
+            apikey: "a76fca94f28c87446b3de6dd7785355fbc9d8d78",
+          },
+        };
+
+        fetch(
+          `https://23195116ca7e245f.api-eu.cometchat.io/v3/groups/${guid}/members?perPage=100&page=1`,
+          options
+        )
+          .then((response) => response.json())
+          .then((response) => {
+            // Obtenim la informació de l'altre membre
+            const otherUser = response.data.filter(
+              (user) => user.name != userData.name
+            );
+
+            // En cas de tenir una icona definida
+            if (otherUser[0].avatar) {
+              iconTemplate = `
+              <img class="rounded-full w-14 h-14" src="${response.data.avatar}">
+            `;
+            } else {
+              iconTemplate = `
+            <img class="rounded-full w-14 h-14" src="https://ui-avatars.com/api/?name=${otherUser[0].name.charAt(
+              0
+            )}&color=7F9CF5&background=EBF4FF" />
+            `;
+            }
+
+            // Definim el nom
+            nameTemplate = `
+              <h2 id="chat-name-${response.data.guid}" class="w-full font-bold text-2xl">${otherUser[0].name}</h2>
+            `;
+
+            // Imprimim les dades
+            document.getElementById("current-chat").innerHTML =
+              iconTemplate + nameTemplate;
+
+            document.getElementById("current-chat-container").className =
+              "flex items-center h-20 w-full border-b";
+          })
+          .catch((err) => console.error(err));
       }
-
     })
     .catch((err) => console.error(err));
-
-  // En cas de ser un xat
-
-  // Obtenim els membres del xat
-
-  // Obtenim la informació de l'altre membre
-
-  // En cas de tenir una icona definida, la mostrem
 
   // En cas de no tenir una icona definida, mostrem la inicial del seu nom
 };
@@ -798,6 +959,45 @@ const toggleModal = () => {
   }
 };
 
+const loadProfile = (uid) => {
+  const options = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      apikey: "a76fca94f28c87446b3de6dd7785355fbc9d8d78",
+    },
+  };
+
+  let iconTemplate = "";
+
+  // Petició a la API per obtenir les dades d'un usuari en concret
+  fetch(`https://23195116ca7e245f.api-eu.cometchat.io/v3/users/${uid}`, options)
+    .then((response) => response.json())
+    .then((response) => {
+      if (response.data.avatar) {
+        iconTemplate = `
+              <img class="rounded-full w-20 h-20" src="${response.data.avatar}">
+            `;
+      } else {
+        iconTemplate = `
+            <img class="rounded-full w-20 h-20" src="https://ui-avatars.com/api/?name=${otherUser[0].name.charAt(
+              0
+            )}&color=7F9CF5&background=EBF4FF" />
+            `;
+      }
+
+      const nameTemplate = `
+        <p class="font-semibold text-lg">
+          ${userData.name}
+        </p>
+      `;
+
+      document.getElementById("profile-image").innerHTML =
+        iconTemplate + nameTemplate;
+    })
+    .catch((err) => console.error(err));
+};
+
 const users = [
   {
     name: "Alex",
@@ -817,3 +1017,15 @@ const users = [
   },
 ];
 </script>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
