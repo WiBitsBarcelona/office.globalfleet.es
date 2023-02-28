@@ -1,5 +1,4 @@
 <template>
-
   <!-- Modal nou chat -->
   <div
     id="new-chat-modal"
@@ -172,26 +171,55 @@
       <div
         class="pt-4 sm:py-4 flex items-center border-t border-slate-200/60 dark:border-darkmode-400 w-full"
       >
-        <input
+        <textarea
           id="message"
-          class="w-5/6 focus:outline-none chat__box__input form-control dark:bg-darkmode-600 resize-none border-transparent px-5 py-3 shadow-none focus:border-transparent focus:ring-0"
+          class="overflow-y-scroll scrollbar-hidden chat__box__input form-control dark:bg-darkmode-600 h-11 resize-none border-transparent px-5 py-3 shadow-none focus:border-transparent focus:ring-0"
           placeholder="Escribe el mensaje..."
-        />
+        ></textarea>
         <div
-          class="flex items-center justify-center w-1/6 text-2xl text-center"
+          class="flex gap-4 items-center justify-center w-1/6 text-2xl text-center"
         >
+          <!-- SVG del clip -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide w-6 h-6"
+          >
+            <path
+              d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"
+            ></path>
+          </svg>
+
+          <!-- Botó d'enviar el missatge -->
           <button
             id="sendMsgBtn"
             v-on:click="sendMessage()"
             class="w-8 h-8 sm:w-10 sm:h-10 bg-primary text-white rounded-full flex-none flex items-center justify-center"
           >
-            ➤
+            <!-- SVG de l'avió de paper -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide w-6 h-6 mt-1 mr-1"
+            >
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
           </button>
         </div>
       </div>
     </div>
   </div>
-
 </template>
 
 <script setup>
@@ -199,7 +227,9 @@ import { CometChat } from "@cometchat-pro/chat";
 import { ref } from "vue";
 
 // Credenciales de la Aplicacion de CometChat
-const appID = "23195116ca7e245f";
+let appId = "";
+let apiKey = "";
+let authKey = "";
 const region = "eu";
 
 // Variables globales
@@ -211,28 +241,31 @@ let chatTag = ref("");
 let usersList = ref("");
 let currentActive = ref("chat-button");
 
-// Variable de configuración del chat
-const appSetting = new CometChat.AppSettingsBuilder()
-  .subscribePresenceForAllUsers()
-  .setRegion(region)
-  .build();
-
-// Iniciamos una conexion con comet chat
-CometChat.init(appID, appSetting).then(
-  () => {
-    console.log("Chat iniciado correctamente");
-  },
-  (error) => {
-    console.log("Error durante el inicio del chat:", error);
-  }
-);
-
 // Función para crear un usuario en caso de que el nuevo no exista
 const createUser = () => {
   const username = document.getElementById("username").value;
   const userInfo = users.filter((user) => username === user.name);
 
-  const authKey = "b1809c12cf23a929539a2ac076b68277f7a4df9b";
+  appId = userInfo[0].appId;
+  apiKey = userInfo[0].apiKey;
+  authKey = userInfo[0].authKey;
+
+  // Variable de configuración del chat
+  const appSetting = new CometChat.AppSettingsBuilder()
+    .subscribePresenceForAllUsers()
+    .setRegion(region)
+    .build();
+
+  // Iniciamos una conexion con comet chat
+  CometChat.init(appId, appSetting).then(
+    () => {
+      console.log("Chat iniciado correctamente");
+    },
+    (error) => {
+      console.log("Error durante el inicio del chat:", error);
+    }
+  );
+
   const UID = userInfo[0].uid;
   const name = username;
 
@@ -299,12 +332,12 @@ const getConversationsList = (user) => {
     headers: {
       accept: "application/json",
       onBehalfOf: user,
-      apikey: "a76fca94f28c87446b3de6dd7785355fbc9d8d78",
+      apikey: apiKey,
     },
   };
 
   fetch(
-    "https://23195116ca7e245f.api-eu.cometchat.io/v3/conversations?perPage=100&page=1",
+    `https://${appId}.api-${region}.cometchat.io/v3/conversations?perPage=100&page=1`,
     options
   )
     .then((response) => response.json())
@@ -566,7 +599,7 @@ const sendMessage = () => {
                             </div>`;
       console.log("Mensaje enviado correctamente:", message);
 
-      getLastMessage(userData.uid, actualGroup)
+      getLastMessage(userData.uid, actualGroup);
     },
     (error) => {
       console.log("Error al enviar el mensaje:", error);
@@ -604,6 +637,7 @@ const createNewChat = () => {
     newChatName = newChatName.replaceAll(" ", "_");
   } else {
     newChatName = selected[0] + "_" + userData.name + "_chat";
+    newChatName = newChatName.replaceAll(" ", "_");
   }
 
   const options = {
@@ -612,7 +646,7 @@ const createNewChat = () => {
       accept: "application/json",
       onBehalfOf: userData.uid,
       "content-type": "application/json",
-      apikey: "a76fca94f28c87446b3de6dd7785355fbc9d8d78",
+      apikey: apiKey,
     },
     body: JSON.stringify({
       members: { participants: selected },
@@ -622,7 +656,7 @@ const createNewChat = () => {
     }),
   };
 
-  fetch("https://23195116ca7e245f.api-eu.cometchat.io/v3/groups", options)
+  fetch(`https://${appId}.api-${region}.cometchat.io/v3/groups`, options)
     .then((response) => response.json())
     .then((response) => {
       toggleModal();
@@ -639,12 +673,12 @@ const getUsersList = () => {
     method: "GET",
     headers: {
       accept: "application/json",
-      apikey: "a76fca94f28c87446b3de6dd7785355fbc9d8d78",
+      apikey: apiKey,
     },
   };
 
   fetch(
-    "https://23195116ca7e245f.api-eu.cometchat.io/v3/users?perPage=100&page=1",
+    `https://${appId}.api-${region}.cometchat.io/v3/users?perPage=100&page=1`,
     options
   )
     .then((response) => response.json())
@@ -671,6 +705,7 @@ const getUsersList = () => {
         possibleChats = otherUsers.filter((user) => user.role === "conductor");
       } else {
         console.log("Rol default");
+        possibleChats = otherUsers
       }
 
       usersList.value = possibleChats;
@@ -684,13 +719,13 @@ const getGroupMembers = (guid, type, name, currentChatName) => {
     method: "GET",
     headers: {
       accept: "application/json",
-      apikey: "a76fca94f28c87446b3de6dd7785355fbc9d8d78",
+      apikey: apiKey,
     },
   };
 
   // Petició a la API per obtenir la llista de membres d'un grup
   fetch(
-    `https://23195116ca7e245f.api-eu.cometchat.io/v3/groups/${guid}/members?perPage=100&page=1`,
+    `https://${appId}.api-${region}.cometchat.io/v3/groups/${guid}/members?perPage=100&page=1`,
     options
   )
     .then((response) => response.json())
@@ -706,13 +741,13 @@ const getGroupMembers = (guid, type, name, currentChatName) => {
             method: "GET",
             headers: {
               accept: "application/json",
-              apikey: "a76fca94f28c87446b3de6dd7785355fbc9d8d78",
+              apikey: apiKey,
             },
           };
 
           // Petició a la API per obtenir les dades d'un grup en concret
           fetch(
-            `https://23195116ca7e245f.api-eu.cometchat.io/v3/groups/${guid}`,
+            `https://${appId}.api-${region}.cometchat.io/v3/groups/${guid}`,
             options
           )
             .then((response) => response.json())
@@ -759,13 +794,13 @@ const getGroupMembers = (guid, type, name, currentChatName) => {
               method: "GET",
               headers: {
                 accept: "application/json",
-                apikey: "a76fca94f28c87446b3de6dd7785355fbc9d8d78",
+                apikey: apiKey,
               },
             };
 
             // Petició a la API per obtenir les dades d'un usuari en concret
             fetch(
-              `https://23195116ca7e245f.api-eu.cometchat.io/v3/users/${usr.uid}`,
+              `https://${appId}.api-${region}.cometchat.io/v3/users/${usr.uid}`,
               options
             )
               .then((response) => response.json())
@@ -817,12 +852,12 @@ const getSingleChatData = (guid) => {
     method: "GET",
     headers: {
       accept: "application/json",
-      apikey: "a76fca94f28c87446b3de6dd7785355fbc9d8d78",
+      apikey: apiKey,
     },
   };
 
   fetch(
-    `https://23195116ca7e245f.api-eu.cometchat.io/v3/groups/${guid}`,
+    `https://${appId}.api-${region}.cometchat.io/v3/groups/${guid}`,
     options
   )
     .then((response) => response.json())
@@ -870,12 +905,12 @@ const getSingleChatData = (guid) => {
           method: "GET",
           headers: {
             accept: "application/json",
-            apikey: "a76fca94f28c87446b3de6dd7785355fbc9d8d78",
+            apikey: apiKey,
           },
         };
 
         fetch(
-          `https://23195116ca7e245f.api-eu.cometchat.io/v3/groups/${guid}/members?perPage=100&page=1`,
+          `https://${appId}.api-${region}.cometchat.io/v3/groups/${guid}/members?perPage=100&page=1`,
           options
         )
           .then((response) => response.json())
@@ -1002,18 +1037,30 @@ const users = [
   {
     name: "Alex",
     uid: "admin_1_alex",
+    appId: "23195116ca7e245f",
+    apiKey: "a76fca94f28c87446b3de6dd7785355fbc9d8d78",
+    authKey: "b1809c12cf23a929539a2ac076b68277f7a4df9b",
   },
   {
     name: "Jordi",
     uid: "g_1_jordi",
+    appId: "23195116ca7e245f",
+    apiKey: "8b721f4d8ce4d4d4aa49ac790d2240aa4ef93cc5",
+    authKey: "f272f99207e0e5a186a8c5134bbd96354b64bc69",
   },
   {
     name: "Marc",
     uid: "jc_1_marc",
+    appId: "23195116ca7e245f",
+    apiKey: "8b721f4d8ce4d4d4aa49ac790d2240aa4ef93cc5",
+    authKey: "f272f99207e0e5a186a8c5134bbd96354b64bc69",
   },
   {
-    name: "Pere",
-    uid: "c_1_jc_1_pere",
+    name: "David Romans",
+    uid: "superhero2",
+    appId: "23376343f2ad7555",
+    apiKey: "8b721f4d8ce4d4d4aa49ac790d2240aa4ef93cc5",
+    authKey: "f272f99207e0e5a186a8c5134bbd96354b64bc69",
   },
 ];
 </script>
