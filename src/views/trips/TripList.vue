@@ -113,7 +113,7 @@
         </Dropdown>
       </div>
     </div>
-    <div class="overflow-x-auto scrollbar-hidden">
+    <div class="overflow-x-auto scrollbar-hidden mb-3">
       <div
         id="tabulator"
         ref="tableRef"
@@ -122,6 +122,11 @@
     </div>
   </div>
   <!-- END: HTML Table Data -->
+
+
+
+
+
 
 </template>
   
@@ -140,6 +145,8 @@
   import Create from "@/views/trips/TripCreate.vue";
   import Edit from "@/views/trips/TripEdit.vue";
 
+  import Swal from "sweetalert2";
+
 
   const { trips, getTrips, destroyTrip, storeTrip, updateTrip } = useTrips();
 
@@ -154,8 +161,6 @@
 
   let div_table; // 
 
-
-
   const tableRef = ref();
   const tabulator = ref();
   const filter = reactive({
@@ -163,6 +168,8 @@
     type: "like",
     value: "",
   });
+  
+
 
 const findData = async() => {
   let dataArr = [];
@@ -172,6 +179,10 @@ const findData = async() => {
   });
   return dataArr;
 }
+
+
+
+
 
 
 
@@ -266,7 +277,7 @@ const initTabulator = () => {
         }
       },
       {
-        title: "ACTIONS",
+        title: t("actions"),
         minWidth: 200,
         field: "actions",
         responsive: 1,
@@ -293,7 +304,7 @@ const initTabulator = () => {
             }
 
             if(event.target.id === 'btn_delete'){
-              deleteTrip(cell.getData().id);
+              deleteTrip(cell.getData().id, cell.getData().name);
             }
 
           });
@@ -404,13 +415,24 @@ const updateTripForm = async (trip) => {
 
 
 
+
+
+
 // Delete
 const deleteTrip = async (id) => {
-  if(!window.confirm('¿Estas seguro?')){
-    return;
-  }
-  await destroyTrip(id);
-  await getTrips();
+  Swal.fire({
+    icon: 'info',
+    title: 'Do you want to save the changes?',
+    showCancelButton: true,
+    confirmButtonText: t("save"),
+    confirmButtonColor: import.meta.env.VITE_COLOR_TRIRD_APP,
+  }).then(async(result) => {
+    if (result.isConfirmed) {
+      // await destroyTrip(id);
+      // await getTrips();
+      Swal.fire(t("message.record_saved"), '', 'success');
+    }
+  });
 }
 
 
