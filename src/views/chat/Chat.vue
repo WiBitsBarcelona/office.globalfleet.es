@@ -923,7 +923,7 @@ const getSingleChatData = (guid) => {
             // En cas de tenir una icona definida
             if (otherUser[0].avatar) {
               iconTemplate = `
-              <img class="rounded-full w-14 h-14" src="${response.data.avatar}">
+              <img class="rounded-full w-14 h-14" src="${otherUser[0].avatar}">
             `;
             } else {
               iconTemplate = `
