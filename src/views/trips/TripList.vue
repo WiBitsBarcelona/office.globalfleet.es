@@ -1,12 +1,11 @@
 <template>
 
+
     <div class="intro-y box p-5 mt-5" v-if="isCreate">
-     
         <Create
             @saveTrip="saveTrip"
             @cancelCreate="cancelCreate"
         />
-      
     </div>
 
 
@@ -16,19 +15,17 @@
         @cancelEdit="cancelEdit"
         @updateTripForm="updateTripForm"
       />
-      
     </div>
-
 
   
    <!-- BEGIN: HTML Table Data -->
-   <div class="intro-y box p-5 mt-5" v-if="isList">
+   <div class="intro-y box p-5 mt-5" id="div_table">
     <div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
       <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
         <div class="sm:flex items-center sm:mr-4">
-          <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2"
-            >{{ $t("field") }}</label
-          >
+          <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">
+            {{ $t("field") }}
+          </label>
           <select
             id="tabulator-html-filter-field"
             v-model="filter.field"
@@ -150,12 +147,13 @@
 
   const isCreate = ref(false);
   const isUpdate = ref(false);
-  const isList = ref(true);
   const tripId = ref(0);
-
 
   const tableData = reactive([]); //data for table to display
   
+
+  let div_table; // 
+
 
 
   const tableRef = ref();
@@ -276,26 +274,27 @@ const initTabulator = () => {
         vertAlign: "middle",
         download: false,
         formatter(cell) {
-
           const a = dom(`<div class="flex lg:justify-center items-center">
                 <button class="flex items-center mr-3"
-                  
+                  id="btn_edit"
                 >
                   <i data-lucide="check-square" class="w-4 h-4 mr-1"></i> ${t("edit")}
                 </button>
                 <button class="flex items-center text-danger"
-                  
+                  id="btn_delete"
                 >
                   <i data-lucide="trash-2" class="w-4 h-4 mr-1"></i> ${t("delete")}
                 </button>
               </div>`);
-          dom(a).on("click", function () {
-            // On click actions
+          dom(a).on("click", function (event) {
+          
+            if(event.target.id === 'btn_edit'){
+              editTrip(cell.getData().id);
+            }
 
-            //alert("hola: "  + cell.getData().id);
-
-            editTrip(cell.getData().id);
-
+            if(event.target.id === 'btn_delete'){
+              deleteTrip(cell.getData().id);
+            }
 
           });
 
@@ -365,78 +364,64 @@ const onPrint = () => {
 
 
 
-
-
-
-onMounted(async() => {
-  // let data = await findData();
-  // initTabulator(data);
-  
-  tableData.value = await findData();
-  initTabulator();
-  reInitOnResizeWindow();
-});
-
-
-
-
 //Store
 const createTrip = () => {
   isCreate.value = true;
-  isList.value = false;
+  div_table.style.display = 'none';
 }
 const cancelCreate = () => {
   isCreate.value = false;
-  isList.value = true;
+  div_table.style.display = 'block';
 }
 
 const saveTrip = async (form) => {
   await storeTrip({ ...form });
   await getTrips();
   isCreate.value = false;
-  isList.value = true;
+  div_table.style.display = 'block';
 }
-
-
 
 
 
 //Edit
 const editTrip = (id) => {
   isUpdate.value = true;
-  isList.value = false;
+  div_table.style.display = 'none';
   tripId.value = id;
 }
 
-const cancelEdit = () => {
+const cancelEdit = async() => {
   isUpdate.value = false;
-  isList.value = true;
-
-  initTabulator();
-  reInitOnResizeWindow();
-
+  div_table.style.display = 'block';
 }
 
 const updateTripForm = async (trip) => {
   await updateTrip(trip.id, trip);
   await getTrips();
   isUpdate.value = false;
-  isList.value = true;
+  div_table.style.display = 'block';
 }
-
-
 
 
 
 // Delete
-const deleteNote = async (id) => {
+const deleteTrip = async (id) => {
   if(!window.confirm('¿Estas seguro?')){
-    return
+    return;
   }
-  await destroyNote(id)
-  await getNotes()
+  await destroyTrip(id);
+  await getTrips();
 }
 
+
+
+// Init table
+onMounted(async() => {
+  tableData.value = await findData();
+  initTabulator();
+  reInitOnResizeWindow();
+  div_table = document.querySelector('#div_table');
+});
 
 
 </script>

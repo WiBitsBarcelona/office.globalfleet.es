@@ -64,7 +64,7 @@ export default function useTrips(){
 
 
     const destroyTrip = async (id) => {
-        await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/destroy/${id}`, config)
+        await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/delete/${id}`, config)
     }
 
     
