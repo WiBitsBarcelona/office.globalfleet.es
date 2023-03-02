@@ -5,7 +5,7 @@
     class="hidden items-center justify-center absolute z-10 top-0 bottom-80 left-0 right-0"
   >
     <div
-      class="flex flex-col bg-gray-200 box border border-gray-100 items-center gap-5 w-64 pb-5"
+      class="flex flex-col bg-gray-200 box border border-gray-100 items-center gap-5 w-64"
     >
       <div class="flex w-full p-3 items-center justify-between">
         <p class="text-xl">Crear nuevo {{ chatType }}</p>
@@ -83,14 +83,14 @@
           id="new-chat-menu"
           class="hidden flex-col w-60 bg-white absolute z-10 right-0 top-14 border border-gray-100 rounded"
         >
-          <div
+          <!-- <div
             class="pl-5 py-2 w-full cursor-pointer border border-bottom hover:bg-gray-200"
             @click="newChat('grupo')"
           >
             <p>Nuevo grupo</p>
-          </div>
+          </div> -->
           <div
-            class="pl-5 py-2 w-full cursor-pointer border border-bottom hover:bg-gray-200"
+            class="pl-5 py-2 w-full cursor-pointer border border-bottom hover:bg-[#0096b2] hover:text-white"
             @click="newChat('chat')"
           >
             <p>Nuevo chat</p>
@@ -102,25 +102,53 @@
       <div
         v-if="currentActive === 'chat-button'"
         id="group-list"
-        class="flex flex-col gap-4 overflow-y-scroll scrollbar-hidden"
+        class="flex flex-col gap-[6px] overflow-y-scroll scrollbar-hidden"
       >
-        <transition-group name="fade">
-          <button
-            v-for="group in allGroups"
-            :key="group.conversationWith.guid"
-            class="flex gap-3 p-3 h-16 box cursor-pointer border-b bg-white"
-            @click="loadGroup(group.conversationWith.guid)"
-          >
-            <div
-              :id="group.conversationWith.guid + '-image'"
-              class="h-full w-14 flex items-center justify-center"
-            ></div>
-            <div class="flex flex-col justify-between h-full text-left">
-              <b :id="group.conversationWith.guid"></b>
-              <p :id="'last-message-' + group.conversationWith.guid"></p>
-            </div>
-          </button>
-        </transition-group>
+        <button
+          v-if="toggleList === false"
+          v-for="group in allGroups"
+          :key="group.conversationWith.guid"
+          class="flex gap-3 p-3 h-16 box cursor-pointer border-b bg-white"
+          @click="loadGroup(group.conversationWith.guid)"
+        >
+          <div
+            :id="group.conversationWith.guid + '-image'"
+            class="h-full w-14 flex items-center justify-center"
+          ></div>
+          <div class="flex flex-col justify-between h-full text-left">
+            <b :id="group.conversationWith.guid"></b>
+            <p :id="'last-message-' + group.conversationWith.guid"></p>
+          </div>
+        </button>
+
+        <!-- Crear nou chat -->
+        <h2
+          v-if="toggleList === true"
+          class="text-lg font-semibold text-gray-500"
+        >
+          Nuevo chat
+        </h2>
+        <button
+          v-if="toggleList === true"
+          v-for="user in usersList"
+          @click="createNewChat(user.uid)"
+          class="flex box gap-3 p-3 h-16 cursor-pointer border-b bg-white text-left"
+        >
+          <div class="h-full w-14 flex items-center justify-center">
+            <img
+              class="rounded-full w-14 h-14"
+              :src="
+                user.avatar
+                  ? user.avatar
+                  : `https://ui-avatars.com/api/?name=${user.name.charAt(
+                      0
+                    )}&color=7F9CF5&background=EBF4FF`
+              "
+              alt=""
+            />
+          </div>
+          {{ user.name }}
+        </button>
       </div>
 
       <!-- Perfil de l'usuari -->
@@ -169,7 +197,7 @@
         class="flex flex-col gap-2 h-5/6 w-full p-5 overflow-y-scroll scrollbar-hidden"
       ></div>
       <div
-        class="pt-4 sm:py-4 flex items-center border-t border-slate-200/60 dark:border-darkmode-400 w-full"
+        class="pt-4 sm:py-4 flex items-center border-t-[6px] border-slate-200/60 dark:border-darkmode-400 w-full"
       >
         <textarea
           id="message"
@@ -227,9 +255,9 @@ import { CometChat } from "@cometchat-pro/chat";
 import { ref } from "vue";
 
 // Credenciales de la Aplicacion de CometChat
-let appId = "";
-let apiKey = "";
-let authKey = "";
+let appId = "23195116ca7e245f";
+let apiKey = "a76fca94f28c87446b3de6dd7785355fbc9d8d78";
+let authKey = "b1809c12cf23a929539a2ac076b68277f7a4df9b";
 const region = "eu";
 
 // Variables globales
@@ -239,7 +267,66 @@ let allGroups = ref("");
 let chatType = ref("");
 let chatTag = ref("");
 let usersList = ref("");
+let toggleList = ref(false);
 let currentActive = ref("chat-button");
+
+// let appSettings = new CometChat.AppSettingsBuilder()
+//   .subscribePresenceForAllUsers()
+//   .setRegion(region)
+//   .autoEstablishSocketConnection(true)
+//   .build();
+
+// CometChat.init(appId, appSettings).then(
+//   () => {
+//     console.log("App iniciada");
+
+//     // Log-in the user
+//     CometChat.getLoggedinUser().then((user) => {
+//       if (!user) {
+//         // Usuari no loguejat
+//         CometChat.login(authKey).then(
+//           (user) => {
+//             console.log("Login correcte", user);
+//             getConversationsList(user.uid);
+//           },
+//           (error) => {
+//             console.log("Login faied", error);
+//           }
+//         );
+//       } else {
+//         console.log("Usuari ja loguejat", user);
+//         getConversationsList(user.uid);
+
+//         // Invoquem al listener
+//         const listenerID = "incoming_messages";
+
+// CometChat.addMessageListener(
+//   listenerID,
+//   new CometChat.MessageListener({
+//     onTextMessageReceived: (textMessage) => {
+//       // document.getElementById(
+//       //   "messages"
+//       // ).innerHTML += `<div class="message flex flex-col gap-1 rounded-3xl w-fit py-2 px-5 bg-gray-200"><b>${message.sender.name}</b><p>${message.text}</p></div>`;
+//       console.log("Text message received successfully", textMessage);
+//     },
+//     onMediaMessageReceived: (mediaMessage) => {
+//       console.log("Media message received successfully", mediaMessage);
+//     },
+//     onCustomMessageReceived: (customMessage) => {
+//       console.log(
+//         "Custom message received successfully",
+//         customMessage
+//       );
+//     },
+//   })
+// );
+//       }
+//     });
+//   },
+//   (error) => {
+//     console.log("Error al iniciar la App", error);
+//   }
+// );
 
 // Función para crear un usuario en caso de que el nuevo no exista
 const createUser = () => {
@@ -254,12 +341,35 @@ const createUser = () => {
   const appSetting = new CometChat.AppSettingsBuilder()
     .subscribePresenceForAllUsers()
     .setRegion(region)
+    .autoEstablishSocketConnection(true)
     .build();
 
   // Iniciamos una conexion con comet chat
   CometChat.init(appId, appSetting).then(
     () => {
       console.log("Chat iniciado correctamente");
+
+      let listenerID = "incoming_messages";
+
+      CometChat.addMessageListener(
+        listenerID,
+        new CometChat.MessageListener({
+          onTextMessageReceived: (textMessage) => {
+            console.log("Text message received successfully", textMessage);
+            if (textMessage.receiverId === actualGroup) {
+              document.getElementById(
+                "messages"
+              ).innerHTML += `<div class="message flex flex-col gap-1 rounded-3xl w-fit py-2 px-5 bg-gray-200"><b>${textMessage.sender.name}</b><p>${textMessage.text}</p></div>`;
+            }
+          },
+          onMediaMessageReceived: (mediaMessage) => {
+            console.log("Media message received successfully", mediaMessage);
+          },
+          onCustomMessageReceived: (customMessage) => {
+            console.log("Custom message received successfully", customMessage);
+          },
+        })
+      );
     },
     (error) => {
       console.log("Error durante el inicio del chat:", error);
@@ -317,6 +427,7 @@ const toggleActiveButtons = (e) => {
 
   // Segons el botó presionat, farem una cosa o una altre
   if (elementId === "chat-button") {
+    toggleList.value = false;
     getConversationsList(userData.uid);
     currentActive.value = "chat-button";
   } else if (elementId === "profile-button") {
@@ -342,6 +453,7 @@ const getConversationsList = (user) => {
   )
     .then((response) => response.json())
     .then((response) => {
+      console.log(response.data);
       allGroups.value = response.data;
       response.data.map((chat) => {
         getGroupMembers(
@@ -383,6 +495,58 @@ const getLastMessage = (user, GID) => {
   });
 };
 
+const lastMessageDay = (GID, message) => {
+  const GUID = GID;
+  const limit = 1;
+  let lastMessage = "";
+
+  const messagesRequest = new CometChat.MessagesRequestBuilder()
+    .setGUID(GUID)
+    .setLimit(limit)
+    .build();
+
+  messagesRequest.fetchPrevious().then((messages) => {
+    messages = messages.filter((message) => message.type === "text");
+    if (messages.length != 0) {
+      lastMessage = messages[0].sentAt;
+    }
+
+    console.log(lastMessage, message);
+
+    // Ultim missatge
+    const timestamp1 = Number(lastMessage) * 1000;
+    const date1 = new Date(timestamp1);
+
+    // Missatge enviat
+    const timestamp2 = Number(message) * 1000;
+    const date2 = new Date(timestamp2);
+
+    // Comprovem si són del mateix any
+    if (date1.getFullYear() === date2.getFullYear()) {
+      console.log("Mateix any");
+      // Comprovem si son del mateix mes
+      if (date1.getMonth() === date2.getMonth()) {
+        console.log("Mateix mes");
+        // Comprovem si son del mateix dia
+        if (date1.getDate() !== date2.getDate()) {
+          console.log("Dia diferent");
+          document.getElementById(
+            "messages"
+          ).innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">Hoy</p></div>`;
+        }
+      } else {
+        document.getElementById(
+          "messages"
+        ).innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-300">Hoy</p></div>`;
+      }
+    } else {
+      document.getElementById(
+        "messages"
+      ).innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-300">Hoy</p></div>`;
+    }
+  });
+};
+
 // Función para entrar al grupo y cargar los mensajes del mismo
 const loadGroup = (GID) => {
   const user = userData;
@@ -402,7 +566,6 @@ const loadGroup = (GID) => {
   getMessageHistory(user, GUID, chatName);
 
   // Llamamos a la función para preparar un listener de recibir y enviar mensajes
-  createMsgListener();
 
   CometChat.joinGroup(GUID, groupType, password).then(
     (group) => {
@@ -415,8 +578,8 @@ const loadGroup = (GID) => {
 };
 
 // Función para recibir mensajes
-const createMsgListener = () => {
-  const listenerID = "GLOBAL_LISTENER_ID";
+const createMsgListener = async () => {
+  const listenerID = "incoming_messages";
 
   CometChat.addMessageListener(
     listenerID,
@@ -425,13 +588,13 @@ const createMsgListener = () => {
         document.getElementById(
           "messages"
         ).innerHTML += `<div class="message flex flex-col gap-1 rounded-3xl w-fit py-2 px-5 bg-gray-200"><b>${message.sender.name}</b><p>${message.text}</p></div>`;
-        console.log("Mensaje de text recivido:", textMessage);
+        console.log("Text message received successfully", textMessage);
       },
-      onMediaMessageRecieved: (mediaMessage) => {
-        console.log("Mensaje multimedia recivido:", mediaMessage);
+      onMediaMessageReceived: (mediaMessage) => {
+        console.log("Media message received successfully", mediaMessage);
       },
-      onCustomMessageRecieved: (customMessage) => {
-        console.log("Mensaje personalizado recivido:", customMessage);
+      onCustomMessageReceived: (customMessage) => {
+        console.log("Custom message received successfully", customMessage);
       },
     })
   );
@@ -464,7 +627,7 @@ const getMessageDate = (strTime) => {
       "/" +
       (date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth()) +
       "/" +
-      date.getFullYear
+      date.getFullYear()
     );
   }
 };
@@ -516,7 +679,7 @@ const getMessageHistory = (user, GID, chatName) => {
           if (missatgeAnterior !== messageDate) {
             document.getElementById(
               "messages"
-            ).innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-300">${messageDate}</p></div>`;
+            ).innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${messageDate}</p></div>`;
           }
           missatgeAnterior = messageDate;
 
@@ -527,12 +690,12 @@ const getMessageHistory = (user, GID, chatName) => {
               document.getElementById(
                 "messages"
               ).innerHTML += `<div class="message flex gap-1 justify-end">
-                              <div class="flex gap-3 py-2 px-7 bg-[#8DF7F2] rounded-lg max-w-md">
+                              <div class="flex gap-3 py-2 px-7 bg-[#0096b2] text-white rounded-lg max-w-md">
                                 <p>
                                   ${message.text}
                                 </p>
                                 <div class="flex flex-col justify-end items-center">
-                                  <p class="text-gray-400">${convertStringToDate(
+                                  <p class="text-gray-300 text-xs">${convertStringToDate(
                                     message.sentAt
                                   )}</p>
                                 </div>
@@ -548,7 +711,7 @@ const getMessageHistory = (user, GID, chatName) => {
                                 <p>${message.text}</p>
                               </div>
                               <div class="flex flex-col justify-end items-center">
-                                <p class="text-gray-400">${convertStringToDate(
+                                <p class="text-gray-400 text-xs">${convertStringToDate(
                                   message.sentAt
                                 )}</p>
                               </div>
@@ -583,20 +746,24 @@ const sendMessage = () => {
 
   CometChat.sendMessage(textMessage).then(
     (message) => {
+      // Recullim l'ultim missatge per comprovar l'hora
+      lastMessageDay(receiverID, message.sentAt);
+
       document.getElementById(
         "messages"
       ).innerHTML += `<div class="message flex gap-1 justify-end">
-                              <div class="flex gap-3 py-2 px-7 bg-[#8DF7F2] rounded-lg max-w-md">
+                              <div class="flex gap-3 py-2 px-7 bg-[#0096b2] text-white rounded-lg max-w-md">
                                 <p>
                                   ${message.text}
                                 </p>
                                 <div class="flex flex-col justify-end items-center">
-                                  <p class="text-gray-400">${convertStringToDate(
+                                  <p class="text-gray-300 text-xs">${convertStringToDate(
                                     message.sentAt
                                   )}</p>
                                 </div>
                               </div>
                             </div>`;
+
       console.log("Mensaje enviado correctamente:", message);
 
       getLastMessage(userData.uid, actualGroup);
@@ -611,7 +778,7 @@ const sendMessage = () => {
 const newChat = (tipo) => {
   getUsersList();
   toggleMenu();
-  toggleModal();
+  // toggleModal();
   chatType.value = tipo;
   if (tipo === "chat") {
     chatTag.value = "usuario";
@@ -621,24 +788,14 @@ const newChat = (tipo) => {
 };
 
 // Crear un nuevo chat o grupo
-const createNewChat = () => {
+const createNewChat = (otherUserUID) => {
   // En cas de ser un grup
   let newChatName;
+  // Definim el nom del xat
+  newChatName = otherUserUID + "_" + userData.uid + "_chat";
 
-  // Variable on guardarem els usuaris seleccionats
-  const select = document.getElementById("new-chat-select");
-
-  var selected = [...select.options]
-    .filter((option) => option.selected)
-    .map((option) => option.value);
-
-  if (chatTag.value === "grupo") {
-    newChatName = document.getElementById("new-chat-input").value;
-    newChatName = newChatName.replaceAll(" ", "_");
-  } else {
-    newChatName = selected[0] + "_" + userData.name + "_chat";
-    newChatName = newChatName.replaceAll(" ", "_");
-  }
+  // Definim que és un chat
+  chatTag.value = "private";
 
   const options = {
     method: "POST",
@@ -649,7 +806,7 @@ const createNewChat = () => {
       apikey: apiKey,
     },
     body: JSON.stringify({
-      members: { participants: selected },
+      members: { participants: [otherUserUID] },
       type: chatTag.value === "grupo" ? "public" : "private",
       guid: newChatName,
       name: newChatName,
@@ -659,7 +816,7 @@ const createNewChat = () => {
   fetch(`https://${appId}.api-${region}.cometchat.io/v3/groups`, options)
     .then((response) => response.json())
     .then((response) => {
-      toggleModal();
+      toggleList.value = false;
       actualGroup = newChatName;
       getConversationsList(userData.uid);
       getSingleChatData(newChatName);
@@ -668,7 +825,7 @@ const createNewChat = () => {
 };
 
 // Obtener lista de usuarios registrados
-const getUsersList = () => {
+const getUsersList = async () => {
   const options = {
     method: "GET",
     headers: {
@@ -677,40 +834,63 @@ const getUsersList = () => {
     },
   };
 
-  fetch(
+  await fetch(
     `https://${appId}.api-${region}.cometchat.io/v3/users?perPage=100&page=1`,
     options
   )
     .then((response) => response.json())
-    .then((response) => {
+    .then(async (response) => {
       const data = response.data;
+      // Llista amb tots els usuaris de l'App
       const otherUsers = data.filter((user) => user.name != userData.name);
       const myUser = data.filter((user) => user.uid === userData.uid);
-      const role = myUser[0].role;
-      let possibleChats;
 
-      // Controlamos el rol del usuario a la hora de buscar la llista de xats disponibles per començar
-      if (role === "admin") {
-        possibleChats = otherUsers;
-      } else if (role === "gerente") {
-        // En caso de ser gerente podrà obrir un xat amb els jefes de tràfic
-        possibleChats = otherUsers.filter((user) => user.role !== "admin");
-      } else if (role === "jefe_trafico") {
-        // En caso de ser jefe de trafico solo podra abrir un chat con uno de sus conductores
-        possibleChats = otherUsers.filter(
-          (user) => user.role !== "admin" && user.role !== "gerente"
-        );
-      } else if (role === "conductor") {
-        // En caso de ser conductor solo va a poder abrir un chat con otro conductor
-        possibleChats = otherUsers.filter((user) => user.role === "conductor");
-      } else {
-        console.log("Rol default");
-        possibleChats = otherUsers
-      }
+      // Actualitzem la llista amb els xats que no tenim oberts
+      const ConversationList = await getConversationList();
 
-      usersList.value = possibleChats;
+      let excludedUsers = [];
+
+      otherUsers.forEach((otherUser) => {
+        ConversationList.data.forEach((conversation) => {
+          const conversationId = conversation.conversationId;
+          const userUid = otherUser.uid;
+          if (conversationId.includes(userUid)) {
+            console.log("Inclueix", conversation.conversationId);
+            excludedUsers.push(userUid);
+          }
+        });
+      });
+
+      toggleList.value = true;
+      usersList.value = otherUsers;
     })
     .catch((err) => console.error(err));
+};
+
+// Function para obtener lista de conversaciones del usuario
+const getConversationList = async () => {
+  const options = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      onBehalfOf: userData.uid,
+      apikey: apiKey,
+    },
+  };
+
+  const data = await fetch(
+    `https://${appId}.api-${region}.cometchat.io/v3/conversations?perPage=100&page=1`,
+    options
+  )
+    .then((response) => response.json())
+    .then((data) => {
+      // console.log(data);
+      return data;
+    })
+    .catch((err) => console.error(err));
+
+  // console.log("List", data);
+  return data;
 };
 
 // Funcion para obtener lista de miembros de un grupo
@@ -999,23 +1179,24 @@ const loadProfile = (uid) => {
     method: "GET",
     headers: {
       accept: "application/json",
-      apikey: "a76fca94f28c87446b3de6dd7785355fbc9d8d78",
+      apikey: apiKey,
     },
   };
 
   let iconTemplate = "";
 
   // Petició a la API per obtenir les dades d'un usuari en concret
-  fetch(`https://23195116ca7e245f.api-eu.cometchat.io/v3/users/${uid}`, options)
+  fetch(`https://${appId}.api-${region}.cometchat.io/v3/users/${uid}`, options)
     .then((response) => response.json())
     .then((response) => {
+      console.log(response);
       if (response.data.avatar) {
         iconTemplate = `
               <img class="rounded-full w-20 h-20" src="${response.data.avatar}">
             `;
       } else {
         iconTemplate = `
-            <img class="rounded-full w-20 h-20" src="https://ui-avatars.com/api/?name=${otherUser[0].name.charAt(
+            <img class="rounded-full w-20 h-20" src="https://ui-avatars.com/api/?name=${response.data.name.charAt(
               0
             )}&color=7F9CF5&background=EBF4FF" />
             `;
@@ -1045,15 +1226,15 @@ const users = [
     name: "Jordi",
     uid: "g_1_jordi",
     appId: "23195116ca7e245f",
-    apiKey: "8b721f4d8ce4d4d4aa49ac790d2240aa4ef93cc5",
-    authKey: "f272f99207e0e5a186a8c5134bbd96354b64bc69",
+    apiKey: "a76fca94f28c87446b3de6dd7785355fbc9d8d78",
+    authKey: "b1809c12cf23a929539a2ac076b68277f7a4df9b",
   },
   {
     name: "Marc",
     uid: "jc_1_marc",
     appId: "23195116ca7e245f",
-    apiKey: "8b721f4d8ce4d4d4aa49ac790d2240aa4ef93cc5",
-    authKey: "f272f99207e0e5a186a8c5134bbd96354b64bc69",
+    apiKey: "a76fca94f28c87446b3de6dd7785355fbc9d8d78",
+    authKey: "b1809c12cf23a929539a2ac076b68277f7a4df9b",
   },
   {
     name: "David Romans",
@@ -1064,15 +1245,3 @@ const users = [
   },
 ];
 </script>
-
-<style>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 1s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>
