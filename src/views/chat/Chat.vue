@@ -185,6 +185,7 @@
       </div>
     </div>
 
+    <!-- Cuadre de xat -->
     <div class="flex flex-col w-full h-[85vh] justify-between items-center box">
       <div id="current-chat-container" class="flex items-center h-20 w-full">
         <div
@@ -196,6 +197,8 @@
         id="messages"
         class="flex flex-col gap-2 h-5/6 w-full p-5 overflow-y-scroll scrollbar-hidden"
       ></div>
+
+      <!-- Textarea per escriure i botons per enviar el missatge -->
       <div
         class="pt-4 sm:py-4 flex items-center border-t-[6px] border-slate-200/60 dark:border-darkmode-400 w-full"
       >
@@ -270,64 +273,6 @@ let usersList = ref("");
 let toggleList = ref(false);
 let currentActive = ref("chat-button");
 
-// let appSettings = new CometChat.AppSettingsBuilder()
-//   .subscribePresenceForAllUsers()
-//   .setRegion(region)
-//   .autoEstablishSocketConnection(true)
-//   .build();
-
-// CometChat.init(appId, appSettings).then(
-//   () => {
-//     console.log("App iniciada");
-
-//     // Log-in the user
-//     CometChat.getLoggedinUser().then((user) => {
-//       if (!user) {
-//         // Usuari no loguejat
-//         CometChat.login(authKey).then(
-//           (user) => {
-//             console.log("Login correcte", user);
-//             getConversationsList(user.uid);
-//           },
-//           (error) => {
-//             console.log("Login faied", error);
-//           }
-//         );
-//       } else {
-//         console.log("Usuari ja loguejat", user);
-//         getConversationsList(user.uid);
-
-//         // Invoquem al listener
-//         const listenerID = "incoming_messages";
-
-// CometChat.addMessageListener(
-//   listenerID,
-//   new CometChat.MessageListener({
-//     onTextMessageReceived: (textMessage) => {
-//       // document.getElementById(
-//       //   "messages"
-//       // ).innerHTML += `<div class="message flex flex-col gap-1 rounded-3xl w-fit py-2 px-5 bg-gray-200"><b>${message.sender.name}</b><p>${message.text}</p></div>`;
-//       console.log("Text message received successfully", textMessage);
-//     },
-//     onMediaMessageReceived: (mediaMessage) => {
-//       console.log("Media message received successfully", mediaMessage);
-//     },
-//     onCustomMessageReceived: (customMessage) => {
-//       console.log(
-//         "Custom message received successfully",
-//         customMessage
-//       );
-//     },
-//   })
-// );
-//       }
-//     });
-//   },
-//   (error) => {
-//     console.log("Error al iniciar la App", error);
-//   }
-// );
-
 // Función para crear un usuario en caso de que el nuevo no exista
 const createUser = () => {
   const username = document.getElementById("username").value;
@@ -347,8 +292,6 @@ const createUser = () => {
   // Iniciamos una conexion con comet chat
   CometChat.init(appId, appSetting).then(
     () => {
-      console.log("Chat iniciado correctamente");
-
       let listenerID = "incoming_messages";
 
       CometChat.addMessageListener(
@@ -356,11 +299,29 @@ const createUser = () => {
         new CometChat.MessageListener({
           onTextMessageReceived: (textMessage) => {
             console.log("Text message received successfully", textMessage);
+            // En cas de tenir el xat obert, mostrarem el missatge
             if (textMessage.receiverId === actualGroup) {
-              document.getElementById(
-                "messages"
-              ).innerHTML += `<div class="message flex flex-col gap-1 rounded-3xl w-fit py-2 px-5 bg-gray-200"><b>${textMessage.sender.name}</b><p>${textMessage.text}</p></div>`;
+              document.getElementById("messages").innerHTML += `
+              <div class="message flex gap-3 rounded-lg w-fit py-2 px-5 bg-gray-200 max-w-md">
+                              <div class="flex flex-col">
+                                <b>${textMessage.sender.name}</b>
+                                <p>${textMessage.text}</p>
+                              </div>
+                              <div class="flex flex-col justify-end items-center">
+                                <p class="text-gray-400 text-xs">${convertStringToDate(
+                                  textMessage.sentAt
+                                )}</p>
+                              </div>
+                            </div>`;
             }
+
+            //Fem baixar l'scroll abaix de tot
+            const messageBody = document.getElementById("messages");
+            messageBody.scrollTop =
+              messageBody.scrollHeight - messageBody.clientHeight;
+
+            // Actualitzem últim missatge de la llista del xat
+            getLastMessage(textMessage.receiverId);
           },
           onMediaMessageReceived: (mediaMessage) => {
             console.log("Media message received successfully", mediaMessage);
@@ -462,14 +423,14 @@ const getConversationsList = (user) => {
           chat.conversationWith.name,
           false
         );
-        getLastMessage(user, chat.conversationWith.guid);
+        getLastMessage(chat.conversationWith.guid);
       });
     })
     .catch((err) => console.error(err));
 };
 
 // Obtener el ultimo mensaje de cada conversación
-const getLastMessage = (user, GID) => {
+const getLastMessage = (GID) => {
   const GUID = GID;
   const limit = 1;
   let lastMessage = "";
@@ -574,29 +535,6 @@ const loadGroup = (GID) => {
     (error) => {
       console.log("Error al entrar al grupo:", error);
     }
-  );
-};
-
-// Función para recibir mensajes
-const createMsgListener = async () => {
-  const listenerID = "incoming_messages";
-
-  CometChat.addMessageListener(
-    listenerID,
-    new CometChat.MessageListener({
-      onTextMessageReceived: (textMessage) => {
-        document.getElementById(
-          "messages"
-        ).innerHTML += `<div class="message flex flex-col gap-1 rounded-3xl w-fit py-2 px-5 bg-gray-200"><b>${message.sender.name}</b><p>${message.text}</p></div>`;
-        console.log("Text message received successfully", textMessage);
-      },
-      onMediaMessageReceived: (mediaMessage) => {
-        console.log("Media message received successfully", mediaMessage);
-      },
-      onCustomMessageReceived: (customMessage) => {
-        console.log("Custom message received successfully", customMessage);
-      },
-    })
   );
 };
 
@@ -719,6 +657,11 @@ const getMessageHistory = (user, GID, chatName) => {
             }
           }
         });
+        //Fem baixar l'scroll abaix de tot
+        const messageBody = document.getElementById("messages");
+        messageBody.scrollTop =
+          messageBody.scrollHeight - messageBody.clientHeight;
+
         // En cas de no haver cap missatge encara a la conversa
       } else {
         getSingleChatData(GUID);
@@ -765,8 +708,12 @@ const sendMessage = () => {
                             </div>`;
 
       console.log("Mensaje enviado correctamente:", message);
+      //Fem baixar l'scroll abaix de tot
+      const messageBody = document.getElementById("messages");
+      messageBody.scrollTop =
+        messageBody.scrollHeight - messageBody.clientHeight;
 
-      getLastMessage(userData.uid, actualGroup);
+      getLastMessage(actualGroup);
     },
     (error) => {
       console.log("Error al enviar el mensaje:", error);
