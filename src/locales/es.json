@@ -68,6 +68,10 @@
       "export_excel": "Archivo XLSX",
       "export_csv": "Archivo CSV",
       "no_matching_records_found": "No se encuentran registros" 
+  },
+
+  "form": {
+    "required": "Campo requerido"
   }
-  
+
 }

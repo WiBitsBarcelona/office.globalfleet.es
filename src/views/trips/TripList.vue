@@ -1,6 +1,5 @@
 <template>
-
-
+  
     <div class="intro-y box p-5 mt-5" v-if="isCreate">
         <Create
             @saveTrip="saveTrip"
@@ -183,9 +182,6 @@ const findData = async() => {
 
 
 
-
-
-
 // Table 
 const initTabulator = () => {
   tabulator.value = new Tabulator(tableRef.value, {
@@ -304,7 +300,7 @@ const initTabulator = () => {
             }
 
             if(event.target.id === 'btn_delete'){
-              deleteTrip(cell.getData().id, cell.getData().name);
+              deleteTrip(cell.getData().id, cell.getData().name); //TODO check name
             }
 
           });
@@ -419,22 +415,22 @@ const updateTripForm = async (trip) => {
 
 
 // Delete
-const deleteTrip = async (id) => {
+const deleteTrip = async (id, description) => {
   Swal.fire({
-    icon: 'info',
-    title: 'Do you want to save the changes?',
+    icon: 'warning',
+    title: t("message.are_you_sure"),
+    text: t("delete") +': '+ description,
     showCancelButton: true,
-    confirmButtonText: t("save"),
-    confirmButtonColor: import.meta.env.VITE_COLOR_TRIRD_APP,
+    confirmButtonText: t("delete"),
+    confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
   }).then(async(result) => {
     if (result.isConfirmed) {
-      // await destroyTrip(id);
-      // await getTrips();
-      Swal.fire(t("message.record_saved"), '', 'success');
+      await destroyTrip(id);
+      await getTrips();
+      Swal.fire(t("message.record_deleted"), '', 'success');
     }
   });
 }
-
 
 
 // Init table
@@ -445,6 +441,4 @@ onMounted(async() => {
   div_table = document.querySelector('#div_table');
 });
 
-
 </script>
-

@@ -7,8 +7,7 @@ import globalComponents from "./global-components";
 import utils from "./utils";
 import "./assets/css/app.css";
 import messages from "@intlify/unplugin-vue-i18n/messages";
-import VueSweetalert2 from 'vue-sweetalert2';
-import 'sweetalert2/dist/sweetalert2.min.css';
+
 
 const i18n = createI18n({
     legacy: false,
@@ -26,5 +25,4 @@ const app = createApp(App).use(router).use(createPinia()).use(i18n);
 globalComponents(app);
 utils(app);
 
-app.use(VueSweetalert2);
 app.mount("#app");
