@@ -145,6 +145,9 @@
   import Edit from "@/views/trips/TripEdit.vue";
 
   import Swal from "sweetalert2";
+  //TODO pendiente
+  import Toastify from "toastify-js";
+
 
 
   const { trips, getTrips, destroyTrip, storeTrip, updateTrip } = useTrips();
@@ -382,7 +385,25 @@ const cancelCreate = () => {
 }
 
 const saveTrip = async (form) => {
-  await storeTrip({ ...form });
+  
+  
+  //await storeTrip({ ...form });
+
+
+    Toastify({
+      node: dom("#failed-notification-content")
+        .clone()
+        .removeClass("hidden")[0],
+      duration: 3000,
+      newWindow: true,
+      close: true,
+      gravity: "top",
+      position: "right",
+      stopOnFocus: true,
+    }).showToast();
+
+
+  
   await getTrips();
   isCreate.value = false;
   div_table.style.display = 'block';
