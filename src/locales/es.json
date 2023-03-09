@@ -72,6 +72,9 @@
 
   "form": {
     "required": "Campo requerido"
-  }
+  },
+  "plate": "Matrcula",
+  "employee": "Empleado",
+  "company": "Compaía"
 
 }
