@@ -73,8 +73,8 @@
   "form": {
     "required": "Campo requerido"
   },
-  "plate": "Matrcula",
+  "plate": "Matricula",
   "employee": "Empleado",
-  "company": "Compaía"
+  "company": "Compañía"
 
 }

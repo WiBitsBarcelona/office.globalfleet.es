@@ -47,10 +47,10 @@ export default function useTrips(){
 
     }
 
-    const updateTrip = async (id, note) => {
+    const updateTrip = async (id, data) => {
         errors.value = ''
         try {
-            await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/update/${id}`, note, config)
+            await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/update/${id}`, data, config)
             await router.push({ name: 'note.index' })
         } catch (e) {
             console.log(e)

@@ -18,6 +18,7 @@ export default function useVehicle() {
 	}
 
 	const getVehicles = async () => {
+		errors.value = ''
 		try {
 			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}vehicles/list`, config);
 			vehicles.value = response.data.data;
@@ -33,6 +34,7 @@ export default function useVehicle() {
 
 
 	const getVehicle = async (id) => {
+		errors.value = ''
 		try {
 		let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}vehicles/show/${id}`, config);
 		vehicle.value = response.data.data;
@@ -51,7 +53,7 @@ export default function useVehicle() {
 		errors.value = ''
 		try {
 			await axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}vehicles/store`, data, config);
-			//await router.push({ name: 'vehicle.index' })
+			//await router.push({ name: 'vehicle.index' });
 		} catch (e) {
 			console.log(e);
 			// if (e.response.status_code === 422) {
@@ -63,11 +65,11 @@ export default function useVehicle() {
 	}
 
 
-	const updateVehicle = async (id, vehicle) => {
+	const updateVehicle = async (id, data) => {
 		errors.value = ''
 		try {
-			await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}vehicles/update/${id}`, vehicle)
-			await router.push({ name: 'vehicle.index' })
+			await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}vehicles/update/${id}`, data, config);
+			//await router.push({ name: 'vehicle.index' });
 		} catch (e) {
 			console.log(e)
 			// if (e.response.status === 422) {
@@ -77,9 +79,11 @@ export default function useVehicle() {
 			// }
 		}
 	}
+
+
 	const destroyVehicle = async (id) => {
 		try {
-			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}vehicles/destroy/${id}`)
+			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}vehicles/destroy/${id}`, config);
 		} catch (e) {
 			console.log(e)
 			// if (e.response.status === 422) {
@@ -89,6 +93,8 @@ export default function useVehicle() {
 			// }
 		}
 	}
+
+
 	return {
 		errors,
 		vehicle,
@@ -99,4 +105,5 @@ export default function useVehicle() {
 		updateVehicle,
 		destroyVehicle,
 	}
+	
 }

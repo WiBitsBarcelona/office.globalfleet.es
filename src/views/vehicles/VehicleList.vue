@@ -1,6 +1,6 @@
 <template>
 
-	<!-- BEGIN: Page Layout Create
+	<!-- BEGIN: Page Layout Create -->
 	<div class="intro-y box p-5 mt-5" v-if="isCreate">
 		<Create
 			@saveVehicle="saveVehicle"
@@ -8,18 +8,14 @@
 		/>
 	</div>
 
-	BEGIN: Page Layout Update 
-	<div class="intro-y box p-5 mt-5" v-if="isUpdate">
+
+	<!-- BEGIN: Page Layout Update -->
+	<div class="intro-y box p-5 mt-5" v-if="isEdit">
 		<Edit
 			:vehicleId="vehicleId"
-			@cancelEdit="cancelEdit"
-			@updateTripForm="updateVehicleForm"
+			@cancelEdit="cancelEdit" 
+			@updateVehicleForm="updateVehicleForm"
 		/>
-	</div> -->
-
-
-	<div class="intro-y box p-5 mt-5" id="div_table">
-		hola
 	</div>
 
 
@@ -123,12 +119,10 @@
 			></div>
 		</div>
 
-	 <!-- END: HTML Table Data  -->
+	<!-- END: HTML Table Data -->
 	</div>
 
 </template>
-
-
 
 
 <script setup>
@@ -140,18 +134,25 @@
 	import xlsx from "xlsx";
 	import Tabulator from "tabulator-tables";
 
+
+		
+
 	import useVehicles from "@/composables/vehicles";
-	import Create from "@/views/vehicles/VehicleCreate.vue";
-	import Edit from "@/views/vehicles/VehicleEdit.vue";
+	
+	import Create from '@/components/vehicles/VehicleCreate.vue';
+	import Edit from '@/components/vehicles/VehicleEdit.vue';
+
+
+
 
 	const { vehicles, getVehicles, storeVehicle, updateVehicle, destroyVehicle} = useVehicles();
 	const { t } = useI18n();
-	// const isCreate = ref(false);
-	// const isUpdate = ref(false);
-	// const vehicleId = ref(0);
+	const isCreate = ref(false);
+	const isEdit = ref(false);
+	const vehicleId = ref(0);
 	// Tabulator
 	const tableData = reactive([]); //data for table to display
-	//let div_table;
+	let div_table;
 	const tableRef = ref();
 	const tabulator = ref();
 
@@ -161,22 +162,14 @@
 		value: "",
 	});
 
-
-
 	const findData = async() => {
-
-		
 		let dataArr = [];
 		await getVehicles();
 		vehicles.value.forEach((elem)=>{
 			dataArr.push(toRaw(elem));
 		});
-		return dataArr;
+	return dataArr;
 	}
-
-
-	
-
 
 	// Table
 	const initTabulator = () => {
@@ -199,28 +192,28 @@
 				headerSort: false,
 			},
 			{
-				title: "plate",
+				title: t("plate"),
 				minWidth: 200,
 				responsive: 0,
 				field: "plate",
 				vertAlign: "middle",
 			},
 			{
-				title: "employee_id",
+				title: t("employee"),
 				minWidth: 200,
 				responsive: 0,
 				field: "employee_id",
 				vertAlign: "middle",
 			},
 			{
-				title: "company_id",
+				title: t("company"),
 				minWidth: 200,
 				responsive: 0,
 				field: "company_id",
 				vertAlign: "middle",
 			},
 			{
-				title: "ACTIONS",
+				title: t("actions"),
 				minWidth: 200,
 				field: "actions",
 				responsive: 1,
@@ -244,7 +237,7 @@
 						}
 
 						if(event.target.id === 'btn_delete'){
-							deleteVehicle(cell.getData().id, cell.getData().name); // TODO check name
+							deleteVehicle(cell.getData().id, cell.getData().plate); // TODO check name
 						}
 
 						});
@@ -272,25 +265,25 @@
 				nameAttr: "data-lucide",
 			});
 		});
-		};
+	};
 
-		// Filter function
-			const onFilter = () => {
+	// Filter function
+		const onFilter = () => {
 			tabulator.value.setFilter(filter.field, filter.type, filter.value);
-		};
+	};
 
-		// On reset filter
-		const onResetFilter = () => {
-			filter.field = "name";
-			filter.type = "like";
-			filter.value = "";
-			onFilter();
-		};
+	// On reset filter
+	const onResetFilter = () => {
+		filter.field = "name";
+		filter.type = "like";
+		filter.value = "";
+		onFilter();
+	};
 
-		// Export
-		const onExportCsv = () => {
-			tabulator.value.download("csv", "data.csv");
-		};
+	// Export
+	const onExportCsv = () => {
+		tabulator.value.download("csv", "data.csv");
+	};
 
 	const onExportXlsx = () => {
 		const win = window;
@@ -299,16 +292,10 @@
 		sheetName: "Vehicles",
 		});
 	};
-
-	
 	// Print
 	const onPrint = () => {
 		tabulator.value.print();
 	};
-
-
-
-
 
 	//Store
 	const createVehicle = () => {
@@ -330,20 +317,20 @@
 
 	//Edit
 	const editVehicle = (id) => {
-		isUpdate.value = true;
+		isEdit.value = true;
 		div_table.style.display = 'none';
 		vehicleId.value = id;
 	}
 
 	const cancelEdit = async() => {
-		isUpdate.value = false;
+		isEdit.value = false;
 		div_table.style.display = 'block';
 	}
 
 	const updateVehicleForm = async (vehicle) => {
 		await updateVehicle(vehicle.id, vehicle);
 		await getVehicles();
-		isUpdate.value = false;
+		isEdit.value = false;
 		div_table.style.display = 'block';
 	}
 
@@ -351,23 +338,21 @@
 	const deleteVehicle = async (id, description) => {
 		Swal.fire({
 			icon: 'warning',
-			title: 't("message.are_you_sure")',
+			title: t("message.are_you_sure"),
 			text: t("delete") +': '+ description,
 			showCancelButton: true,
 			confirmButtonText: t("delete"),
 			confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
-			}).then(async(result) => {
-				if (result.isConfirmed) {
-					await destroyVehicle(id);
-					await getVehicles();
-					Swal.fire(t("message.record_deleted"), '', 'success');
-				}
+		}).then(async(result) => {
+			if (result.isConfirmed) {
+				await destroyVehicle(id);
+				await getVehicles();
+				Swal.fire(t("message.record_deleted"), '', 'success');
+			}
 
-			});
+		});
 
-		}
-
-
+	}
 
 	// Init table
 	onMounted(async() => {
