@@ -8,17 +8,14 @@
 		/>
 	</div>
 
-
 	<!-- BEGIN: Page Layout Update -->
 	<div class="intro-y box p-5 mt-5" v-if="isEdit">
 		<Edit
 			:vehicleId="vehicleId"
-			@cancelEdit="cancelEdit" 
+			@cancelEdit="cancelEdit"
 			@updateVehicleForm="updateVehicleForm"
 		/>
 	</div>
-
-
 
 	<!-- BEGIN: Page Layout Table -->
 	<div class="intro-y box p-5 mt-5" id="div_table">
@@ -33,9 +30,9 @@
 						v-model="filter.field"
 						class="form-select w-full sm:w-32 2xl:w-full mt-2 sm:mt-0 sm:w-auto"
 					>
-						<option value="name">{{ $t("plate") }}</option>
-						<option value="name">{{ $t("employee") }}</option>
-						<option value="name">{{ $t("company") }}</option>
+						<option value="plate">{{ $t("plate") }}</option>
+						<option value="employee_id">{{ $t("employee") }}</option>
+						<option value="company_id">{{ $t("company") }}</option>
 					</select>
 				</div>
 				<div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
@@ -123,8 +120,6 @@
 	</div>
 
 </template>
-
-
 <script setup>
 
 	import { ref, reactive, onMounted, toRaw } from "vue";
@@ -134,16 +129,9 @@
 	import xlsx from "xlsx";
 	import Tabulator from "tabulator-tables";
 
-
-		
-
 	import useVehicles from "@/composables/vehicles";
-	
-	import Create from '@/components/vehicles/VehicleCreate.vue';
-	import Edit from '@/components/vehicles/VehicleEdit.vue';
-
-
-
+	import Create from "@/components/vehicles/VehicleCreate.vue";
+	import Edit from "@/components/vehicles/VehicleEdit.vue";
 
 	const { vehicles, getVehicles, storeVehicle, updateVehicle, destroyVehicle} = useVehicles();
 	const { t } = useI18n();
@@ -157,7 +145,7 @@
 	const tabulator = ref();
 
 	const filter = reactive({
-		field: "name",
+		field: "plate",
 		type: "like",
 		value: "",
 	});
@@ -202,14 +190,14 @@
 				title: t("employee"),
 				minWidth: 200,
 				responsive: 0,
-				field: "employee_id",
+				field: "employee.name",
 				vertAlign: "middle",
 			},
 			{
 				title: t("company"),
 				minWidth: 200,
 				responsive: 0,
-				field: "company_id",
+				field: "company.name",
 				vertAlign: "middle",
 			},
 			{
@@ -237,7 +225,7 @@
 						}
 
 						if(event.target.id === 'btn_delete'){
-							deleteVehicle(cell.getData().id, cell.getData().plate); // TODO check name
+							deleteVehicle(cell.getData().id, cell.getData().name); // TODO check name
 						}
 
 						});
@@ -268,13 +256,18 @@
 	};
 
 	// Filter function
-		const onFilter = () => {
-			tabulator.value.setFilter(filter.field, filter.type, filter.value);
+	const onFilter = () => {
+
+		console.log({filter});
+		
+		tabulator.value.setFilter(filter.field, filter.type, filter.value);
+
+
 	};
 
 	// On reset filter
 	const onResetFilter = () => {
-		filter.field = "name";
+		filter.field = "plate";
 		filter.type = "like";
 		filter.value = "";
 		onFilter();
@@ -327,9 +320,14 @@
 		div_table.style.display = 'block';
 	}
 
-	const updateVehicleForm = async (vehicle) => {
-		await updateVehicle(vehicle.id, vehicle);
-		await getVehicles();
+	const updateVehicleForm = async (id, form) => {
+		await updateVehicle(id, {...form});
+		//await getVehicles();
+
+		//tabulator.value.clearData();
+		tableData.value = await findData();
+		tabulator.value.updateData(tableData.value);
+
 		isEdit.value = false;
 		div_table.style.display = 'block';
 	}

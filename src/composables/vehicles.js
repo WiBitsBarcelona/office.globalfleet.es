@@ -36,8 +36,8 @@ export default function useVehicle() {
 	const getVehicle = async (id) => {
 		errors.value = ''
 		try {
-		let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}vehicles/show/${id}`, config);
-		vehicle.value = response.data.data;
+			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}vehicles/show/${id}`, config);
+			vehicle.value = response.data.data;
 		} catch (e) {
 			console.log(e);
 			// if (e.response.status_code === 422) {
@@ -105,5 +105,5 @@ export default function useVehicle() {
 		updateVehicle,
 		destroyVehicle,
 	}
-	
+
 }
