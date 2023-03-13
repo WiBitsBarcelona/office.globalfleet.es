@@ -108,11 +108,9 @@
 		},
 		employee_id: {
 			required: helpers.withMessage(t("form.required"), required),
-			minLength: minLength(2),
 		},
 		company_id: {
 			required: helpers.withMessage(t("form.required"), required),
-			minLength: minLength(2),
 		},
 	};
 

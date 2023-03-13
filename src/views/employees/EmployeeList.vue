@@ -3,7 +3,7 @@
 	<!-- BEGIN: Page Layout Create -->
 	<div class="intro-y box p-5 mt-5" v-if="isCreate">
 		<Create
-			@saveVehicleForm="saveVehicleForm"
+			@saveEmployeeForm="saveEmployeeForm"
 			@cancelCreate="cancelCreate"
 		/>
 	</div>
@@ -11,9 +11,9 @@
 	<!-- BEGIN: Page Layout Update -->
 	<div class="intro-y box p-5 mt-5" v-if="isEdit">
 		<Edit
-			:vehicleId="vehicleId"
+			:employeeId="employeeId"
 			@cancelEdit="cancelEdit"
-			@updateVehicleForm="updateVehicleForm"
+			@updateEmployeeForm="updateEmployeeForm"
 		/>
 	</div>
 
@@ -30,9 +30,11 @@
 						v-model="filter.field"
 						class="form-select w-full sm:w-32 2xl:w-full mt-2 sm:mt-0 sm:w-auto"
 					>
-						<option value="plate">{{ $t("plate") }}</option>
-						<option value="employee_id">{{ $t("employee_id") }}</option>
+						<option value="user_id">{{ $t("user_id") }}</option>
 						<option value="company_id">{{ $t("company_id") }}</option>
+						<option value="name">{{ $t("name") }}</option>
+						<option value="surname">{{ $t("surname") }}</option>
+						<option value="fiscal_identification">{{ $t("fiscal_identification") }}</option>
 					</select>
 				</div>
 				<div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
@@ -86,7 +88,7 @@
 			<div class="flex mt-5 sm:mt-0">
 				<button
 					class="btn btn-primary w-1/2 sm:w-auto mr-2"
-					@click="createVehicle"
+					@click="createEmployee"
 				>
 					<PlusCircleIcon class="w-4 h-4" />
 				</button>
@@ -129,15 +131,15 @@
 	import xlsx from "xlsx";
 	import Tabulator from "tabulator-tables";
 
-	import useVehicles from "@/composables/vehicles";
-	import Create from "@/components/vehicles/VehicleCreate.vue";
-	import Edit from "@/components/vehicles/VehicleEdit.vue";
+	import useEmployees from "@/composables/employees";
+	import Create from "@/components/employees/EmployeeCreate.vue";
+	import Edit from "@/components/employees/EmployeeEdit.vue";
 
-	const { vehicles, getVehicles, storeVehicle, updateVehicle, destroyVehicle} = useVehicles();
+	const { employees, getEmployees, storeEmployee, updateEmployee, destroyEmployee} = useEmployees();
 	const { t } = useI18n();
 	const isCreate = ref(false);
 	const isEdit = ref(false);
-	const vehicleId = ref(0);
+	const employeeId = ref(0);
 	// Tabulator
 	const tableData = reactive([]); //data for table to display
 	let div_table;
@@ -145,15 +147,15 @@
 	const tabulator = ref();
 
 	const filter = reactive({
-		field: "plate",
+		field: "user_id",
 		type: "like",
 		value: "",
 	});
 
 	const findData = async() => {
 		let dataArr = [];
-		await getVehicles();
-		vehicles.value.forEach((elem)=>{
+		await getEmployees();
+		employees.value.forEach((elem)=>{
 			dataArr.push(toRaw(elem));
 		});
 	return dataArr;
@@ -180,24 +182,38 @@
 				headerSort: false,
 			},
 			{
-				title: t("plate"),
+				title: t("user_id"),
 				minWidth: 200,
 				responsive: 0,
-				field: "plate",
-				vertAlign: "middle",
-			},
-			{
-				title: t("employee_id"),
-				minWidth: 200,
-				responsive: 0,
-				field: "employee_id",
+				field: "user_id",
 				vertAlign: "middle",
 			},
 			{
 				title: t("company_id"),
 				minWidth: 200,
 				responsive: 0,
-				field: "company_id",
+				field: "company.name",
+				vertAlign: "middle",
+			},
+			{
+				title: t("name"),
+				minWidth: 200,
+				responsive: 0,
+				field: "name",
+				vertAlign: "middle",
+			},
+			{
+				title: t("surname"),
+				minWidth: 200,
+				responsive: 0,
+				field: "surname",
+				vertAlign: "middle",
+			},
+			{
+				title: t("fiscal_identification"),
+				minWidth: 200,
+				responsive: 0,
+				field: "fiscal_identification",
 				vertAlign: "middle",
 			},
 			{
@@ -221,11 +237,11 @@
 					dom(a).on("click", function (event) {
 
 						if(event.target.id === 'btn_edit'){
-							editVehicle(cell.getData().id);
+							editEmployee(cell.getData().id);
 						}
 
 						if(event.target.id === 'btn_delete'){
-							deleteVehicle(cell.getData().id, cell.getData().name); // TODO check name
+							deleteEmployee(cell.getData().id, cell.getData().name); // TODO check name
 						}
 
 						});
@@ -262,7 +278,7 @@
 
 	// On reset filter
 	const onResetFilter = () => {
-		filter.field = "plate";
+		filter.field = "user_id";
 		filter.type = "like";
 		filter.value = "";
 		onFilter();
@@ -277,7 +293,7 @@
 		const win = window;
 		win.XLSX = xlsx;
 		tabulator.value.download("xlsx", "data.xlsx", {
-		sheetName: "Vehicles",
+		sheetName: "Employees",
 		});
 	};
 	// Print
@@ -286,7 +302,7 @@
 	};
 
 	//Store
-	const createVehicle = () => {
+	const createEmployee = () => {
 		isCreate.value = true;
 		div_table.style.display = 'none';
 	}
@@ -296,9 +312,9 @@
 		div_table.style.display = 'block';
 	}
 
-	const saveVehicleForm = async (form) => {
-		await storeVehicle({ ...form });
-		//await getVehicles();
+	const saveEmployeeForm = async (form) => {
+		await storeEmployee({ ...form });
+		//await getEmployees();
 		tableData.value = await findData();
 		tabulator.value.replaceData(tableData.value);
 		isCreate.value = false;
@@ -306,10 +322,10 @@
 	}
 
 	//Edit
-	const editVehicle = (id) => {
+	const editEmployee = (id) => {
 		isEdit.value = true;
 		div_table.style.display = 'none';
-		vehicleId.value = id;
+		employeeId.value = id;
 	}
 
 	const cancelEdit = async() => {
@@ -317,9 +333,9 @@
 		div_table.style.display = 'block';
 	}
 
-	const updateVehicleForm = async (id, data) => {
-		await updateVehicle(id, data);
-		//await getVehicles();
+	const updateEmployeeForm = async (id, data) => {
+		await updateEmployee(id, data);
+		//await getEmployees();
 		tableData.value = await findData();
 		tabulator.value.updateData(tableData.value);
 		isEdit.value = false;
@@ -327,7 +343,7 @@
 	}
 
 	// Delete
-	const deleteVehicle = async (id, description) => {
+	const deleteEmployee = async (id, description) => {
 		Swal.fire({
 			icon: 'warning',
 			title: t("message.are_you_sure"),
@@ -337,8 +353,8 @@
 			confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
 		}).then(async(result) => {
 			if (result.isConfirmed) {
-				await destroyVehicle(id);
-				await getVehicles();
+				await destroyEmployee(id);
+				await getEmployees();
 				Swal.fire(t("message.record_deleted"), '', 'success');
 			}
 

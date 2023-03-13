@@ -99,7 +99,7 @@
 	const { vehicle, getVehicle } = useVehicles();
 	const { t } = useI18n();
 	const props = defineProps(['vehicleId']);
-	const emit = defineEmits(['cancelEdit', 'updatevehicleForm']);
+	const emit = defineEmits(['cancelEdit', 'updateVehicleForm']);
 
 	const rules = {
 		plate: {
@@ -108,11 +108,9 @@
 		},
 		employee_id: {
 			required: helpers.withMessage(t("form.required"), required),
-			minLength: minLength(2),
 		},
 		company_id: {
 			required: helpers.withMessage(t("form.required"), required),
-			minLength: minLength(2),
 		},
 	};
 
@@ -135,6 +133,7 @@
 
 	onMounted(async () => {
 		await getVehicle(props.vehicleId);
+		console.log(vehicle);
 		formData.plate = vehicle.value.plate;
 		formData.employee_id = vehicle.value.employee_id;
 		formData.company_id = vehicle.value.company_id;
