@@ -184,21 +184,18 @@
 				minWidth: 200,
 				responsive: 0,
 				field: "plate",
-				vertAlign: "middle",
 			},
 			{
 				title: t("employee"),
 				minWidth: 200,
 				responsive: 0,
 				field: "employee.name",
-				vertAlign: "middle",
 			},
 			{
 				title: t("company"),
 				minWidth: 200,
 				responsive: 0,
 				field: "company.name",
-				vertAlign: "middle",
 			},
 			{
 				title: t("actions"),
@@ -257,12 +254,7 @@
 
 	// Filter function
 	const onFilter = () => {
-
-		console.log({filter});
-		
 		tabulator.value.setFilter(filter.field, filter.type, filter.value);
-
-
 	};
 
 	// On reset filter
@@ -303,7 +295,9 @@
 
 	const saveVehicle = async (form) => {
 		await storeVehicle({ ...form });
-		await getVehicles();
+		//await getVehicles();
+		tableData.value = await findData();
+		tabulator.value.updateData(tableData.value);
 		isCreate.value = false;
 		div_table.style.display = 'block';
 	}
@@ -323,11 +317,8 @@
 	const updateVehicleForm = async (id, form) => {
 		await updateVehicle(id, {...form});
 		//await getVehicles();
-
-		//tabulator.value.clearData();
 		tableData.value = await findData();
 		tabulator.value.updateData(tableData.value);
-
 		isEdit.value = false;
 		div_table.style.display = 'block';
 	}

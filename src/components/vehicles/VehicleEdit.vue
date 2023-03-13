@@ -21,9 +21,6 @@
 				</div>
 			</div>
 
-
-
-
 			<div class="col-span-12 md:col-span-6 lg:col-span-6">
 				<div class="input-form">
 					<label for="employee_id" class="form-label w-full">
@@ -39,9 +36,6 @@
 				</div>
 			</div>
 
-
-
-
 			<div class="col-span-12 md:col-span-6 lg:col-span-6">
 				<div class="input-form">
 					<label for="company_id" class="form-label w-full">
@@ -56,8 +50,6 @@
 					</template>
 				</div>
 			</div>
-
-
 
 
 			<!-- BEGIN: Buttons -->
@@ -78,11 +70,9 @@
 			</div>
 			<!-- END: Buttons -->
 
-
 		</div>
 		<!-- END: container -->
 		
-
 	</form>
 	<!-- END: Form -->
 
@@ -93,17 +83,10 @@
 
 import { onMounted, reactive, toRefs } from 'vue';
 import useVehicles from '@/composables/vehicles';
-import {
-	required,
-	minLength,
-	maxLength,
-	email,
-	url,
-	integer,
-} from "@vuelidate/validators";
-import { useVuelidate } from "@vuelidate/core";
+import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
+import { useVuelidate } from '@vuelidate/core';
 import { helpers } from '@vuelidate/validators';
-import { useI18n } from "vue-i18n";
+import { useI18n } from 'vue-i18n';
 
 
 const { vehicle, getVehicle } = useVehicles();
@@ -113,9 +96,6 @@ const { t } = useI18n();
 const props = defineProps(['vehicleId']);
 
 const emit = defineEmits(['cancelEdit', 'updateVehicleForm']);
-
-
-
 
 const rules = {
 	plate: {
@@ -132,78 +112,30 @@ const rules = {
 	},
 };
 
-
-
 const formData = reactive({
 	plate: "",
 	employee_id: "",
 	company_id: "",
 });
 
-
-
 const validate = useVuelidate(rules, toRefs(formData));
-
-
 
 const save = () => {
 
 	validate.value.$touch();
 
 	if (validate.value.$invalid) {
-
-
-		// Toastify({
-		//   node: dom("#failed-notification-content")
-		//     .clone()
-		//     .removeClass("hidden")[0],
-		//   duration: 3000,
-		//   newWindow: true,
-		//   close: true,
-		//   gravity: "top",
-		//   position: "right",
-		//   stopOnFocus: true,
-		// }).showToast();
-
-
-
+		//TODO
 	} else {
-
-		console.log("Guardar");
-		console.log(formData);
-
 		emit('updateVehicleForm', vehicle.value.id, formData);
-
-		// Toastify({
-		//   node: dom("#success-notification-content")
-		//     .clone()
-		//     .removeClass("hidden")[0],
-		//   duration: 3000,
-		//   newWindow: true,
-		//   close: true,
-		//   gravity: "top",
-		//   position: "right",
-		//   stopOnFocus: true,
-		// }).showToast();
 	}
 };
 
-
-
-
-
-
 onMounted(async () => {
-
 	await getVehicle(props.vehicleId);
-
 	formData.plate = vehicle.value.plate;
 	formData.employee_id = vehicle.value.employee.id;
 	formData.company_id = vehicle.value.company.id;
-
-
-	//console.log(vehicle);
-
 });
 
 </script>
