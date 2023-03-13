@@ -3,7 +3,7 @@
 	<!-- BEGIN: Page Layout Create -->
 	<div class="intro-y box p-5 mt-5" v-if="isCreate">
 		<Create
-			@saveVehicle="saveVehicle"
+			@saveVehicleForm="saveVehicleForm"
 			@cancelCreate="cancelCreate"
 		/>
 	</div>
@@ -31,8 +31,8 @@
 						class="form-select w-full sm:w-32 2xl:w-full mt-2 sm:mt-0 sm:w-auto"
 					>
 						<option value="plate">{{ $t("plate") }}</option>
-						<option value="employee_id">{{ $t("employee") }}</option>
-						<option value="company_id">{{ $t("company") }}</option>
+						<option value="employee_id">{{ $t("employee_id") }}</option>
+						<option value="company_id">{{ $t("company_id") }}</option>
 					</select>
 				</div>
 				<div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
@@ -184,18 +184,21 @@
 				minWidth: 200,
 				responsive: 0,
 				field: "plate",
+				vertAlign: "middle",
 			},
 			{
-				title: t("employee"),
+				title: t("employee_id"),
 				minWidth: 200,
 				responsive: 0,
-				field: "employee.name",
+				field: "employee_id",
+				vertAlign: "middle",
 			},
 			{
-				title: t("company"),
+				title: t("company_id"),
 				minWidth: 200,
 				responsive: 0,
-				field: "company.name",
+				field: "company_id",
+				vertAlign: "middle",
 			},
 			{
 				title: t("actions"),
@@ -253,8 +256,8 @@
 	};
 
 	// Filter function
-	const onFilter = () => {
-		tabulator.value.setFilter(filter.field, filter.type, filter.value);
+		const onFilter = () => {
+			tabulator.value.setFilter(filter.field, filter.type, filter.value);
 	};
 
 	// On reset filter
@@ -293,11 +296,11 @@
 		div_table.style.display = 'block';
 	}
 
-	const saveVehicle = async (form) => {
+	const saveVehicleForm = async (form) => {
 		await storeVehicle({ ...form });
 		//await getVehicles();
 		tableData.value = await findData();
-		tabulator.value.updateData(tableData.value);
+		tabulator.value.replaceData(tableData.value);
 		isCreate.value = false;
 		div_table.style.display = 'block';
 	}
@@ -314,8 +317,8 @@
 		div_table.style.display = 'block';
 	}
 
-	const updateVehicleForm = async (id, form) => {
-		await updateVehicle(id, {...form});
+	const updateVehicleForm = async (vehicle) => {
+		await updateVehicle(vehicle.id, vehicle);
 		//await getVehicles();
 		tableData.value = await findData();
 		tabulator.value.updateData(tableData.value);

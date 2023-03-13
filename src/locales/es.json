@@ -71,7 +71,8 @@
   },
 
   "form": {
-    "required": "Campo requerido"
+    "required": "Campo requerido",
+    "minLength": ""
   },
   "plate": "Matricula",
   "employee": "Empleado",
