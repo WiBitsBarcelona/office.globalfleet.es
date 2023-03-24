@@ -23,7 +23,7 @@
             <div
               class="-intro-x text-white font-light text-4xl leading-tight mt-10"
             >
-              The driver`s fellow 
+              The driver`s fellow -----
             </div>
 <!--             <div
               class="-intro-x mt-5 text-lg text-white text-opacity-70 dark:text-slate-400"
