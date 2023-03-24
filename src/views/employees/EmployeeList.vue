@@ -189,7 +189,7 @@
 				vertAlign: "middle",
 			},
 			{
-				title: t("company_id"),
+				title: t("company"),
 				minWidth: 200,
 				responsive: 0,
 				field: "company.name",

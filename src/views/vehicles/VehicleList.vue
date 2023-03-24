@@ -187,17 +187,17 @@
 				vertAlign: "middle",
 			},
 			{
-				title: t("employee_id"),
+				title: t("employee"),
 				minWidth: 200,
 				responsive: 0,
-				field: "employee_id",
+				field: "employee.name",
 				vertAlign: "middle",
 			},
 			{
-				title: t("company_id"),
+				title: t("company"),
 				minWidth: 200,
 				responsive: 0,
-				field: "company_id",
+				field: "company.name",
 				vertAlign: "middle",
 			},
 			{

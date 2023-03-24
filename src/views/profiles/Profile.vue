@@ -1,36 +1,53 @@
 <template>
-    <!-- BEGIN: Page Layout -->
-    <div class="intro-y box p-5 mt-5">
+    
+<!-- BEGIN: Form -->
+<form class="validate-form" @submit.prevent="save">
 
-        <div class="grid grid-cols-12 gap-6">
-            
-            <div class="col-span-12 md:col-span-4 lg:col-span-4">
-                <label for="vertical-form-1" class="form-label">Email</label>
-                <input id="vertical-form-1" type="text" class="form-control" placeholder="example@gmail.com" />
-            </div>
+<!-- BEGIN: container -->
+<div class="grid grid-cols-12 gap-6">
 
-            <div class="col-span-12 md:col-span-4 lg:col-span-4">
-                <label for="vertical-form-2" class="form-label">Password</label>
-                <input id="vertical-form-2" type="text" class="form-control" placeholder="secret" />
-            </div>
-            
+    <div class="col-span-12 md:col-span-12 lg:col-span-12">
 
-
-            <div class="col-span-12 md:col-span-4 lg:col-span-4">
-                <input id="vertical-form-3" class="form-check-input" type="checkbox" value="" />
-                <label class="form-check-label" for="vertical-form-3">Remember me</label>
-            </div>
-
-
-
-            <div class="col-span-12 md:col-span-12 lg:col-span-12 content-center">
-                <button class="btn btn-primary mt-5">{{ $t("save") }}</button>
-            </div>
-
+        <div class="input-form">
+            <label for="user_id" class="form-label w-full">
+                {{ $t("user_id") }}
+            </label>
+            <input
+                v-model.trim="validate.user_id.$model"
+                id="user_id"
+                type="text"
+                name="user_id"
+                class="form-control"
+                :class="{ 'border-danger': validate.user_id.$error }"
+            />
+            <template v-if="validate.user_id.$error">
+                <div v-for="(error, index) in validate.user_id.$errors" :key="index" class="text-danger mt-2">
+                    {{ error.$message }}
+                </div>
+            </template>
         </div>
 
-    <!-- END: Page Layout -->
     </div>
+
+    <!-- BEGIN: Buttons -->
+    <div class="col-span-12 md:col-span-12 lg:col-span-12">
+        <div class="flex justify-center">
+            <button type="submit" class="btn btn-primary mr-5">
+                {{ $t("save") }}
+            </button>
+            <button @click.prevent="cancelEdit" class="btn btn-danger">
+                {{ $t("cancel") }}
+            </button>
+        </div>
+    </div>
+    <!-- END: Buttons -->
+
+</div>
+<!-- END: container -->
+
+</form>
+<!-- END: Form -->
+
 
 </template>
   
