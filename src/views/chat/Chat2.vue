@@ -1,7 +1,7 @@
 <template>
   <!-- Chat -->
   <div id="app" class="flex gap-6 mt-5">
-    <div class="flex flex-col w-1/4 gap-4">
+    <div class="flex flex-col w-1/3 gap-4">
       <!-- Botons menú -->
       <div class="box p-2 grid grid-cols-3 justify-between">
         <button
@@ -106,9 +106,9 @@
             </div>
             <p :id="'last-' + conversation.conversationId">
               {{
-                conversation.lastMessage.data.text.length < 25
+                conversation.lastMessage.data.text.length < 35
                   ? conversation.lastMessage.data.text
-                  : conversation.lastMessage.data.text.substring(0, 25) + "..."
+                  : conversation.lastMessage.data.text.substring(0, 35) + "..."
               }}
             </p>
           </div>
@@ -251,12 +251,27 @@ CometChat.init(appID, appSetting).then(
     CometChat.addMessageListener(
       listenerID,
       new CometChat.MessageListener({
-        onTextMessageReceived: (textMessage) => {
+        onTextMessageReceived: async (textMessage) => {
           // Quan arribi un nou missatge
           console.log("Text message received successfully", textMessage);
 
+          let lastMessageDate = "";
+          let currentMessageDate;
+
           // Tornem a carregar tots els xats
           LoadChatsList();
+
+          // Comprobem la data del missatge
+          currentMessageDate = getMessageDate(textMessage.sentAt);
+
+          // Comprobem l'ultim missatge d'aquesta mateixa conversació
+          lastMessageDate = await loadChatMessages(textMessage.conversationId)
+
+          lastMessageDate = getMessageDate(lastMessageDate.data[lastMessageDate.data.length - 2].sentAt)
+
+          if (lastMessageDate !== currentMessageDate) {
+            chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
+          }
 
           if (
             textMessage.receiverId ===
@@ -387,6 +402,9 @@ const getConversationsList = async () => {
 
 // Funció per montar la pantalla del xat
 const buildChat = async (ConversationId, ChatType, ChatId) => {
+  let currentMessageDate;
+  let lastMessageDate = "";
+
   if (ChatType === "user") {
     const response = await getUserData(ChatId);
     selectedChat.value = response.data;
@@ -402,18 +420,28 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
 
   const chat = document.getElementById("chat");
 
+  console.log(conversations);
+
   // Revisem cada missatge qui l'ha enviat per saber quins estils aplicar-li
   conversations.data.map((conversation) => {
     // Marquem el missatge com a llegit
     if (conversation.sender != userInfo.uid) {
-      console.log(conversation)
-      if (conversation.receiverType === 'user')
+      console.log(conversation);
+      if (conversation.receiverType === "user")
         markUserConversationAsRead(conversation.sender);
-      else
-        markGroupConversationAsRead(conversation.receiver);
+      else markGroupConversationAsRead(conversation.receiver);
 
-        LoadChatsList();
+      LoadChatsList();
     }
+
+    // Comprobem la data del missatge
+    currentMessageDate = getMessageDate(conversation.sentAt);
+
+    if (lastMessageDate !== currentMessageDate) {
+      chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
+    }
+
+    lastMessageDate = currentMessageDate;
 
     if (userInfo.uid === conversation.sender) {
       chat.innerHTML += `<div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
@@ -598,6 +626,39 @@ const convertStringToDate = (strTime) => {
   return timeStr.toString();
 };
 
+// Funció per a comparar la data dels missatges
+const getMessageDate = (strTime) => {
+  const timestamp = Number(strTime) * 1000;
+  const date = new Date(timestamp);
+
+  const curdate = new Date();
+
+  if (
+    date.getFullYear() === curdate.getFullYear() &&
+    date.getMonth() === curdate.getMonth()
+  ) {
+    if (date.getDate() === curdate.getDate()) {
+      return "Hoy";
+    } else if (date.getDate() === curdate.getDate() - 1) {
+      return "Ayer";
+    } else {
+      return (
+        (date.getDate() < 10 ? "0" + date.getDate() : date.getDate()) +
+        "/" +
+        (date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth())
+      );
+    }
+  } else {
+    return (
+      (date.getDate() < 10 ? "0" + date.getDate() : date.getDate()) +
+      "/" +
+      (date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth()) +
+      "/" +
+      date.getFullYear()
+    );
+  }
+};
+
 // Funció per a carregar la llista de xats nous
 const toggleNewChat = async () => {
   inNewChat.value = !inNewChat.value;
@@ -635,35 +696,43 @@ const openNewChat = (selectedChat) => {
   console.log(selectedChat);
 };
 
+// Funció per a marcar com a llegit un xat entre dos usuaris
 const markUserConversationAsRead = (conversationWith) => {
   const options = {
-  method: 'POST',
-  headers: {
-    accept: 'application/json',
-    onBehalfOf: userInfo.uid,
-    apikey: apiKey
-  }
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      onBehalfOf: userInfo.uid,
+      apikey: apiKey,
+    },
+  };
+
+  fetch(
+    `https://${appID}.api-${region}.cometchat.io/v3/users/${conversationWith}/conversation/read`,
+    options
+  )
+    .then((response) => response.json())
+    .then((response) => console.log(response))
+    .catch((err) => console.error(err));
 };
 
-fetch(`https://${appID}.api-${region}.cometchat.io/v3/users/${conversationWith}/conversation/read`, options)
-  .then(response => response.json())
-  .then(response => console.log(response))
-  .catch(err => console.error(err));
-}
-
+// Funció per a marcar com a llegit un xat de grup
 const markGroupConversationAsRead = (guid) => {
   const options = {
-  method: 'POST',
-  headers: {
-    accept: 'application/json',
-    onBehalfOf: userInfo.uid,
-    apikey: apiKey
-  }
-};
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      onBehalfOf: userInfo.uid,
+      apikey: apiKey,
+    },
+  };
 
-fetch(`https://${appID}.api-${region}.cometchat.io/v3/groups/${guid}/conversation/read`, options)
-  .then(response => response.json())
-  .then(response => console.log(response))
-  .catch(err => console.error(err));
-}
+  fetch(
+    `https://${appID}.api-${region}.cometchat.io/v3/groups/${guid}/conversation/read`,
+    options
+  )
+    .then((response) => response.json())
+    .then((response) => console.log(response))
+    .catch((err) => console.error(err));
+};
 </script>

@@ -735,39 +735,6 @@ const sendMessage = () => {
   );
 };
 
-// Funció per a enviar missatges
-const sendTextMessage = () => {
-  const mensaje = document.getElementById("message");
-  const header = document.getElementById("chat-header");
-
-  const options = {
-    method: "POST",
-    headers: {
-      accept: "application/json",
-      onBehalfOf: userInfo.uid,
-      "content-type": "application/json",
-      apikey: apiKey,
-    },
-    body: JSON.stringify({
-      category: "message",
-      type: "text",
-      data: { text: mensaje.value },
-      receiver: header.getAttribute("chatId"),
-      receiverType: header.getAttribute("type"),
-    }),
-  };
-
-  fetch(`https://${appId}.api-${region}.cometchat.io/v3/messages`, options)
-    .then((response) => response.json())
-    .then((response) => {
-      return response;
-    })
-    .catch((err) => console.error(err));
-
-  // Netejem el text
-  mensaje.value = "";
-};
-
 // Funcion para llenar valores del modal de crear un chat/grupo
 const newChat = (tipo) => {
   getUsersList();
