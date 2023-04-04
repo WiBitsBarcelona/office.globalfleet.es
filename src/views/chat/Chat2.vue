@@ -281,10 +281,10 @@ import { CometChat } from "@cometchat-pro/chat";
 import { ref } from "vue";
 import { useAuthenticationStore } from "@/stores/auth/authentications";
 
-let appID = "2343812648126b59";
+let appID = "236295e8d26beda0";
 let region = "eu";
-let authKey = "65aba0afa100469706ce7d0f9d9febba02a4500d";
-let apiKey = "8b55ca7afaa426c86acf3847c9060c1de8e66d3d";
+let authKey = "b38b4ff133caaf0d95e66ffa751ea229215db7f1";
+let apiKey = "a80009a3c96c71cd0cd7b86c7ed8f1e4ae295116";
 
 let userInfo;
 let conversationList = ref("");
@@ -327,14 +327,12 @@ CometChat.init(appID, appSetting).then(
           // Comprobem l'ultim missatge d'aquesta mateixa conversació
           lastMessageDate = await loadChatMessages(textMessage.conversationId);
 
-          console.log(lastMessageDate)
-
           if (lastMessageDate.data.length > 1) {
             lastMessageDate = getMessageDate(
               lastMessageDate.data[lastMessageDate.data.length - 2].sentAt
             );
           } else {
-            lastMessageDate = 'Hoy';
+            lastMessageDate = "Hoy";
           }
 
           if (lastMessageDate !== currentMessageDate) {
@@ -511,6 +509,8 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
 
   const chat = document.getElementById("chat");
 
+  chat.innerHTML = "";
+
   // Revisem cada missatge qui l'ha enviat per saber quins estils aplicar-li
   conversations.data.map((conversation) => {
     // Marquem el missatge com a llegit
@@ -569,22 +569,21 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
 const buildNewChat = async (id, nom) => {
   let lastMessageDate = "";
   let currentMessageDate;
-  
+
   // Obtenim les dades de l'usuari en cuestió
   const response = await getUserData(id);
   selectedChat.value = response.data;
-  
-  if (!inChat.value) 
-  inChat.value = true;
-  
+
+  if (!inChat.value) inChat.value = true;
+
   // Revisem que no tinguem alguna conversa amb aquest usuari
   const conversation = await getSingleConversation(id);
   const hasConversation = conversation.error ? false : true;
 
   // Netejem el xat
   const chat = document.getElementById("chat");
-  chat.innerHTML = '';
-  
+  chat.innerHTML = "";
+
   LoadChatsList();
 
   // En cas de tenir alguna conversa la carregarem
@@ -596,7 +595,6 @@ const buildNewChat = async (id, nom) => {
         if (message.receiverType === "user")
           markUserConversationAsRead(message.sender);
         else markGroupConversationAsRead(message.receiver);
-
       }
 
       // Comprobem la data del missatge

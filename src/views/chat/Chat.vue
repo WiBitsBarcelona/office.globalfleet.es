@@ -524,6 +524,8 @@ const lastMessageDay = (GID, message) => {
 
 // Función para entrar al grupo y cargar los mensajes del mismo
 const loadGroup = (GID) => {
+
+
   const user = userData;
 
   const GUID = GID;
