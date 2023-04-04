@@ -52,6 +52,11 @@
         <button
           v-if="!inNewChat"
           v-for="conversation in conversationList"
+          :id="
+            conversation.conversationWith.uid
+              ? conversation.conversationWith.uid
+              : conversation.conversationWith.guid
+          "
           :key="conversation.conversationWith"
           v-on:click="
             buildChat(
@@ -62,7 +67,7 @@
                 : conversation.conversationWith.guid
             )
           "
-          class="flex gap-3 p-3 pl-2 h-16 box cursor-pointer border-b bg-white items-center"
+          class="flex gap-3 p-3 pl-2 h-16 box cursor-pointer border-b bg-white items-center conversations-list-item"
         >
           <!-- En cas de ser un xat amb un usuari -->
           <img
@@ -281,6 +286,11 @@ import { CometChat } from "@cometchat-pro/chat";
 import { ref } from "vue";
 import { useAuthenticationStore } from "@/stores/auth/authentications";
 
+// let appID = "2343812648126b59";
+// let region = "eu";
+// let authKey = "65aba0afa100469706ce7d0f9d9febba02a4500d";
+// let apiKey = "8b55ca7afaa426c86acf3847c9060c1de8e66d3d";
+
 let appID = "236295e8d26beda0";
 let region = "eu";
 let authKey = "b38b4ff133caaf0d95e66ffa751ea229215db7f1";
@@ -447,7 +457,6 @@ const LoadChatsList = async () => {
   // Carregarem la llista de xats
   const response = await getConversationsList();
   conversationList.value = response.data;
-  // console.log(response.data)
 };
 
 // Funció per loguejar un usuari
@@ -493,6 +502,25 @@ const getConversationsList = async () => {
 const buildChat = async (ConversationId, ChatType, ChatId) => {
   let currentMessageDate;
   let lastMessageDate = "";
+
+  // Agafem tots els xats
+  const elements = document.querySelectorAll('.conversations-list-item');
+
+  // Pintem els xats de blanc
+  elements.forEach(element => {
+    if (element.classList.contains('bg-gray-300')) {
+      element.classList.replace('bg-gray-300', 'bg-white');
+    }
+  });
+
+  // Mirem l'element que hem fet clic
+  const elementSeleccionat = document.getElementById(ChatId);
+
+  // Treiem el fons blanc de l'element
+  elementSeleccionat.classList.remove('bg-white')
+
+  // Pintem el background a l'element
+  elementSeleccionat.classList.add('bg-gray-300')
 
   if (ChatType === "user") {
     const response = await getUserData(ChatId);
