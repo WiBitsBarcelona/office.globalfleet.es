@@ -508,8 +508,8 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
 
   // Pintem els xats de blanc
   elements.forEach(element => {
-    if (element.classList.contains('bg-gray-300')) {
-      element.classList.replace('bg-gray-300', 'bg-white');
+    if (element.classList.contains('bg-gray-200')) {
+      element.classList.replace('bg-gray-200', 'bg-white');
     }
   });
 
@@ -520,7 +520,7 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
   elementSeleccionat.classList.remove('bg-white')
 
   // Pintem el background a l'element
-  elementSeleccionat.classList.add('bg-gray-300')
+  elementSeleccionat.classList.add('bg-gray-200')
 
   if (ChatType === "user") {
     const response = await getUserData(ChatId);

@@ -66,12 +66,12 @@ const routes = [
       {
         path: "chat",
         name: "chat",
-        component: () => import('@/views/chat/Chat.vue'),
+        component: () => import('@/views/chat/Chat2.vue'),
       },
       {
         path: "chat2",
         name: "chat2",
-        component: () => import('@/views/chat/Chat2.vue'),
+        component: () => import('@/views/chat/Chat.vue'),
       },
     ],
   },
