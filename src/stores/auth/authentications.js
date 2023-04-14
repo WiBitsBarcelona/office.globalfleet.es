@@ -30,7 +30,7 @@ export const useAuthenticationStore = defineStore("authStore", {
         //     })
         // },
         async login(email, password) {
-            const res = await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}auth/login`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}office/auth/login`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -55,7 +55,7 @@ export const useAuthenticationStore = defineStore("authStore", {
             return new Promise((resolve, reject) => {
                 this.token = localStorage.getItem('token');
                 axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;//Set token by default
-                axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}auth/user`)
+                axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}office/auth/user`)
                     .then((res) => {
                         this.user = res.data.data;
                         // OK
@@ -76,7 +76,7 @@ export const useAuthenticationStore = defineStore("authStore", {
         async logout(){
 
             try {
-                const res = await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}auth/logout`, {
+                const res = await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}office/auth/logout`, {
                     method: "GET",
                     headers: {
                       "Content-Type": "application/json",
@@ -101,7 +101,7 @@ export const useAuthenticationStore = defineStore("authStore", {
         async forgotPassword(email){
             this.loading = true;
             try {
-                const res = await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}auth/password/email`, {
+                const res = await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}office/auth/password/email`, {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
