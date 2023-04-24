@@ -43,6 +43,19 @@
         </div>
       </div>
 
+      <div class="w-full relative mr-auto mt-3 sm:mt-0">
+        <SearchIcon
+          class="w-4 h-4 absolute my-auto inset-y-0 ml-3 left-0 z-10 text-slate-500"
+        />
+        <input
+          id="search-conversation"
+          type="text"
+          class="form-control w-full box px-10"
+          placeholder="Buscar conversación"
+          v-on:input="searchConversation"
+        />
+      </div>
+
       <!-- Llista de xats -->
       <div
         id="group-list"
@@ -298,6 +311,8 @@ let apiKey = "a80009a3c96c71cd0cd7b86c7ed8f1e4ae295116";
 
 let userInfo;
 let conversationList = ref("");
+let conversationList2 = ref("");
+let searching = ref(false);
 let inChat = ref(false);
 let inNewChat = ref(false);
 let selectedChat = ref("");
@@ -388,6 +403,20 @@ CometChat.init(appID, appSetting).then(
         },
         onCustomMessageReceived: (customMessage) => {
           console.log("Custom message received successfully", customMessage);
+        },
+      })
+    );
+
+    const userListenerID = "USER_LISTENER_ID";
+
+    CometChat.addUserListener(
+      userListenerID,
+      new CometChat.UserListener({
+        onUserOnline: (onlineUser) => {
+          console.log("On User Online:", { onlineUser });
+        },
+        onUserOffline: (offlineUser) => {
+          console.log("On User Offline:", { offlineUser });
         },
       })
     );
@@ -504,12 +533,12 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
   let lastMessageDate = "";
 
   // Agafem tots els xats
-  const elements = document.querySelectorAll('.conversations-list-item');
+  const elements = document.querySelectorAll(".conversations-list-item");
 
   // Pintem els xats de blanc
-  elements.forEach(element => {
-    if (element.classList.contains('bg-gray-200')) {
-      element.classList.replace('bg-gray-200', 'bg-white');
+  elements.forEach((element) => {
+    if (element.classList.contains("bg-gray-200")) {
+      element.classList.replace("bg-gray-200", "bg-white");
     }
   });
 
@@ -517,10 +546,10 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
   const elementSeleccionat = document.getElementById(ChatId);
 
   // Treiem el fons blanc de l'element
-  elementSeleccionat.classList.remove('bg-white')
+  elementSeleccionat.classList.remove("bg-white");
 
   // Pintem el background a l'element
-  elementSeleccionat.classList.add('bg-gray-200')
+  elementSeleccionat.classList.add("bg-gray-200");
 
   if (ChatType === "user") {
     const response = await getUserData(ChatId);
@@ -548,7 +577,7 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
         markUserConversationAsRead(conversation.sender);
       else markGroupConversationAsRead(conversation.receiver);
 
-      LoadChatsList();
+      // LoadChatsList();
     }
 
     // Comprobem la data del missatge
@@ -948,5 +977,18 @@ const markGroupConversationAsRead = (guid) => {
     .then((response) => response.json())
     .then((response) => console.log(response))
     .catch((err) => console.error(err));
+};
+
+// Funció per buscar un xat des del buscador
+const searchConversation = (e) => {
+  if (e.target.value.length != 0) {
+    searching.value = true;
+    conversationList2.value = conversationList.value.filter((conversation) =>
+      conversation.conversationWith.name.includes(e.target.value)
+    );
+  } else {
+    searching.value = false;
+    LoadChatsList();
+  }
 };
 </script>

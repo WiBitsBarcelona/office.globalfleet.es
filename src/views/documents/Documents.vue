@@ -9,12 +9,12 @@
             href=""
             class="flex items-center px-3 py-2 rounded-md bg-primary text-white font-medium"
           >
-            <ImageIcon class="w-4 h-4 mr-2" /> Images
+            <PlaneIcon class="w-4 h-4 mr-2" /> Viajes
           </a>
           <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
-            <VideoIcon class="w-4 h-4 mr-2" /> Videos
+            <VideoIcon class="w-4 h-4 mr-2" /> Otros
           </a>
-          <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
+          <!-- <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
             <FileIcon class="w-4 h-4 mr-2" /> Documents
           </a>
           <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
@@ -22,12 +22,12 @@
           </a>
           <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
             <TrashIcon class="w-4 h-4 mr-2" /> Trash
-          </a>
+          </a> -->
         </div>
         <div
           class="border-t border-slate-200 dark:border-darkmode-400 mt-4 pt-4"
         >
-          <a href="" class="flex items-center px-3 py-2 rounded-md">
+          <!-- <a href="" class="flex items-center px-3 py-2 rounded-md">
             <div class="w-2 h-2 bg-pending rounded-full mr-3"></div>
             Custom Work
           </a>
@@ -46,9 +46,9 @@
           <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
             <div class="w-2 h-2 bg-danger rounded-full mr-3"></div>
             Next Week
-          </a>
+          </a> -->
           <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
-            <PlusIcon class="w-4 h-4 mr-2" /> Add New Label
+            <PlusIcon class="w-4 h-4 mr-2" /> Añadir etiqueta
           </a>
         </div>
       </div>
@@ -168,15 +168,15 @@
           class="intro-y col-span-6 sm:col-span-4 md:col-span-3 2xl:col-span-2"
         >
           <div
-            class="file box rounded-md px-5 pt-8 pb-5 px-3 sm:px-5 relative zoom-in"
+            class="file box rounded-md px-5 pt-8 pb-5 sm:px-5 relative zoom-in"
           >
-            <div class="absolute left-0 top-0 mt-3 ml-3">
+            <!-- <div class="absolute left-0 top-0 mt-3 ml-3">
               <input
                 class="form-check-input border border-slate-500"
                 type="checkbox"
                 :checked="faker.trueFalse[0]"
               />
-            </div>
+            </div> -->
             <a
               v-if="faker.files[0].type == 'Empty Folder'"
               href=""
@@ -218,11 +218,11 @@
               </DropdownToggle>
               <DropdownMenu class="w-40">
                 <DropdownContent>
-                  <DropdownItem>
+                  <!-- <DropdownItem>
                     <UsersIcon class="w-4 h-4 mr-2" /> Share File
-                  </DropdownItem>
+                  </DropdownItem> -->
                   <DropdownItem>
-                    <TrashIcon class="w-4 h-4 mr-2" /> Delete
+                    <TrashIcon class="w-4 h-4 mr-2" /> Eliminar
                   </DropdownItem>
                 </DropdownContent>
               </DropdownMenu>

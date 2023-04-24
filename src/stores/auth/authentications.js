@@ -30,7 +30,7 @@ export const useAuthenticationStore = defineStore("authStore", {
         //     })
         // },
         async login(email, password) {
-            const res = await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}auth/login`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}office/auth/login`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",

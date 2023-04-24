@@ -1,200 +1,225 @@
 <template>
-  <!-- Modal nou chat -->
-  <div
-    id="new-chat-modal"
-    class="hidden items-center justify-center absolute z-10 top-0 bottom-80 left-0 right-0"
-  >
-    <div
-      class="flex flex-col bg-gray-200 box border border-gray-100 items-center gap-5 w-64"
-    >
-      <div class="flex w-full p-3 items-center justify-between">
-        <p class="text-xl">Crear nuevo {{ chatType }}</p>
-        <div
-          class="cursor-pointer text-black font-bold text-2xl"
-          @click="toggleModal()"
-        >
-          X
-        </div>
-      </div>
-      <div class="flex flex-col gap-5">
-        <input
-          v-if="chatType === 'grupo'"
-          id="new-chat-input"
-          type="text"
-          :placeholder="'Nombre del grupo...'"
-        />
-        <select
-          name="newChatSelect"
-          id="new-chat-select"
-          :multiple="chatType === 'grupo' ? true : false"
-          class="overflow-y-scroll scrollbar-hidden"
-        >
-          <option v-for="user in usersList" :value="user.uid">
-            {{ user.name }}
-          </option>
-        </select>
-      </div>
-      <button class="box p-2 font-bold" @click="createNewChat()">Crear</button>
-    </div>
-  </div>
-
-  <!-- Barra superior -->
-  <!-- <div class="flex w-full h-14 items-center justify-start">
-    <div class="text-lg font-medium mr-auto w-1/4"></div>
-    <div class="flex w-full">
-      {{ useAuthentication.user.name }}
-      <div class="flex justify-end w-full gap-4">
-        <input type="text" name="username" id="username" placeholder="Usuari" />
-        <div class="flex gap-1">
-          <button type="submit" class="box mr-4 p-3" @click="createUser()">
-            Accedir
-          </button>
-        </div>
-      </div>
-    </div>
-  </div> -->
-
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0"
+  />
   <!-- Chat -->
   <div id="app" class="flex gap-6 mt-5">
-    <div class="flex flex-col w-2/6 gap-4">
+    <div class="flex flex-col w-1/3 gap-4">
       <!-- Botons menú -->
       <div class="box p-2 grid grid-cols-3 justify-between">
         <button
-          v-on:click="toggleActiveButtons"
           id="chat-button"
-          class="py-2 w-full bg-[#0096b2] chat-button active text-white rounded-lg"
+          class="flex items-center justify-center gap-1 py-2 w-full bg-[#0096b2] chat-button active text-white rounded-lg"
+          @click="LoadChatsList"
         >
+          <span class="material-symbols-outlined"> chat </span>
           Chats
         </button>
         <button
-          v-on:click="toggleActiveButtons"
           id="profile-button"
-          class="py-2 w-full chat-button"
+          class="flex items-center justify-center gap-1 py-2 w-full chat-button"
         >
+          <span class="material-symbols-outlined"> person </span>
           Perfil
         </button>
         <button
-          v-on:click="toggleMenu()"
           id="new-chat-button"
-          class="py-2 w-full chat-button text-xl font-bold"
+          class="flex items-center justify-center gap-1 py-2 w-full chat-button"
+          @click="toggleNewChat"
         >
-          ⋮
+          <span class="material-symbols-outlined"> add_comment </span>
+          Nuevo
         </button>
         <div
           id="new-chat-menu"
           class="hidden flex-col w-60 bg-white absolute z-10 right-0 top-14 border border-gray-100 rounded"
         >
-          <!-- <div
-            class="pl-5 py-2 w-full cursor-pointer border border-bottom hover:bg-gray-200"
-            @click="newChat('grupo')"
-          >
-            <p>Nuevo grupo</p>
-          </div> -->
           <div
             class="pl-5 py-2 w-full cursor-pointer border border-bottom hover:bg-[#0096b2] hover:text-white"
-            @click="newChat('chat')"
           >
             <p>Nuevo chat</p>
           </div>
         </div>
       </div>
 
-      <!-- Llista de xats -->
-      <div
-        v-if="currentActive === 'chat-button'"
-        id="group-list"
-        class="flex flex-col gap-[6px] overflow-y-scroll scrollbar-hidden"
-      >
-        <button
-          v-if="toggleList === false"
-          v-for="group in allGroups"
-          :key="group.conversationWith.guid"
-          class="flex gap-3 p-3 h-16 box cursor-pointer border-b bg-white"
-          @click="loadGroup(group.conversationWith.guid)"
-        >
-          <div
-            :id="group.conversationWith.guid + '-image'"
-            class="h-full w-14 flex items-center justify-center"
-          ></div>
-          <div class="flex flex-col justify-between h-full text-left">
-            <b :id="group.conversationWith.guid"></b>
-            <p :id="'last-message-' + group.conversationWith.guid"></p>
-          </div>
-        </button>
-
-        <!-- Crear nou chat -->
-        <h2
-          v-if="toggleList === true"
-          class="text-lg font-semibold text-gray-500"
-        >
-          Nuevo chat
-        </h2>
-        <button
-          v-if="toggleList === true"
-          v-for="user in usersList"
-          @click="createNewChat(user.uid)"
-          class="flex box gap-3 p-3 h-16 cursor-pointer border-b bg-white text-left"
-        >
-          <div class="h-full w-14 flex items-center justify-center">
-            <img
-              class="rounded-full w-14 h-14"
-              :src="
-                user.avatar
-                  ? user.avatar
-                  : `https://ui-avatars.com/api/?name=${user.name.charAt(
-                      0
-                    )}&color=7F9CF5&background=EBF4FF`
-              "
-              alt=""
-            />
-          </div>
-          {{ user.name }}
-        </button>
+      <div class="w-full relative mr-auto mt-3 sm:mt-0">
+        <SearchIcon
+          class="w-4 h-4 absolute my-auto inset-y-0 ml-3 left-0 z-10 text-slate-500"
+        />
+        <input
+          id="search-conversation"
+          type="text"
+          class="form-control w-full box px-10"
+          placeholder="Buscar conversación"
+          v-on:input="searchConversation"
+        />
       </div>
 
-      <!-- Perfil de l'usuari -->
+      <!-- Llista de xats -->
       <div
-        v-if="currentActive === 'profile-button'"
-        class="flex flex-col gap-8"
+        id="group-list"
+        class="flex flex-col gap-[6px] h-[76vh] overflow-y-scroll scrollbar-hidden"
       >
-        <div
-          id="profile-image"
-          class="flex flex-col box w-full py-10 items-center justify-center gap-3"
-        ></div>
-        <div
-          class="flex flex-col w-full h-80 box px-5 justify-between items-center"
+        <!-- Per cada xat farem un botó -->
+        <button
+          v-if="!inNewChat"
+          v-for="conversation in conversationList"
+          :id="
+            conversation.conversationWith.uid
+              ? conversation.conversationWith.uid
+              : conversation.conversationWith.guid
+          "
+          :key="conversation.conversationWith"
+          v-on:click="
+            buildChat(
+              conversation.conversationId,
+              conversation.conversationType,
+              conversation.conversationWith.uid
+                ? conversation.conversationWith.uid
+                : conversation.conversationWith.guid
+            )
+          "
+          class="flex gap-3 p-3 pl-2 h-16 box cursor-pointer border-b bg-white items-center conversations-list-item"
         >
+          <!-- En cas de ser un xat amb un usuari -->
+          <img
+            v-if="conversation.conversationType === 'user'"
+            class="w-14 h-14 rounded-full"
+            :src="
+              conversation.conversationWith.avatar
+                ? conversation.conversationWith.avatar
+                : `https://ui-avatars.com/api/?name=${conversation.conversationWith.name.charAt(
+                    0
+                  )}&color=7F9CF5&background=EBF4FF`
+            "
+          />
+          <!-- En cas de ser un grup -->
+          <img
+            v-if="conversation.conversationType === 'group'"
+            class="w-14 h-14 rounded-full"
+            :src="
+              conversation.conversationWith.icon
+                ? conversation.conversationWith.icon
+                : `https://ui-avatars.com/api/?name=${conversation.conversationWith.name.charAt(
+                    0
+                  )}&color=7F9CF5&background=EBF4FF`
+            "
+          />
+
           <div
-            class="flex flex-col border-b w-full h-full items-left justify-center gap-2"
+            class="flex flex-col justify-between h-full w-full text-left gap-1"
           >
-            <p class="text-gray-400">Empresa</p>
-            <p>GlobalFleet</p>
+            <div class="flex w-full justify-between">
+              <h2 class="font-semibold">
+                {{ conversation.conversationWith.name }}
+              </h2>
+              <div
+                :id="'unreadMessages-container-' + conversation.conversationId"
+                v-if="
+                  conversation.unreadMessageCount != 0 &&
+                  conversation.unreadMessageCount < 100
+                "
+                class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-green-500 text-white rounded-full"
+              >
+                <p class="w-full text-center mt-[.1rem]">
+                  {{ conversation.unreadMessageCount }}
+                </p>
+              </div>
+              <div
+                :id="'unreadMessages-container-' + conversation.conversationId"
+                v-else-if="
+                  conversation.unreadMessageCount != 0 &&
+                  conversation.unreadMessageCount > 100
+                "
+                class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-green-500 text-white rounded-full"
+              >
+                <p class="w-full text-center mt-[.1rem]">+99</p>
+              </div>
+            </div>
+            <p :id="'last-' + conversation.conversationId">
+              {{
+                conversation.lastMessage.data.text.length < 35
+                  ? conversation.lastMessage.data.text
+                  : conversation.lastMessage.data.text.substring(0, 35) + "..."
+              }}
+            </p>
           </div>
+        </button>
+
+        <!-- Per cada nou possible xat, farem un botó també -->
+        <button
+          v-if="inNewChat"
+          v-for="chatList in newChatsList"
+          v-on:click="
+            buildNewChat(
+              chatList.uid ? chatList.uid : chatList.guid,
+              chatList.name
+            )
+          "
+          class="flex gap-3 p-3 pl-2 h-16 box cursor-pointer border-b bg-white items-center"
+        >
+          <!-- En cas de ser un xat amb un usuari -->
+          <img
+            v-if="chatList.uid"
+            class="w-14 h-14 rounded-full"
+            :src="
+              chatList.avatar
+                ? chatList.avatar
+                : `https://ui-avatars.com/api/?name=${chatList.name.charAt(
+                    0
+                  )}&color=7F9CF5&background=EBF4FF`
+            "
+          />
+          <!-- En cas de ser un grup -->
+          <img
+            v-if="chatList.guid"
+            class="w-14 h-14 rounded-full"
+            :src="
+              chatList.icon
+                ? chatList.icon
+                : `https://ui-avatars.com/api/?name=${chatList.name.charAt(
+                    0
+                  )}&color=7F9CF5&background=EBF4FF`
+            "
+          />
           <div
-            class="flex flex-col border-b w-full h-full items-left justify-center gap-2"
+            class="flex flex-col justify-between h-full w-full text-left gap-1"
           >
-            <p class="text-gray-400">Telefono</p>
-            <p>654875415</p>
+            <div class="flex w-full justify-between">
+              <h2 class="font-semibold">
+                {{ chatList.name }}
+              </h2>
+            </div>
           </div>
-          <div
-            class="flex flex-col border-b w-full h-full items-left justify-center gap-2"
-          >
-            <p class="text-gray-400">Correo</p>
-            <p>webmaster@globalfleet.com</p>
-          </div>
-        </div>
+        </button>
       </div>
     </div>
 
     <!-- Cuadre de xat -->
-    <div class="flex flex-col w-full h-[85vh] justify-between items-center box">
-      <div id="current-chat-container" class="flex items-center h-20 w-full">
-        <div
-          id="current-chat"
-          class="flex gap-5 items-center justify-center h-14 p-2"
-        ></div>
+    <div
+      v-if="inChat"
+      class="flex flex-col w-full h-[85vh] justify-between items-center box overflow-hidden"
+    >
+      <div
+        id="current-chat-container"
+        class="flex items-center h-20 w-full gap-3 px-4"
+      >
+        <img
+          v-if="selectedChat.icon || selectedChat.avatar"
+          :src="selectedChat.icon ? selectedChat.icon : selectedChat.avatar"
+          class="rounded-full w-14 h-14"
+        />
+        <img
+          v-else
+          :src="`https://ui-avatars.com/api/?name=${selectedChat.name.charAt(
+            0
+          )}&color=7F9CF5&background=EBF4FF`"
+          class="rounded-full w-14 h-14"
+        />
         <h2
           id="chat-header"
+          class="w-full font-bold text-2xl"
           :type="selectedChat.uid ? 'user' : 'group'"
           :chatId="selectedChat.uid ? selectedChat.uid : selectedChat.guid"
         >
@@ -202,7 +227,7 @@
         </h2>
       </div>
       <div
-        id="messages"
+        id="chat"
         class="flex flex-col gap-2 h-5/6 w-full p-5 overflow-y-scroll scrollbar-hidden"
       ></div>
 
@@ -214,7 +239,7 @@
         class="pt-4 sm:py-4 flex items-center border-t-[6px] border-slate-200/60 dark:border-darkmode-400 w-full"
       >
         <textarea
-          v-on:keyup.enter="sendMessage"
+          v-on:keyup.enter="sendTextMessage"
           id="message"
           class="overflow-y-scroll scrollbar-hidden chat__box__input form-control dark:bg-darkmode-600 h-11 resize-none border-transparent px-5 py-3 shadow-none focus:border-transparent focus:ring-0"
           placeholder="Escribe el mensaje..."
@@ -242,7 +267,7 @@
           <button
             id="sendMsgBtn"
             type="submit"
-            v-on:click="sendMessage()"
+            v-on:click="sendTextMessage"
             class="w-8 h-8 sm:w-10 sm:h-10 bg-primary text-white rounded-full flex-none flex items-center justify-center"
           >
             <!-- SVG de l'avió de paper -->
@@ -263,6 +288,10 @@
         </div>
       </form>
     </div>
+    <div
+      v-else
+      class="flex flex-col w-full h-[85vh] justify-between items-center box overflow-hidden"
+    ></div>
   </div>
 </template>
 
@@ -271,86 +300,133 @@ import { CometChat } from "@cometchat-pro/chat";
 import { ref } from "vue";
 import { useAuthenticationStore } from "@/stores/auth/authentications";
 
-const useAuthentication = useAuthenticationStore();
+// let appID = "2343812648126b59";
+// let region = "eu";
+// let authKey = "65aba0afa100469706ce7d0f9d9febba02a4500d";
+// let apiKey = "8b55ca7afaa426c86acf3847c9060c1de8e66d3d";
 
-// Credenciales de la Aplicacion de CometChat
-let appId = "2343812648126b59";
-let apiKey = "8b55ca7afaa426c86acf3847c9060c1de8e66d3d";
-let authKey = "65aba0afa100469706ce7d0f9d9febba02a4500d";
-const region = "eu";
+let appID = "236295e8d26beda0";
+let region = "eu";
+let authKey = "b38b4ff133caaf0d95e66ffa751ea229215db7f1";
+let apiKey = "a80009a3c96c71cd0cd7b86c7ed8f1e4ae295116";
 
-// Variables globales
-let userData;
-let actualGroup;
-let allGroups = ref("");
-let chatType = ref("");
-let chatTag = ref("");
-let usersList = ref("");
-let toggleList = ref(false);
-let currentActive = ref("chat-button");
-
+let userInfo;
+let conversationList = ref("");
+let conversationList2 = ref("");
+let searching = ref(false);
+let inChat = ref(false);
+let inNewChat = ref(false);
 let selectedChat = ref("");
+let selectedConversation = ref("");
+let newChatsList = ref("");
 
-// Función para crear un usuario en caso de que el nuevo no exista
-
-let username = useAuthentication.user.name; // document.getElementById("username").value;
-
-const userInfo = [
-  {
-    name: useAuthentication.user.name,
-    uid: useAuthentication.user.name.includes(" ")
-      ? useAuthentication.user.name.replaceAll(" ", "_")
-      : useAuthentication.user.name,
-    appId: "2343812648126b59",
-    apiKey: "8b55ca7afaa426c86acf3847c9060c1de8e66d3d",
-    authKey: "65aba0afa100469706ce7d0f9d9febba02a4500d",
-  },
-]; // users.filter((user) => username === user.name);
-
-appId = userInfo[0].appId;
-apiKey = userInfo[0].apiKey;
-authKey = userInfo[0].authKey;
-
-// Variable de configuración del chat
+// Variable amb la configuració de la App
 const appSetting = new CometChat.AppSettingsBuilder()
   .subscribePresenceForAllUsers()
   .setRegion(region)
   .autoEstablishSocketConnection(true)
   .build();
 
-// Iniciamos una conexion con comet chat
-CometChat.init(appId, appSetting).then(
+// Inicialitzem la App
+CometChat.init(appID, appSetting).then(
   () => {
-    let listenerID = "incoming_messages";
+    console.log("Initialization completed successfully");
+
+    // Afegirem un listener dels missatges
+    const listenerID = "INCOMING_MESSAGES_LISTENER";
 
     CometChat.addMessageListener(
       listenerID,
       new CometChat.MessageListener({
-        onTextMessageReceived: (textMessage) => {
+        onTextMessageReceived: async (textMessage) => {
+          // Quan arribi un nou missatge
           console.log("Text message received successfully", textMessage);
-          // En cas de tenir el xat obert, mostrarem el missatge
-          if (textMessage.receiverId === actualGroup) {
-            document.getElementById("messages").innerHTML += `
-              <div class="message flex gap-3 rounded-lg w-fit py-2 px-5 bg-gray-200 max-w-md">
-                              <div class="flex flex-col">
-                                <b>${textMessage.sender.name}</b>
-                                <p>${textMessage.text}</p>
-                              </div>
-                              <div class="flex flex-col justify-end items-center">
-                                <p class="text-gray-400 text-xs">${convertStringToDate(
-                                  textMessage.sentAt
-                                )}</p>
-                              </div>
-                            </div>`;
+
+          let lastMessageDate = "";
+          let currentMessageDate;
+
+          // Tornem a carregar tots els xats
+          LoadChatsList();
+
+          console.log(
+            textMessage.conversationId,
+            selectedConversation.value,
+            selectedChat.value.uid
+          );
+
+          // Si el missatge prové del mateix xat on som
+          if (
+            textMessage.conversationId === selectedConversation.value
+          ) {
+
+            console.log('Mateix xat')
+            // El marquem com a llegit
+            markUserConversationAsRead(selectedChat.value.uid)
+
+            // Tornem a seleccionar el mateix xat
+            const elementSeleccionat = document.getElementById(selectedChat.value.uid);
+            // Treiem el fons blanc de l'element
+            elementSeleccionat.classList.remove("bg-white");
+            // Pintem el background a l'element
+            elementSeleccionat.classList.add("bg-gray-200");
           }
 
-          //Fem baixar l'scroll abaix de tot
-          const messageBody = document.getElementById("messages");
-          messageBody.scrollTop =
-            messageBody.scrollHeight - messageBody.clientHeight;
+          // Comprobem la data del missatge
+          currentMessageDate = getMessageDate(textMessage.sentAt);
 
-          // Actualitzem últim missatge de la llista del xat
-          getLastMessage(textMessage.receiverId);
+          // Comprobem l'ultim missatge d'aquesta mateixa conversació
+          lastMessageDate = await loadChatMessages(textMessage.conversationId);
+
+          if (lastMessageDate.data.length > 1) {
+            lastMessageDate = getMessageDate(
+              lastMessageDate.data[lastMessageDate.data.length - 2].sentAt
+            );
+          } else {
+            lastMessageDate = "Hoy";
+          }
+
+          if (lastMessageDate !== currentMessageDate) {
+            chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
+          }
+
+          // En cas de estar dins el xat
+          if (
+            textMessage.receiverId ===
+            document.getElementById("chat-header").getAttribute("chatId")
+          ) {
+            // Mirem si hem enviat nosaltres el missatge
+            if (textMessage.sender.uid === userInfo.uid) {
+              document.getElementById("chat").innerHTML += `
+                        <div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
+                            <div class="flex gap-3 py-2 px-3 bg-[#0096b2] text-white rounded-lg max-w-md">
+                            <p style="margin: 0px;">${textMessage.text}</p>
+                            <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
+                              <p style="font-size: 12px; color: white; margin: 0px; heigh: 100%">
+                                ${convertStringToDate(textMessage.sentAt)}
+                              </p>
+                            </div>
+                          </div>
+                        </div>`;
+            } else {
+              // En cas de haver enviat el missatge una altre persona
+              document.getElementById("chat").innerHTML += `
+                        <div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
+                          <div class="flex gap-3 rounded-lg w-fit py-2 px-5 bg-gray-200 max-w-md">
+                            <p style="margin: 0px;">${textMessage.text}</p>
+                            <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
+                              <p style="font-size: 12px; margin: 0px; heigh: 100%">
+                                ${convertStringToDate(textMessage.sentAt)}
+                              </p>
+                            </div>
+                          </div>
+                        </div>`;
+            }
+
+            // Fem scroll aball de tot de la pàgina
+            const messageBody = document.getElementById("chat");
+            messageBody.scrollTop =
+              messageBody.scrollHeight - messageBody.clientHeight;
+          }
         },
         onMediaMessageReceived: (mediaMessage) => {
           console.log("Media message received successfully", mediaMessage);
@@ -360,200 +436,483 @@ CometChat.init(appId, appSetting).then(
         },
       })
     );
+
+    const userListenerID = "USER_LISTENER_ID";
+
+    CometChat.addUserListener(
+      userListenerID,
+      new CometChat.UserListener({
+        onUserOnline: (onlineUser) => {
+          console.log("On User Online:", { onlineUser });
+        },
+        onUserOffline: (offlineUser) => {
+          console.log("On User Offline:", { offlineUser });
+        },
+      })
+    );
   },
   (error) => {
-    console.log("Error durante el inicio del chat:", error);
+    console.log("Initialization failed with error:", error);
   }
 );
 
-const UID = userInfo[0].uid;
-const name = username;
+// Iniciem la sessió al xat
+const UID = "marc";
+const name = "Marc";
 
 const user = new CometChat.User(UID);
 user.setName(name);
 
-userData = user;
+userInfo = user;
 
+// Creem l'usuari
 CometChat.createUser(user, authKey).then(
-  (user) => {
-    logUserIn(authKey, UID);
+  async () => {
+    // Un cop creat, ens loguejarem
+    const Logued = await logUserIn(authKey, UID);
+    // Si la sessió s'ha iniciat correctament
+    if (Logued) {
+      LoadChatsList();
+    }
   },
-  (error) => {
+  async (error) => {
     if (error.code === "ERR_UID_ALREADY_EXISTS") {
-      logUserIn(authKey, UID);
+      // En cas d'existir, farem login
+      const Logued = await logUserIn(authKey, UID);
+      if (Logued) {
+        LoadChatsList();
+      }
     }
   }
 );
 
-// Función para loguear un usuario
-const logUserIn = (authKey, UID) => {
-  CometChat.login(UID, authKey).then(
-    (user) => {
-      console.log("Login Successful:", { user });
-      getConversationsList(user.uid);
+// Funció per carregar/reiniciar els xats
+const LoadChatsList = async () => {
+  const chatButton = document.getElementById("chat-button");
+  const profileButton = document.getElementById("profile-button");
+  const newChatButton = document.getElementById("new-chat-button");
+
+  // En cas de estar mirant la llista de xats nous
+  if (inNewChat.value) {
+    inNewChat.value = false;
+    // Comprobem quin botó està actiu
+    if (newChatButton.classList.contains("bg-[#0096b2]"))
+      newChatButton.classList.remove(
+        "bg-[#0096b2]",
+        "text-white",
+        "rounded-lg"
+      );
+    else if (profileButton.classList.contains("bg-[#0096b2]"))
+      profileButton.classList.remove(
+        "bg-[#0096b2]",
+        "text-white",
+        "rounded-lg"
+      );
+
+    if (!chatButton.classList.contains("bg-[#0096b2]"))
+      chatButton.classList.add("bg-[#0096b2]", "text-white", "rounded-lg");
+  }
+
+  // Carregarem la llista de xats
+  const response = await getConversationsList();
+  conversationList.value = response.data;
+};
+
+// Funció per loguejar un usuari
+const logUserIn = async (authKey, UID) => {
+  const response = await CometChat.login(UID, authKey).then(
+    async () => {
+      return true;
     },
     (error) => {
       console.log("Login failed with exception:", { error });
+      return false;
     }
   );
+
+  return response;
 };
 
-const toggleActiveButtons = (e) => {
-  const elementId = e.target.getAttribute("id");
-  // Posem el tag de "chats" en Active
-  const activeElements = document.getElementsByClassName("active chat-button");
-  console.log(activeElements);
-
-  // Canviem els estils del botó que estigui en actiu
-  for (let i = 0; i < activeElements.length; i++) {
-    activeElements[i].classList = "py-2 w-full chat-button";
-  }
-
-  // Posem en actiu el nou botó seleccionat
-  document
-    .getElementById(elementId)
-    .classList.add("bg-[#0096b2]", "active", "rounded", "text-white");
-
-  // Segons el botó presionat, farem una cosa o una altre
-  if (elementId === "chat-button") {
-    toggleList.value = false;
-    getConversationsList(userData.uid);
-    currentActive.value = "chat-button";
-  } else if (elementId === "profile-button") {
-    loadProfile(userData.uid);
-    currentActive.value = "profile-button";
-  }
-};
-
-// Función para obtener lista de chats
-const getConversationsList = async (user) => {
-  // Obtenim llista de grups
-  const response = await getConversationList();
-  allGroups.value = response.data;
-
-  // Mirem els membres de cada grup
-  response.data.map((chat) => {
-    getGroupMembers(
-      chat.conversationWith.guid,
-      chat.conversationWith.type,
-      chat.conversationWith.name,
-      false
-    );
-    getLastMessage(chat.conversationWith.guid);
-  });
-};
-
-// Obtener el ultimo mensaje de cada conversación
-const getLastMessage = (GID) => {
-  const GUID = GID;
-  const limit = 1;
-  let lastMessage = "";
-
-  const messagesRequest = new CometChat.MessagesRequestBuilder()
-    .setGUID(GUID)
-    .setLimit(limit)
-    .build();
-
-  messagesRequest.fetchPrevious().then((messages) => {
-    messages = messages.filter((message) => message.type === "text");
-    if (messages.length != 0) {
-      lastMessage = messages[0].data.text;
-    }
-
-    if (lastMessage.length > 19) {
-      document.getElementById(`last-message-${GUID}`).innerHTML =
-        lastMessage.substring(0, 20) + "...";
-    } else {
-      document.getElementById(`last-message-${GUID}`).innerHTML =
-        lastMessage.substring(0, 20);
-    }
-  });
-};
-
-const lastMessageDay = (GID, message) => {
-  const GUID = GID;
-  const limit = 1;
-  let lastMessage = "";
-
-  const messagesRequest = new CometChat.MessagesRequestBuilder()
-    .setGUID(GUID)
-    .setLimit(limit)
-    .build();
-
-  messagesRequest.fetchPrevious().then((messages) => {
-    messages = messages.filter((message) => message.type === "text");
-    if (messages.length != 0) {
-      lastMessage = messages[0].sentAt;
-    }
-
-    console.log(lastMessage, message);
-
-    // Ultim missatge
-    const timestamp1 = Number(lastMessage) * 1000;
-    const date1 = new Date(timestamp1);
-
-    // Missatge enviat
-    const timestamp2 = Number(message) * 1000;
-    const date2 = new Date(timestamp2);
-
-    // Comprovem si són del mateix any
-    if (date1.getFullYear() === date2.getFullYear()) {
-      console.log("Mateix any");
-      // Comprovem si son del mateix mes
-      if (date1.getMonth() === date2.getMonth()) {
-        console.log("Mateix mes");
-        // Comprovem si son del mateix dia
-        if (date1.getDate() !== date2.getDate()) {
-          console.log("Dia diferent");
-          document.getElementById(
-            "messages"
-          ).innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">Hoy</p></div>`;
-        }
-      } else {
-        document.getElementById(
-          "messages"
-        ).innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-300">Hoy</p></div>`;
-      }
-    } else {
-      document.getElementById(
-        "messages"
-      ).innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-300">Hoy</p></div>`;
-    }
-  });
-};
-
-// Función para entrar al grupo y cargar los mensajes del mismo
-const loadGroup = (GID) => {
-
-
-  const user = userData;
-
-  const GUID = GID;
-  const password = "";
-  const groupType = CometChat.GROUP_TYPE.PUBLIC;
-
-  actualGroup = GID;
-
-  const chatName = document.getElementById(GID).textContent;
-
-  document.getElementById("current-chat-container").className =
-    "flex items-center h-20 w-full border-b";
-
-  // Llamamos a la función de cargar el historial de mensajes del grupo en cuestión
-  getMessageHistory(user, GUID, chatName);
-
-  // Llamamos a la función para preparar un listener de recibir y enviar mensajes
-
-  CometChat.joinGroup(GUID, groupType, password).then(
-    (group) => {
-      console.log("Se ha accedido al grupo:", group);
+// Funció per llistar tots els xats
+const getConversationsList = async () => {
+  const options = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      onBehalfOf: userInfo.uid,
+      apikey: apiKey,
     },
-    (error) => {
-      console.log("Error al entrar al grupo:", error);
-    }
-  );
+  };
+
+  const response = await fetch(
+    `https://${appID}.api-${region}.cometchat.io/v3/conversations`,
+    options
+  )
+    .then((response) => response.json())
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => console.error(err));
+
+  return response;
 };
 
+// Funció per montar la pantalla del xat
+const buildChat = async (ConversationId, ChatType, ChatId) => {
+  let currentMessageDate;
+  let lastMessageDate = "";
+
+  selectedConversation.value = ConversationId;
+
+  // Guardem les dades de l'usuari o grup
+  if (ChatType === "user") {
+    const response = await getUserData(ChatId);
+    selectedChat.value = response.data;
+    inChat.value = true;
+  } else {
+    const response = await getGroupData(ChatId);
+    selectedChat.value = response.data;
+    inChat.value = true;
+  }
+
+  // Recullim els missatges del xat
+  const conversations = await loadChatMessages(ConversationId);
+
+  const chat = document.getElementById("chat");
+
+  // Posem el xat en blanc per si hi havia una anterior conversació carregada
+  chat.innerHTML = "";
+
+  // Revisem cada missatge qui l'ha enviat per saber quins estils aplicar-li
+  conversations.data.map((conversation) => {
+    // Marquem el missatge com a llegit
+    if (conversation.sender != userInfo.uid) {
+      if (conversation.receiverType === "user")
+        markUserConversationAsRead(conversation.sender);
+      else markGroupConversationAsRead(conversation.receiver);
+
+      // LoadChatsList();
+    }
+
+    // Comprobem la data del missatge
+    currentMessageDate = getMessageDate(conversation.sentAt);
+
+    if (lastMessageDate !== currentMessageDate) {
+      chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
+    }
+
+    lastMessageDate = currentMessageDate;
+
+    if (userInfo.uid === conversation.sender) {
+      chat.innerHTML += `<div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
+                            <div class="flex gap-3 py-2 px-3 bg-[#0096b2] text-white rounded-lg max-w-md">
+                            <p style="margin: 0px;">${
+                              conversation.data.text
+                            }</p>
+                            <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
+                              <p style="font-size: 12px; color: white; margin: 0px; heigh: 100%">
+                                ${convertStringToDate(conversation.sentAt)}
+                              </p>
+                            </div>
+                          </div>
+                         </div>`;
+    } else {
+      chat.innerHTML += `<div class="missatgeEntrant" style="display: flex; width: 100%; justify-content: flex-start;">
+                            <div class="flex gap-3 rounded-lg w-fit py-2 px-3 bg-gray-200 max-w-md">
+                            <p style="margin: 0px;">${
+                              conversation.data.text
+                            }</p>
+                            <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
+                              <p style="font-size: 12px; margin: 0px; heigh: 100%">
+                                ${convertStringToDate(conversation.sentAt)}
+                              </p>
+                            </div>
+                          </div>
+                        </div>`;
+    }
+  });
+
+  // Amaguem el popup amb els missatges pendents
+  const msgPopup = document.getElementById(
+    `unreadMessages-container-${ConversationId}`
+  );
+  if (msgPopup !== null) {
+    msgPopup.remove();
+  }
+
+  // Agafem tots els xats
+  const elements = document.querySelectorAll(".conversations-list-item");
+
+  // Pintem els xats de blanc
+  elements.forEach((element) => {
+    if (element.classList.contains("bg-gray-200")) {
+      element.classList.replace("bg-gray-200", "bg-white");
+    }
+  });
+
+  // Mirem l'element que hem fet clic
+  const elementSeleccionat = document.getElementById(ChatId);
+
+  // Treiem el fons blanc de l'element
+  elementSeleccionat.classList.remove("bg-white");
+
+  // Pintem el background a l'element
+  elementSeleccionat.classList.add("bg-gray-200");
+
+  const messageBody = document.getElementById("chat");
+  messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
+};
+
+// Funció per carregar un nou xat
+const buildNewChat = async (id, nom) => {
+  let lastMessageDate = "";
+  let currentMessageDate;
+
+  // Obtenim les dades de l'usuari en cuestió
+  const response = await getUserData(id);
+  selectedChat.value = response.data;
+
+  if (!inChat.value) inChat.value = true;
+
+  // Revisem que no tinguem alguna conversa amb aquest usuari
+  const conversation = await getSingleConversation(id);
+  const hasConversation = conversation.error ? false : true;
+
+  // Netejem el xat
+  const chat = document.getElementById("chat");
+  chat.innerHTML = "";
+
+  LoadChatsList();
+
+  // En cas de tenir alguna conversa la carregarem
+  if (hasConversation) {
+    const messages = await loadChatMessages(conversation.data.conversationId);
+
+    messages.data.map((message) => {
+      if (message.sender != userInfo.uid) {
+        if (message.receiverType === "user")
+          markUserConversationAsRead(message.sender);
+        else markGroupConversationAsRead(message.receiver);
+      }
+
+      // Comprobem la data del missatge
+      currentMessageDate = getMessageDate(message.sentAt);
+
+      if (lastMessageDate !== currentMessageDate) {
+        chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
+      }
+
+      lastMessageDate = currentMessageDate;
+
+      if (userInfo.uid === message.sender) {
+        chat.innerHTML += `<div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
+                            <div class="flex gap-3 py-2 px-3 bg-[#0096b2] text-white rounded-lg max-w-md">
+                            <p style="margin: 0px;">${message.data.text}</p>
+                            <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
+                              <p style="font-size: 12px; color: white; margin: 0px; heigh: 100%">
+                                ${convertStringToDate(message.sentAt)}
+                              </p>
+                            </div>
+                          </div>
+                         </div>`;
+      } else {
+        chat.innerHTML += `<div class="missatgeEntrant" style="display: flex; width: 100%; justify-content: flex-start;">
+                            <div class="flex gap-3 rounded-lg w-fit py-2 px-3 bg-gray-200 max-w-md">
+                            <p style="margin: 0px;">${message.data.text}</p>
+                            <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
+                              <p style="font-size: 12px; margin: 0px; heigh: 100%">
+                                ${convertStringToDate(message.sentAt)}
+                              </p>
+                            </div>
+                          </div>
+                        </div>`;
+      }
+
+      const messageBody = document.getElementById("chat");
+      messageBody.scrollTop =
+        messageBody.scrollHeight - messageBody.clientHeight;
+    });
+  }
+};
+
+// Funció per a enviar missatges
+const sendTextMessage = () => {
+  const mensaje = document.getElementById("message");
+  const header = document.getElementById("chat-header");
+
+  const options = {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      onBehalfOf: userInfo.uid,
+      "content-type": "application/json",
+      apikey: apiKey,
+    },
+    body: JSON.stringify({
+      category: "message",
+      type: "text",
+      data: { text: mensaje.value },
+      receiver: header.getAttribute("chatId"),
+      receiverType: header.getAttribute("type"),
+    }),
+  };
+
+  fetch(`https://${appID}.api-${region}.cometchat.io/v3/messages`, options)
+    .then((response) => response.json())
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => console.error(err));
+
+  // Netejem el text
+  mensaje.value = "";
+};
+
+// Funció per rebre una sola conversació
+const getSingleConversation = async (otherUser) => {
+  const options = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      onBehalfOf: userInfo.uid,
+      apikey: apiKey,
+    },
+  };
+
+  const response = await fetch(
+    `https://${appID}.api-${region}.cometchat.io/v3/users/${otherUser}/conversation`,
+    options
+  )
+    .then((response) => response.json())
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
+      // console.error(err);
+      return err;
+    });
+
+  return response;
+};
+
+// Funció per llistar els missatges del xat seleccionat
+const loadChatMessages = async (ConversationId) => {
+  const options = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      apikey: apiKey,
+    },
+  };
+
+  const response = await fetch(
+    `https://${appID}.api-${region}.cometchat.io/v3/messages?limit=100&conversationId=${ConversationId}`,
+    options
+  )
+    .then((response) => response.json())
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => console.error(err));
+
+  return response;
+};
+
+// Funció per rebre informació sobre un usuari
+const getUserData = async (uid) => {
+  const options = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      apikey: apiKey,
+    },
+  };
+
+  const response = await fetch(
+    `https://${appID}.api-${region}.cometchat.io/v3/users/${uid}`,
+    options
+  )
+    .then((response) => response.json())
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => console.error(err));
+
+  return response;
+};
+
+// Funció per rebre informació sobre un grup
+const getGroupData = async (guid) => {
+  const options = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      apikey: apiKey,
+    },
+  };
+
+  const response = fetch(
+    `https://${appID}.api-${region}.cometchat.io/v3/groups/${guid}`,
+    options
+  )
+    .then((response) => response.json())
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => console.error(err));
+
+  return response;
+};
+
+// Funció per a obtenir una llista dels usuaris registrats a la app
+const getRegistredUsers = async () => {
+  const options = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      apikey: apiKey,
+    },
+  };
+
+  const response = await fetch(
+    `https://${appID}.api-${region}.cometchat.io/v3/users?perPage=100&page=1`,
+    options
+  )
+    .then((response) => response.json())
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => console.error(err));
+
+  return response;
+};
+
+// Funció per a alternar la vista de xat a llista de xat
+const toggleInChat = () => {
+  inChat.value = false;
+  selectedChat.value = "";
+
+  // Recarreguem la llista de missatges per reposicionar i per actualitzar el últim missatge enviat
+  LoadChatsList();
+};
+
+// Funció per a convertir la data del missatge a hora
+const convertStringToDate = (strTime) => {
+  const timestamp = Number(strTime) * 1000;
+  const date = new Date(timestamp);
+
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  // const ampm = hours >= 12 ? "pm" : "am";
+  // hours = hours % 12;
+  hours = hours ? hours : 12;
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+  var timeStr = hours + ":" + minutes;
+
+  return timeStr.toString();
+};
+
+// Funció per a comparar la data dels missatges
 const getMessageDate = (strTime) => {
   const timestamp = Number(strTime) * 1000;
   const date = new Date(timestamp);
@@ -586,612 +945,89 @@ const getMessageDate = (strTime) => {
   }
 };
 
-// Obtener la lista de mensajes de un grupo
-const getMessageHistory = (user, GID, chatName) => {
-  const GUID = GID;
-  const limit = 100;
-  const messagesRequest = new CometChat.MessagesRequestBuilder()
-    .setGUID(GUID)
-    .setLimit(limit)
-    .build();
+// Funció per a carregar la llista de xats nous
+const toggleNewChat = async () => {
+  const chatButton = document.getElementById("chat-button");
+  const profileButton = document.getElementById("profile-button");
+  const newChatButton = document.getElementById("new-chat-button");
 
-  document.getElementById("messages").innerHTML = "";
+  inNewChat.value = true;
 
-  let messageDate;
-  let missatgeAnterior = "";
+  // En cas de estar mirant la llista de xats nous
+  if (inNewChat.value) {
+    // Comprobem quin botó està actiu
+    if (chatButton.classList.contains("bg-[#0096b2]"))
+      chatButton.classList.remove("bg-[#0096b2]", "text-white", "rounded-lg");
+    else if (profileButton.classList.contains("bg-[#0096b2]"))
+      profileButton.classList.remove(
+        "bg-[#0096b2]",
+        "text-white",
+        "rounded-lg"
+      );
 
-  messagesRequest.fetchPrevious().then(
-    (messages) => {
-      messages = messages.filter((message) => message.type === "text");
-      console.log("Mensajes anteriores: ", messages);
+    if (!newChatButton.classList.contains("bg-[#0096b2]"))
+      newChatButton.classList.add("bg-[#0096b2]", "text-white", "rounded-lg");
 
-      // En cas d'haver algun missatge
-      if (messages.length != 0) {
-        // Primer colocarem l'icona del xat
-        document.getElementById(
-          "current-chat"
-        ).innerHTML = `<img src="${messages[0].receiver.getIcon()}" class="w-14 h-14" />`;
-        if (messages[0].receiver.getIcon() === undefined) {
-          document.getElementById(
-            "current-chat"
-          ).innerHTML = `<img class="rounded-full w-14 h-14" src="https://ui-avatars.com/api/?name=${chatName.charAt(
-            0
-          )}&color=7F9CF5&background=EBF4FF" />`;
-        }
+    // Recullim tots els usuaris registrats excloent el nostre
+    const response = await getRegistredUsers();
+    const otherUsers = response.data.filter(
+      (user) => user.uid !== userInfo.uid
+    );
 
-        // Imprimim el nom del xat seleccionat
-        document.getElementById(
-          "current-chat"
-        ).innerHTML += `<h2 id="chat-name-${messages[0].receiver.guid}" class="w-full font-bold text-2xl">${chatName}</h2>`;
-
-        // Recorrem els missatges
-        messages.map((message) => {
-          // Comprovem la data
-          messageDate = getMessageDate(message.sentAt);
-
-          // En cas de ser la data de dies diferents, la mostrarem al xat
-          if (missatgeAnterior !== messageDate) {
-            document.getElementById(
-              "messages"
-            ).innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${messageDate}</p></div>`;
-          }
-          missatgeAnterior = messageDate;
-
-          // Comprovem que hi hagi text al missatge enviat
-          if (message.text !== undefined) {
-            // En cas d'haver enviat nosaltres el missatge, el mostrarem amb uns estils
-            if (user.name === message.sender.name) {
-              document.getElementById(
-                "messages"
-              ).innerHTML += `<div class="message flex gap-1 justify-end">
-                              <div class="flex gap-3 py-2 px-7 bg-[#0096b2] text-white rounded-lg max-w-md">
-                                <p>
-                                  ${message.text}
-                                </p>
-                                <div class="flex flex-col justify-end items-center">
-                                  <p class="text-gray-300 text-xs">${convertStringToDate(
-                                    message.sentAt
-                                  )}</p>
-                                </div>
-                              </div>
-                            </div>`;
-              // En cas d'haver enviat el missatge una persona diferent a nosaltres, mostrarem el missatge amb uns altres estils
-            } else {
-              document.getElementById(
-                "messages"
-              ).innerHTML += `<div class="message flex gap-3 rounded-lg w-fit py-2 px-5 bg-gray-200 max-w-md">
-                              <div class="flex flex-col">
-                                <b>${message.sender.name}</b>
-                                <p>${message.text}</p>
-                              </div>
-                              <div class="flex flex-col justify-end items-center">
-                                <p class="text-gray-400 text-xs">${convertStringToDate(
-                                  message.sentAt
-                                )}</p>
-                              </div>
-                            </div>`;
-            }
-          }
-        });
-        //Fem baixar l'scroll abaix de tot
-        const messageBody = document.getElementById("messages");
-        messageBody.scrollTop =
-          messageBody.scrollHeight - messageBody.clientHeight;
-
-        // En cas de no haver cap missatge encara a la conversa
-      } else {
-        getSingleChatData(GUID);
-      }
-    },
-    (error) => {
-      console.log("Message fetching failed with error:", error);
-    }
-  );
-};
-
-// Función para mandar mensajes
-const sendMessage = () => {
-  const receiverID = actualGroup;
-  const messageText = document.getElementById("message").value;
-
-  document.getElementById("message").value = "";
-
-  const receiverType = CometChat.RECEIVER_TYPE.GROUP;
-  const textMessage = CometChat.TextMessage(
-    receiverID,
-    messageText,
-    receiverType
-  );
-
-  CometChat.sendMessage(textMessage).then(
-    (message) => {
-      // Recullim l'ultim missatge per comprovar l'hora
-      lastMessageDay(receiverID, message.sentAt);
-
-      document.getElementById(
-        "messages"
-      ).innerHTML += `<div class="message flex gap-1 justify-end">
-                              <div class="flex gap-3 py-2 px-7 bg-[#0096b2] text-white rounded-lg max-w-md">
-                                <p>
-                                  ${message.text}
-                                </p>
-                                <div class="flex flex-col justify-end items-center">
-                                  <p class="text-gray-300 text-xs">${convertStringToDate(
-                                    message.sentAt
-                                  )}</p>
-                                </div>
-                              </div>
-                            </div>`;
-
-      console.log("Mensaje enviado correctamente:", message);
-      //Fem baixar l'scroll abaix de tot
-      const messageBody = document.getElementById("messages");
-      messageBody.scrollTop =
-        messageBody.scrollHeight - messageBody.clientHeight;
-
-      getLastMessage(actualGroup);
-    },
-    (error) => {
-      console.log("Error al enviar el mensaje:", error);
-    }
-  );
-};
-
-// Funcion para llenar valores del modal de crear un chat/grupo
-const newChat = (tipo) => {
-  getUsersList();
-  toggleMenu();
-  // toggleModal();
-  chatType.value = tipo;
-  if (tipo === "chat") {
-    chatTag.value = "usuario";
-  } else {
-    chatTag.value = "grupo";
+    newChatsList.value = otherUsers;
   }
 };
 
-// Crear un nuevo chat o grupo
-const createNewChat = (otherUserUID) => {
-  // En cas de ser un grup
-  let newChatName;
-  // Definim el nom del xat
-  newChatName = otherUserUID + "_" + userData.uid + "_chat";
-
-  // Definim que és un chat
-  chatTag.value = "private";
-
+// Funció per a marcar com a llegit un xat entre dos usuaris
+const markUserConversationAsRead = (conversationWith) => {
   const options = {
     method: "POST",
     headers: {
       accept: "application/json",
-      onBehalfOf: userData.uid,
-      "content-type": "application/json",
-      apikey: apiKey,
-    },
-    body: JSON.stringify({
-      members: { participants: [otherUserUID] },
-      type: chatTag.value === "grupo" ? "public" : "private",
-      guid: newChatName,
-      name: newChatName,
-    }),
-  };
-
-  fetch(`https://${appId}.api-${region}.cometchat.io/v3/groups`, options)
-    .then((response) => response.json())
-    .then((response) => {
-      toggleList.value = false;
-      actualGroup = newChatName;
-      getConversationsList(userData.uid);
-      getSingleChatData(newChatName);
-    })
-    .catch((err) => console.error(err));
-};
-
-// Obtener lista de usuarios para abrir un nuevo xat
-const getUsersList = async () => {
-  const options = {
-    method: "GET",
-    headers: {
-      accept: "application/json",
-      apikey: apiKey,
-    },
-  };
-
-  await fetch(
-    `https://${appId}.api-${region}.cometchat.io/v3/users?perPage=100&page=1`,
-    options
-  )
-    .then((response) => response.json())
-    .then(async (response) => {
-      const data = response.data;
-      // Llista amb tots els usuaris de l'App
-      const otherUsers = data.filter((user) => user.name != userData.name);
-      const myUser = data.filter((user) => user.uid === userData.uid);
-
-      // Actualitzem la llista amb els xats que no tenim oberts
-      const ConversationList = await getConversationList();
-
-      console.log(ConversationList, otherUsers);
-
-      toggleList.value = true;
-      usersList.value = otherUsers;
-    })
-    .catch((err) => console.error(err));
-};
-
-// Function para obtener lista de conversaciones del usuario
-const getConversationList = async () => {
-  const options = {
-    method: "GET",
-    headers: {
-      accept: "application/json",
-      onBehalfOf: userData.uid,
-      apikey: apiKey,
-    },
-  };
-
-  const data = await fetch(
-    `https://${appId}.api-${region}.cometchat.io/v3/conversations?perPage=100&page=1`,
-    options
-  )
-    .then((response) => response.json())
-    .then((data) => {
-      return data;
-    })
-    .catch((err) => console.error(err));
-
-  return data;
-};
-
-// Funcion para obtener lista de miembros de un grupo
-const getGroupMembers = (guid, type, name, currentChatName) => {
-  const options = {
-    method: "GET",
-    headers: {
-      accept: "application/json",
-      apikey: apiKey,
-    },
-  };
-
-  // Petició a la API per obtenir la llista de membres d'un grup
-  fetch(
-    `https://${appId}.api-${region}.cometchat.io/v3/groups/${guid}/members?perPage=100&page=1`,
-    options
-  )
-    .then((response) => response.json())
-    .then((response) => {
-      // Variable per definir quin nom e icona apareixeràn a la llista de xats
-      let otherUser;
-      let otherUserAvatar;
-      response.data.map((usr) => {
-        // En cas de ser un grup
-        if (type === "public") {
-          // Definim l'icona del grup
-          const options = {
-            method: "GET",
-            headers: {
-              accept: "application/json",
-              apikey: apiKey,
-            },
-          };
-
-          // Petició a la API per obtenir les dades d'un grup en concret
-          fetch(
-            `https://${appId}.api-${region}.cometchat.io/v3/groups/${guid}`,
-            options
-          )
-            .then((response) => response.json())
-            .then((response) => {
-              // En cas de tenir icona definida, la mostrarem
-              if (response.data.icon) {
-                otherUserAvatar = response.data.icon;
-                const imgTemplate = `
-                      <img
-                            src="${otherUserAvatar}"
-                            class="w-14 h-14 rounded-full"
-                          />
-                      `;
-
-                document.getElementById(`${guid}-image`).innerHTML =
-                  imgTemplate;
-                // En cas de no tenir una icona definida, mostrarem la inicial del nom del grup
-              } else {
-                const imgTemplate = `
-                      <img
-                            src="https://ui-avatars.com/api/?name=${response.data.name.charAt(
-                              0
-                            )}&color=7F9CF5&background=EBF4FF"
-                            class="w-14 h-14 rounded-full"
-                          />
-                      `;
-
-                document.getElementById(`${guid}-image`).innerHTML =
-                  imgTemplate;
-              }
-            })
-            .catch((err) => console.error(err));
-
-          // Definim el nom del grup
-          if (name.includes("_")) {
-            otherUser = name.replaceAll("_", " ");
-          } else {
-            otherUser = name;
-          }
-          // En cas de ser un chat
-        } else {
-          if (usr.name != userData.name) {
-            const options = {
-              method: "GET",
-              headers: {
-                accept: "application/json",
-                apikey: apiKey,
-              },
-            };
-
-            // Petició a la API per obtenir les dades d'un usuari en concret
-            fetch(
-              `https://${appId}.api-${region}.cometchat.io/v3/users/${usr.uid}`,
-              options
-            )
-              .then((response) => response.json())
-              .then((response) => {
-                // En cas de tenir icona definida, la mostrarem
-                if (response.data.avatar) {
-                  otherUserAvatar = response.data.avatar;
-                  const imgTemplate = `
-                      <img
-                            src="${otherUserAvatar}"
-                            class="w-14 h-14 rounded-full"
-                          />
-                      `;
-
-                  document.getElementById(`${guid}-image`).innerHTML =
-                    imgTemplate;
-                  // En cas de no tenir una icona definida, mostrarem la inicial del nom del usuari
-                } else {
-                  const imgTemplate = `
-                      <img
-                            src="https://ui-avatars.com/api/?name=${usr.name.charAt(
-                              0
-                            )}&color=7F9CF5&background=EBF4FF"
-                            class="w-14 h-14 rounded-full"
-                          />
-                      `;
-
-                  document.getElementById(`${guid}-image`).innerHTML =
-                    imgTemplate;
-                }
-              })
-              .catch((err) => console.error(err));
-
-            // Definim el nom que apareixerà a la llista de xats
-            otherUser = usr.name;
-          }
-        }
-      });
-      // Imprimim el nom de l'usuari
-      document.getElementById(guid).innerHTML = otherUser;
-    })
-    .catch((err) => console.error(err));
-};
-
-// Funcion para obtener
-const getSingleChatData = (guid) => {
-  // Obtenim el xat i mirem si és un grup o un xat entre dues persones
-  const options = {
-    method: "GET",
-    headers: {
-      accept: "application/json",
+      onBehalfOf: userInfo.uid,
       apikey: apiKey,
     },
   };
 
   fetch(
-    `https://${appId}.api-${region}.cometchat.io/v3/groups/${guid}`,
+    `https://${appID}.api-${region}.cometchat.io/v3/users/${conversationWith}/conversation/read`,
     options
   )
     .then((response) => response.json())
-    .then((response) => {
-      // En cas de ser un grup
-      if (response.data.type === "public") {
-        let iconTemplate;
-        let nameTemplate;
-        let otherUser;
-        // Mirem si te la icona definida
-        if (response.data.icon) {
-          iconTemplate = `
-              <img class="rounded-full w-14 h-14" src="${response.data.icon}">
-            `;
-        } else {
-          iconTemplate = `
-            <img class="rounded-full w-14 h-14" src="https://ui-avatars.com/api/?name=${response.data.name.charAt(
-              0
-            )}&color=7F9CF5&background=EBF4FF" />
-            `;
-        }
-
-        // Definim el nom
-        if (response.data.name.includes("_")) {
-          otherUser = response.data.name.replaceAll("_", " ");
-        } else {
-          otherUser = response.data.name;
-        }
-
-        nameTemplate = `
-          <h2 id="chat-name-${response.data.guid}" class="w-full font-bold text-2xl">${otherUser}</h2>
-        `;
-
-        // Imprimim les dades
-        document.getElementById("current-chat").innerHTML =
-          iconTemplate + nameTemplate;
-
-        // En cas de ser un xat
-      } else {
-        let iconTemplate;
-        let nameTemplate;
-
-        // Obtenim els membres del xat
-        const options = {
-          method: "GET",
-          headers: {
-            accept: "application/json",
-            apikey: apiKey,
-          },
-        };
-
-        fetch(
-          `https://${appId}.api-${region}.cometchat.io/v3/groups/${guid}/members?perPage=100&page=1`,
-          options
-        )
-          .then((response) => response.json())
-          .then((response) => {
-            // Obtenim la informació de l'altre membre
-            const otherUser = response.data.filter(
-              (user) => user.name != userData.name
-            );
-
-            // En cas de tenir una icona definida
-            if (otherUser[0].avatar) {
-              iconTemplate = `
-              <img class="rounded-full w-14 h-14" src="${otherUser[0].avatar}">
-            `;
-            } else {
-              iconTemplate = `
-            <img class="rounded-full w-14 h-14" src="https://ui-avatars.com/api/?name=${otherUser[0].name.charAt(
-              0
-            )}&color=7F9CF5&background=EBF4FF" />
-            `;
-            }
-
-            // Definim el nom
-            nameTemplate = `
-              <h2 id="chat-name-${response.data.guid}" class="w-full font-bold text-2xl">${otherUser[0].name}</h2>
-            `;
-
-            // Imprimim les dades
-            document.getElementById("current-chat").innerHTML =
-              iconTemplate + nameTemplate;
-
-            document.getElementById("current-chat-container").className =
-              "flex items-center h-20 w-full border-b";
-          })
-          .catch((err) => console.error(err));
-      }
-    })
+    .then((response) => console.log(response))
     .catch((err) => console.error(err));
-
-  // En cas de no tenir una icona definida, mostrem la inicial del seu nom
 };
 
-// Funciones Externas al chat
-
-// Convertir la hora del formato numerico a fecha
-const convertStringToDate = (strTime) => {
-  const timestamp = Number(strTime) * 1000;
-  const date = new Date(timestamp);
-
-  var hours = date.getHours();
-  var minutes = date.getMinutes();
-  // const ampm = hours >= 12 ? "pm" : "am";
-  // hours = hours % 12;
-  hours = hours ? hours : 12;
-  minutes = minutes < 10 ? "0" + minutes : minutes;
-  var timeStr = hours + ":" + minutes;
-
-  return timeStr.toString();
-};
-
-// Hacer visible o no el menú de "Nuevo grupo/chat"
-const toggleMenu = () => {
-  const menu = document.getElementById("new-chat-menu");
-  if (menu.classList.contains("flex")) {
-    menu.classList.remove("flex");
-    menu.classList.add("hidden");
-  } else {
-    menu.classList.remove("hidden");
-    menu.classList.add("flex");
-  }
-};
-
-const toggleModal = () => {
-  const modal = document.getElementById("new-chat-modal");
-  if (modal.classList.contains("flex")) {
-    modal.classList.remove("flex");
-    modal.classList.add("hidden");
-  } else {
-    modal.classList.remove("hidden");
-    modal.classList.add("flex");
-  }
-};
-
-const loadProfile = (uid) => {
+// Funció per a marcar com a llegit un xat de grup
+const markGroupConversationAsRead = (guid) => {
   const options = {
-    method: "GET",
+    method: "POST",
     headers: {
       accept: "application/json",
+      onBehalfOf: userInfo.uid,
       apikey: apiKey,
     },
   };
 
-  let iconTemplate = "";
-
-  // Petició a la API per obtenir les dades d'un usuari en concret
-  fetch(`https://${appId}.api-${region}.cometchat.io/v3/users/${uid}`, options)
+  fetch(
+    `https://${appID}.api-${region}.cometchat.io/v3/groups/${guid}/conversation/read`,
+    options
+  )
     .then((response) => response.json())
-    .then((response) => {
-      console.log(response);
-      if (response.data.avatar) {
-        iconTemplate = `
-              <img class="rounded-full w-20 h-20" src="${response.data.avatar}">
-            `;
-      } else {
-        iconTemplate = `
-            <img class="rounded-full w-20 h-20" src="https://ui-avatars.com/api/?name=${response.data.name.charAt(
-              0
-            )}&color=7F9CF5&background=EBF4FF" />
-            `;
-      }
-
-      const nameTemplate = `
-        <p class="font-semibold text-lg">
-          ${userData.name}
-        </p>
-      `;
-
-      document.getElementById("profile-image").innerHTML =
-        iconTemplate + nameTemplate;
-    })
+    .then()
     .catch((err) => console.error(err));
 };
 
-const users = [
-  {
-    name: "Alex",
-    uid: "admin_1_alex",
-    appId: "23195116ca7e245f",
-    apiKey: "a76fca94f28c87446b3de6dd7785355fbc9d8d78",
-    authKey: "b1809c12cf23a929539a2ac076b68277f7a4df9b",
-  },
-  {
-    name: "Jordi",
-    uid: "g_1_jordi",
-    appId: "23195116ca7e245f",
-    apiKey: "a76fca94f28c87446b3de6dd7785355fbc9d8d78",
-    authKey: "b1809c12cf23a929539a2ac076b68277f7a4df9b",
-  },
-  {
-    name: "Marc",
-    uid: "jc_1_marc",
-    appId: "23195116ca7e245f",
-    apiKey: "a76fca94f28c87446b3de6dd7785355fbc9d8d78",
-    authKey: "b1809c12cf23a929539a2ac076b68277f7a4df9b",
-  },
-  {
-    name: "David Romans",
-    uid: "superhero2",
-    appId: "23376343f2ad7555",
-    apiKey: "8b721f4d8ce4d4d4aa49ac790d2240aa4ef93cc5",
-    authKey: "f272f99207e0e5a186a8c5134bbd96354b64bc69",
-  },
-];
+// Funció per buscar un xat des del buscador
+const searchConversation = (e) => {
+  if (e.target.value.length != 0) {
+    searching.value = true;
+    conversationList2.value = conversationList.value.filter((conversation) =>
+      conversation.conversationWith.name.includes(e.target.value)
+    );
+  } else {
+    searching.value = false;
+    LoadChatsList();
+  }
+};
 </script>
