@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import {useAuthenticationStore} from '@/stores/auth/authentications';
+import { useAuthenticationStore } from '@/stores/auth/authentications';
 
 
 const requireAuth = async(to, from, next) => {

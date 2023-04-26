@@ -87,8 +87,8 @@
 	<!-- END: Form -->
 
 </template>
-<script setup>
 
+<script setup>
 	import { onMounted, reactive, toRefs } from 'vue';
 	import useVehicles from '@/composables/vehicles';
 	import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
