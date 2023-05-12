@@ -23,7 +23,7 @@
             <div
               class="-intro-x text-white font-light text-4xl leading-tight mt-10"
             >
-              The driver`s fellow 
+              The driver`s fellow
             </div>
 <!--             <div
               class="-intro-x mt-5 text-lg text-white text-opacity-70 dark:text-slate-400"
@@ -36,15 +36,6 @@
 
         <!-- BEGIN: Login Form -->
         <div class="h-screen xl:h-auto flex py-5 xl:py-0 my-10 xl:my-0">
-
-            <!-- <div class="flex flex-wrap justify-center xxl:hidden my-auto mx-auto">
-              <img
-                  alt="GlobalFleet - Office"
-                  class="max-w-full w-45 h-48"
-                  src="@/assets/images/globalfleet-office-logo-white-translucent.svg"
-                />
-            </div> -->
-
             <div
               class="my-auto mx-auto xl:ml-20 bg-white dark:bg-darkmode-600 xl:bg-transparent px-5 sm:px-8 py-8 xl:p-0 rounded-md shadow-md xl:shadow-none w-full sm:w-3/4 lg:w-2/4 xl:w-auto"
             >
@@ -130,7 +121,7 @@ import AuthFooter from "@/components/auth-footer/Main.vue";
 import LocaleSelect from "@/components/localeSelect/Main.vue";
 import { useAuthenticationStore } from '@/stores/auth/authentications';
 import { useRouter } from "vue-router";
-
+import { Toast } from '@/utils/toast';
 
 
 const useAuthentication = useAuthenticationStore();
@@ -140,8 +131,6 @@ const email = ref('');
 const password = ref('');
 const submitted = ref(false);
 const errors = ref(null);
-
-
 
 
 const handleSubmit = async() => {
@@ -160,13 +149,17 @@ const handleSubmit = async() => {
 
   if(useAuthentication.errors){
       if(useAuthentication.errors.e === 'Unauthorized'){
-          console.log('No autorizado')
+          //console.log('No autorizado')
           useAuthentication.errors = null;
+          await Toast('Claves de acceso no válidas', 'error');
+          //Remove localStore
+          if(localStorage.getItem('token')){
+            localStorage.removeItem('token');
+          }
+
       }
   }
 }
-
-
 
 
 onMounted(() => {
@@ -176,4 +169,5 @@ onMounted(() => {
     localStorage.removeItem('token');
   }
 });
+
 </script>

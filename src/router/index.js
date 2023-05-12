@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import {useAuthenticationStore} from '@/stores/auth/authentications';
+import { useAuthenticationStore } from '@/stores/auth/authentications';
 
 
 const requireAuth = async(to, from, next) => {
@@ -49,14 +49,24 @@ const routes = [
         component: () => import('@/views/dashboard/Dashboard.vue'),
       },
       {
+        path: "profile",
+        name: "profile",
+        component: () => import('@/views/profiles/Profile.vue'),
+      },
+      {
         path: "trips",
         name: "trips",
-        component: () => import('@/views/trips/Trip.vue'),
+        component: () => import('@/views/trips/TripList.vue'),
       },
       {
         path: "vehicles",
         name: "vehicles",
-        component: () => import('@/views/vehicles/Vehicle.vue'),
+        component: () => import('@/views/vehicles/VehicleList.vue'),
+      },
+      {
+        path: "employees",
+        name: "employees",
+        component: () => import('@/views/employees/EmployeeList.vue'),
       },
       {
         path: "documents",

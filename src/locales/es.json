@@ -29,5 +29,53 @@
     "password_placeholder": "Contraseña",
     "password_repeat_placeholder": "Repite la contraseña",
     "btn_save": "Guardar"
-  }
+  },
+  "profile": "Perfil",
+  "reset_password": "Resetear Password",
+  "help": "Ayuda",
+  "logout": "Cerrar Sesión",
+  "created_at": "Fecha creación",
+  "update_at": "Fecha actualiación",
+  "deleted_at": "Fecha eliminado",
+  "field": "Campo",
+  "filter": "Filtro",
+  "value": "Valor",
+
+  "save": "Guardar",
+  "update": "Actualizar",
+  "edit": "Editar",
+  "show": "Ver",
+  "delete": "Eliminar",
+  "search": "Buscar",
+  "cancel": "Cancelar",
+  "results": "Resultados",
+  "export": "Exportar",
+  "actions": "Acciones",
+  "reset": "Limpiar",
+
+  "message": {
+      "yes": "Sí",
+      "no": "No",
+      "are_you_sure": "Estás seguro?",
+      "record_saved": "Registro guardado",
+      "record_deleted": "Registro eliminado",
+      "record_updated": "Registro actualizado",
+      "record_error": "Error de registro",
+      "select": "Seleccione",
+      "record_will_be_deleted": "El registro será borrado",
+      "operation_cancelled": "Operación cancelada",
+      "no_results_found": "No se encontró resultados",
+      "export_excel": "Archivo XLSX",
+      "export_csv": "Archivo CSV",
+      "no_matching_records_found": "No se encuentran registros" 
+  },
+
+  "form": {
+    "required": "Campo requerido",
+    "minLength": ""
+  },
+  "plate": "Matricula",
+  "employee": "Empleado",
+  "company": "Compañía"
+
 }

@@ -17,8 +17,8 @@
       <!-- BEGIN: Breadcrumb -->
       <nav aria-label="breadcrumb" class="-intro-x h-[45px] mr-auto">
          <ol class="breadcrumb breadcrumb-light">
-          <li class="breadcrumb-item"><a href="#">Application</a></li>
-          <li class="breadcrumb-item active" aria-current="page" style="text-transform: capitalize">{{ $route.name }}</li>
+          <li class="breadcrumb-item"><a href="#">Inicio</a></li>
+          <li class="breadcrumb-item active capitalize" aria-current="page">{{ $route.name }}</li>
           <li>
             <Tippy tag="button" class="tooltip primary ml-4 mr-2" content="Desacoplar Ventana" :options="{
                     theme: 'light',
@@ -43,7 +43,6 @@
           />
           <SearchIcon class="search__icon dark:text-slate-500" />
         </div> -->
-        
         <a class="notification notification--light sm:hidden" href="">
           <SearchIcon class="notification__icon dark:text-slate-500" />
         </a>
@@ -128,57 +127,7 @@
 
       <FleetModeSwitcher />
 
-
-
-      <!-- BEGIN: Notifications -->
-
-      <Dropdown class="intro-x mr-4 sm:mr-6">
-        <DropdownToggle
-          tag="div"
-          role="button"
-          class="notification notification--bullet cursor-pointer"
-        >
-          <MessageCircleIcon class="notification__icon dark:text-slate-500" />
-        </DropdownToggle>
-        <DropdownMenu class="notification-content pt-2">
-          <DropdownContent tag="div" class="notification-content__box">
-            <div class="notification-content__title">Notifications</div>
-            <div
-              v-for="(faker, fakerKey) in $_.take($f(), 5)"
-              :key="fakerKey"
-              class="cursor-pointer relative flex items-center"
-              :class="{ 'mt-5': fakerKey }"
-            >
-              <div class="w-12 h-12 flex-none image-fit mr-1">
-                <img
-                  alt="Enigma Tailwind HTML Admin Template"
-                  class="rounded-full"
-                  :src="faker.photos[0]"
-                />
-                <div
-                  class="w-3 h-3 bg-success absolute right-0 bottom-0 rounded-full border-2 border-white"
-                ></div>
-              </div>
-              <div class="ml-2 overflow-hidden">
-                <div class="flex items-center">
-                  <a href="javascript:;" class="font-medium truncate mr-5">{{
-                    faker.users[0].name
-                  }}</a>
-                  <div class="text-xs text-slate-400 ml-auto whitespace-nowrap">
-                    {{ faker.times[0] }}
-                  </div>
-                </div>
-                <div class="w-full truncate text-slate-500 mt-0.5">
-                  {{ faker.news[0].shortContent }}
-                </div>
-              </div>
-            </div>
-          </DropdownContent>
-        </DropdownMenu>
-      </Dropdown>
-
-
-      <Dropdown class="intro-x mr-4 sm:mr-6">
+      <!-- <Dropdown class="intro-x mr-4 sm:mr-6">
         <DropdownToggle
           tag="div"
           role="button"
@@ -221,19 +170,17 @@
             </div>
           </DropdownContent>
         </DropdownMenu>
-      </Dropdown>
+      </Dropdown> -->
       <!-- END: Notifications -->
       <!-- BEGIN: Account Menu -->
-      <Dropdown class="intro-x w-8 h-8">
+
+      <Dropdown class="intro-x ">
         <DropdownToggle
           tag="div"
           role="button"
-          class="w-8 h-8 rounded-full overflow-hidden shadow-lg image-fit zoom-in scale-110"
+          class="zoom-in"
         >
-        <img
-            alt="{{ useAuthentication.user.name }}"
-            :src="$f()[9].photos[0]"
-          />
+          <ProfileAvatar :username="useAuthentication.user.name" bg-color="#d0d0d0" border-color="#d0d0d0"></ProfileAvatar>
         </DropdownToggle>
         <DropdownMenu class="w-56">
           <DropdownContent
@@ -243,26 +190,21 @@
               <div class="font-medium">
                 {{ useAuthentication.user.name }}
               </div>
-              <!-- <div class="text-xs text-white/60 mt-0.5 dark:text-slate-500">
-                {{ $f()[0].jobs[0] }}
-              </div> -->
             </DropdownHeader>
             <DropdownDivider class="border-white/[0.08]" />
             <DropdownItem class="dropdown-item hover:bg-white/5">
-              <UserIcon class="w-4 h-4 mr-2" /> Perfil</DropdownItem
+              <UserIcon class="w-4 h-4 mr-2" /> 
+              <router-link to="/profile">{{ $t("profile") }}</router-link></DropdownItem
             >
             <!-- <DropdownItem class="dropdown-item hover:bg-white/5">
               <EditIcon class="w-4 h-4 mr-2" /> Add Account</DropdownItem
             > -->
             <DropdownItem class="dropdown-item hover:bg-white/5">
-              <LockIcon class="w-4 h-4 mr-2" /> Resetear Password</DropdownItem
-            >
-            <DropdownItem class="dropdown-item hover:bg-white/5">
-              <HelpCircleIcon class="w-4 h-4 mr-2" /> Ayuda</DropdownItem
+              <HelpCircleIcon class="w-4 h-4 mr-2" /> {{ $t("help") }}</DropdownItem
             >
             <DropdownDivider class="border-white/[0.08]" />
             <DropdownItem class="dropdown-item hover:bg-white/5" @click="logout">
-              <ToggleRightIcon class="w-4 h-4 mr-2" /> Cerrar Sesión</DropdownItem
+              <ToggleRightIcon class="w-4 h-4 mr-2" /> {{ $t("logout") }}</DropdownItem
             >
           </DropdownContent>
         </DropdownMenu>
@@ -275,9 +217,11 @@
 
 <script setup>
   import { ref } from "vue";
-  import {useAuthenticationStore} from '@/stores/auth/authentications';
   import { useRouter } from "vue-router";
+  import {useAuthenticationStore} from '@/stores/auth/authentications';
   import FleetModeSwitcher from "@/components/fleet-dark-mode/Main.vue";
+  import ProfileAvatar from 'vue-profile-avatar'
+
   
 
   const useAuthentication = useAuthenticationStore();
@@ -287,6 +231,7 @@
   const showSearchDropdown = () => {
     searchDropdown.value = true;
   };
+
   const hideSearchDropdown = () => {
     searchDropdown.value = false;
   };

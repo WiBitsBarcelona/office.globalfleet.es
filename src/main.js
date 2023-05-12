@@ -8,6 +8,12 @@ import utils from "./utils";
 import "./assets/css/app.css";
 import messages from "@intlify/unplugin-vue-i18n/messages";
 
+
+// Sweetalert2
+import VueSweetalert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
+
+
 const i18n = createI18n({
     legacy: false,
     globalInjection: true,
@@ -19,9 +25,14 @@ const i18n = createI18n({
   });
 
 
-const app = createApp(App).use(router).use(createPinia()).use(i18n);
+const app = createApp(App)
+              .use(router)
+              .use(createPinia())
+              .use(i18n)
+              .use(VueSweetalert2);
 
 globalComponents(app);
 utils(app);
+
 
 app.mount("#app");
