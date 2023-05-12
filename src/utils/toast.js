@@ -1,6 +1,6 @@
 import Swal from "sweetalert2";
 
-export const Toast = (text, icon) => {
+export const Toast = async (text, icon) => {
     Swal.fire({
         toast: true,
         icon: icon,

@@ -36,15 +36,6 @@
 
         <!-- BEGIN: Login Form -->
         <div class="h-screen xl:h-auto flex py-5 xl:py-0 my-10 xl:my-0">
-
-            <!-- <div class="flex flex-wrap justify-center xxl:hidden my-auto mx-auto">
-              <img
-                  alt="GlobalFleet - Office"
-                  class="max-w-full w-45 h-48"
-                  src="@/assets/images/globalfleet-office-logo-white-translucent.svg"
-                />
-            </div> -->
-
             <div
               class="my-auto mx-auto xl:ml-20 bg-white dark:bg-darkmode-600 xl:bg-transparent px-5 sm:px-8 py-8 xl:p-0 rounded-md shadow-md xl:shadow-none w-full sm:w-3/4 lg:w-2/4 xl:w-auto"
             >
@@ -160,8 +151,7 @@ const handleSubmit = async() => {
       if(useAuthentication.errors.e === 'Unauthorized'){
           //console.log('No autorizado')
           useAuthentication.errors = null;
-          Toast('Claves de acceso no válidas', 'error');
-
+          await Toast('Claves de acceso no válidas', 'error');
           //Remove localStore
           if(localStorage.getItem('token')){
             localStorage.removeItem('token');
