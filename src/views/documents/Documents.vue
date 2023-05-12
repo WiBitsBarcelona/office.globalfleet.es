@@ -1,32 +1,82 @@
 <template>
   <div class="grid grid-cols-12 gap-6 mt-8">
     <div class="col-span-12 lg:col-span-2 2xl:col-span-2">
-      <h2 class="intro-y text-lg font-medium mr-auto mt-2">Gestor de Documentos</h2>
+      <h2 class="intro-y text-lg font-medium mr-auto mt-2">
+        Gestor de Documentos
+      </h2>
       <!-- BEGIN: File Manager Menu -->
       <div class="intro-y box p-5 mt-6">
-        <div class="mt-1">
-          <a
-            href=""
-            class="flex items-center px-3 py-2 rounded-md bg-primary text-white font-medium"
-          >
-            <PlaneIcon class="w-4 h-4 mr-2" /> Viajes
-          </a>
+        <div class="flex flex-col gap-6 mt-1">
+          <div class="flex flex-col gap-2 items-end">
+            <a
+              href=""
+              class="flex items-center w-full px-3 py-2 rounded-md bg-primary text-white font-medium"
+            >
+              <PlaneIcon class="w-4 h-4 mr-2" /> Viajes
+            </a>
+            <div class="flex w-full items-center justify-end gap-2">
+              <p class="text-xl font-semibold">-</p>
+              <a
+                href=""
+                class="flex items-center px-3 py-2 rounded-md bg-primary text-white font-medium w-10/12 cursor-pointer"
+              >
+                <CarIcon class="w-4 h-4 mr-2" /> Subviaje 1
+              </a>
+            </div>
+            <div class="flex w-full items-center justify-end gap-2">
+              <p class="text-xl font-semibold">-</p>
+              <a
+                href=""
+                class="flex items-center px-3 py-2 rounded-md bg-primary text-white font-medium w-10/12 cursor-pointer"
+              >
+                <CarIcon class="w-4 h-4 mr-2" /> Subviaje 2
+              </a>
+            </div>
+            <div class="flex w-full items-center justify-end gap-2">
+              <p class="text-xl font-semibold">-</p>
+              <a
+                href=""
+                class="flex items-center px-3 py-2 rounded-md bg-primary text-white font-medium w-10/12 cursor-pointer"
+              >
+                <CarIcon class="w-4 h-4 mr-2" /> Subviaje 3
+              </a>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2 items-end">
+            <a
+              href=""
+              class="flex items-center w-full px-3 py-2 rounded-md bg-primary text-white font-medium"
+            >
+              <TruckIcon class="w-4 h-4 mr-2" /> Vehiculos
+            </a>
+            <div class="flex w-full items-center justify-end gap-2">
+              <p class="text-xl font-semibold">-</p>
+              <a
+                href=""
+                class="flex items-center px-3 py-2 rounded-md bg-primary text-white font-medium w-10/12 cursor-pointer"
+              >
+                <CarIcon class="w-4 h-4 mr-2" /> Subvehiculo 1
+              </a>
+            </div>
+            <div class="flex w-full items-center justify-end gap-2">
+              <p class="text-xl font-semibold">-</p>
+              <a
+                href=""
+                class="flex items-center px-3 py-2 rounded-md bg-primary text-white font-medium w-10/12 cursor-pointer"
+              >
+                <BusIcon class="w-4 h-4 mr-2" /> Subvehiculo 2
+              </a>
+            </div>
+          </div>
+<!-- 
           <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
             <VideoIcon class="w-4 h-4 mr-2" /> Otros
           </a>
-          <!-- <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
-            <FileIcon class="w-4 h-4 mr-2" /> Documents
-          </a>
-          <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
-            <UsersIcon class="w-4 h-4 mr-2" /> Shared
-          </a>
-          <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
-            <TrashIcon class="w-4 h-4 mr-2" /> Trash
-          </a> -->
         </div>
         <div
           class="border-t border-slate-200 dark:border-darkmode-400 mt-4 pt-4"
-        >
+        > -->
           <!-- <a href="" class="flex items-center px-3 py-2 rounded-md">
             <div class="w-2 h-2 bg-pending rounded-full mr-3"></div>
             Custom Work
@@ -47,9 +97,9 @@
             <div class="w-2 h-2 bg-danger rounded-full mr-3"></div>
             Next Week
           </a> -->
-          <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
+          <!-- <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
             <PlusIcon class="w-4 h-4 mr-2" /> Añadir etiqueta
-          </a>
+          </a> -->
         </div>
       </div>
       <!-- END: File Manager Menu -->
@@ -167,6 +217,7 @@
           :key="fakerKey"
           class="intro-y col-span-6 sm:col-span-4 md:col-span-3 2xl:col-span-2"
         >
+        <!-- {{ faker.files[0] }} -->
           <div
             class="file box rounded-md px-5 pt-8 pb-5 sm:px-5 relative zoom-in"
           >
@@ -285,3 +336,13 @@
     </div>
   </div>
 </template>
+
+<script>
+  import { ref } from 'vue';
+  import { faker } from '../../utils/faker'
+
+  let selectedFolder = ref('viajes');
+  let foldersToShow = ref(faker);
+
+  console.log(faker)
+</script>

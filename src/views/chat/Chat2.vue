@@ -427,8 +427,8 @@ CometChat.init(appID, appSetting).then(
 );
 
 // Iniciem la sessió al xat
-const UID = "alex";
-const name = "Alex";
+const UID = "marc";
+const name = "Marc";
 
 const user = new CometChat.User(UID);
 user.setName(name);

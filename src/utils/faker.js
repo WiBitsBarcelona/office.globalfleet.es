@@ -241,16 +241,16 @@ const fakers = {
   },
   fakeFiles() {
     const files = [
-      { fileName: "Celine Dion - Ashes.mp4", type: "MP4", size: "20 MB" },
-      { fileName: "Laravel 7", type: "Empty Folder", size: "120 MB" },
-      { fileName: fakers.fakeImages()[0], type: "Image", size: "1.2 MB" },
-      { fileName: "Repository", type: "Folder", size: "20 KB" },
-      { fileName: "Resources.txt", type: "TXT", size: "2.2 MB" },
-      { fileName: "Routes.php", type: "PHP", size: "1 KB" },
-      { fileName: "Dota 2", type: "Folder", size: "112 GB" },
-      { fileName: "Documentation", type: "Empty Folder", size: "4 MB" },
-      { fileName: fakers.fakeImages()[0], type: "Image", size: "1.4 MB" },
-      { fileName: fakers.fakeImages()[0], type: "Image", size: "1 MB" },
+      { fileName: "Celine Dion - Ashes.mp4", type: "MP4", size: "20 MB", onFolder: 'viajes' },
+      { fileName: "Laravel 7", type: "Empty Folder", size: "120 MB", onFolder: 'viajes' },
+      { fileName: fakers.fakeImages()[0], type: "Image", size: "1.2 MB", onFolder: 'viajes' },
+      { fileName: "Repository", type: "Folder", size: "20 KB", onFolder: 'viajes' },
+      { fileName: "Resources.txt", type: "TXT", size: "2.2 MB", onFolder: 'otros' },
+      { fileName: "Routes.php", type: "PHP", size: "1 KB", onFolder: 'otros' },
+      { fileName: "Dota 2", type: "Folder", size: "112 GB", onFolder: 'subviaje1' },
+      { fileName: "Documentation", type: "Empty Folder", size: "4 MB", onFolder: 'subviaje1' },
+      { fileName: fakers.fakeImages()[0], type: "Image", size: "1.4 MB", onFolder: 'subviaje1' },
+      { fileName: fakers.fakeImages()[0], type: "Image", size: "1 MB", onFolder: 'viajes' },
     ];
     return _.shuffle(files);
   },
