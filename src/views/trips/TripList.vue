@@ -214,13 +214,13 @@ const initTabulator = () => {
       },
       {
         title: "Referencia",
-        minWidth: 200,
+        minWidth: 100,
         responsive: 0,
         field: "reference_number",
         vertAlign: "middle",
       },
       {
-        title: "Estados",
+        title: "Etapas",
         minWidth: 200,
         responsive: 0,
         field: "stages",
@@ -232,7 +232,7 @@ const initTabulator = () => {
           //console.log(cell.getData().stages);
 
           stages.forEach((el) => {
-            s += el.name;
+            s += el.name + '/';
           });
           return s;
         }
