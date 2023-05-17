@@ -33,7 +33,7 @@
             <option value="name">Nombre</option>
             <option value="reference_number">Referencia</option>
             <option value="remaining_stock">Remaining Stock</option>
-            <option value="comm.name">Comm</option>
+            <option value="comm.name">Estatus</option>
           </select>
         </div>
         <div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
@@ -206,7 +206,7 @@ const initTabulator = () => {
         headerSort: false,
       },
       {
-        title: "Name",
+        title: "Nombre",
         minWidth: 200,
         responsive: 0,
         field: "name",
@@ -238,7 +238,7 @@ const initTabulator = () => {
         }
       },
       {
-        title: "Comm",
+        title: "Estatus Comm",
         minWidth: 200,
         responsive: 0,
         field: "comm.name",
@@ -261,7 +261,7 @@ const initTabulator = () => {
         }
       },
       {
-        title: "Status",
+        title: "Estatus",
         minWidth: 200,
         responsive: 0,
         field: "status",
