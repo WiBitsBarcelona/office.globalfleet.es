@@ -115,26 +115,24 @@
                 {{ conversation.conversationWith.name }}
               </h2>
               <div
-                :id="'unreadMessages-container-' + conversation.conversationId"
                 v-if="
                   conversation.unreadMessageCount != 0 &&
                   conversation.unreadMessageCount < 100
                 "
                 class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-green-500 text-white rounded-full"
               >
-                <p class="w-full text-center mt-[.1rem]">
+                <p class="w-full text-center">
                   {{ conversation.unreadMessageCount }}
                 </p>
               </div>
               <div
-                :id="'unreadMessages-container-' + conversation.conversationId"
                 v-else-if="
                   conversation.unreadMessageCount != 0 &&
                   conversation.unreadMessageCount > 100
                 "
                 class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-green-500 text-white rounded-full"
               >
-                <p class="w-full text-center mt-[.1rem]">+99</p>
+                <p class="w-full text-center">+99</p>
               </div>
             </div>
             <p :id="'last-' + conversation.conversationId">
@@ -226,6 +224,7 @@
           {{ selectedChat.name }}
         </h2>
       </div>
+
       <div
         id="chat"
         class="flex flex-col gap-2 h-5/6 w-full p-5 overflow-y-scroll scrollbar-hidden"
@@ -305,10 +304,16 @@ import { useAuthenticationStore } from "@/stores/auth/authentications";
 // let authKey = "65aba0afa100469706ce7d0f9d9febba02a4500d";
 // let apiKey = "8b55ca7afaa426c86acf3847c9060c1de8e66d3d";
 
-let appID = "236295e8d26beda0";
+// let appID = "236295e8d26beda0";
+// let region = "eu";
+// let authKey = "b38b4ff133caaf0d95e66ffa751ea229215db7f1";
+// let apiKey = "a80009a3c96c71cd0cd7b86c7ed8f1e4ae295116";
+
+let appID = "231046aa8ee568e3";
 let region = "eu";
-let authKey = "b38b4ff133caaf0d95e66ffa751ea229215db7f1";
-let apiKey = "a80009a3c96c71cd0cd7b86c7ed8f1e4ae295116";
+let authKey = "f588a52d5487c195325e84aee5b610d0647a43bf";
+let apiKey = "c785651bb72cc0ca4c4f79ba24f4123f491ea863";
+
 
 let userInfo;
 let conversationList = ref("");
@@ -317,7 +322,6 @@ let searching = ref(false);
 let inChat = ref(false);
 let inNewChat = ref(false);
 let selectedChat = ref("");
-let selectedConversation = ref("");
 let newChatsList = ref("");
 
 // Variable amb la configuració de la App
@@ -348,29 +352,6 @@ CometChat.init(appID, appSetting).then(
           // Tornem a carregar tots els xats
           LoadChatsList();
 
-          console.log(
-            textMessage.conversationId,
-            selectedConversation.value,
-            selectedChat.value.uid
-          );
-
-          // Si el missatge prové del mateix xat on som
-          if (
-            textMessage.conversationId === selectedConversation.value
-          ) {
-
-            console.log('Mateix xat')
-            // El marquem com a llegit
-            markUserConversationAsRead(selectedChat.value.uid)
-
-            // Tornem a seleccionar el mateix xat
-            const elementSeleccionat = document.getElementById(selectedChat.value.uid);
-            // Treiem el fons blanc de l'element
-            elementSeleccionat.classList.remove("bg-white");
-            // Pintem el background a l'element
-            elementSeleccionat.classList.add("bg-gray-200");
-          }
-
           // Comprobem la data del missatge
           currentMessageDate = getMessageDate(textMessage.sentAt);
 
@@ -389,12 +370,10 @@ CometChat.init(appID, appSetting).then(
             chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
           }
 
-          // En cas de estar dins el xat
           if (
             textMessage.receiverId ===
             document.getElementById("chat-header").getAttribute("chatId")
           ) {
-            // Mirem si hem enviat nosaltres el missatge
             if (textMessage.sender.uid === userInfo.uid) {
               document.getElementById("chat").innerHTML += `
                         <div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
@@ -408,7 +387,6 @@ CometChat.init(appID, appSetting).then(
                           </div>
                         </div>`;
             } else {
-              // En cas de haver enviat el missatge una altre persona
               document.getElementById("chat").innerHTML += `
                         <div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
                           <div class="flex gap-3 rounded-lg w-fit py-2 px-5 bg-gray-200 max-w-md">
@@ -421,8 +399,6 @@ CometChat.init(appID, appSetting).then(
                           </div>
                         </div>`;
             }
-
-            // Fem scroll aball de tot de la pàgina
             const messageBody = document.getElementById("chat");
             messageBody.scrollTop =
               messageBody.scrollHeight - messageBody.clientHeight;
@@ -457,7 +433,7 @@ CometChat.init(appID, appSetting).then(
 );
 
 // Iniciem la sessió al xat
-const UID = "marc";
+const UID = "ges_1";
 const name = "Marc";
 
 const user = new CometChat.User(UID);
@@ -562,9 +538,25 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
   let currentMessageDate;
   let lastMessageDate = "";
 
-  selectedConversation.value = ConversationId;
+  // Agafem tots els xats
+  const elements = document.querySelectorAll(".conversations-list-item");
 
-  // Guardem les dades de l'usuari o grup
+  // Pintem els xats de blanc
+  elements.forEach((element) => {
+    if (element.classList.contains("bg-gray-200")) {
+      element.classList.replace("bg-gray-200", "bg-white");
+    }
+  });
+
+  // Mirem l'element que hem fet clic
+  const elementSeleccionat = document.getElementById(ChatId);
+
+  // Treiem el fons blanc de l'element
+  elementSeleccionat.classList.remove("bg-white");
+
+  // Pintem el background a l'element
+  elementSeleccionat.classList.add("bg-gray-200");
+
   if (ChatType === "user") {
     const response = await getUserData(ChatId);
     selectedChat.value = response.data;
@@ -580,13 +572,13 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
 
   const chat = document.getElementById("chat");
 
-  // Posem el xat en blanc per si hi havia una anterior conversació carregada
   chat.innerHTML = "";
 
   // Revisem cada missatge qui l'ha enviat per saber quins estils aplicar-li
   conversations.data.map((conversation) => {
     // Marquem el missatge com a llegit
     if (conversation.sender != userInfo.uid) {
+      console.log(conversation);
       if (conversation.receiverType === "user")
         markUserConversationAsRead(conversation.sender);
       else markGroupConversationAsRead(conversation.receiver);
@@ -631,33 +623,6 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
                         </div>`;
     }
   });
-
-  // Amaguem el popup amb els missatges pendents
-  const msgPopup = document.getElementById(
-    `unreadMessages-container-${ConversationId}`
-  );
-  if (msgPopup !== null) {
-    msgPopup.remove();
-  }
-
-  // Agafem tots els xats
-  const elements = document.querySelectorAll(".conversations-list-item");
-
-  // Pintem els xats de blanc
-  elements.forEach((element) => {
-    if (element.classList.contains("bg-gray-200")) {
-      element.classList.replace("bg-gray-200", "bg-white");
-    }
-  });
-
-  // Mirem l'element que hem fet clic
-  const elementSeleccionat = document.getElementById(ChatId);
-
-  // Treiem el fons blanc de l'element
-  elementSeleccionat.classList.remove("bg-white");
-
-  // Pintem el background a l'element
-  elementSeleccionat.classList.add("bg-gray-200");
 
   const messageBody = document.getElementById("chat");
   messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
@@ -974,6 +939,8 @@ const toggleNewChat = async () => {
       (user) => user.uid !== userInfo.uid
     );
 
+    console.log(otherUsers);
+
     newChatsList.value = otherUsers;
   }
 };
@@ -1014,7 +981,7 @@ const markGroupConversationAsRead = (guid) => {
     options
   )
     .then((response) => response.json())
-    .then()
+    .then((response) => console.log(response))
     .catch((err) => console.error(err));
 };
 
