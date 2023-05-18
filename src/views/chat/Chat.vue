@@ -297,23 +297,24 @@
 <script setup>
 import { CometChat } from "@cometchat-pro/chat";
 import { ref } from "vue";
+
+// Hooks
 import { useAuthenticationStore } from "@/stores/auth/authentications";
+import useChat from '@/composables/chat'
 
-// let appID = "2343812648126b59";
-// let region = "eu";
-// let authKey = "65aba0afa100469706ce7d0f9d9febba02a4500d";
-// let apiKey = "8b55ca7afaa426c86acf3847c9060c1de8e66d3d";
+const { cometData, getCometChatCredentials } = useChat();
 
-// let appID = "236295e8d26beda0";
-// let region = "eu";
-// let authKey = "b38b4ff133caaf0d95e66ffa751ea229215db7f1";
-// let apiKey = "a80009a3c96c71cd0cd7b86c7ed8f1e4ae295116";
+// Funcion que va a correr al iniciar la pagina
+const initialize = async () => {
+  // funcion para listar los datos de cometchat
+  await getCometChatCredentials();
+};
+initialize();
 
-let appID = "231046aa8ee568e3";
-let region = "eu";
-let authKey = "f588a52d5487c195325e84aee5b610d0647a43bf";
-let apiKey = "c785651bb72cc0ca4c4f79ba24f4123f491ea863";
-
+let appID = cometData.value.cometchat_uid ? cometData.value.app_id : "231046aa8ee568e3";
+let region = cometData.value.region ? cometData.value.region : "eu";
+let authKey = cometData.value.auth_key ? cometData.value.auth_key : "f588a52d5487c195325e84aee5b610d0647a43bf";
+let apiKey = cometData.value.rest_api_key ? cometData.value.rest_api_key : "c785651bb72cc0ca4c4f79ba24f4123f491ea863";
 
 let userInfo;
 let conversationList = ref("");
@@ -433,8 +434,8 @@ CometChat.init(appID, appSetting).then(
 );
 
 // Iniciem la sessió al xat
-const UID = "ges_1";
-const name = "Marc";
+const UID = useAuthenticationStore().user.employee.cometchat_uid;
+const name = useAuthenticationStore().user.employee.name;
 
 const user = new CometChat.User(UID);
 user.setName(name);
