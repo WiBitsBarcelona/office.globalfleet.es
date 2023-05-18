@@ -185,6 +185,7 @@ const initTabulator = () => {
         responsive: 0,
         field: "name",
         vertAlign: "middle",
+        headerHozAlign:"left"
       },
       {
         title: "Referencia",
@@ -192,6 +193,7 @@ const initTabulator = () => {
         responsive: 0,
         field: "reference_number",
         vertAlign: "middle",
+        headerHozAlign:"left"
       },
       {
         title: "Etapas",
@@ -199,6 +201,7 @@ const initTabulator = () => {
         responsive: 0,
         field: "stages",
         vertAlign: "middle",
+        headerHozAlign:"left",
         formatter(cell) {
           let stages = cell.getData().stages;
           let s = '';
@@ -217,6 +220,7 @@ const initTabulator = () => {
         responsive: 0,
         field: "comm.name",
         vertAlign: "middle",
+        headerHozAlign:"left",
         formatter(cell) {
 
           let textColor = '';
@@ -240,6 +244,7 @@ const initTabulator = () => {
         responsive: 0,
         field: "status",
         vertAlign: "middle",
+        headerHozAlign:"left",
         formatter(cell) {
           return `<div class="flex items-center lg:justify-center 
           ${cell.getData().status.id === 1 ? "text-success" : "text-danger"}"

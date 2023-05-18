@@ -182,13 +182,6 @@
 				headerSort: false,
 			},
 			{
-				title: t("user_id"),
-				minWidth: 200,
-				responsive: 0,
-				field: "user_id",
-				vertAlign: "middle",
-			},
-			{
 				title: t("company"),
 				minWidth: 200,
 				responsive: 0,
@@ -201,6 +194,7 @@
 				responsive: 0,
 				field: "name",
 				vertAlign: "middle",
+				headerHozAlign:"left"
 			},
 			{
 				title: t("surname"),
@@ -208,6 +202,7 @@
 				responsive: 0,
 				field: "surname",
 				vertAlign: "middle",
+				headerHozAlign:"left"
 			},
 			{
 				title: t("fiscal_identification"),
@@ -215,12 +210,14 @@
 				responsive: 0,
 				field: "fiscal_identification",
 				vertAlign: "middle",
+				headerHozAlign:"left"
 			},
 			{
 				title: t("actions"),
 				minWidth: 200,
 				field: "actions",
 				responsive: 1,
+				headerHozAlign: "center",
 				hozAlign: "center",
 				vertAlign: "middle",
 				download: false,

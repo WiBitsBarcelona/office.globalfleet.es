@@ -76,6 +76,9 @@
   },
   "plate": "Matricula",
   "employee": "Empleado",
-  "company": "Compañía"
+  "company": "Compañía",
+  "name": "Nombre", 
+  "surname": "Apellidos",
+  "fiscal_identification": "Identificación"
 
 }
