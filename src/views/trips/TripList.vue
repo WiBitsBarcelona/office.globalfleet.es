@@ -119,18 +119,12 @@
         class="mt-5 table-report table-report--tabulator"
       ></div>
     </div>
+
   </div>
   <!-- END: HTML Table Data -->
 
-
-
-
-
-
 </template>
   
-
-
 
 <script setup>
 
@@ -141,8 +135,8 @@
   import { useI18n } from "vue-i18n";  
 
   import useTrips from "../../composables/trips";
-  import Create from "@/views/trips/TripCreate.vue";
-  import Edit from "@/views/trips/TripEdit.vue";
+  import Create from "@/components/trips/TripCreate.vue";
+  import Edit from "@/components/trips/TripEdit.vue";
 
   import Swal from "sweetalert2";
   //TODO pendiente
@@ -229,15 +223,49 @@ const initTabulator = () => {
         vertAlign: "middle",
         headerHozAlign:"left",
         formatter(cell) {
+          
           let stages = cell.getData().stages;
           let s = '';
 
           //console.log(cell.getData().stages);
 
           stages.forEach((el) => {
-            s += el.name + '/';
+
+            console.log({...el});
+            
+            s += el.name + `(${el.status.name} ${el.id})` + ' / ';
+            
+            //console.log({...el.status});
           });
           return s;
+        }
+      },
+      {
+        title: "Prioridad",
+        minWidth: 200,
+        responsive: 0,
+        field: "priority.name",
+        vertAlign: "middle",
+        headerHozAlign:"left",
+        formatter(cell) {
+
+          let textColor = '';
+          if(cell.getData().comm.id === 1){
+            textColor = 'text-success';
+          }else if(cell.getData().comm.id === 2){
+            textColor = 'text-amber-500';
+          }else if(cell.getData().comm.id === 3){
+            textColor = 'text-orange-600';
+          }
+
+          //<i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
+
+          return `<div class="flex items-center lg:justify-center 
+          ${textColor}"
+          >
+            
+              ${cell.getData().comm.name}
+          </div>`;
         }
       },
       {
@@ -252,14 +280,18 @@ const initTabulator = () => {
           let textColor = '';
           if(cell.getData().comm.id === 1){
             textColor = 'text-success';
-          }else{
-            textColor = 'text-danger';
+          }else if(cell.getData().comm.id === 2){
+            textColor = 'text-amber-500';
+          }else if(cell.getData().comm.id === 3){
+            textColor = 'text-orange-600';
           }
+
+          //<i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
 
           return `<div class="flex items-center lg:justify-center 
           ${textColor}"
           >
-            <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
+            
               ${cell.getData().comm.name}
           </div>`;
         }
@@ -272,10 +304,30 @@ const initTabulator = () => {
         vertAlign: "middle",
         headerHozAlign:"left",
         formatter(cell) {
+
+          let textColor = ''; 
+
+          if(cell.getData().status.id === 1){
+            textColor = 'text-cyan-400';
+          }else if(cell.getData().status.id === 2){
+            textColor = 'text-cyan-500';
+          }else if(cell.getData().status.id === 3){
+            textColor = 'text-cyan-600';
+          }else if(cell.getData().status.id === 4){
+            textColor = 'text-cyan-700';
+          }else if(cell.getData().status.id === 5){
+            textColor = 'text-blue-900';
+          }else if(cell.getData().status.id === 6){
+            textColor = 'text-green-700';
+          }
+
+          
+          //<i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
+
           return `<div class="flex items-center lg:justify-center 
-          ${cell.getData().status.id === 1 ? "text-success" : "text-danger"}"
+          ${textColor}"
           >
-            <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
+            
               ${cell.getData().status.name}
           </div>`;
         }
@@ -291,7 +343,7 @@ const initTabulator = () => {
         download: false,
         formatter(cell) {
           const a = dom(`<div class="flex lg:justify-center items-center">
-                <button class="flex items-center mr-3"
+                <button class="flex items-center mr-3 text-green-800"
                   id="btn_edit"
                 >
                   <i data-lucide="check-square" class="w-4 h-4 mr-1"></i> ${t("edit")}
