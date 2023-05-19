@@ -42,7 +42,6 @@
           </div>
         </div>
       </div>
-
       <div class="w-full relative mr-auto mt-3 sm:mt-0">
         <SearchIcon
           class="w-4 h-4 absolute my-auto inset-y-0 ml-3 left-0 z-10 text-slate-500"
@@ -63,7 +62,7 @@
       >
         <!-- Per cada xat farem un botó -->
         <button
-          v-if="!inNewChat"
+          v-if="!inNewChat || conversationList.length != 0"
           v-for="conversation in conversationList"
           :id="
             conversation.conversationWith.uid
@@ -106,13 +105,11 @@
                   )}&color=7F9CF5&background=EBF4FF`
             "
           />
-
           <div
             class="flex flex-col justify-between h-full w-full text-left gap-1"
           >
             <div class="flex w-full justify-between">
               <h2 class="font-semibold">
-                {{ conversation.conversationWith.name }}
               </h2>
               <div
                 v-if="
@@ -137,9 +134,11 @@
             </div>
             <p :id="'last-' + conversation.conversationId">
               {{
-                conversation.lastMessage.data.text.length < 35
+              conversationList.length > 0 && conversation.lastMessage && conversation.lastMessage.data && conversation.lastMessage.data.text
+                ? conversation.lastMessage.data.text.length < 35
                   ? conversation.lastMessage.data.text
                   : conversation.lastMessage.data.text.substring(0, 35) + "..."
+                : ''
               }}
             </p>
           </div>
