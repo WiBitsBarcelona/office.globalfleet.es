@@ -122,7 +122,7 @@ import { ref, reactive, onMounted, toRaw } from "vue";
   import Tabulator from "tabulator-tables";
   import { useI18n } from "vue-i18n";  
 
-  import useTrips from "../../composables/trips";
+  import useTrips from "@/composables/trips";
 
 
 

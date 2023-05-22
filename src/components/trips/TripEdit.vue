@@ -3,10 +3,37 @@
 	<!-- BEGIN: Form -->
 	<form class="validate-form" @submit.prevent="save">
 
-		<!-- BEGIN: container -->
-		<div class="grid grid-cols-12 gap-6">
+		<h1 class="text-lg">{{ t("trip") }}</h1>
 
-			<div class="col-span-4 md:col-span-4 lg:col-span-4">
+		<!-- BEGIN: container -->
+		<div class="grid grid-rows-12 gap-6">
+
+			<div class="col-span-12 md:col-span-8 lg:col-span-8">
+
+				<div class="input-form">
+					<label for="name" class="form-label w-full">
+						{{ $t("name") }}
+					</label>
+					<input
+						v-model.trim="validate.name.$model"
+						id="name"
+						type="text"
+						name="name"
+						class="form-control"
+						:class="{ 'border-danger': validate.name.$error }"
+					/>
+					<template v-if="validate.name.$error">
+						<div v-for="(error, index) in validate.name.$errors" :key="index" class="text-danger mt-2">
+							{{ error.$message }}
+						</div>
+					</template>
+				</div>
+
+			</div>
+
+
+
+			<div class="col-span-12 md:col-span-4 lg:col-span-4">
 
 				<div class="input-form">
 					<label for="reference_number" class="form-label w-full">
@@ -27,24 +54,10 @@
 					</template>
 				</div>
 
-				<div class="input-form">
-					<label for="name" class="form-label w-full">
-						{{ $t("name") }}
-					</label>
-					<input
-						v-model.trim="validate.name.$model"
-						id="name"
-						type="text"
-						name="name"
-						class="form-control"
-						:class="{ 'border-danger': validate.name.$error }"
-					/>
-					<template v-if="validate.name.$error">
-						<div v-for="(error, index) in validate.name.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
+			</div>
+				
+
+			<div class="col-span-4 md:col-span-4 lg:col-span-4">
 
 				<div class="input-form">
 					<label for="execution_at" class="form-label w-full">
@@ -68,8 +81,8 @@
 
 			</div>
 
+			<div class="col-span-12 md:col-span-4 lg:col-span-4">
 
-			<div class="col-span-4 md:col-span-4 lg:col-span-4">
 
 				<div class="input-form">
 					<label for="started_at" class="form-label w-full">
@@ -90,6 +103,13 @@
 					</template>
 				</div>
 
+			</div>
+
+
+
+
+			<div class="col-span-12 md:col-span-4 lg:col-span-4">
+
 				<div class="input-form">
 					<label for="finished_at" class="form-label w-full">
 						{{ $t("finished_at") }}
@@ -109,23 +129,43 @@
 					</template>
 				</div>
 
+			</div>
+
+
+			<div class="col-span-12 md:col-span-4 lg:col-span-4">
+
 				<div class="input-form">
-					<label for="observations" class="form-label w-full">
-						{{ $t("observations") }}
+					<label for="trip_priority_id" class="form-label w-full">
+						{{ $t("trip_priority") }}
 					</label>
 					<input
-						v-model.trim="validate.observations.$model"
-						id="observations"
+						v-model.trim="validate.trip_priority_id.$model"
+						id="trip_priority_id"
 						type="text"
-						name="observations"
+						name="trip_priority_id"
 						class="form-control"
-						:class="{ 'border-danger': validate.observations.$error }"
+						:class="{ 'border-danger': validate.trip_priority_id.$error }"
 					/>
-					<template v-if="validate.observations.$error">
-						<div v-for="(error, index) in validate.observations.$errors" :key="index" class="text-danger mt-2">
+					<template v-if="validate.trip_priority_id.$error">
+						<div v-for="(error, index) in validate.trip_priority_id.$errors" :key="index" class="text-danger mt-2">
 							{{ error.$message }}
 						</div>
 					</template>
+				</div>
+
+			</div>
+
+			<div class="col-span-12 md:col-span-4 lg:col-span-4">
+
+				<div class="input-form">
+					<label for="trip_priority_id" class="form-label w-full">
+						{{ $t("trip_priority") }}
+					</label>
+					<select v-model="selected" :selected="2">
+						<option v-for="priority in tripPriorities" :value="priority.id">
+							{{ priority.name}}
+						</option>
+					</select>
 				</div>
 
 			</div>
@@ -134,67 +174,9 @@
 
 			<div class="col-span-4 md:col-span-4 lg:col-span-4">
 
-
-				<div class="input-form">
-					<label for="vehicle_id" class="form-label w-full">
-						{{ $t("vehicle_id") }}
-					</label>
-					<input
-						v-model.trim="validate.vehicle_id.$model"
-						id="vehicle_id"
-						type="text"
-						name="vehicle_id"
-						class="form-control"
-						:class="{ 'border-danger': validate.vehicle_id.$error }"
-					/>
-					<template v-if="validate.vehicle_id.$error">
-						<div v-for="(error, index) in validate.vehicle_id.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
-
-				<div class="input-form">
-					<label for="employee_id" class="form-label w-full">
-						{{ $t("employee_id") }}
-					</label>
-					<input
-						v-model.trim="validate.employee_id.$model"
-						id="employee_id"
-						type="text"
-						name="employee_id"
-						class="form-control"
-						:class="{ 'border-danger': validate.employee_id.$error }"
-					/>
-					<template v-if="validate.employee_id.$error">
-						<div v-for="(error, index) in validate.employee_id.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
-
-				<div class="input-form">
-					<label for="company_id" class="form-label w-full">
-						{{ $t("company_id") }}
-					</label>
-					<input
-						v-model.trim="validate.company_id.$model"
-						id="company_id"
-						type="text"
-						name="company_id"
-						class="form-control"
-						:class="{ 'border-danger': validate.company_id.$error }"
-					/>
-					<template v-if="validate.company_id.$error">
-						<div v-for="(error, index) in validate.company_id.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
-
 				<div class="input-form">
 					<label for="trip_status_id" class="form-label w-full">
-						{{ $t("trip_status_id") }}
+						{{ $t("trip_status") }}
 					</label>
 					<input
 						v-model.trim="validate.trip_status_id.$model"
@@ -219,7 +201,7 @@
 
 				<div class="input-form">
 					<label for="trip_comm_status_id" class="form-label w-full">
-						{{ $t("trip_comm_status_id") }}
+						{{ $t("trip_comm_status") }}
 					</label>
 					<input
 						v-model.trim="validate.trip_comm_status_id.$model"
@@ -236,28 +218,107 @@
 					</template>
 				</div>
 
+			</div>
+
+
+
+			<div class="col-span-12 md:col-span-12 lg:col-span-12">
+
 				<div class="input-form">
-					<label for="trip_priority_id" class="form-label w-full">
-						{{ $t("trip_priority_id") }}
+					<label for="observations" class="form-label w-full">
+						{{ $t("observations") }}
 					</label>
-					<input
-						v-model.trim="validate.trip_priority_id.$model"
-						id="trip_priority_id"
+					<textarea
+						v-model.trim="validate.observations.$model"
+						id="observations"
 						type="text"
-						name="trip_priority_id"
+						name="observations"
 						class="form-control"
-						:class="{ 'border-danger': validate.trip_priority_id.$error }"
+						:class="{ 'border-danger': validate.observations.$error }"
 					/>
-					<template v-if="validate.trip_priority_id.$error">
-						<div v-for="(error, index) in validate.trip_priority_id.$errors" :key="index" class="text-danger mt-2">
+					<template v-if="validate.observations.$error">
+						<div v-for="(error, index) in validate.observations.$errors" :key="index" class="text-danger mt-2">
 							{{ error.$message }}
 						</div>
 					</template>
 				</div>
 
+			</div>
+
+		</div>
+		<!-- END: container -->
+
+
+
+
+		<h1 class="text-lg">{{ t("vehicle") }}</h1>
+
+		
+		<!-- BEGIN: container -->
+		<div class="grid grid-rows-12 gap-6">
+
+
+			<div class="col-span-12 md:col-span-4 lg:col-span-4">
+				<div class="input-form">
+					<label for="vehicle_id" class="form-label w-full">
+						{{ $t("vehicle") }}
+					</label>
+					<input
+						v-model.trim="validate.vehicle_id.$model"
+						id="vehicle_id"
+						type="text"
+						name="vehicle_id"
+						class="form-control"
+						:class="{ 'border-danger': validate.plate.$error }"
+					/>
+					<template v-if="validate.vehicle_id.$error">
+						<div v-for="(error, index) in validate.vehicle_id.$errors" :key="index" class="text-danger mt-2">
+							{{ error.$message }}
+						</div>
+					</template>
+				</div>
+
+			</div>
+			
+		</div>
+		<!-- END: container -->
+
+
+
+
+		<!-- BEGIN: container -->
+		<div class="grid grid-rows-12 gap-6">
+
+
+			<div class="col-span-4 md:col-span-4 lg:col-span-4">
+
+				<div class="input-form">
+					<label for="employee_id" class="form-label w-full">
+						{{ $t("employee") }}
+					</label>
+					<input
+						v-model.trim="validate.employee_id.$model"
+						id="employee_id"
+						type="text"
+						name="employee_id"
+						class="form-control"
+						:class="{ 'border-danger': validate.employee_id.$error }"
+					/>
+					<template v-if="validate.employee_id.$error">
+						<div v-for="(error, index) in validate.employee_id.$errors" :key="index" class="text-danger mt-2">
+							{{ error.$message }}
+						</div>
+					</template>
+				</div>
+
+			</div>
+
+
+
+			<div class="col-span-4 md:col-span-4 lg:col-span-4">
 				<div class="input-form">
 					<label for="driver_id" class="form-label w-full">
-						{{ $t("driver_id") }}
+						{{ $t("driver") }}
 					</label>
 					<input
 						v-model.trim="validate.driver_id.$model"
@@ -276,10 +337,27 @@
 
 			</div>
 
+		</div>
+		<!-- END: container -->
 
 
 
 
+
+
+		<!-- BEGIN: container -->
+		<div class="grid grid-rows-12 gap-6">
+			
+		</div>
+		<!-- END: container -->
+
+
+
+
+
+
+		<!-- BEGIN: container -->
+		<div class="grid grid-rows-12 gap-6">
 
 			<!-- BEGIN: Buttons -->
 			<div class="col-span-12 md:col-span-12 lg:col-span-12">
@@ -293,9 +371,12 @@
 				</div>
 			</div>
 			<!-- END: Buttons -->
-
+			
 		</div>
 		<!-- END: container -->
+
+
+
 
 	</form>
 	<!-- END: Form -->
@@ -303,20 +384,40 @@
 </template>
 <script setup>
 
-	import { onMounted, reactive, toRefs } from 'vue';
+	import { onMounted, reactive, toRefs, ref } from 'vue';
 	import useTrips from '@/composables/trips';
+	import useTripPriority from '@/composables/trip_priorities';
 	import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
 	import { useVuelidate } from '@vuelidate/core';
 	import { helpers } from '@vuelidate/validators';
 	import { useI18n } from 'vue-i18n';
 
+
+
+
 	const { trip, getTrip } = useTrips();
+	const { tripPriorities, getTripPriorities } = useTripPriority();
 	const { t } = useI18n();
 	const props = defineProps(['tripId']);
 	const emit = defineEmits(['cancelEdit', 'updateTripForm']);
 
+	
+
+
+
+
+	const status = ref('');
+	const priority = ref('');
+	const comm = ref('');
+
+
+
 	const rules = {
 		vehicle_id: {
+			required: helpers.withMessage(t("form.required"), required),
+			minLength: minLength(2),
+		},
+		plate: {
 			required: helpers.withMessage(t("form.required"), required),
 			minLength: minLength(2),
 		},
@@ -370,6 +471,8 @@
 		},
 	};
 
+
+
 	const formData = reactive({
 		trip_tracking_id: "",
 		provider_telematic_id: "",
@@ -401,9 +504,11 @@
 
 	onMounted(async () => {
 		await getTrip(props.tripId);
-		formData.trip_tracking_id = trip.value.trip_tracking_id;
-		formData.provider_telematic_id = trip.value.provider_telematic_id;
+
+		await getTripPriorities();
+
 		formData.vehicle_id = trip.value.vehicle_id;
+		formData.plate = trip.value.vehicle.plate;
 		formData.employee_id = trip.value.employee_id;
 		formData.company_id = trip.value.company_id;
 		formData.trip_status_id = trip.value.trip_status_id;
@@ -416,6 +521,9 @@
 		formData.started_at = trip.value.started_at;
 		formData.finished_at = trip.value.finished_at;
 		formData.observations = trip.value.observations;
+
+
+
 	});
 
 </script>

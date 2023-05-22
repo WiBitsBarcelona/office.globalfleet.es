@@ -134,7 +134,7 @@
   import Tabulator from "tabulator-tables";
   import { useI18n } from "vue-i18n";  
 
-  import useTrips from "../../composables/trips";
+  import useTrips from "@/composables/trips";
   import Create from "@/components/trips/TripCreate.vue";
   import Edit from "@/components/trips/TripEdit.vue";
 
@@ -200,7 +200,7 @@ const initTabulator = () => {
         headerSort: false,
       },
       {
-        title: "Nombre",
+        title: t("name"),
         minWidth: 200,
         responsive: 0,
         field: "name",
@@ -208,7 +208,7 @@ const initTabulator = () => {
         headerHozAlign:"left"
       },
       {
-        title: "Referencia",
+        title: t("reference_number"),
         minWidth: 100,
         responsive: 0,
         field: "reference_number",
@@ -216,7 +216,7 @@ const initTabulator = () => {
         headerHozAlign:"left"
       },
       {
-        title: "Etapas",
+        title: t("stages"),
         minWidth: 200,
         responsive: 0,
         field: "stages",
@@ -239,7 +239,7 @@ const initTabulator = () => {
         }
       },
       {
-        title: "Prioridad",
+        title: t("trip_priority"),
         minWidth: 200,
         responsive: 0,
         field: "priority.name",
@@ -267,7 +267,7 @@ const initTabulator = () => {
         }
       },
       {
-        title: "Estatus Comm",
+        title: t("trip_comm_status"),
         minWidth: 200,
         responsive: 0,
         field: "comm.name",

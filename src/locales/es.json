@@ -79,6 +79,22 @@
   "company": "Compañía",
   "name": "Nombre", 
   "surname": "Apellidos",
-  "fiscal_identification": "Identificación"
+  "fiscal_identification": "Identificación",
+  "reference_number": "Número",
+  "started_at": "Inicio viaje",
+  "finished_at": "Finalizó viaje",
+  "execution_at": "ETA",
+  "observations": "Observaciones",
+  "trip_priority": "Prioridad",
+  "driver": "Conductor",
+  "drivers": "Conductores",
+  "trip_comm_status": "Estatus Comunicación",
+  "trip_status": "Estatus",
+  "trip": "Viaje",
+  "trips": "Viajes",
+  "vehicle": "Vehículo",
+  "vehicles": "Vehículos",
+  "stage": "Estapa",
+  "stages": "Estapas"
 
 }
