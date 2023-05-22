@@ -62,7 +62,7 @@
       >
         <!-- Per cada xat farem un botó -->
         <button
-          v-if="!inNewChat || conversationList.length != 0"
+          v-if="!inNewChat"
           v-for="conversation in conversationList"
           :id="
             conversation.conversationWith.uid
@@ -109,8 +109,7 @@
             class="flex flex-col justify-between h-full w-full text-left gap-1"
           >
             <div class="flex w-full justify-between">
-              <h2 class="font-semibold">
-              </h2>
+              <h2 class="font-semibold">{{ conversation.conversationWith.name }}</h2>
               <div
                 v-if="
                   conversation.unreadMessageCount != 0 &&
@@ -134,11 +133,15 @@
             </div>
             <p :id="'last-' + conversation.conversationId">
               {{
-              conversationList.length > 0 && conversation.lastMessage && conversation.lastMessage.data && conversation.lastMessage.data.text
-                ? conversation.lastMessage.data.text.length < 35
-                  ? conversation.lastMessage.data.text
-                  : conversation.lastMessage.data.text.substring(0, 35) + "..."
-                : ''
+                conversationList.length > 0 &&
+                conversation.lastMessage &&
+                conversation.lastMessage.data &&
+                conversation.lastMessage.data.text
+                  ? conversation.lastMessage.data.text.length < 35
+                    ? conversation.lastMessage.data.text
+                    : conversation.lastMessage.data.text.substring(0, 35) +
+                      "..."
+                  : ""
               }}
             </p>
           </div>
@@ -299,7 +302,7 @@ import { ref } from "vue";
 
 // Hooks
 import { useAuthenticationStore } from "@/stores/auth/authentications";
-import useChat from '@/composables/chat'
+import useChat from "@/composables/chat";
 
 const { cometData, getCometChatCredentials } = useChat();
 
@@ -310,10 +313,16 @@ const initialize = async () => {
 };
 initialize();
 
-let appID = cometData.value.cometchat_uid ? cometData.value.app_id : "231046aa8ee568e3";
+let appID = cometData.value.cometchat_uid
+  ? cometData.value.app_id
+  : "231046aa8ee568e3";
 let region = cometData.value.region ? cometData.value.region : "eu";
-let authKey = cometData.value.auth_key ? cometData.value.auth_key : "f588a52d5487c195325e84aee5b610d0647a43bf";
-let apiKey = cometData.value.rest_api_key ? cometData.value.rest_api_key : "c785651bb72cc0ca4c4f79ba24f4123f491ea863";
+let authKey = cometData.value.auth_key
+  ? cometData.value.auth_key
+  : "f588a52d5487c195325e84aee5b610d0647a43bf";
+let apiKey = cometData.value.rest_api_key
+  ? cometData.value.rest_api_key
+  : "c785651bb72cc0ca4c4f79ba24f4123f491ea863";
 
 let userInfo;
 let conversationList = ref("");
@@ -321,6 +330,7 @@ let conversationList2 = ref("");
 let searching = ref(false);
 let inChat = ref(false);
 let inNewChat = ref(false);
+let isLoggued = ref(false);
 let selectedChat = ref("");
 let newChatsList = ref("");
 
@@ -441,26 +451,33 @@ user.setName(name);
 
 userInfo = user;
 
-// Creem l'usuari
-CometChat.createUser(user, authKey).then(
-  async () => {
-    // Un cop creat, ens loguejarem
-    const Logued = await logUserIn(authKey, UID);
-    // Si la sessió s'ha iniciat correctament
-    if (Logued) {
-      LoadChatsList();
-    }
-  },
-  async (error) => {
-    if (error.code === "ERR_UID_ALREADY_EXISTS") {
-      // En cas d'existir, farem login
+CometChat.getLoggedinUser().then(() => {
+  isLoggued = true;
+  LoadChatsList();
+});
+
+if (!isLoggued) {
+  // Creem l'usuari
+  CometChat.createUser(user, authKey).then(
+    async () => {
+      // Un cop creat, ens loguejarem
       const Logued = await logUserIn(authKey, UID);
+      // Si la sessió s'ha iniciat correctament
       if (Logued) {
         LoadChatsList();
       }
+    },
+    async (error) => {
+      if (error.code === "ERR_UID_ALREADY_EXISTS") {
+        // En cas d'existir, farem login
+        const Logued = await logUserIn(authKey, UID);
+        if (Logued) {
+          LoadChatsList();
+        }
+      }
     }
-  }
-);
+  );
+}
 
 // Funció per carregar/reiniciar els xats
 const LoadChatsList = async () => {
@@ -933,15 +950,43 @@ const toggleNewChat = async () => {
     if (!newChatButton.classList.contains("bg-[#0096b2]"))
       newChatButton.classList.add("bg-[#0096b2]", "text-white", "rounded-lg");
 
-    // Recullim tots els usuaris registrats excloent el nostre
-    const response = await getRegistredUsers();
-    const otherUsers = response.data.filter(
-      (user) => user.uid !== userInfo.uid
-    );
+    await fetch(`https://api-eu.cometchat.io/v3.0/users/${UID}/groups`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        appid: appID,
+        apikey: apiKey,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Obtener los grupos a los que pertenece el usuario de la respuesta
+        const groups = data.data;
 
-    console.log(otherUsers);
+        const options = {
+          method: "GET",
+          headers: {
+            accept: "application/json",
+            apikey: apiKey,
+          },
+        };
 
-    newChatsList.value = otherUsers;
+        fetch(
+          `https://${appID}.api-${region}.cometchat.io/v3/groups/${groups[0].guid}/members?perPage=100&page=1`,
+          options
+        )
+          .then((response) => response.json())
+          .then((response) => {
+            const otherUsers = response.data.filter(
+              (user) => user.uid !== userInfo.uid
+            );
+            newChatsList.value = otherUsers;
+          })
+          .catch((err) => console.error(err));
+      })
+      .catch((error) => {
+        console.log("Error al obtener los grupos del usuario:", error);
+      });
   }
 };
 
