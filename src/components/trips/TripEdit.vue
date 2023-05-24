@@ -158,10 +158,12 @@
 			<div class="col-span-12 md:col-span-4 lg:col-span-4">
 
 				<div class="input-form">
-					<label for="trip_priority_id" class="form-label w-full">
-						{{ $t("trip_priority") }}
+					<label for="" class="form-label w-full">
+						{{ $t("zzz") }}
 					</label>
-					<select v-model="selected" :selected="2">
+
+
+					<select v-model="selectedPriority">
 						<option v-for="priority in tripPriorities" :value="priority.id">
 							{{ priority.name}}
 						</option>
@@ -407,8 +409,10 @@
 
 
 	const status = ref('');
-	const priority = ref('');
+	const selectedPriority = ref('');
 	const comm = ref('');
+
+
 
 
 
@@ -506,6 +510,8 @@
 		await getTrip(props.tripId);
 
 		await getTripPriorities();
+
+		selectedPriority.value = tripPriorities.value;
 
 		formData.vehicle_id = trip.value.vehicle_id;
 		formData.plate = trip.value.vehicle.plate;

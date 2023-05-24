@@ -248,11 +248,11 @@ const initTabulator = () => {
         formatter(cell) {
 
           let textColor = '';
-          if(cell.getData().comm.id === 1){
+          if(cell.getData().priority.id === 1){
             textColor = 'text-success';
-          }else if(cell.getData().comm.id === 2){
-            textColor = 'text-amber-500';
-          }else if(cell.getData().comm.id === 3){
+          }else if(cell.getData().priority.id === 2){
+            textColor = 'text-blue-500';
+          }else if(cell.getData().priority.id === 3){
             textColor = 'text-orange-600';
           }
 
@@ -262,7 +262,7 @@ const initTabulator = () => {
           ${textColor}"
           >
             
-              ${cell.getData().comm.name}
+              ${cell.getData().priority.name}
           </div>`;
         }
       },
