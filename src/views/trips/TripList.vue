@@ -230,8 +230,6 @@ const initTabulator = () => {
           //console.log(cell.getData().stages);
 
           stages.forEach((el) => {
-
-            console.log({...el});
             
             s += el.name + `(${el.status.name} ${el.id})` + ' / ';
             

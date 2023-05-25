@@ -215,6 +215,34 @@ const initTabulator = () => {
         }
       },
       {
+        title: "Prioridad",
+        minWidth: 200,
+        responsive: 0,
+        field: "priority.name",
+        vertAlign: "middle",
+        headerHozAlign:"left",
+        formatter(cell) {
+
+          let textColor = '';
+          if(cell.getData().comm.id === 1){
+            textColor = 'text-success';
+          }else if(cell.getData().comm.id === 2){
+            textColor = 'text-amber-500';
+          }else if(cell.getData().comm.id === 3){
+            textColor = 'text-orange-600';
+          }
+
+          //<i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
+
+          return `<div class="flex items-center lg:justify-center 
+          ${textColor}"
+          >
+            
+              ${cell.getData().comm.name}
+          </div>`;
+        }
+      },
+      {
         title: "Estatus Comm",
         minWidth: 200,
         responsive: 0,
@@ -226,14 +254,16 @@ const initTabulator = () => {
           let textColor = '';
           if(cell.getData().comm.id === 1){
             textColor = 'text-success';
-          }else{
-            textColor = 'text-danger';
+          }else if(cell.getData().comm.id === 2){
+            textColor = 'text-amber-500';
+          }else if(cell.getData().comm.id === 3){
+            textColor = 'text-orange-600';
           }
 
           return `<div class="flex items-center lg:justify-center 
           ${textColor}"
           >
-            <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
+          
               ${cell.getData().comm.name}
           </div>`;
         }
@@ -246,10 +276,28 @@ const initTabulator = () => {
         vertAlign: "middle",
         headerHozAlign:"left",
         formatter(cell) {
+
+          let textColor = ''; 
+
+          if(cell.getData().status.id === 1){
+            textColor = 'text-cyan-400';
+          }else if(cell.getData().status.id === 2){
+            textColor = 'text-cyan-500';
+          }else if(cell.getData().status.id === 3){
+            textColor = 'text-cyan-600';
+          }else if(cell.getData().status.id === 4){
+            textColor = 'text-cyan-700';
+          }else if(cell.getData().status.id === 5){
+            textColor = 'text-blue-900';
+          }else if(cell.getData().status.id === 6){
+            textColor = 'text-green-700';
+          }
+
+
           return `<div class="flex items-center lg:justify-center 
-          ${cell.getData().status.id === 1 ? "text-success" : "text-danger"}"
+          ${textColor}"
           >
-            <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
+        
               ${cell.getData().status.name}
           </div>`;
         }
