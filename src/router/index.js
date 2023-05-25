@@ -32,6 +32,11 @@ const routes = [
     component: () => import('@/views/login/NewPassword.vue'),
   },
   {
+    path: "/chat3",
+    name: "chat3",
+    component: () => import('@/views/chat/Chat.vue'),
+  },
+  {
     path: "/",
     name: "main",
     component: () => import('@/layouts/simple-menu/Main.vue'),
@@ -71,7 +76,12 @@ const routes = [
       {
         path: "chat",
         name: "chat",
-        component: () => import('@/views/chat/Main.vue'),
+        component: () => import('@/views/chat/Chat2.vue'),
+      },
+      {
+        path: "chat2",
+        name: "chat2",
+        component: () => import('@/views/chat/Chat.vue'),
       },
     ],
   },

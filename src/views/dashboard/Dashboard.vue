@@ -1,123 +1,330 @@
 <template>
-
-    <!-- BEGIN: Page Layout -->
-    <div class="intro-y box mt-5">
-
-  
-
-      <!-- BEGIN table -->
-      <!-- <div class="col-span-12 mt-6">
-          <div class="intro-y block sm:flex items-center h-10">
-            <h2 class="text-lg font-medium truncate ml-5">
-              Viajes
-            </h2>
-            <div class="flex items-center sm:ml-auto mt-3 sm:mt-0">
-              <button
-                class="btn box flex items-center text-slate-600 dark:text-slate-300"
-              >
-                <FileTextIcon class="hidden sm:block w-4 h-4 mr-2" />
-                Export to Excel
-              </button>
-              <button
-                class="ml-3 btn box flex items-center text-slate-600 dark:text-slate-300"
-              >
-                <FileTextIcon class="hidden sm:block w-4 h-4 mr-2" />
-                Export to PDF
-              </button>
-            </div>
-          </div>
-          <div class="intro-y overflow-auto lg:overflow-visible mt-8 sm:mt-0">
-            <table class="table table-report sm:mt-2">
-              <thead>
-                <tr>
-                  <th class="whitespace-nowrap">Nombre</th>
-                  <th class="whitespace-nowrap">Referencia</th>
-                  <th class="whitespace-nowrap">Fecha</th>
-                  <th class="whitespace-nowrap">Vehículo</th>
-                  <th class="whitespace-nowrap">Etapas</th>
-                  <th class="whitespace-nowrap">Estatus</th>
-                  <th class="text-center whitespace-nowrap">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-
-                <tr
-                  v-for="trip in tripStore.trips.slice(current_page, last_page)"
-                  :key="trip.id"
-                  class="intro-x"
-                >
-                  <td>{{ trip.name }}</td>
-                  <td>
-                    <a href="" class="font-medium whitespace-nowrap">
-                      {{ trip.reference_number}}
-                    </a>
-                  </td>
-                  <td>{{ trip.started_at }}</td>
-                  <td>{{ trip.vehicle.plate }}</td>
-                  <td>
-                    {{ formatStages(trip.stages) }}
-                  </td>
-                  <td>{{ trip.status.name }}</td>
-
-                  
-                  <td class="table-report__action w-56">
-                    <div class="flex justify-center items-center">
-                      <a class="flex items-center mr-3" href="#">
-                        <CheckSquareIcon class="w-4 h-4 mr-1" />
-                        Ver
-                      </a>
-                    </div>
-                  </td>
-                </tr>
+ <!-- BEGIN: HTML Table Data -->
+ <div class="intro-y box p-5 mt-5" id="div_table">
+  <div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
+    <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
+      <div class="sm:flex items-center sm:mr-4">
+        <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">
+          {{ $t("field") }}
+        </label>
+        <select
+          id="tabulator-html-filter-field"
+          v-model="filter.field"
+          class="form-select w-full sm:w-32 2xl:w-full mt-2 sm:mt-0 sm:w-auto"
+        >
+          <option value="name">Nombre</option>
+          <option value="reference_number">Referencia</option>
+          <option value="remaining_stock">Remaining Stock</option>
+          <option value="comm.name">Estatus</option>
+        </select>
+      </div>
+      <div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
+        <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2"
+          >{{ $t("filter") }}</label
+        >
+        <select
+          id="tabulator-html-filter-type"
+          v-model="filter.type"
+          class="form-select w-full mt-2 sm:mt-0 sm:w-auto"
+        >
+          <option value="like" selected>like</option>
+          <option value="=">=</option>
+          <option value="<">&lt;</option>
+          <option value="<=">&lt;=</option>
+          <option value=">">></option>
+          <option value=">=">>=</option>
+          <option value="!=">!=</option>
+        </select>
+      </div>
+      <div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
+        <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2"
+          >{{ $t("value") }}</label
+        >
+        <input
+          id="tabulator-html-filter-value"
+          v-model="filter.value"
+          type="text"
+          class="form-control sm:w-40 2xl:w-full mt-2 sm:mt-0"
+        />
+      </div>
+      <div class="mt-2 xl:mt-0">
+        <button
+          id="tabulator-html-filter-go"
+          type="button"
+          class="btn btn-primary w-full sm:w-16"
+          @click="onFilter"
+        >
+          <SearchIcon class="w-4 h-4"></SearchIcon> 
+        </button>
+        <button
+          id="tabulator-html-filter-reset"
+          type="button"
+          class="btn btn-secondary w-full sm:w-16 mt-2 sm:mt-0 sm:ml-1"
+          @click="onResetFilter"
+        >
+         <RotateCcwIcon class="w-4 h-4"></RotateCcwIcon>
+        </button>
+      </div>
+    </form>
 
 
-                
-              </tbody>
-            </table>
-          </div>
+    <div class="flex mt-5 sm:mt-0">
+      <button
+        class="btn btn-primary w-1/2 sm:w-auto mr-2"
+        @click="createTrip"
+      >
+        <PlusCircleIcon class="w-4 h-4" />
+      </button>
 
-          <div
-            class="intro-y flex flex-wrap sm:flex-row sm:flex-nowrap items-center mt-3"
-          >
-            <nav class="w-full sm:w-auto sm:mr-auto">
-              <ul class="pagination">
-                
-                <li class="page-item">
-                  <button class="page-link" @click.prevent="previus" :disabled="current_page === 0">
-                    <ChevronLeftIcon class="w-4 h-4" />
-                  </button>
-                </li>
-
-                <li class="page-item active">
-                  <a class="page-link" href="javascript:void(0)">{{ pageSelected }} - {{ pageN }}</a>
-                </li>
-
-                
-                <li class="page-item">
-                  <button class="page-link" @click.prevent="next" :disabled="last_page >= tripStore.trips.length">
-                    <ChevronRightIcon class="w-4 h-4" />
-                  </button>
-                </li>
-                
-              </ul>
-            </nav>
-            <select class="w-20 form-select box mt-3 sm:mt-0">
-              <option>10</option>
-              <option>25</option>
-              <option>35</option>
-              <option>50</option>
-            </select>
-          </div>
-      </div> -->
-      <!-- END table -->
-
+      <Dropdown class="w-1/2 sm:w-auto">
+        <DropdownToggle class="btn btn-outline-secondary w-full sm:w-auto">
+          <FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("export") }}
+          <ChevronDownIcon class="w-4 h-4 ml-auto sm:ml-2" />
+        </DropdownToggle>
+        <DropdownMenu class="w-40">
+          <DropdownContent>
+            <DropdownItem @click="onExportXlsx">
+              <FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("message.export_excel") }}
+            </DropdownItem>
+            <DropdownItem @click="onExportCsv"> 
+              <FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("message.export_csv") }}
+            </DropdownItem>
+          </DropdownContent>
+        </DropdownMenu>
+      </Dropdown>
     </div>
-    <!-- END: Page Layout -->
-    
+  </div>
+  <div class="overflow-x-auto scrollbar-hidden mb-3">
+    <div
+      id="tabulator"
+      ref="tableRef"
+      class="mt-5 table-report table-report--tabulator"
+    ></div>
+  </div>
+</div>
+<!-- END: HTML Table Data -->
+
+
+
+
+
+
 </template>
+
+
+
 
 <script setup>
 
+import { ref, reactive, onMounted, toRaw } from "vue";
+  import xlsx from "xlsx";
+  import { createIcons, icons } from "lucide";
+  import Tabulator from "tabulator-tables";
+  import { useI18n } from "vue-i18n";  
+
+  import useTrips from "../../composables/trips";
+
+
+
+  const { trips, getTrips, destroyTrip, storeTrip, updateTrip } = useTrips();
+
+  const { t } = useI18n();
+
+
+
+const tableData = reactive([]); //data for table to display
+  
+
+  let div_table; // 
+
+  const tableRef = ref();
+  const tabulator = ref();
+  const filter = reactive({
+    field: "name",
+    type: "like",
+    value: "",
+  });
+  
+
+
+const findData = async() => {
+  let dataArr = [];
+  await getTrips();
+  trips.value.forEach((elem)=>{
+    dataArr.push(toRaw(elem));
+  });
+  return dataArr;
+}
+
+
+
+
+// Table 
+const initTabulator = () => {
+  tabulator.value = new Tabulator(tableRef.value, {
+    pagination: "local",
+    paginationSize: 10,
+    paginationSizeSelector: [10, 20, 30, 40],
+    layout: "fitColumns",
+    responsiveLayout: "collapse",
+    placeholder: t("message.no_matching_records_found"),
+    reactiveData:true, //enable reactive data
+    data: tableData.value,
+    columns: [
+      {
+        formatter: "responsiveCollapse",
+        width: 40,
+        minWidth: 30,
+        hozAlign: "center",
+        resizable: false,
+        headerSort: false,
+      },
+      {
+        title: "Nombre",
+        minWidth: 200,
+        responsive: 0,
+        field: "name",
+        vertAlign: "middle",
+        headerHozAlign:"left"
+      },
+      {
+        title: "Referencia",
+        minWidth: 100,
+        responsive: 0,
+        field: "reference_number",
+        vertAlign: "middle",
+        headerHozAlign:"left"
+      },
+      {
+        title: "Etapas",
+        minWidth: 200,
+        responsive: 0,
+        field: "stages",
+        vertAlign: "middle",
+        headerHozAlign:"left",
+        formatter(cell) {
+          let stages = cell.getData().stages;
+          let s = '';
+
+          //console.log(cell.getData().stages);
+
+          stages.forEach((el) => {
+            s += el.name + '/';
+          });
+          return s;
+        }
+      },
+      {
+        title: "Estatus Comm",
+        minWidth: 200,
+        responsive: 0,
+        field: "comm.name",
+        vertAlign: "middle",
+        headerHozAlign:"left",
+        formatter(cell) {
+
+          let textColor = '';
+          if(cell.getData().comm.id === 1){
+            textColor = 'text-success';
+          }else{
+            textColor = 'text-danger';
+          }
+
+          return `<div class="flex items-center lg:justify-center 
+          ${textColor}"
+          >
+            <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
+              ${cell.getData().comm.name}
+          </div>`;
+        }
+      },
+      {
+        title: "Estatus",
+        minWidth: 200,
+        responsive: 0,
+        field: "status",
+        vertAlign: "middle",
+        headerHozAlign:"left",
+        formatter(cell) {
+          return `<div class="flex items-center lg:justify-center 
+          ${cell.getData().status.id === 1 ? "text-success" : "text-danger"}"
+          >
+            <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
+              ${cell.getData().status.name}
+          </div>`;
+        }
+      },
+    ],
+    renderComplete() {
+      createIcons({
+        icons,
+        "stroke-width": 1.5,
+        nameAttr: "data-lucide",
+      });
+    },
+  });
+};
+
+
+// Redraw table onresize
+const reInitOnResizeWindow = () => {
+  window.addEventListener("resize", () => {
+    tabulator.value.redraw();
+    createIcons({
+      icons,
+      "stroke-width": 1.5,
+      nameAttr: "data-lucide",
+    });
+  });
+};
+
+// Filter function
+const onFilter = () => {
+  tabulator.value.setFilter(filter.field, filter.type, filter.value);
+};
+
+
+
+// On reset filter
+const onResetFilter = () => {
+  filter.field = "name";
+  filter.type = "like";
+  filter.value = "";
+  onFilter();
+};
+
+
+
+// Export
+const onExportCsv = () => {
+  tabulator.value.download("csv", "data.csv");
+};
+
+const onExportXlsx = () => {
+  const win = window;
+  win.XLSX = xlsx;
+  tabulator.value.download("xlsx", "data.xlsx", {
+    sheetName: "Products",
+  });
+};
+
+
+
+// Print
+const onPrint = () => {
+  tabulator.value.print();
+};
+
+
+
+
+// Init table
+onMounted(async() => {
+  tableData.value = await findData();
+  initTabulator();
+  reInitOnResizeWindow();
+  div_table = document.querySelector('#div_table');
+});
 
 
 </script>

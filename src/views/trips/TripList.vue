@@ -33,7 +33,7 @@
             <option value="name">Nombre</option>
             <option value="reference_number">Referencia</option>
             <option value="remaining_stock">Remaining Stock</option>
-            <option value="comm.name">Comm</option>
+            <option value="comm.name">Estatus</option>
           </select>
         </div>
         <div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
@@ -119,18 +119,12 @@
         class="mt-5 table-report table-report--tabulator"
       ></div>
     </div>
+
   </div>
   <!-- END: HTML Table Data -->
 
-
-
-
-
-
 </template>
   
-
-
 
 <script setup>
 
@@ -141,8 +135,8 @@
   import { useI18n } from "vue-i18n";  
 
   import useTrips from "../../composables/trips";
-  import Create from "@/views/trips/TripCreate.vue";
-  import Edit from "@/views/trips/TripEdit.vue";
+  import Create from "@/components/trips/TripCreate.vue";
+  import Edit from "@/components/trips/TripEdit.vue";
 
   import Swal from "sweetalert2";
   //TODO pendiente
@@ -206,71 +200,134 @@ const initTabulator = () => {
         headerSort: false,
       },
       {
-        title: "Name",
+        title: "Nombre",
         minWidth: 200,
         responsive: 0,
         field: "name",
         vertAlign: "middle",
+        headerHozAlign:"left"
       },
       {
         title: "Referencia",
-        minWidth: 200,
+        minWidth: 100,
         responsive: 0,
         field: "reference_number",
         vertAlign: "middle",
+        headerHozAlign:"left"
       },
       {
-        title: "Estados",
+        title: "Etapas",
         minWidth: 200,
         responsive: 0,
         field: "stages",
         vertAlign: "middle",
+        headerHozAlign:"left",
         formatter(cell) {
+          
           let stages = cell.getData().stages;
           let s = '';
 
           //console.log(cell.getData().stages);
 
           stages.forEach((el) => {
-            s += el.name;
+
+            console.log({...el});
+            
+            s += el.name + `(${el.status.name} ${el.id})` + ' / ';
+            
+            //console.log({...el.status});
           });
           return s;
         }
       },
       {
-        title: "Comm",
+        title: "Prioridad",
         minWidth: 200,
         responsive: 0,
-        field: "comm.name",
+        field: "priority.name",
         vertAlign: "middle",
+        headerHozAlign:"left",
         formatter(cell) {
 
           let textColor = '';
           if(cell.getData().comm.id === 1){
             textColor = 'text-success';
-          }else{
-            textColor = 'text-danger';
+          }else if(cell.getData().comm.id === 2){
+            textColor = 'text-amber-500';
+          }else if(cell.getData().comm.id === 3){
+            textColor = 'text-orange-600';
           }
+
+          //<i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
 
           return `<div class="flex items-center lg:justify-center 
           ${textColor}"
           >
-            <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
+            
               ${cell.getData().comm.name}
           </div>`;
         }
       },
       {
-        title: "Status",
+        title: "Estatus Comm",
+        minWidth: 200,
+        responsive: 0,
+        field: "comm.name",
+        vertAlign: "middle",
+        headerHozAlign:"left",
+        formatter(cell) {
+
+          let textColor = '';
+          if(cell.getData().comm.id === 1){
+            textColor = 'text-success';
+          }else if(cell.getData().comm.id === 2){
+            textColor = 'text-amber-500';
+          }else if(cell.getData().comm.id === 3){
+            textColor = 'text-orange-600';
+          }
+
+          //<i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
+
+          return `<div class="flex items-center lg:justify-center 
+          ${textColor}"
+          >
+            
+              ${cell.getData().comm.name}
+          </div>`;
+        }
+      },
+      {
+        title: "Estatus",
         minWidth: 200,
         responsive: 0,
         field: "status",
         vertAlign: "middle",
+        headerHozAlign:"left",
         formatter(cell) {
+
+          let textColor = ''; 
+
+          if(cell.getData().status.id === 1){
+            textColor = 'text-cyan-400';
+          }else if(cell.getData().status.id === 2){
+            textColor = 'text-cyan-500';
+          }else if(cell.getData().status.id === 3){
+            textColor = 'text-cyan-600';
+          }else if(cell.getData().status.id === 4){
+            textColor = 'text-cyan-700';
+          }else if(cell.getData().status.id === 5){
+            textColor = 'text-blue-900';
+          }else if(cell.getData().status.id === 6){
+            textColor = 'text-green-700';
+          }
+
+          
+          //<i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
+
           return `<div class="flex items-center lg:justify-center 
-          ${cell.getData().status.id === 1 ? "text-success" : "text-danger"}"
+          ${textColor}"
           >
-            <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
+            
               ${cell.getData().status.name}
           </div>`;
         }
@@ -278,14 +335,15 @@ const initTabulator = () => {
       {
         title: t("actions"),
         minWidth: 200,
-        field: "actions",
-        responsive: 1,
+				field: "actions",
+				responsive: 1,
+				headerHozAlign: "center",
         hozAlign: "center",
-        vertAlign: "middle",
+				vertAlign: "middle",
         download: false,
         formatter(cell) {
           const a = dom(`<div class="flex lg:justify-center items-center">
-                <button class="flex items-center mr-3"
+                <button class="flex items-center mr-3 text-green-800"
                   id="btn_edit"
                 >
                   <i data-lucide="check-square" class="w-4 h-4 mr-1"></i> ${t("edit")}
