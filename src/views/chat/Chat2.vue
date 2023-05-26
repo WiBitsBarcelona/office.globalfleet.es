@@ -304,15 +304,10 @@ import { useAuthenticationStore } from "@/stores/auth/authentications";
 // let authKey = "65aba0afa100469706ce7d0f9d9febba02a4500d";
 // let apiKey = "8b55ca7afaa426c86acf3847c9060c1de8e66d3d";
 
-// let appID = "236295e8d26beda0";
-// let region = "eu";
-// let authKey = "b38b4ff133caaf0d95e66ffa751ea229215db7f1";
-// let apiKey = "a80009a3c96c71cd0cd7b86c7ed8f1e4ae295116";
-
-let appID = "231046aa8ee568e3";
+let appID = "236295e8d26beda0";
 let region = "eu";
-let authKey = "f588a52d5487c195325e84aee5b610d0647a43bf";
-let apiKey = "c785651bb72cc0ca4c4f79ba24f4123f491ea863";
+let authKey = "b38b4ff133caaf0d95e66ffa751ea229215db7f1";
+let apiKey = "a80009a3c96c71cd0cd7b86c7ed8f1e4ae295116";
 
 
 let userInfo;
@@ -433,7 +428,7 @@ CometChat.init(appID, appSetting).then(
 );
 
 // Iniciem la sessió al xat
-const UID = "ges_1";
+const UID = "marc";
 const name = "Marc";
 
 const user = new CometChat.User(UID);

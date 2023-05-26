@@ -122,7 +122,7 @@ import { ref, reactive, onMounted, toRaw } from "vue";
   import Tabulator from "tabulator-tables";
   import { useI18n } from "vue-i18n";  
 
-  import useTrips from "../../composables/trips";
+  import useTrips from "@/composables/trips";
 
 
 
@@ -215,28 +215,40 @@ const initTabulator = () => {
         }
       },
       {
-        title: "Estatus Comm",
+        title: "Prioridad",
         minWidth: 200,
         responsive: 0,
-        field: "comm.name",
+        field: "priority.name",
         vertAlign: "middle",
         headerHozAlign:"left",
         formatter(cell) {
 
           let textColor = '';
-          if(cell.getData().comm.id === 1){
+          if(cell.getData().priority.id === 1){
             textColor = 'text-success';
-          }else{
-            textColor = 'text-danger';
+          }else if(cell.getData().priority.id === 2){
+            textColor = 'text-blue-500';
+          }else if(cell.getData().priority.id === 3){
+            textColor = 'text-orange-600';
           }
+
+          //<i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
 
           return `<div class="flex items-center lg:justify-center 
           ${textColor}"
           >
-            <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
-              ${cell.getData().comm.name}
+            
+              ${cell.getData().priority.name}
           </div>`;
         }
+      },
+      {
+        title: "Fecha ETA",
+        minWidth: 100,
+        responsive: 0,
+        field: "execution_at",
+        vertAlign: "middle",
+        headerHozAlign:"left"
       },
       {
         title: "Estatus",
@@ -246,14 +258,33 @@ const initTabulator = () => {
         vertAlign: "middle",
         headerHozAlign:"left",
         formatter(cell) {
+
+          let textColor = ''; 
+
+          if(cell.getData().status.id === 1){
+            textColor = 'text-cyan-400';
+          }else if(cell.getData().status.id === 2){
+            textColor = 'text-cyan-500';
+          }else if(cell.getData().status.id === 3){
+            textColor = 'text-cyan-600';
+          }else if(cell.getData().status.id === 4){
+            textColor = 'text-cyan-700';
+          }else if(cell.getData().status.id === 5){
+            textColor = 'text-blue-900';
+          }else if(cell.getData().status.id === 6){
+            textColor = 'text-green-700';
+          }
+
+
           return `<div class="flex items-center lg:justify-center 
-          ${cell.getData().status.id === 1 ? "text-success" : "text-danger"}"
+          ${textColor}"
           >
-            <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
+        
               ${cell.getData().status.name}
           </div>`;
         }
       },
+      
     ],
     renderComplete() {
       createIcons({
