@@ -122,7 +122,7 @@ import { ref, reactive, onMounted, toRaw } from "vue";
   import Tabulator from "tabulator-tables";
   import { useI18n } from "vue-i18n";  
 
-  import useTrips from "../../composables/trips";
+  import useTrips from "@/composables/trips";
 
 
 
@@ -224,11 +224,11 @@ const initTabulator = () => {
         formatter(cell) {
 
           let textColor = '';
-          if(cell.getData().comm.id === 1){
+          if(cell.getData().priority.id === 1){
             textColor = 'text-success';
-          }else if(cell.getData().comm.id === 2){
-            textColor = 'text-amber-500';
-          }else if(cell.getData().comm.id === 3){
+          }else if(cell.getData().priority.id === 2){
+            textColor = 'text-blue-500';
+          }else if(cell.getData().priority.id === 3){
             textColor = 'text-orange-600';
           }
 
@@ -238,35 +238,17 @@ const initTabulator = () => {
           ${textColor}"
           >
             
-              ${cell.getData().comm.name}
+              ${cell.getData().priority.name}
           </div>`;
         }
       },
       {
-        title: "Estatus Comm",
-        minWidth: 200,
+        title: "Fecha ETA",
+        minWidth: 100,
         responsive: 0,
-        field: "comm.name",
+        field: "execution_at",
         vertAlign: "middle",
-        headerHozAlign:"left",
-        formatter(cell) {
-
-          let textColor = '';
-          if(cell.getData().comm.id === 1){
-            textColor = 'text-success';
-          }else if(cell.getData().comm.id === 2){
-            textColor = 'text-amber-500';
-          }else if(cell.getData().comm.id === 3){
-            textColor = 'text-orange-600';
-          }
-
-          return `<div class="flex items-center lg:justify-center 
-          ${textColor}"
-          >
-          
-              ${cell.getData().comm.name}
-          </div>`;
-        }
+        headerHozAlign:"left"
       },
       {
         title: "Estatus",
@@ -302,6 +284,7 @@ const initTabulator = () => {
           </div>`;
         }
       },
+      
     ],
     renderComplete() {
       createIcons({
