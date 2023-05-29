@@ -260,6 +260,43 @@ export default function useChat() {
       .catch((err) => console.error(err));
   };
 
+  const getUserGroups = async (user_uid) => {
+    const response = await fetch(
+      `https://api-eu.cometchat.io/v3.0/users/${user_uid}/groups`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          appid: cometData.value.company.cometchat.app_id,
+          apikey: cometData.value.company.cometchat.rest_api_key,
+        },
+      }
+    ).then((response) => {
+      return response.json();
+    });
+
+    return response.data;
+  };
+
+  const getGroupMembers = async (group_guid) => {
+    const options = {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        apikey: cometData.value.company.cometchat.rest_api_key,
+      },
+    };
+
+    const response = await fetch(
+      `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/groups/${group_guid}/members?perPage=100&page=1`,
+      options
+    ).then((response) => {
+      return response.json();
+    });
+
+    return response.data;
+  };
+
   return {
     // Variables
     cometData,
@@ -276,5 +313,7 @@ export default function useChat() {
     markUserConversationAsRead,
     sendTextMessage,
     markGroupConversationAsRead,
+    getUserGroups,
+    getGroupMembers,
   };
 }
