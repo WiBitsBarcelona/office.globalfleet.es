@@ -1,9 +1,5 @@
 <template>
   <div>
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0"
-    />
     <!-- Chat -->
     <div v-if="isViewLoaded" id="app" class="flex gap-6 mt-5">
         <ChatView />
@@ -12,22 +8,26 @@
 </template>
 
 <script>
+import { ref, onMounted } from 'vue';
 import ChatView from '../../components/chat/ChatView.vue';
 
 export default {
   components: {
     ChatView
   },
-  data() {
+  setup() {
+    const isViewLoaded = ref(false);
+
+    onMounted(() => {
+      // Simulación de un retraso en la carga de la vista
+      setTimeout(() => {
+        isViewLoaded.value = true;
+      }, 1000);
+    });
+
     return {
-      isViewLoaded: false
+      isViewLoaded
     };
-  },
-  mounted() {
-    // Simulación de un retraso en la carga de la vista
-    setTimeout(() => {
-      this.isViewLoaded = true;
-    }, 1000);
   }
 };
 </script>
