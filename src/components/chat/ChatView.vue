@@ -154,11 +154,12 @@
         v-on:click="
           buildNewChat(
             chatList.uid ? chatList.uid : chatList.guid,
-            chatList.name
-          )
-        "
+            chatList.name,
+            chatList.uid ? 'user' : 'group',
+            )
+            "
         class="flex gap-3 p-3 pl-2 h-16 box cursor-pointer border-b bg-white items-center"
-      >
+        >
         <!-- En cas de ser un xat amb un usuari -->
         <img
           v-if="chatList.uid"
@@ -310,8 +311,10 @@ const {
   getConversationsList,
   getSingleConversation,
   getUserData,
+  getGroupData,
   loadChatMessages,
   markUserConversationAsRead,
+  markGroupConversationAsRead,
   sendTextMessage,
 } = useChat();
 
@@ -560,7 +563,7 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
     if (conversation.sender != userInfo.uid) {
       if (conversation.receiverType === "user")
         markUserConversationAsRead(userInfo.uid, conversation.sender);
-      else markGroupConversationAsRead(conversation.receiver);
+      else markGroupConversationAsRead(userInfo.uid, conversation.receiver);
 
       // LoadChatsList();
     }
@@ -746,19 +749,27 @@ const toggleNewChat = async () => {
 };
 
 // Funció per carregar un nou xat
-const buildNewChat = async (id) => {
+const buildNewChat = async (id, name, type) => {
   let lastMessageDate = "";
   let currentMessageDate;
 
-  // Obtenim les dades de l'usuari en cuestió
-  const response = await getUserData(id);
-  selectedChat.value = response.data;
+  console.log(id, name, type)
+
+  if (type === 'user') {
+    // Obtenim les dades de l'usuari en cuestió
+    const response = await getUserData(id);
+    selectedChat.value = response.data;
+  } else if (type === 'group') {
+    // Obtenim les dades de l'usuari en cuestió
+    const response = await getGroupData(id);
+    selectedChat.value = response.data;
+  }
 
   if (!inChat.value) inChat.value = true;
 
   // Revisem que no tinguem alguna conversa amb aquest usuari
   const conversation = await getSingleConversation(userInfo.uid, id);
-  console.log(conversation)
+  console.log(conversation);
   const hasConversation = conversation.error ? false : true;
 
   // Netejem el xat
