@@ -141,7 +141,7 @@ export default function useChat() {
   };
 
   // Funció per rebre una sola conversació
-  const getSingleConversation = async (user_uid, other_user_uid) => {
+  const getUserConversation = async (user_uid, other_user_uid) => {
     const options = {
       method: "GET",
       headers: {
@@ -153,6 +153,32 @@ export default function useChat() {
 
     const response = await fetch(
       `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/users/${other_user_uid}/conversation`,
+      options
+    )
+      .then((response) => response.json())
+      .then((response) => {
+        return response;
+      })
+      .catch((err) => {
+        // console.error(err);
+        return err;
+      });
+
+    return response;
+  };
+
+  const getGroupConversation = async (user_uid, group_uid) => {
+    const options = {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        onBehalfOf: user_uid,
+        apikey: cometData.value.company.cometchat.rest_api_key,
+      },
+    };
+
+    const response = await fetch(
+      `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/groups/${group_uid}/conversation`,
       options
     )
       .then((response) => response.json())
@@ -245,7 +271,8 @@ export default function useChat() {
     getGroupData,
     getRegistredUsers,
     loadChatMessages,
-    getSingleConversation,
+    getUserConversation,
+    getGroupConversation,
     markUserConversationAsRead,
     sendTextMessage,
     markGroupConversationAsRead,

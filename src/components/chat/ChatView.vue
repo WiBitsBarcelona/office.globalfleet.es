@@ -155,11 +155,11 @@
           buildNewChat(
             chatList.uid ? chatList.uid : chatList.guid,
             chatList.name,
-            chatList.uid ? 'user' : 'group',
-            )
-            "
+            chatList.uid ? 'user' : 'group'
+          )
+        "
         class="flex gap-3 p-3 pl-2 h-16 box cursor-pointer border-b bg-white items-center"
-        >
+      >
         <!-- En cas de ser un xat amb un usuari -->
         <img
           v-if="chatList.uid"
@@ -309,7 +309,8 @@ const {
   conversationList,
   getCometChatCredentials,
   getConversationsList,
-  getSingleConversation,
+  getUserConversation,
+  getGroupConversation,
   getUserData,
   getGroupData,
   loadChatMessages,
@@ -753,13 +754,13 @@ const buildNewChat = async (id, name, type) => {
   let lastMessageDate = "";
   let currentMessageDate;
 
-  console.log(id, name, type)
+  console.log(id, name, type);
 
-  if (type === 'user') {
+  if (type === "user") {
     // Obtenim les dades de l'usuari en cuestió
     const response = await getUserData(id);
     selectedChat.value = response.data;
-  } else if (type === 'group') {
+  } else if (type === "group") {
     // Obtenim les dades de l'usuari en cuestió
     const response = await getGroupData(id);
     selectedChat.value = response.data;
@@ -767,39 +768,39 @@ const buildNewChat = async (id, name, type) => {
 
   if (!inChat.value) inChat.value = true;
 
-  // Revisem que no tinguem alguna conversa amb aquest usuari
-  const conversation = await getSingleConversation(userInfo.uid, id);
-  console.log(conversation);
-  const hasConversation = conversation.error ? false : true;
+  if (type === "user") {
+    // Revisem que no tinguem alguna conversa amb aquest usuari
+    const conversation = await getUserConversation(userInfo.uid, id);
+    const hasConversation = conversation.error ? false : true;
 
-  // Netejem el xat
-  const chat = document.getElementById("chat");
-  chat.innerHTML = "";
+    // Netejem el xat
+    const chat = document.getElementById("chat");
+    chat.innerHTML = "";
 
-  LoadChatsList();
+    LoadChatsList();
 
-  // En cas de tenir alguna conversa la carregarem
-  if (hasConversation) {
-    const messages = await loadChatMessages(conversation.data.conversationId);
+    // En cas de tenir alguna conversa la carregarem
+    if (hasConversation) {
+      const messages = await loadChatMessages(conversation.data.conversationId);
 
-    messages.data.map((message) => {
-      if (message.sender != userInfo.uid) {
-        if (message.receiverType === "user")
-          markUserConversationAsRead(userInfo.uid, message.sender);
-        else markGroupConversationAsRead(message.receiver);
-      }
+      messages.data.map((message) => {
+        if (message.sender != userInfo.uid) {
+          if (message.receiverType === "user")
+            markUserConversationAsRead(userInfo.uid, message.sender);
+          else markGroupConversationAsRead(userInfo.uid, message.receiver);
+        }
 
-      // Comprobem la data del missatge
-      currentMessageDate = getMessageDate(message.sentAt);
+        // Comprobem la data del missatge
+        currentMessageDate = getMessageDate(message.sentAt);
 
-      if (lastMessageDate !== currentMessageDate) {
-        chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
-      }
+        if (lastMessageDate !== currentMessageDate) {
+          chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
+        }
 
-      lastMessageDate = currentMessageDate;
+        lastMessageDate = currentMessageDate;
 
-      if (userInfo.uid === message.sender) {
-        chat.innerHTML += `<div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
+        if (userInfo.uid === message.sender) {
+          chat.innerHTML += `<div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
                               <div class="flex gap-3 py-2 px-3 bg-[#0096b2] text-white rounded-lg max-w-md">
                               <p style="margin: 0px;">${message.data.text}</p>
                               <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
@@ -809,8 +810,8 @@ const buildNewChat = async (id, name, type) => {
                               </div>
                             </div>
                            </div>`;
-      } else {
-        chat.innerHTML += `<div class="missatgeEntrant" style="display: flex; width: 100%; justify-content: flex-start;">
+        } else {
+          chat.innerHTML += `<div class="missatgeEntrant" style="display: flex; width: 100%; justify-content: flex-start;">
                               <div class="flex gap-3 rounded-lg w-fit py-2 px-3 bg-gray-200 max-w-md">
                               <p style="margin: 0px;">${message.data.text}</p>
                               <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
@@ -820,12 +821,73 @@ const buildNewChat = async (id, name, type) => {
                               </div>
                             </div>
                           </div>`;
-      }
+        }
 
-      const messageBody = document.getElementById("chat");
-      messageBody.scrollTop =
-        messageBody.scrollHeight - messageBody.clientHeight;
-    });
+        const messageBody = document.getElementById("chat");
+        messageBody.scrollTop =
+          messageBody.scrollHeight - messageBody.clientHeight;
+      });
+    }
+  } else if (type === "group") {
+    // Revisem que no tinguem alguna conversa amb aquest usuari
+    const conversation = await getGroupConversation(userInfo.uid, id);
+    const hasConversation = conversation.error ? false : true;
+
+    // Netejem el xat
+    const chat = document.getElementById("chat");
+    chat.innerHTML = "";
+
+    LoadChatsList();
+
+    // En cas de tenir alguna conversa la carregarem
+    if (hasConversation) {
+      const messages = await loadChatMessages(conversation.data.conversationId);
+
+      messages.data.map((message) => {
+        if (message.sender != userInfo.uid) {
+          if (message.receiverType === "user")
+            markUserConversationAsRead(userInfo.uid, message.sender);
+          else markGroupConversationAsRead(userInfo.uid, message.receiver);
+        }
+
+        // Comprobem la data del missatge
+        currentMessageDate = getMessageDate(message.sentAt);
+
+        if (lastMessageDate !== currentMessageDate) {
+          chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
+        }
+
+        lastMessageDate = currentMessageDate;
+
+        if (userInfo.uid === message.sender) {
+          chat.innerHTML += `<div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
+                              <div class="flex gap-3 py-2 px-3 bg-[#0096b2] text-white rounded-lg max-w-md">
+                              <p style="margin: 0px;">${message.data.text}</p>
+                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
+                                <p style="font-size: 12px; color: white; margin: 0px; heigh: 100%">
+                                  ${convertStringToDate(message.sentAt)}
+                                </p>
+                              </div>
+                            </div>
+                           </div>`;
+        } else {
+          chat.innerHTML += `<div class="missatgeEntrant" style="display: flex; width: 100%; justify-content: flex-start;">
+                              <div class="flex gap-3 rounded-lg w-fit py-2 px-3 bg-gray-200 max-w-md">
+                              <p style="margin: 0px;">${message.data.text}</p>
+                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
+                                <p style="font-size: 12px; margin: 0px; heigh: 100%">
+                                  ${convertStringToDate(message.sentAt)}
+                                </p>
+                              </div>
+                            </div>
+                          </div>`;
+        }
+
+        const messageBody = document.getElementById("chat");
+        messageBody.scrollTop =
+          messageBody.scrollHeight - messageBody.clientHeight;
+      });
+    }
   }
 };
 
