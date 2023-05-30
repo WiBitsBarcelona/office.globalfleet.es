@@ -153,6 +153,9 @@
 	const findData = async() => {
 		let dataArr = [];
 		await getVehicles();
+
+		console.log({...vehicles});
+
 		vehicles.value.forEach((elem)=>{
 			dataArr.push(toRaw(elem));
 		});
@@ -185,6 +188,7 @@
 				responsive: 0,
 				field: "plate",
 				vertAlign: "middle",
+				headerHozAlign:"left",
 			},
 			{
 				title: t("employee"),
@@ -192,6 +196,7 @@
 				responsive: 0,
 				field: "employee.name",
 				vertAlign: "middle",
+				headerHozAlign:"left",
 			},
 			{
 				title: t("company"),
@@ -199,6 +204,7 @@
 				responsive: 0,
 				field: "company.name",
 				vertAlign: "middle",
+				headerHozAlign:"left",
 			},
 			{
 				title: t("actions"),
@@ -256,8 +262,8 @@
 	};
 
 	// Filter function
-		const onFilter = () => {
-			tabulator.value.setFilter(filter.field, filter.type, filter.value);
+	const onFilter = () => {
+		tabulator.value.setFilter(filter.field, filter.type, filter.value);
 	};
 
 	// On reset filter

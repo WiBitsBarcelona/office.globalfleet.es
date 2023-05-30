@@ -135,36 +135,12 @@
 			<div class="col-span-12 md:col-span-4 lg:col-span-4">
 
 				<div class="input-form">
-					<label for="trip_priority_id" class="form-label w-full">
+					<label for="" class="form-label w-full">
 						{{ $t("trip_priority") }}
 					</label>
-					<input
-						v-model.trim="validate.trip_priority_id.$model"
-						id="trip_priority_id"
-						type="text"
-						name="trip_priority_id"
-						class="form-control"
-						:class="{ 'border-danger': validate.trip_priority_id.$error }"
-					/>
-					<template v-if="validate.trip_priority_id.$error">
-						<div v-for="(error, index) in validate.trip_priority_id.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
 
-			</div>
-
-			<div class="col-span-12 md:col-span-4 lg:col-span-4">
-
-				<div class="input-form">
-					<label for="" class="form-label w-full">
-						{{ $t("zzz") }}
-					</label>
-
-
-					<select v-model="selectedPriority">
-						<option v-for="priority in tripPriorities" :value="priority.id">
+					<select v-model="selectPriority">
+						<option v-for="priority in tripPriorities" :value="priority.id" :key="priority.id">
 							{{ priority.name}}
 						</option>
 					</select>
@@ -173,8 +149,43 @@
 			</div>
 
 
+			<div class="col-span-12 md:col-span-4 lg:col-span-4">
 
-			<div class="col-span-4 md:col-span-4 lg:col-span-4">
+				<div class="input-form">
+					<label for="" class="form-label w-full">
+						{{ $t("trip_status") }}
+					</label>
+
+					<select v-model="selectStatus">
+						<option v-for="status in tripStatuses" :value="status.id" :key="status.id">
+							{{ status.name}}
+						</option>
+					</select>
+				</div>
+
+			</div>
+
+
+
+			<div class="col-span-12 md:col-span-4 lg:col-span-4">
+
+				<div class="input-form">
+					<label for="" class="form-label w-full">
+						{{ $t("trip_comm_status") }}
+					</label>
+
+					<select v-model="selectCommStatus">
+						<option v-for="comm_status in tripCommStatuses" :value="comm_status.id" :key="comm_status.id">
+							{{ comm_status.name}}
+						</option>
+					</select>
+				</div>
+
+			</div>
+
+
+
+			<!-- <div class="col-span-4 md:col-span-4 lg:col-span-4">
 
 				<div class="input-form">
 					<label for="trip_status_id" class="form-label w-full">
@@ -195,11 +206,11 @@
 					</template>
 				</div>
 
-			</div>
+			</div> -->
 
 
 
-			<div class="col-span-4 md:col-span-4 lg:col-span-4">
+			<!-- <div class="col-span-4 md:col-span-4 lg:col-span-4">
 
 				<div class="input-form">
 					<label for="trip_comm_status_id" class="form-label w-full">
@@ -220,7 +231,7 @@
 					</template>
 				</div>
 
-			</div>
+			</div> -->
 
 
 
@@ -389,30 +400,37 @@
 	import { onMounted, reactive, toRefs, ref } from 'vue';
 	import useTrips from '@/composables/trips';
 	import useTripPriority from '@/composables/trip_priorities';
+	import useTripStatus from '@/composables/trip_statuses';
+	import useTripCommStatus from '@/composables/trip_comm_statuses';
 	import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
 	import { useVuelidate } from '@vuelidate/core';
 	import { helpers } from '@vuelidate/validators';
 	import { useI18n } from 'vue-i18n';
 
 
-
-
-	const { trip, getTrip } = useTrips();
-	const { tripPriorities, getTripPriorities } = useTripPriority();
 	const { t } = useI18n();
 	const props = defineProps(['tripId']);
 	const emit = defineEmits(['cancelEdit', 'updateTripForm']);
 
+
+	// Trips
+	const { trip, getTrip } = useTrips();
 	
+	// Priority
+	const { tripPriorities, getTripPriorities } = useTripPriority();
 
+	// Statuses
+	const { tripStatuses, getTripStatuses } = useTripStatus();
 
-
-
-	const status = ref('');
-	const selectedPriority = ref('');
-	const comm = ref('');
-
-
+	// Comm statuses
+	const { tripCommStatuses, getTripCommStatuses } = useTripCommStatus();
+	
+	
+	
+	
+	const selectPriority = ref('');
+	const selectStatus = ref('');
+	const selectCommStatus = ref('');
 
 
 
@@ -508,18 +526,27 @@
 
 	onMounted(async () => {
 		await getTrip(props.tripId);
-
 		await getTripPriorities();
+		await getTripStatuses();
+		await getTripCommStatuses();
+		
+		selectStatus.value = trip.value.trip_status_id;
+		selectPriority.value = trip.value.trip_priority_id;
+		selectCommStatus.value = trip.value.trip_comm_status_id;
 
-		selectedPriority.value = tripPriorities.value;
+
 
 		formData.vehicle_id = trip.value.vehicle_id;
 		formData.plate = trip.value.vehicle.plate;
 		formData.employee_id = trip.value.employee_id;
 		formData.company_id = trip.value.company_id;
-		formData.trip_status_id = trip.value.trip_status_id;
-		formData.trip_comm_status_id = trip.value.trip_comm_status_id;
-		formData.trip_priority_id = trip.value.trip_priority_id;
+		
+		//formData.trip_comm_status_id = trip.value.trip_comm_status_id;
+		//formData.trip_status_id = trip.value.trip_status_id;
+		//formData.trip_priority_id = trip.value.trip_priority_id;
+		
+
+
 		formData.driver_id = trip.value.driver_id;
 		formData.reference_number = trip.value.reference_number;
 		formData.name = trip.value.name;
