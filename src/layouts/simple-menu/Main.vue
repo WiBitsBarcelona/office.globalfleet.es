@@ -34,7 +34,11 @@
                 @click="linkTo(menu, router, $event)"
               >
                 <div class="side-menu__icon mb-4">
-                  <span v-if="menu.pageName == 'chat'" class="ml-5 px-2 py-1 text-white rounded-full bg-primary relative z-50">3</span>
+                  <span
+                    v-if="menu.pageName == 'chat' && unreadMessageCount"
+                    class="ml-5 px-2 py-1 text-white rounded-full bg-primary relative z-50"
+                    >{{ unreadMessageCount }}</span
+                  >
                   <component :is="menu.icon" />
                 </div>
                 <div class="side-menu__title">
@@ -45,7 +49,6 @@
                     :class="{ 'transform rotate-180': menu.activeDropdown }"
                   >
                     <ChevronDownIcon />
-                    
                   </div>
                 </div>
               </Tippy>
@@ -158,6 +161,10 @@ import MainColorSwitcher from "@/components/main-color-switcher/Main.vue";
 import { linkTo, nestedMenu, enter, leave } from "@/layouts/side-menu";
 import dom from "@left4code/tw-starter/dist/js/dom";
 
+// Chat hooks
+import useChat from "@/composables/chat";
+const { unreadMessageCount, checkUnreadMessages } = useChat();
+
 const route = useRoute();
 const router = useRouter();
 const formattedMenu = ref([]);
@@ -180,5 +187,8 @@ watch(
 onMounted(() => {
   dom("body").removeClass("error-page").removeClass("login").addClass("main");
   formattedMenu.value = $h.toRaw(simpleMenu.value);
+
+  checkUnreadMessages();
+  setInterval(checkUnreadMessages, 5000);
 });
 </script>
