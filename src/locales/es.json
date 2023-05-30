@@ -30,6 +30,14 @@
     "password_repeat_placeholder": "Repite la contraseña",
     "btn_save": "Guardar"
   },
+  "dashboard": {
+    "title": "Visión General",
+    "reload": "Recargar Datos",
+    "trips": "Nuevos Viajes",
+    "warnings": "Nuevos Avisos",
+    "chats": "Nuevos Mensajes",
+    "docs": "Nuevos Documentos"
+  },
   "profile": "Perfil",
   "reset_password": "Resetear Password",
   "help": "Ayuda",
