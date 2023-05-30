@@ -17,8 +17,8 @@
                     <NavigationIcon class="report-box__icon text-primary" />
 
                   </div>
-                  <div class="text-3xl font-medium leading-8 mt-6">10</div>
-                  <div class="text-base text-slate-500 mt-1">{{ $t("dashboard.trips") }}</div>
+                  <div class="text-3xl font-medium leading-8 mt-6">3</div>
+                  <div class="text-base text-slate-500 mt-1">{{ $t("dashboard.new_trips") }}</div>
                 </div>
               </div>
             </div>
@@ -29,7 +29,7 @@
                     <AlertTriangleIcon class="report-box__icon text-pending" />
                   </div>
                   <div class="text-3xl font-medium leading-8 mt-6">2</div>
-                  <div class="text-base text-slate-500 mt-1">{{ $t("dashboard.warnings") }}</div>
+                  <div class="text-base text-slate-500 mt-1">{{ $t("dashboard.new_warnings") }}</div>
                 </div>
               </div>
             </div>
@@ -41,7 +41,7 @@
                   </div>
                   <div class="text-3xl font-medium leading-8 mt-6">3</div>
                   <div class="text-base text-slate-500 mt-1">
-                    {{ $t("dashboard.chats") }}
+                    {{ $t("dashboard.new_chats") }}
                   </div>
                 </div>
               </div>
@@ -54,7 +54,7 @@
                   </div>
                   <div class="text-3xl font-medium leading-8 mt-6">1</div>
                   <div class="text-base text-slate-500 mt-1">
-                    {{ $t("dashboard.docs") }}
+                    {{ $t("dashboard.new_docs") }}
                   </div>
                 </div>
               </div>
@@ -66,27 +66,30 @@
         <!-- BEGIN: Weekly Top Seller -->
         <div class="col-span-8 sm:col-span-6 lg:col-span-3 mt-6">
           <div class="intro-y flex items-center h-10">
-            <h2 class="text-lg font-medium truncate mr-5">Weekly Top Seller</h2>
-            <a href="" class="ml-auto text-primary truncate">Show More</a>
+            <h2 class="text-lg font-medium truncate mr-5">{{ $t("dashboard.trips_graph_title") }}</h2>
+            <a href="/trips" class="ml-auto text-primary truncate">{{ $t("dashboard.show_more") }}</a>
           </div>
           <div class="intro-y box p-5 mt-5">
-            <div class="mt-3">
-              <ReportPieChart :height="213" />
+            <div class="text-right">
+              <span class="text-2xl text-primary">100</span> {{ $t("dashboard.trips") }} 
             </div>
+            <withDirectives>
+              <ReportPieChart :height="213" />
+            </withDirectives>
             <div class="w-52 sm:w-auto mx-auto mt-8">
               <div class="flex items-center">
                 <div class="w-2 h-2 bg-primary rounded-full mr-3"></div>
-                <span class="truncate">17 - 30 Years old</span>
-                <span class="font-medium ml-auto">62%</span>
-              </div>
-              <div class="flex items-center mt-4">
-                <div class="w-2 h-2 bg-pending rounded-full mr-3"></div>
-                <span class="truncate">31 - 50 Years old</span>
-                <span class="font-medium ml-auto">33%</span>
+                <span class="truncate">{{ $t("dashboard.current_trips") }} </span>
+                <span class="font-medium ml-auto">65%</span>
               </div>
               <div class="flex items-center mt-4">
                 <div class="w-2 h-2 bg-warning rounded-full mr-3"></div>
-                <span class="truncate">>= 50 Years old</span>
+                <span class="truncate">{{ $t("dashboard.finished_trips") }}</span>
+                <span class="font-medium ml-auto">25%</span>
+              </div>
+              <div class="flex items-center mt-4">
+                <div class="w-2 h-2 bg-light rounded-full mr-3"></div>
+                <span class="truncate">{{ $t("dashboard.pending_trips") }}</span>
                 <span class="font-medium ml-auto">10%</span>
               </div>
             </div>
@@ -97,7 +100,7 @@
         <!-- BEGIN: Official Store -->
         <div class="col-span-12 xl:col-span-9 mt-6">
           <div class="intro-y block sm:flex items-center h-10">
-            <h2 class="text-lg font-medium truncate mr-5">Official Store</h2>
+            <h2 class="text-lg font-medium truncate mr-5">{{ $t("dashboard.vehicles_title") }}</h2>
             <div class="sm:ml-auto mt-3 sm:mt-0 relative text-slate-500">
               <MapPinIcon
                 class="w-4 h-4 z-10 absolute my-auto inset-y-0 ml-3 left-0"
@@ -105,14 +108,13 @@
               <input
                 type="text"
                 class="form-control sm:w-56 box pl-10"
-                placeholder="Filter by city"
+                placeholder="Filtrar por matrícula"
               />
             </div>
           </div>
           <div class="intro-y box p-5 mt-12 sm:mt-5">
             <div>
-              250 Official stores in 21 countries, click the marker to see
-              location details.
+              {{ $t("dashboard.vehicles_subtitle1") }} <span class="text-2xl text-primary">50 </span>{{ $t("dashboard.vehicles_subtitle2") }}
             </div>
             <ReportMap class="report-maps mt-5 bg-slate-200 rounded-md" />
           </div>
@@ -122,23 +124,13 @@
         <div class="col-span-12 xl:col-span-9 2xl:col-span-12 z-10">
         <div class="mt-6 -mb-6 intro-y">
           <Alert
-            class="box bg-primary text-white flex items-center mb-6"
+            class="box bg-danger text-white flex items-center mb-6"
             v-slot="{ dismiss }"
           >
-            <span>
-              Introducing new dashboard! Download now at
-              <a
-                href="https://themeforest.net/item/midone-jquery-tailwindcss-html-admin-template/26366820"
-                class="underline ml-1"
-                target="blank"
-                >themeforest.net</a
-              >.
-              <button
-                class="rounded-md bg-white bg-opacity-20 dark:bg-darkmode-300 hover:bg-opacity-30 py-0.5 px-2 -my-3 ml-2"
-              >
-                Live Preview
-              </button>
-            </span>
+            <AlertOctagon class="w-6 h-6 mr-2 text-white z-10" />
+            <span class="font-bold underline mr-2">
+              {{ $t("dashboard.info_demo_title") }}
+            </span> {{ $t("dashboard.info_demo_text") }}
             <button
               type="button"
               class="btn-close text-white"
