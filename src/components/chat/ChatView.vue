@@ -6,7 +6,7 @@
   <!-- Chat -->
   <div class="flex flex-col w-1/3 gap-4">
     <!-- Botons menú -->
-    <div class="box p-2 grid grid-cols-3 justify-between">
+    <div class="box p-2 grid grid-cols-2 justify-between">
       <button
         id="chat-button"
         class="flex items-center justify-center gap-1 py-2 w-full bg-[#0096b2] chat-button active text-white rounded-lg"
@@ -14,13 +14,6 @@
       >
         <span class="material-symbols-outlined"> chat </span>
         Chats
-      </button>
-      <button
-        id="profile-button"
-        class="flex items-center justify-center gap-1 py-2 w-full chat-button"
-      >
-        <span class="material-symbols-outlined"> person </span>
-        Perfil
       </button>
       <button
         id="new-chat-button"
@@ -167,11 +160,9 @@
           :src="
             chatList.avatar
               ? chatList.avatar
-              : chatList.name && typeof chatList.name === 'string'
-              ? `https://ui-avatars.com/api/?name=${chatList.name.charAt(
+              : `https://ui-avatars.com/api/?name=${chatList.name.charAt(
                   0
                 )}&color=7F9CF5&background=EBF4FF`
-              : 'https://ui-avatars.com/api/?name=&color=7F9CF5&background=EBF4FF'
           "
         />
         <!-- En cas de ser un grup -->
@@ -181,14 +172,11 @@
           :src="
             chatList.icon
               ? chatList.icon
-              : chatList.name && typeof chatList.name === 'string'
-              ? `https://ui-avatars.com/api/?name=${chatList.name.charAt(
+              : `https://ui-avatars.com/api/?name=${chatList.name.charAt(
                   0
                 )}&color=7F9CF5&background=EBF4FF`
-              : 'https://ui-avatars.com/api/?name=&color=7F9CF5&background=EBF4FF'
           "
         />
-
         <div
           class="flex flex-col justify-between h-full w-full text-left gap-1"
         >
@@ -322,8 +310,6 @@ const {
   markUserConversationAsRead,
   markGroupConversationAsRead,
   sendTextMessage,
-  getUserGroups,
-  getGroupMembers,
 } = useChat();
 
 let selectedChat = ref("");
@@ -367,7 +353,66 @@ const initialize = async () => {
           onTextMessageReceived: async (textMessage) => {
             // Quan arribi un nou missatge
             console.log("Text message received successfully", textMessage);
-            printTextMessage(textMessage);
+
+            let lastMessageDate = "";
+            let currentMessageDate;
+
+            // Tornem a carregar tots els xats
+            LoadChatsList();
+
+            // Comprobem la data del missatge
+            currentMessageDate = getMessageDate(textMessage.sentAt);
+
+            // Comprobem l'ultim missatge d'aquesta mateixa conversació
+            lastMessageDate = await loadChatMessages(
+              textMessage.conversationId
+            );
+
+            if (lastMessageDate.data.length > 1) {
+              lastMessageDate = getMessageDate(
+                lastMessageDate.data[lastMessageDate.data.length - 2].sentAt
+              );
+            } else {
+              lastMessageDate = "Hoy";
+            }
+
+            if (lastMessageDate !== currentMessageDate) {
+              chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
+            }
+
+            if (
+              textMessage.receiverId ===
+              document.getElementById("chat-header").getAttribute("chatId")
+            ) {
+              if (textMessage.sender.uid === userInfo.uid) {
+                document.getElementById("chat").innerHTML += `
+                          <div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
+                              <div class="flex gap-3 py-2 px-3 bg-[#0096b2] text-white rounded-lg max-w-md">
+                              <p style="margin: 0px;">${textMessage.text}</p>
+                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
+                                <p style="font-size: 12px; color: white; margin: 0px; heigh: 100%">
+                                  ${convertStringToDate(textMessage.sentAt)}
+                                </p>
+                              </div>
+                            </div>
+                          </div>`;
+              } else {
+                document.getElementById("chat").innerHTML += `
+                          <div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
+                            <div class="flex gap-3 rounded-lg w-fit py-2 px-5 bg-gray-200 max-w-md">
+                              <p style="margin: 0px;">${textMessage.text}</p>
+                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
+                                <p style="font-size: 12px; margin: 0px; heigh: 100%">
+                                  ${convertStringToDate(textMessage.sentAt)}
+                                </p>
+                              </div>
+                            </div>
+                          </div>`;
+              }
+              const messageBody = document.getElementById("chat");
+              messageBody.scrollTop =
+                messageBody.scrollHeight - messageBody.clientHeight;
+            }
           },
           onMediaMessageReceived: (mediaMessage) => {
             console.log("Media message received successfully", mediaMessage);
@@ -467,6 +512,9 @@ initialize();
 
 // Funció per montar la pantalla del xat
 const buildChat = async (ConversationId, ChatType, ChatId) => {
+  let currentMessageDate;
+  let lastMessageDate = "";
+
   // Agafem tots els xats
   const elements = document.querySelectorAll(".conversations-list-item");
 
@@ -499,8 +547,58 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
   // Recullim els missatges del xat
   const conversations = await loadChatMessages(ConversationId);
 
+  const chat = document.getElementById("chat");
+
+  chat.innerHTML = "";
+
   // Revisem cada missatge qui l'ha enviat per saber quins estils aplicar-li
-  buildConversation(conversations);
+  conversations.data.map((conversation) => {
+    // Marquem el missatge com a llegit
+    if (conversation.sender != userInfo.uid) {
+      if (conversation.receiverType === "user")
+        markUserConversationAsRead(userInfo.uid, conversation.sender);
+      else markGroupConversationAsRead(userInfo.uid, conversation.receiver);
+
+      // LoadChatsList();
+    }
+
+    // Comprobem la data del missatge
+    currentMessageDate = getMessageDate(conversation.sentAt);
+
+    if (lastMessageDate !== currentMessageDate) {
+      chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
+    }
+
+    lastMessageDate = currentMessageDate;
+
+    if (userInfo.uid === conversation.sender) {
+      chat.innerHTML += `<div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
+                              <div class="flex gap-3 py-2 px-3 bg-[#0096b2] text-white rounded-lg max-w-md">
+                              <p style="margin: 0px;">${
+                                conversation.data.text
+                              }</p>
+                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
+                                <p style="font-size: 12px; color: white; margin: 0px; heigh: 100%">
+                                  ${convertStringToDate(conversation.sentAt)}
+                                </p>
+                              </div>
+                            </div>
+                           </div>`;
+    } else {
+      chat.innerHTML += `<div class="missatgeEntrant" style="display: flex; width: 100%; justify-content: flex-start;">
+                              <div class="flex gap-3 rounded-lg w-fit py-2 px-3 bg-gray-200 max-w-md">
+                              <p style="margin: 0px;">${
+                                conversation.data.text
+                              }</p>
+                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
+                                <p style="font-size: 12px; margin: 0px; heigh: 100%">
+                                  ${convertStringToDate(conversation.sentAt)}
+                                </p>
+                              </div>
+                            </div>
+                          </div>`;
+    }
+  });
 
   const messageBody = document.getElementById("chat");
   messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
@@ -600,25 +698,57 @@ const toggleNewChat = async () => {
     if (!newChatButton.classList.contains("bg-[#0096b2]"))
       newChatButton.classList.add("bg-[#0096b2]", "text-white", "rounded-lg");
 
-    const groups = await getUserGroups(userInfo.uid);
-    const otherUsers = [];
-
-    for (const group of groups) {
-      otherUsers.push(group);
-      const members = await getGroupMembers(group.guid);
-      const otherMembers = members.filter((user) => user.uid !== userInfo.uid);
-
-      for (const member of otherMembers) {
-        otherUsers.push(member);
+    await fetch(
+      `https://api-eu.cometchat.io/v3.0/users/${userInfo.uid}/groups`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          appid: cometData.value.company.cometchat.app_id,
+          apikey: cometData.value.company.cometchat.rest_api_key,
+        },
       }
-    }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        // Obtener los grupos a los que pertenece el usuario de la respuesta
+        const groups = data.data;
 
-    newChatsList.value = otherUsers;
+        const options = {
+          method: "GET",
+          headers: {
+            accept: "application/json",
+            apikey: cometData.value.company.cometchat.rest_api_key,
+          },
+        };
+
+        fetch(
+          `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/groups/${groups[0].guid}/members?perPage=100&page=1`,
+          options
+        )
+          .then((response) => response.json())
+          .then((response) => {
+            const otherUsers = response.data.filter(
+              (user) => user.uid !== userInfo.uid
+            );
+            otherUsers.push(groups[0]);
+            newChatsList.value = otherUsers;
+          })
+          .catch((err) => console.error(err));
+      })
+      .catch((error) => {
+        console.log("Error al obtener los grupos del usuario:", error);
+      });
   }
 };
 
 // Funció per carregar un nou xat
-const buildNewChat = async (id, type) => {
+const buildNewChat = async (id, name, type) => {
+  let lastMessageDate = "";
+  let currentMessageDate;
+
+  console.log(id, name, type);
+
   if (type === "user") {
     // Obtenim les dades de l'usuari en cuestió
     const response = await getUserData(id);
@@ -636,12 +766,60 @@ const buildNewChat = async (id, type) => {
     const conversation = await getUserConversation(userInfo.uid, id);
     const hasConversation = conversation.error ? false : true;
 
+    // Netejem el xat
+    const chat = document.getElementById("chat");
+    chat.innerHTML = "";
+
     LoadChatsList();
 
     // En cas de tenir alguna conversa la carregarem
     if (hasConversation) {
       const messages = await loadChatMessages(conversation.data.conversationId);
-      buildConversation(messages);
+
+      messages.data.map((message) => {
+        if (message.sender != userInfo.uid) {
+          if (message.receiverType === "user")
+            markUserConversationAsRead(userInfo.uid, message.sender);
+          else markGroupConversationAsRead(userInfo.uid, message.receiver);
+        }
+
+        // Comprobem la data del missatge
+        currentMessageDate = getMessageDate(message.sentAt);
+
+        if (lastMessageDate !== currentMessageDate) {
+          chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
+        }
+
+        lastMessageDate = currentMessageDate;
+
+        if (userInfo.uid === message.sender) {
+          chat.innerHTML += `<div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
+                              <div class="flex gap-3 py-2 px-3 bg-[#0096b2] text-white rounded-lg max-w-md">
+                              <p style="margin: 0px;">${message.data.text}</p>
+                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
+                                <p style="font-size: 12px; color: white; margin: 0px; heigh: 100%">
+                                  ${convertStringToDate(message.sentAt)}
+                                </p>
+                              </div>
+                            </div>
+                           </div>`;
+        } else {
+          chat.innerHTML += `<div class="missatgeEntrant" style="display: flex; width: 100%; justify-content: flex-start;">
+                              <div class="flex gap-3 rounded-lg w-fit py-2 px-3 bg-gray-200 max-w-md">
+                              <p style="margin: 0px;">${message.data.text}</p>
+                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
+                                <p style="font-size: 12px; margin: 0px; heigh: 100%">
+                                  ${convertStringToDate(message.sentAt)}
+                                </p>
+                              </div>
+                            </div>
+                          </div>`;
+        }
+
+        const messageBody = document.getElementById("chat");
+        messageBody.scrollTop =
+          messageBody.scrollHeight - messageBody.clientHeight;
+      });
     }
   } else if (type === "group") {
     // Revisem que no tinguem alguna conversa amb aquest usuari
@@ -657,7 +835,51 @@ const buildNewChat = async (id, type) => {
     // En cas de tenir alguna conversa la carregarem
     if (hasConversation) {
       const messages = await loadChatMessages(conversation.data.conversationId);
-      buildConversation(messages);
+
+      messages.data.map((message) => {
+        if (message.sender != userInfo.uid) {
+          if (message.receiverType === "user")
+            markUserConversationAsRead(userInfo.uid, message.sender);
+          else markGroupConversationAsRead(userInfo.uid, message.receiver);
+        }
+
+        // Comprobem la data del missatge
+        currentMessageDate = getMessageDate(message.sentAt);
+
+        if (lastMessageDate !== currentMessageDate) {
+          chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
+        }
+
+        lastMessageDate = currentMessageDate;
+
+        if (userInfo.uid === message.sender) {
+          chat.innerHTML += `<div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
+                              <div class="flex gap-3 py-2 px-3 bg-[#0096b2] text-white rounded-lg max-w-md">
+                              <p style="margin: 0px;">${message.data.text}</p>
+                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
+                                <p style="font-size: 12px; color: white; margin: 0px; heigh: 100%">
+                                  ${convertStringToDate(message.sentAt)}
+                                </p>
+                              </div>
+                            </div>
+                           </div>`;
+        } else {
+          chat.innerHTML += `<div class="missatgeEntrant" style="display: flex; width: 100%; justify-content: flex-start;">
+                              <div class="flex gap-3 rounded-lg w-fit py-2 px-3 bg-gray-200 max-w-md">
+                              <p style="margin: 0px;">${message.data.text}</p>
+                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
+                                <p style="font-size: 12px; margin: 0px; heigh: 100%">
+                                  ${convertStringToDate(message.sentAt)}
+                                </p>
+                              </div>
+                            </div>
+                          </div>`;
+        }
+
+        const messageBody = document.getElementById("chat");
+        messageBody.scrollTop =
+          messageBody.scrollHeight - messageBody.clientHeight;
+      });
     }
   }
 };
@@ -691,122 +913,5 @@ const LoadChatsList = async () => {
 
   // Carregarem la llista de xats
   await getConversationsList(userInfo.uid);
-};
-
-const buildConversation = (conversations) => {
-  let lastMessageDate = "";
-  let currentMessageDate;
-
-  // Limpiamos el chat actual
-  const chat = document.getElementById("chat");
-  chat.innerHTML = "";
-
-  // Revisem cada missatge qui l'ha enviat per saber quins estils aplicar-li
-  conversations.data.map((conversation) => {
-    // Marquem el missatge com a llegit
-    if (conversation.sender != userInfo.uid) {
-      if (conversation.receiverType === "user")
-        markUserConversationAsRead(userInfo.uid, conversation.sender);
-      else markGroupConversationAsRead(userInfo.uid, conversation.receiver);
-
-      // LoadChatsList();
-    }
-
-    // Comprobem la data del missatge
-    currentMessageDate = getMessageDate(conversation.sentAt);
-
-    if (lastMessageDate !== currentMessageDate) {
-      chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
-    }
-
-    lastMessageDate = currentMessageDate;
-
-    if (userInfo.uid === conversation.sender) {
-      chat.innerHTML += `<div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
-                              <div class="flex gap-3 py-2 px-3 bg-[#0096b2] text-white rounded-lg max-w-md">
-                              <p style="margin: 0px;">${
-                                conversation.data.text
-                              }</p>
-                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
-                                <p style="font-size: 12px; color: white; margin: 0px; heigh: 100%">
-                                  ${convertStringToDate(conversation.sentAt)}
-                                </p>
-                              </div>
-                            </div>
-                           </div>`;
-    } else {
-      chat.innerHTML += `<div class="missatgeEntrant" style="display: flex; width: 100%; justify-content: flex-start;">
-                              <div class="flex gap-3 rounded-lg w-fit py-2 px-3 bg-gray-200 max-w-md">
-                              <p style="margin: 0px;">${
-                                conversation.data.text
-                              }</p>
-                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
-                                <p style="font-size: 12px; margin: 0px; heigh: 100%">
-                                  ${convertStringToDate(conversation.sentAt)}
-                                </p>
-                              </div>
-                            </div>
-                          </div>`;
-    }
-  });
-};
-
-const printTextMessage = async (textMessage) => {
-  let lastMessageDate = "";
-  let currentMessageDate;
-
-  // Tornem a carregar tots els xats
-  LoadChatsList();
-
-  // Comprobem la data del missatge
-  currentMessageDate = getMessageDate(textMessage.sentAt);
-
-  // Comprobem l'ultim missatge d'aquesta mateixa conversació
-  lastMessageDate = await loadChatMessages(textMessage.conversationId);
-
-  if (lastMessageDate.data.length > 1) {
-    lastMessageDate = getMessageDate(
-      lastMessageDate.data[lastMessageDate.data.length - 2].sentAt
-    );
-  } else {
-    lastMessageDate = "Hoy";
-  }
-
-  if (lastMessageDate !== currentMessageDate) {
-    chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
-  }
-
-  if (
-    textMessage.receiverId ===
-    document.getElementById("chat-header").getAttribute("chatId")
-  ) {
-    if (textMessage.sender.uid === userInfo.uid) {
-      document.getElementById("chat").innerHTML += `
-                          <div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
-                              <div class="flex gap-3 py-2 px-3 bg-[#0096b2] text-white rounded-lg max-w-md">
-                              <p style="margin: 0px;">${textMessage.text}</p>
-                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
-                                <p style="font-size: 12px; color: white; margin: 0px; heigh: 100%">
-                                  ${convertStringToDate(textMessage.sentAt)}
-                                </p>
-                              </div>
-                            </div>
-                          </div>`;
-    } else {
-      document.getElementById("chat").innerHTML += `
-                          <div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
-                            <div class="flex gap-3 rounded-lg w-fit py-2 px-5 bg-gray-200 max-w-md">
-                              <p style="margin: 0px;">${textMessage.text}</p>
-                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
-                                <p style="font-size: 12px; margin: 0px; heigh: 100%">
-                                  ${convertStringToDate(textMessage.sentAt)}
-                                </p>
-                              </div>
-                            </div>
-                          </div>`;
-    }
-    const messageBody = document.getElementById("chat");
-    messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
-  }
 };
 </script>
