@@ -21,6 +21,7 @@ export default function useChat() {
       );
 
       cometData.value = response.data.data;
+      return response.data.data;
     } catch (e) {
       console.log(e);
     }
@@ -37,15 +38,18 @@ export default function useChat() {
       },
     };
 
-    await fetch(
+    const response = await fetch(
       `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/conversations`,
       options
     )
       .then(async (response) => await response.json())
       .then((response) => {
         conversationList.value = response.data;
+        return response.data;
       })
       .catch((err) => console.error(err));
+
+      return response;
   };
 
   // Funció per rebre informació sobre un usuari

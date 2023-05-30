@@ -759,6 +759,9 @@ const buildNewChat = async (id, name, type) => {
         messageBody.scrollTop =
           messageBody.scrollHeight - messageBody.clientHeight;
       });
+
+      document.getElementById(document.getElementById('chat-header').getAttribute('ChatId')).classList.add('selected')
+
     }
   }
 };
