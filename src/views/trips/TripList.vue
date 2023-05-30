@@ -344,12 +344,7 @@ const initTabulator = () => {
                 <button class="flex items-center mr-3 text-green-800"
                   id="btn_edit"
                 >
-                  <i data-lucide="check-square" class="w-4 h-4 mr-1"></i> ${t("edit")}
-                </button>
-                <button class="flex items-center text-danger"
-                  id="btn_delete"
-                >
-                  <i data-lucide="trash-2" class="w-4 h-4 mr-1"></i> ${t("delete")}
+                  <i data-lucide="eye" class="w-4 h-4 mr-1"></i> ${t("show")}
                 </button>
               </div>`);
           dom(a).on("click", function (event) {
@@ -358,9 +353,9 @@ const initTabulator = () => {
               editTrip(cell.getData().id);
             }
 
-            if(event.target.id === 'btn_delete'){
-              deleteTrip(cell.getData().id, cell.getData().name); //TODO check name
-            }
+            // if(event.target.id === 'btn_delete'){
+            //   deleteTrip(cell.getData().id, cell.getData().name); //TODO check name
+            // }
 
           });
 
