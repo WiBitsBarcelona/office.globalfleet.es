@@ -455,71 +455,39 @@ initialize();
 
 // Funció per montar la pantalla del xat
 const buildChat = async (ConversationId, ChatType, ChatId) => {
-  let currentMessageDate;
   let lastMessageDate = "";
 
-  const messagesCounter = document.getElementById(ChatId);
-  const messagesBalloon = messagesCounter.querySelector(
-    ".inner-messages-balloon"
-  );
-
+  const messagesBalloon = document.getElementById(ChatId)?.querySelector(".inner-messages-balloon");
   if (messagesBalloon) {
     messagesBalloon.remove();
   }
 
-  // Agafem tots els xats
-  const elements = document.querySelectorAll(".conversations-list-item");
-
-  // Pintem els xats de blanc
-  elements.forEach((element) => {
-    if (element.classList.contains("bg-gray-200")) {
-      element.classList.replace("bg-gray-200", "bg-white");
-    }
-
-    if (element.classList.contains("selected")) {
-      element.classList.remove("selected");
-    }
+  document.querySelectorAll(".conversations-list-item").forEach((element) => {
+    element.classList.replace("bg-gray-200", "bg-white");
+    element.classList.remove("selected");
   });
 
-  // Mirem l'element que hem fet clic
   const elementSeleccionat = document.getElementById(ChatId);
-
-  // Treiem el fons blanc de l'element
   elementSeleccionat.classList.remove("bg-white");
-
-  // Pintem el background a l'element
   elementSeleccionat.classList.add("bg-gray-200");
 
-  if (ChatType === "user") {
-    const response = await getUserData(ChatId);
-    selectedChat.value = response.data;
-    inChat.value = true;
-  } else {
-    const response = await getGroupData(ChatId);
-    selectedChat.value = response.data;
-    inChat.value = true;
-  }
+  const response = ChatType === "user" ? await getUserData(ChatId) : await getGroupData(ChatId);
+  selectedChat.value = response.data;
+  inChat.value = true;
 
-  // Recullim els missatges del xat
   const conversations = await loadChatMessages(ConversationId);
-
   const chat = document.getElementById("chat");
-
   chat.innerHTML = "";
 
-  // Revisem cada missatge qui l'ha enviat per saber quins estils aplicar-li
-  conversations.data.map((conversation) => {
-    // Marquem el missatge com a llegit
-    if (conversation.sender != userInfo.uid) {
+  conversations.data.forEach((conversation) => {
+    if (conversation.sender !== userInfo.uid) {
       if (conversation.receiverType === "user")
         markUserConversationAsRead(userInfo.uid, conversation.sender);
-      else markGroupConversationAsRead(userInfo.uid, conversation.receiver);
-
-      // LoadChatsList();
+      else
+        markGroupConversationAsRead(userInfo.uid, conversation.receiver);
     }
 
-    // Comprobem la data del missatge
-    currentMessageDate = getMessageDate(conversation.sentAt);
+    const currentMessageDate = getMessageDate(conversation.sentAt);
 
     if (lastMessageDate !== currentMessageDate) {
       chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
@@ -527,33 +495,17 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
 
     lastMessageDate = currentMessageDate;
 
-    if (userInfo.uid === conversation.sender) {
-      chat.innerHTML += `<div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
-                              <div class="flex gap-3 py-2 px-3 bg-[#0096b2] text-white rounded-lg max-w-md">
-                              <p style="margin: 0px;">${
-                                conversation.data.text
-                              }</p>
-                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
-                                <p style="font-size: 12px; color: white; margin: 0px; heigh: 100%">
-                                  ${convertStringToDate(conversation.sentAt)}
-                                </p>
-                              </div>
+    const messageClass = userInfo.uid === conversation.sender ? "missatgePropi" : "missatgeEntrant";
+    chat.innerHTML += `<div class="${messageClass}" style="display: flex; width: 100%; justify-content: flex-${userInfo.uid === conversation.sender ? "end" : "start"};">
+                          <div class="flex gap-3 ${userInfo.uid === conversation.sender ? "py-2 px-3 bg-[#0096b2] text-white rounded-lg w-fit" : "rounded-lg w-fit py-2 px-3 bg-gray-200"} max-w-md">
+                            <p style="margin: 0px;">${conversation.data.text}</p>
+                            <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
+                              <p style="font-size: 12px; margin: 0px; heigh: 100%">
+                                ${convertStringToDate(conversation.sentAt)}
+                              </p>
                             </div>
-                           </div>`;
-    } else {
-      chat.innerHTML += `<div class="missatgeEntrant" style="display: flex; width: 100%; justify-content: flex-start;">
-                              <div class="flex gap-3 rounded-lg w-fit py-2 px-3 bg-gray-200 max-w-md">
-                              <p style="margin: 0px;">${
-                                conversation.data.text
-                              }</p>
-                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
-                                <p style="font-size: 12px; margin: 0px; heigh: 100%">
-                                  ${convertStringToDate(conversation.sentAt)}
-                                </p>
-                              </div>
-                            </div>
-                          </div>`;
-    }
+                          </div>
+                        </div>`;
   });
 
   const messageBody = document.getElementById("chat");
@@ -901,9 +853,10 @@ const printTextMessage = async (textMessage) => {
   messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
 
   await getConversationsList(userInfo.uid);
+  
+  // Volvemos a seleccionar el chat con el color gris
   document.getElementById(header.getAttribute("chatId")).classList.add("selected");
 
-  // Volvemos a seleccionar el chat con el color gris
 };
 </script>
 
