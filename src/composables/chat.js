@@ -232,7 +232,6 @@ export default function useChat() {
 
   // Funció per a enviar missatges
   const sendTextMessage = async (user_uid, message, chat_id, receiverType) => {
-    console.log(user_uid, message, chat_id, receiverType);
     const options = {
       method: "POST",
       headers: {

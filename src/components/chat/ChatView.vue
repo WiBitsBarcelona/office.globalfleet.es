@@ -475,6 +475,10 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
     if (element.classList.contains("bg-gray-200")) {
       element.classList.replace("bg-gray-200", "bg-white");
     }
+
+    if (element.classList.contains("selected")) {
+      element.classList.remove("selected");
+    }
   });
 
   // Mirem l'element que hem fet clic
@@ -842,23 +846,50 @@ const printTextMessage = async (textMessage) => {
 
   // Comprobem l'ultim missatge d'aquesta mateixa conversació
   const lastMessageDate = await loadChatMessages(textMessage.conversationId);
-  const lastDate = lastMessageDate.data.length > 1 ? getMessageDate(lastMessageDate.data[lastMessageDate.data.length - 2].sentAt) : "Hoy";
+  const lastDate =
+    lastMessageDate.data.length > 1
+      ? getMessageDate(
+          lastMessageDate.data[lastMessageDate.data.length - 2].sentAt
+        )
+      : "Hoy";
 
   if (lastDate !== currentMessageDate) {
     messageBody.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
   }
 
-  if (!header || (header.getAttribute("chatId") !== receiver && header.getAttribute("chatId") !== sender)) {
+  if (
+    !header ||
+    (header.getAttribute("chatId") !== receiver &&
+      header.getAttribute("chatId") !== sender)
+  ) {
+    await getConversationsList(userInfo.uid);
     return;
   }
 
-  const senderClass = textMessage.sender.uid === userInfo.uid ? "missatgePropi" : "missatgeEntrant";
-  const bgColorClass = textMessage.sender.uid === userInfo.uid ? "bg-[#0096b2] text-white" : "bg-gray-200";
+  const senderClass =
+    textMessage.sender.uid === userInfo.uid
+      ? "missatgePropi"
+      : "missatgeEntrant";
+  const bgColorClass =
+    textMessage.sender.uid === userInfo.uid
+      ? "bg-[#0096b2] text-white"
+      : "bg-gray-200";
   const messageText = textMessage.text;
   const messageDate = convertStringToDate(textMessage.sentAt);
 
+  // Marcamos el nuevo mensaje como leido
+  if (sender !== userInfo.uid) {
+    if (textMessage.receiverType === "group") {
+      markGroupConversationAsRead(userInfo.uid, receiver);
+    } else {
+      markUserConversationAsRead(userInfo.uid, sender);
+    }
+  }
+
   messageBody.innerHTML += `
-    <div class="${senderClass}" style="display: flex; width: 100%; justify-content: ${senderClass === 'missatgePropi' ? 'flex-end' : 'flex-start'};">
+    <div class="${senderClass}" style="display: flex; width: 100%; justify-content: ${
+    senderClass === "missatgePropi" ? "flex-end" : "flex-start"
+  };">
       <div class="flex gap-3 py-2 px-3 ${bgColorClass} rounded-lg max-w-md">
         <p style="margin: 0;">${messageText}</p>
         <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
@@ -868,5 +899,17 @@ const printTextMessage = async (textMessage) => {
     </div>`;
 
   messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
+
+  await getConversationsList(userInfo.uid);
+  document.getElementById(header.getAttribute("chatId")).classList.add("selected");
+
+  // Volvemos a seleccionar el chat con el color gris
 };
 </script>
+
+<style>
+  .selected {
+    --tw-bg-opacity: 1;
+    background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+  }
+</style>
