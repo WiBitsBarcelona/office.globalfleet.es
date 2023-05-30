@@ -109,7 +109,7 @@
                 conversation.unreadMessageCount != 0 &&
                 conversation.unreadMessageCount < 100
               "
-              class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-green-500 text-white rounded-full"
+              class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-green-500 text-white rounded-full inner-messages-balloon"
             >
               <p class="w-full text-center">
                 {{ conversation.unreadMessageCount }}
@@ -120,7 +120,7 @@
                 conversation.unreadMessageCount != 0 &&
                 conversation.unreadMessageCount > 100
               "
-              class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-green-500 text-white rounded-full"
+              class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-green-500 text-white rounded-full inner-messages-balloon"
             >
               <p class="w-full text-center">+99</p>
             </div>
@@ -514,6 +514,10 @@ initialize();
 const buildChat = async (ConversationId, ChatType, ChatId) => {
   let currentMessageDate;
   let lastMessageDate = "";
+
+  const messagesCounter = document.getElementById(ChatId);
+  const messagesBalloon = messagesCounter.querySelector('.inner-messages-balloon');
+  messagesBalloon.remove();
 
   // Agafem tots els xats
   const elements = document.querySelectorAll(".conversations-list-item");
