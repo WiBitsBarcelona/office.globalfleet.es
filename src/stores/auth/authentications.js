@@ -95,6 +95,7 @@ export const useAuthenticationStore = defineStore("authStore", {
             } catch (error) {
                 console.log(e);
                 this.errors = e;
+                this.token = null;
             }
 
         },
