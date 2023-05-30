@@ -310,6 +310,8 @@ const {
   markUserConversationAsRead,
   markGroupConversationAsRead,
   sendTextMessage,
+  getUserGroups,
+  getGroupMembers,
 } = useChat();
 
 let selectedChat = ref("");
@@ -353,66 +355,7 @@ const initialize = async () => {
           onTextMessageReceived: async (textMessage) => {
             // Quan arribi un nou missatge
             console.log("Text message received successfully", textMessage);
-
-            let lastMessageDate = "";
-            let currentMessageDate;
-
-            // Tornem a carregar tots els xats
-            LoadChatsList();
-
-            // Comprobem la data del missatge
-            currentMessageDate = getMessageDate(textMessage.sentAt);
-
-            // Comprobem l'ultim missatge d'aquesta mateixa conversació
-            lastMessageDate = await loadChatMessages(
-              textMessage.conversationId
-            );
-
-            if (lastMessageDate.data.length > 1) {
-              lastMessageDate = getMessageDate(
-                lastMessageDate.data[lastMessageDate.data.length - 2].sentAt
-              );
-            } else {
-              lastMessageDate = "Hoy";
-            }
-
-            if (lastMessageDate !== currentMessageDate) {
-              chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
-            }
-
-            if (
-              textMessage.receiverId ===
-              document.getElementById("chat-header").getAttribute("chatId")
-            ) {
-              if (textMessage.sender.uid === userInfo.uid) {
-                document.getElementById("chat").innerHTML += `
-                          <div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
-                              <div class="flex gap-3 py-2 px-3 bg-[#0096b2] text-white rounded-lg max-w-md">
-                              <p style="margin: 0px;">${textMessage.text}</p>
-                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
-                                <p style="font-size: 12px; color: white; margin: 0px; heigh: 100%">
-                                  ${convertStringToDate(textMessage.sentAt)}
-                                </p>
-                              </div>
-                            </div>
-                          </div>`;
-              } else {
-                document.getElementById("chat").innerHTML += `
-                          <div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
-                            <div class="flex gap-3 rounded-lg w-fit py-2 px-5 bg-gray-200 max-w-md">
-                              <p style="margin: 0px;">${textMessage.text}</p>
-                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
-                                <p style="font-size: 12px; margin: 0px; heigh: 100%">
-                                  ${convertStringToDate(textMessage.sentAt)}
-                                </p>
-                              </div>
-                            </div>
-                          </div>`;
-              }
-              const messageBody = document.getElementById("chat");
-              messageBody.scrollTop =
-                messageBody.scrollHeight - messageBody.clientHeight;
-            }
+            printTextMessage(textMessage);
           },
           onMediaMessageReceived: (mediaMessage) => {
             console.log("Media message received successfully", mediaMessage);
@@ -516,8 +459,13 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
   let lastMessageDate = "";
 
   const messagesCounter = document.getElementById(ChatId);
-  const messagesBalloon = messagesCounter.querySelector('.inner-messages-balloon');
-  messagesBalloon.remove();
+  const messagesBalloon = messagesCounter.querySelector(
+    ".inner-messages-balloon"
+  );
+
+  if (messagesBalloon) {
+    messagesBalloon.remove();
+  }
 
   // Agafem tots els xats
   const elements = document.querySelectorAll(".conversations-list-item");
@@ -702,47 +650,20 @@ const toggleNewChat = async () => {
     if (!newChatButton.classList.contains("bg-[#0096b2]"))
       newChatButton.classList.add("bg-[#0096b2]", "text-white", "rounded-lg");
 
-    await fetch(
-      `https://api-eu.cometchat.io/v3.0/users/${userInfo.uid}/groups`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          appid: cometData.value.company.cometchat.app_id,
-          apikey: cometData.value.company.cometchat.rest_api_key,
-        },
+    const groups = await getUserGroups(userInfo.uid);
+    const otherUsers = [];
+
+    for (const group of groups) {
+      otherUsers.push(group);
+      const members = await getGroupMembers(group.guid);
+      const otherMembers = members.filter((user) => user.uid !== userInfo.uid);
+
+      for (const member of otherMembers) {
+        otherUsers.push(member);
       }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        // Obtener los grupos a los que pertenece el usuario de la respuesta
-        const groups = data.data;
+    }
 
-        const options = {
-          method: "GET",
-          headers: {
-            accept: "application/json",
-            apikey: cometData.value.company.cometchat.rest_api_key,
-          },
-        };
-
-        fetch(
-          `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/groups/${groups[0].guid}/members?perPage=100&page=1`,
-          options
-        )
-          .then((response) => response.json())
-          .then((response) => {
-            const otherUsers = response.data.filter(
-              (user) => user.uid !== userInfo.uid
-            );
-            otherUsers.push(groups[0]);
-            newChatsList.value = otherUsers;
-          })
-          .catch((err) => console.error(err));
-      })
-      .catch((error) => {
-        console.log("Error al obtener los grupos del usuario:", error);
-      });
+    newChatsList.value = otherUsers;
   }
 };
 
@@ -750,8 +671,6 @@ const toggleNewChat = async () => {
 const buildNewChat = async (id, name, type) => {
   let lastMessageDate = "";
   let currentMessageDate;
-
-  console.log(id, name, type);
 
   if (type === "user") {
     // Obtenim les dades de l'usuari en cuestió
@@ -891,7 +810,6 @@ const buildNewChat = async (id, name, type) => {
 // Funció per carregar/reiniciar els xats
 const LoadChatsList = async () => {
   const chatButton = document.getElementById("chat-button");
-  const profileButton = document.getElementById("profile-button");
   const newChatButton = document.getElementById("new-chat-button");
 
   // En cas de estar mirant la llista de xats nous
@@ -904,12 +822,6 @@ const LoadChatsList = async () => {
         "text-white",
         "rounded-lg"
       );
-    else if (profileButton.classList.contains("bg-[#0096b2]"))
-      profileButton.classList.remove(
-        "bg-[#0096b2]",
-        "text-white",
-        "rounded-lg"
-      );
 
     if (!chatButton.classList.contains("bg-[#0096b2]"))
       chatButton.classList.add("bg-[#0096b2]", "text-white", "rounded-lg");
@@ -917,5 +829,44 @@ const LoadChatsList = async () => {
 
   // Carregarem la llista de xats
   await getConversationsList(userInfo.uid);
+};
+
+const printTextMessage = async (textMessage) => {
+  const receiver = textMessage.receiverId;
+  const sender = textMessage.sender.uid;
+  const header = document.getElementById("chat-header");
+  const messageBody = document.getElementById("chat");
+
+  // Comprobem la data del missatge
+  const currentMessageDate = getMessageDate(textMessage.sentAt);
+
+  // Comprobem l'ultim missatge d'aquesta mateixa conversació
+  const lastMessageDate = await loadChatMessages(textMessage.conversationId);
+  const lastDate = lastMessageDate.data.length > 1 ? getMessageDate(lastMessageDate.data[lastMessageDate.data.length - 2].sentAt) : "Hoy";
+
+  if (lastDate !== currentMessageDate) {
+    messageBody.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
+  }
+
+  if (!header || (header.getAttribute("chatId") !== receiver && header.getAttribute("chatId") !== sender)) {
+    return;
+  }
+
+  const senderClass = textMessage.sender.uid === userInfo.uid ? "missatgePropi" : "missatgeEntrant";
+  const bgColorClass = textMessage.sender.uid === userInfo.uid ? "bg-[#0096b2] text-white" : "bg-gray-200";
+  const messageText = textMessage.text;
+  const messageDate = convertStringToDate(textMessage.sentAt);
+
+  messageBody.innerHTML += `
+    <div class="${senderClass}" style="display: flex; width: 100%; justify-content: ${senderClass === 'missatgePropi' ? 'flex-end' : 'flex-start'};">
+      <div class="flex gap-3 py-2 px-3 ${bgColorClass} rounded-lg max-w-md">
+        <p style="margin: 0;">${messageText}</p>
+        <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
+          <p style="font-size: 12px; margin: 0; heigh: 100%">${messageDate}</p>
+        </div>
+      </div>
+    </div>`;
+
+  messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
 };
 </script>

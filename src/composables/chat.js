@@ -41,7 +41,7 @@ export default function useChat() {
       `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/conversations`,
       options
     )
-      .then((response) => response.json())
+      .then(async (response) => await response.json())
       .then((response) => {
         conversationList.value = response.data;
       })
@@ -231,7 +231,8 @@ export default function useChat() {
   };
 
   // Funció per a enviar missatges
-  const sendTextMessage = (user_uid, message, chat_id, receiverType) => {
+  const sendTextMessage = async (user_uid, message, chat_id, receiverType) => {
+    console.log(user_uid, message, chat_id, receiverType);
     const options = {
       method: "POST",
       headers: {
@@ -254,8 +255,8 @@ export default function useChat() {
       options
     )
       .then((response) => response.json())
-      .then((response) => {
-        return response;
+      .then(async () => {
+        await getConversationsList(user_uid);
       })
       .catch((err) => console.error(err));
   };
