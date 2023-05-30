@@ -35,7 +35,7 @@
               >
                 <div class="side-menu__icon mb-4">
                   <span
-                    v-if="menu.pageName == 'chat'"
+                    v-if="menu.pageName == 'chat' && unreadMessageCount"
                     class="ml-5 px-2 py-1 text-white rounded-full bg-primary relative z-50"
                     >{{ unreadMessageCount }}</span
                   >
@@ -163,12 +163,11 @@ import dom from "@left4code/tw-starter/dist/js/dom";
 
 // Chat hooks
 import useChat from "@/composables/chat";
-const { getCometChatCredentials, getConversationsList } = useChat();
+const { unreadMessageCount, checkUnreadMessages } = useChat();
 
 const route = useRoute();
 const router = useRouter();
 const formattedMenu = ref([]);
-const unreadMessageCount = ref(0);
 const simpleMenuStore = useSimpleMenuStore();
 const simpleMenu = computed(() => nestedMenu(simpleMenuStore.menu, route));
 
@@ -189,22 +188,7 @@ onMounted(() => {
   dom("body").removeClass("error-page").removeClass("login").addClass("main");
   formattedMenu.value = $h.toRaw(simpleMenu.value);
 
-  // Function to check the chat messages
-  const checkUnreadMessages = async () => {
-    let values = 0;
-    const user = await getCometChatCredentials();
-    const user_uid = user.cometchat_uid;
-
-    const response = await getConversationsList(user_uid);
-
-    response.map(conversation => {
-      values += parseInt(conversation.unreadMessageCount);
-    })
-
-    unreadMessageCount.value = values;
-  }
-
   checkUnreadMessages();
-  setInterval(checkUnreadMessages, 3000);
+  setInterval(checkUnreadMessages, 5000);
 });
 </script>

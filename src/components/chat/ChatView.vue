@@ -111,7 +111,7 @@
               "
               class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-green-500 text-white rounded-full inner-messages-balloon"
             >
-              <p class="w-full text-center">
+              <p class="w-full text-center mt-[2px] ml-[1px]">
                 {{ conversation.unreadMessageCount }}
               </p>
             </div>
@@ -122,7 +122,7 @@
               "
               class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-green-500 text-white rounded-full inner-messages-balloon"
             >
-              <p class="w-full text-center">+99</p>
+              <p class="w-full text-center mt-[2px] ml-[1px]">+99</p>
             </div>
           </div>
           <p :id="'last-' + conversation.conversationId">
@@ -312,6 +312,8 @@ const {
   sendTextMessage,
   getUserGroups,
   getGroupMembers,
+  checkUnreadMessages,
+  unreadMessageCount,
 } = useChat();
 
 let selectedChat = ref("");
@@ -457,7 +459,9 @@ initialize();
 const buildChat = async (ConversationId, ChatType, ChatId) => {
   let lastMessageDate = "";
 
-  const messagesBalloon = document.getElementById(ChatId)?.querySelector(".inner-messages-balloon");
+  const messagesBalloon = document
+    .getElementById(ChatId)
+    ?.querySelector(".inner-messages-balloon");
   if (messagesBalloon) {
     messagesBalloon.remove();
   }
@@ -471,7 +475,10 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
   elementSeleccionat.classList.remove("bg-white");
   elementSeleccionat.classList.add("bg-gray-200");
 
-  const response = ChatType === "user" ? await getUserData(ChatId) : await getGroupData(ChatId);
+  const response =
+    ChatType === "user"
+      ? await getUserData(ChatId)
+      : await getGroupData(ChatId);
   selectedChat.value = response.data;
   inChat.value = true;
 
@@ -483,8 +490,7 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
     if (conversation.sender !== userInfo.uid) {
       if (conversation.receiverType === "user")
         markUserConversationAsRead(userInfo.uid, conversation.sender);
-      else
-        markGroupConversationAsRead(userInfo.uid, conversation.receiver);
+      else markGroupConversationAsRead(userInfo.uid, conversation.receiver);
     }
 
     const currentMessageDate = getMessageDate(conversation.sentAt);
@@ -495,10 +501,21 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
 
     lastMessageDate = currentMessageDate;
 
-    const messageClass = userInfo.uid === conversation.sender ? "missatgePropi" : "missatgeEntrant";
-    chat.innerHTML += `<div class="${messageClass}" style="display: flex; width: 100%; justify-content: flex-${userInfo.uid === conversation.sender ? "end" : "start"};">
-                          <div class="flex gap-3 ${userInfo.uid === conversation.sender ? "py-2 px-3 bg-[#0096b2] text-white rounded-lg w-fit" : "rounded-lg w-fit py-2 px-3 bg-gray-200"} max-w-md">
-                            <p style="margin: 0px;">${conversation.data.text}</p>
+    const messageClass =
+      userInfo.uid === conversation.sender
+        ? "missatgePropi"
+        : "missatgeEntrant";
+    chat.innerHTML += `<div class="${messageClass}" style="display: flex; width: 100%; justify-content: flex-${
+      userInfo.uid === conversation.sender ? "end" : "start"
+    };">
+                          <div class="flex gap-3 ${
+                            userInfo.uid === conversation.sender
+                              ? "py-2 px-3 bg-[#0096b2] text-white rounded-lg w-fit"
+                              : "rounded-lg w-fit py-2 px-3 bg-gray-200"
+                          } max-w-md">
+                            <p style="margin: 0px;">${
+                              conversation.data.text
+                            }</p>
                             <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
                               <p style="font-size: 12px; margin: 0px; heigh: 100%">
                                 ${convertStringToDate(conversation.sentAt)}
@@ -760,8 +777,11 @@ const buildNewChat = async (id, name, type) => {
           messageBody.scrollHeight - messageBody.clientHeight;
       });
 
-      document.getElementById(document.getElementById('chat-header').getAttribute('ChatId')).classList.add('selected')
-
+      document
+        .getElementById(
+          document.getElementById("chat-header").getAttribute("ChatId")
+        )
+        .classList.add("selected");
     }
   }
 };
@@ -812,12 +832,25 @@ const printTextMessage = async (textMessage) => {
     messageBody.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
   }
 
-  if (
-    !header ||
-    (header.getAttribute("chatId") !== receiver &&
-      header.getAttribute("chatId") !== sender)
-  ) {
+  // En caso de no encontrar ningun xat abierto
+  if (!inChat || !header) {
+    // Simplemente cargamos la lista de xats de nuevo
     await getConversationsList(userInfo.uid);
+    return;
+  }
+  // En caso de estar en un chat pero no es del que recibimos el mensaje
+  if (
+    header.getAttribute("chatId") !== receiver &&
+    header.getAttribute("chatId") !== sender
+  ) {
+    // Actualizamos lista de xats
+    await getConversationsList(userInfo.uid);
+    // Volvemos a pintar el elemento
+
+    document
+      .getElementById(header.getAttribute("chatId"))
+      .classList.add("selected");
+    // Volvemos a seleccionar el chat con el color gris
     return;
   }
 
@@ -856,16 +889,17 @@ const printTextMessage = async (textMessage) => {
   messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
 
   await getConversationsList(userInfo.uid);
-  
-  // Volvemos a seleccionar el chat con el color gris
-  document.getElementById(header.getAttribute("chatId")).classList.add("selected");
 
+  // Volvemos a seleccionar el chat con el color gris
+  document
+    .getElementById(header.getAttribute("chatId"))
+    .classList.add("selected");
 };
 </script>
 
 <style>
-  .selected {
-    --tw-bg-opacity: 1;
-    background-color: rgb(229 231 235 / var(--tw-bg-opacity));
-  }
+.selected {
+  --tw-bg-opacity: 1;
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+}
 </style>

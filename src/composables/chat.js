@@ -4,6 +4,7 @@ import axios from "axios";
 export default function useChat() {
   const cometData = ref({});
   const conversationList = ref("");
+  const unreadMessageCount = ref(0);
 
   let config = {
     headers: {
@@ -49,7 +50,7 @@ export default function useChat() {
       })
       .catch((err) => console.error(err));
 
-      return response;
+    return response;
   };
 
   // Funció per rebre informació sobre un usuari
@@ -230,7 +231,6 @@ export default function useChat() {
       options
     )
       .then((response) => response.json())
-      .then((response) => console.log(response))
       .catch((err) => console.error(err));
   };
 
@@ -301,10 +301,26 @@ export default function useChat() {
     return response.data;
   };
 
+  const checkUnreadMessages = async () => {
+    let values = 0;
+    const user = await getCometChatCredentials();
+    const user_uid = user.cometchat_uid;
+
+    const response = await getConversationsList(user_uid);
+
+    response.map((conversation) => {
+      values += parseInt(conversation.unreadMessageCount);
+    });
+
+    unreadMessageCount.value = values;
+    return values;
+  };
+
   return {
     // Variables
     cometData,
     conversationList,
+    unreadMessageCount,
     // Funciones
     getCometChatCredentials,
     getConversationsList,
@@ -319,5 +335,6 @@ export default function useChat() {
     markGroupConversationAsRead,
     getUserGroups,
     getGroupMembers,
+    checkUnreadMessages,
   };
 }
