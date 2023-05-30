@@ -3,10 +3,10 @@ import axios from 'axios';
 //import { useRouter } from 'vue-router';
 
 
-export default function useTripPriority() {
+export default function useTripStatus() {
 
-	const tripPriority = ref([])
-	const tripPriorities = ref([])
+	const tripStatus = ref([])
+	const tripStatuses = ref([])
 	const errors = ref('')
 	//const router = useRouter()
 
@@ -17,11 +17,12 @@ export default function useTripPriority() {
 		}
 	}
 
-	const getTripPriorities = async () => {
+	const getTripStatuses = async () => {
 		errors.value = ''
 		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-priorities/list`, config);
-			tripPriorities.value = response.data.data;
+			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-statuses/list`, config);
+			
+            tripStatuses.value = response.data.data;
 		} catch (e) {
 			console.log(e);
 			// if (e.response.status_code === 422) {
@@ -33,11 +34,11 @@ export default function useTripPriority() {
 	}
 
 
-	const getTripPriority = async (id) => {
+	const getTripStatus = async (id) => {
 		errors.value = ''
 		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-priorities/show/${id}`, config);
-			tripPriority.value = response.data.data;
+			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-statuses/show/${id}`, config);
+			tripStatus.value = response.data.data;
 		} catch (e) {
 			console.log(e);
 			// if (e.response.status_code === 422) {
@@ -49,11 +50,11 @@ export default function useTripPriority() {
 	}
 
 
-	const storeTripPriority = async (data) => {
+	const storeTripStatus = async (data) => {
 		errors.value = ''
 		try {
-			await axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-priorities/store`, data, config);
-			//await router.push({ name: 'tripPriority.index' });
+			await axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-statuses/store`, data, config);
+			//await router.push({ name: 'tripStatus.index' });
 		} catch (e) {
 			console.log(e);
 			// if (e.response.status_code === 422) {
@@ -65,11 +66,11 @@ export default function useTripPriority() {
 	}
 
 
-	const updateTripPriority = async (id, data) => {
+	const updateTripStatus = async (id, data) => {
 		errors.value = ''
 		try {
-			await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-priorities/update/${id}`, data, config);
-			//await router.push({ name: 'tripPriority.index' });
+			await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-statuses/update/${id}`, data, config);
+			//await router.push({ name: 'tripStatus.index' });
 		} catch (e) {
 			console.log(e)
 			// if (e.response.status === 422) {
@@ -81,9 +82,9 @@ export default function useTripPriority() {
 	}
 
 
-	const destroyTripPriority = async (id) => {
+	const destroyTripStatus = async (id) => {
 		try {
-			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-priorities/destroy/${id}`, config);
+			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-statuses/destroy/${id}`, config);
 		} catch (e) {
 			console.log(e)
 			// if (e.response.status === 422) {
@@ -97,13 +98,13 @@ export default function useTripPriority() {
 
 	return {
 		errors,
-		tripPriority,
-		tripPriorities,
-		getTripPriority,
-		getTripPriorities,
-		storeTripPriority,
-		updateTripPriority,
-		destroyTripPriority,
+		tripStatus,
+		tripStatuses,
+		getTripStatus,
+		getTripStatuses,
+		storeTripStatus,
+		updateTripStatus,
+		destroyTripStatus,
 	}
 
 }
