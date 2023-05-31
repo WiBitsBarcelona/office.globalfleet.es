@@ -312,8 +312,6 @@ const {
   sendTextMessage,
   getUserGroups,
   getGroupMembers,
-  checkUnreadMessages,
-  unreadMessageCount,
 } = useChat();
 
 let selectedChat = ref("");
@@ -332,30 +330,65 @@ const initialize = async () => {
   let authKey = cometData.value.company.cometchat.auth_key;
   let apiKey = cometData.value.company.cometchat.rest_api_key;
 
-  let conversationList2 = ref("");
-  let searching = ref(false);
   let isLoggued = ref(false);
 
   // Variable amb la configuració de la App
-  const appSetting = new CometChat.AppSettingsBuilder()
+  const appSettings = new CometChat.AppSettingsBuilder()
     .subscribePresenceForAllUsers()
     .setRegion(region)
     .autoEstablishSocketConnection(true)
     .build();
 
   // Inicialitzem la App
-  CometChat.init(appID, appSetting).then(
+  CometChat.init(appID, appSettings).then(
     () => {
       console.log("Initialization completed successfully");
 
+      // Iniciem la sessió al xat
+      const UID = useAuthenticationStore().user.employee.cometchat_uid;
+      const name = useAuthenticationStore().user.employee.name;
+
+      const user = new CometChat.User(UID);
+      user.setName(name);
+
+      userInfo = user;
+
+      CometChat.getLoggedinUser().then(() => {
+        isLoggued = true;
+        LoadChatsList();
+      });
+
+      if (!isLoggued) {
+        // Creem l'usuari
+        CometChat.createUser(user, authKey).then(
+          async () => {
+            // Un cop creat, ens loguejarem
+            const Logued = await logUserIn(authKey, UID);
+            // Si la sessió s'ha iniciat correctament
+            if (Logued) {
+              LoadChatsList();
+            }
+          },
+          async (error) => {
+            if (error.code === "ERR_UID_ALREADY_EXISTS") {
+              // En cas d'existir, farem login
+              const Logued = await logUserIn(authKey, UID);
+              if (Logued) {
+                LoadChatsList();
+              }
+            }
+          }
+        );
+      }
+
       // Afegirem un listener dels missatges
-      const listenerID = "INCOMING_MESSAGES_LISTENER";
+      const chatListenerID =
+        "chat_incoming_messages_unique_id_globaltank_apliemporda";
 
       CometChat.addMessageListener(
-        listenerID,
+        chatListenerID,
         new CometChat.MessageListener({
-          onTextMessageReceived: async (textMessage) => {
-            // Quan arribi un nou missatge
+          onTextMessageReceived: (textMessage) => {
             console.log("Text message received successfully", textMessage);
             printTextMessage(textMessage);
           },
@@ -367,62 +400,11 @@ const initialize = async () => {
           },
         })
       );
-
-      const userListenerID = "USER_LISTENER_ID";
-
-      CometChat.addUserListener(
-        userListenerID,
-        new CometChat.UserListener({
-          onUserOnline: (onlineUser) => {
-            console.log("On User Online:", { onlineUser });
-          },
-          onUserOffline: (offlineUser) => {
-            console.log("On User Offline:", { offlineUser });
-          },
-        })
-      );
     },
     (error) => {
       console.log("Initialization failed with error:", error);
     }
   );
-
-  // Iniciem la sessió al xat
-  const UID = useAuthenticationStore().user.employee.cometchat_uid;
-  const name = useAuthenticationStore().user.employee.name;
-
-  const user = new CometChat.User(UID);
-  user.setName(name);
-
-  userInfo = user;
-
-  CometChat.getLoggedinUser().then(() => {
-    isLoggued = true;
-    LoadChatsList();
-  });
-
-  if (!isLoggued) {
-    // Creem l'usuari
-    CometChat.createUser(user, authKey).then(
-      async () => {
-        // Un cop creat, ens loguejarem
-        const Logued = await logUserIn(authKey, UID);
-        // Si la sessió s'ha iniciat correctament
-        if (Logued) {
-          LoadChatsList();
-        }
-      },
-      async (error) => {
-        if (error.code === "ERR_UID_ALREADY_EXISTS") {
-          // En cas d'existir, farem login
-          const Logued = await logUserIn(authKey, UID);
-          if (Logued) {
-            LoadChatsList();
-          }
-        }
-      }
-    );
-  }
 
   // Funció per loguejar un usuari
   const logUserIn = async (authKey, UID) => {
@@ -888,7 +870,7 @@ const printTextMessage = async (textMessage) => {
 };
 
 const searchConversationByName = async () => {
-  const element = document.getElementById('search-conversation');
+  const element = document.getElementById("search-conversation");
   const searchTerm = element.value.toString().toLowerCase();
 
   const conversations = await getConversationsList(userInfo.uid);
@@ -898,7 +880,7 @@ const searchConversationByName = async () => {
     return name.toString().toLowerCase().includes(searchTerm);
   });
 
-  conversationList.value = r
+  conversationList.value = r;
 };
 </script>
 

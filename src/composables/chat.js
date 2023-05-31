@@ -258,7 +258,7 @@ export default function useChat() {
       options
     )
       .then((response) => response.json())
-      .then(async () => {
+      .then(async (response) => {
         await getConversationsList(user_uid);
       })
       .catch((err) => console.error(err));
