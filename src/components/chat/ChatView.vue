@@ -43,7 +43,7 @@
         type="text"
         class="form-control w-full box px-10"
         placeholder="Buscar conversación"
-        v-on:input="searchConversation"
+        v-on:input="searchConversationByName"
       />
     </div>
 
@@ -438,19 +438,6 @@ const initialize = async () => {
 
     return response;
   };
-
-  // Funció per buscar un xat des del buscador
-  const searchConversation = (e) => {
-    if (e.target.value.length != 0) {
-      searching.value = true;
-      conversationList2.value = conversationList.value.filter((conversation) =>
-        conversation.conversationWith.name.includes(e.target.value)
-      );
-    } else {
-      searching.value = false;
-      LoadChatsList();
-    }
-  };
 };
 
 initialize();
@@ -594,7 +581,11 @@ const sendMessage = () => {
   const chatId = header.getAttribute("chatId");
   const receiverType = header.getAttribute("type");
 
-  sendTextMessage(userInfo.uid, message.value, chatId, receiverType);
+  // Controlamos que el mensaje no esté vacio
+  const value = message.value.trim();
+  if (value !== "") {
+    sendTextMessage(userInfo.uid, message.value, chatId, receiverType);
+  }
 
   // Netejem el text
   message.value = "";
@@ -894,6 +885,20 @@ const printTextMessage = async (textMessage) => {
   document
     .getElementById(header.getAttribute("chatId"))
     .classList.add("selected");
+};
+
+const searchConversationByName = async () => {
+  const element = document.getElementById('search-conversation');
+  const searchTerm = element.value.toString().toLowerCase();
+
+  const conversations = await getConversationsList(userInfo.uid);
+
+  const r = conversations.filter((conversation) => {
+    const name = conversation.conversationWith.name;
+    return name.toString().toLowerCase().includes(searchTerm);
+  });
+
+  conversationList.value = r
 };
 </script>
 
