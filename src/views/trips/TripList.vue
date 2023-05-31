@@ -200,6 +200,14 @@ const initTabulator = () => {
         headerSort: false,
       },
       {
+        title: t("vehicle"),
+        minWidth: 200,
+        responsive: 0,
+        field: "vehicle.plate",
+        vertAlign: "middle",
+        headerHozAlign:"left"
+      },
+      {
         title: t("name"),
         minWidth: 200,
         responsive: 0,
@@ -214,65 +222,6 @@ const initTabulator = () => {
         field: "reference_number",
         vertAlign: "middle",
         headerHozAlign:"left"
-      },
-      {
-        title: t("reference_number"),
-        minWidth: 100,
-        responsive: 0,
-        field: "reference_number",
-        vertAlign: "middle",
-        headerHozAlign:"left"
-      },
-      {
-        title: t("stages"),
-        minWidth: 200,
-        responsive: 0,
-        field: "stages",
-        vertAlign: "middle",
-        headerHozAlign:"left",
-        formatter(cell) {
-          
-          let stages = cell.getData().stages;
-          let s = '';
-
-          //console.log(cell.getData().stages);
-
-          stages.forEach((el) => {
-            
-            s += el.name + `(${el.status.name} ${el.id})` + ' / ';
-            
-            //console.log({...el.status});
-          });
-          return s;
-        }
-      },
-      {
-        title: t("trip_priority"),
-        minWidth: 200,
-        responsive: 0,
-        field: "priority.name",
-        vertAlign: "middle",
-        headerHozAlign:"left",
-        formatter(cell) {
-
-          let textColor = '';
-          if(cell.getData().priority.id === 1){
-            textColor = 'text-success';
-          }else if(cell.getData().priority.id === 2){
-            textColor = 'text-blue-500';
-          }else if(cell.getData().priority.id === 3){
-            textColor = 'text-orange-600';
-          }
-
-          //<i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
-
-          return `<div class="flex items-center lg:justify-center 
-          ${textColor}"
-          >
-            
-              ${cell.getData().priority.name}
-          </div>`;
-        }
       },
       {
         title: t("trip_comm_status"),
@@ -335,6 +284,94 @@ const initTabulator = () => {
           >
             
               ${cell.getData().status.name}
+          </div>`;
+        }
+      },
+      {
+        title: t("driver"),
+        minWidth: 100,
+        responsive: 0,
+        field: "driver",
+        vertAlign: "middle",
+        headerHozAlign:"left",
+        formatter(cell) {
+          return cell.getData().driver.name + ' ' + cell.getData().driver.name;
+        }
+      },
+      {
+        title: t("tow"),
+        minWidth: 100,
+        responsive: 0,
+        field: "tow",
+        vertAlign: "middle",
+        headerHozAlign:"left",
+        formatter(cell) {
+
+          console.log(cell.getData().tows);
+
+          if(cell.getData().tows.lenght > 0){
+            return cell.getData().tows[0].tow.plate;
+          }else{
+            return '';
+          }
+        }
+      },
+      {
+        title: t("execution_at"),
+        minWidth: 100,
+        responsive: 0,
+        field: "execution_at",
+        vertAlign: "middle",
+        headerHozAlign:"left"
+      },
+      {
+        title: t("stages"),
+        minWidth: 200,
+        responsive: 0,
+        field: "stages",
+        vertAlign: "middle",
+        headerHozAlign:"left",
+        formatter(cell) {
+          
+          let stages = cell.getData().stages;
+          let s = '';
+
+          //console.log(cell.getData().stages);
+
+          stages.forEach((el) => {
+            
+            s += el.name + `(${el.status.name} ${el.id})` + ' / ';
+            
+            //console.log({...el.status});
+          });
+          return s;
+        }
+      },
+      {
+        title: t("trip_priority"),
+        minWidth: 200,
+        responsive: 0,
+        field: "priority.name",
+        vertAlign: "middle",
+        headerHozAlign:"left",
+        formatter(cell) {
+
+          let textColor = '';
+          if(cell.getData().priority.id === 1){
+            textColor = 'text-success';
+          }else if(cell.getData().priority.id === 2){
+            textColor = 'text-blue-500';
+          }else if(cell.getData().priority.id === 3){
+            textColor = 'text-orange-600';
+          }
+
+          //<i data-lucide="check-square" class="w-4 h-4 mr-2"></i> 
+
+          return `<div class="flex items-center lg:justify-center 
+          ${textColor}"
+          >
+            
+              ${cell.getData().priority.name}
           </div>`;
         }
       },
