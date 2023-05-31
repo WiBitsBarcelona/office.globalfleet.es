@@ -216,6 +216,14 @@ const initTabulator = () => {
         headerHozAlign:"left"
       },
       {
+        title: t("reference_number"),
+        minWidth: 100,
+        responsive: 0,
+        field: "reference_number",
+        vertAlign: "middle",
+        headerHozAlign:"left"
+      },
+      {
         title: t("stages"),
         minWidth: 200,
         responsive: 0,
