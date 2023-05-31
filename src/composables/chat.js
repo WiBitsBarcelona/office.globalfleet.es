@@ -4,6 +4,7 @@ import axios from "axios";
 export default function useChat() {
   const cometData = ref({});
   const conversationList = ref("");
+  const unreadMessageCount = ref(0);
 
   let config = {
     headers: {
@@ -21,31 +22,33 @@ export default function useChat() {
       );
 
       cometData.value = response.data.data;
+      return response.data.data;
     } catch (e) {
       console.log(e);
     }
   };
 
-  // Funció per llistar tots els xats
-  const getConversationsList = async (user_uid) => {
+  // Funció per a obtenir una llista dels usuaris registrats a la app
+  const getRegistredUsers = async () => {
     const options = {
       method: "GET",
       headers: {
         accept: "application/json",
-        onBehalfOf: user_uid,
         apikey: cometData.value.company.cometchat.rest_api_key,
       },
     };
 
-    await fetch(
-      `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/conversations`,
+    const response = await fetch(
+      `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/users?perPage=100&page=1`,
       options
     )
       .then((response) => response.json())
       .then((response) => {
-        conversationList.value = response.data;
+        return response;
       })
       .catch((err) => console.error(err));
+
+    return response;
   };
 
   // Funció per rebre informació sobre un usuari
@@ -94,23 +97,25 @@ export default function useChat() {
     return response;
   };
 
-  // Funció per a obtenir una llista dels usuaris registrats a la app
-  const getRegistredUsers = async () => {
+  // Funció per llistar tots els xats
+  const getConversationsList = async (user_uid) => {
     const options = {
       method: "GET",
       headers: {
         accept: "application/json",
+        onBehalfOf: user_uid,
         apikey: cometData.value.company.cometchat.rest_api_key,
       },
     };
 
     const response = await fetch(
-      `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/users?perPage=100&page=1`,
+      `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/conversations`,
       options
     )
-      .then((response) => response.json())
+      .then(async (response) => await response.json())
       .then((response) => {
-        return response;
+        conversationList.value = response.data;
+        return response.data;
       })
       .catch((err) => console.error(err));
 
@@ -226,12 +231,11 @@ export default function useChat() {
       options
     )
       .then((response) => response.json())
-      .then((response) => console.log(response))
       .catch((err) => console.error(err));
   };
 
   // Funció per a enviar missatges
-  const sendTextMessage = (user_uid, message, chat_id, receiverType) => {
+  const sendTextMessage = async (user_uid, message, chat_id, receiverType) => {
     const options = {
       method: "POST",
       headers: {
@@ -254,8 +258,8 @@ export default function useChat() {
       options
     )
       .then((response) => response.json())
-      .then((response) => {
-        return response;
+      .then(async () => {
+        await getConversationsList(user_uid);
       })
       .catch((err) => console.error(err));
   };
@@ -297,10 +301,26 @@ export default function useChat() {
     return response.data;
   };
 
+  const checkUnreadMessages = async () => {
+    let values = 0;
+    const user = await getCometChatCredentials();
+    const user_uid = user.cometchat_uid;
+
+    const response = await getConversationsList(user_uid);
+
+    response.map((conversation) => {
+      values += parseInt(conversation.unreadMessageCount);
+    });
+
+    unreadMessageCount.value = values;
+    return values;
+  };
+
   return {
     // Variables
     cometData,
     conversationList,
+    unreadMessageCount,
     // Funciones
     getCometChatCredentials,
     getConversationsList,
@@ -315,5 +335,6 @@ export default function useChat() {
     markGroupConversationAsRead,
     getUserGroups,
     getGroupMembers,
+    checkUnreadMessages,
   };
 }

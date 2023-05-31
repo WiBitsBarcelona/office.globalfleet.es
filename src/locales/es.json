@@ -94,7 +94,7 @@
     "required": "Campo requerido",
     "minLength": ""
   },
-  "plate": "Matricula",
+  "plate": "Matrícula",
   "employee": "Empleado",
   "company": "Compañía",
   "name": "Nombre", 
@@ -114,7 +114,8 @@
   "trips": "Viajes",
   "vehicle": "Vehículo",
   "vehicles": "Vehículos",
-  "stage": "Estapa",
-  "stages": "Estapas"
+  "stage": "Etapa",
+  "stages": "Etapas",
+  "tow": "Remolque"
 
 }
