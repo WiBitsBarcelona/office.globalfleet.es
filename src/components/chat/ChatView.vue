@@ -353,33 +353,45 @@ const initialize = async () => {
 
       userInfo = user;
 
-      CometChat.getLoggedinUser().then(() => {
-        isLoggued = true;
-        LoadChatsList();
-      });
+      CometChat.login(UID, authKey).then(
+        (user) => {
+          console.log("Loggued successful:", { user });
+          LoadChatsList();
+        },
+        (error) => {
+          console.log("Login failed with exception:", { error });
+        }
+      );
 
-      if (!isLoggued) {
-        // Creem l'usuari
-        CometChat.createUser(user, authKey).then(
-          async () => {
-            // Un cop creat, ens loguejarem
-            const Logued = await logUserIn(authKey, UID);
-            // Si la sessió s'ha iniciat correctament
-            if (Logued) {
-              LoadChatsList();
-            }
-          },
-          async (error) => {
-            if (error.code === "ERR_UID_ALREADY_EXISTS") {
-              // En cas d'existir, farem login
-              const Logued = await logUserIn(authKey, UID);
-              if (Logued) {
-                LoadChatsList();
-              }
-            }
-          }
-        );
-      }
+      // CometChat.getLoggedinUser().then((e) => {
+      //   if (e) {
+      //     isLoggued = true;
+      //     LoadChatsList();
+      //   }
+      // });
+
+      // if (!isLoggued) {
+      //   // Creem l'usuari
+      //   CometChat.createUser(user, authKey).then(
+      //     async () => {
+      //       // Un cop creat, ens loguejarem
+      //       const Logued = await logUserIn(authKey, UID);
+      //       // Si la sessió s'ha iniciat correctament
+      //       if (Logued) {
+      //         LoadChatsList();
+      //       }
+      //     },
+      //     async (error) => {
+      //       if (error.code === "ERR_UID_ALREADY_EXISTS") {
+      //         // En cas d'existir, farem login
+      //         const Logued = await logUserIn(authKey, UID);
+      //         if (Logued) {
+      //           LoadChatsList();
+      //         }
+      //       }
+      //     }
+      //   );
+      // }
 
       // Afegirem un listener dels missatges
       const chatListenerID =
