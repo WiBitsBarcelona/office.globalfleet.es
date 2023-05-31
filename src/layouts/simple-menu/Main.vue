@@ -189,6 +189,6 @@ onMounted(() => {
   formattedMenu.value = $h.toRaw(simpleMenu.value);
 
   checkUnreadMessages();
-  // setInterval(checkUnreadMessages, 5000);
+  setInterval(checkUnreadMessages, 5000);
 });
 </script>
