@@ -3,10 +3,10 @@
 	<!-- BEGIN: Form -->
 	<form class="validate-form" @submit.prevent="save">
 
+		<!-- BEGIN: Trip -->
 		<h1 class="text-lg">{{ t("trip") }}</h1>
-
-		<!-- BEGIN: container -->
-		<div class="grid grid-rows-12 gap-6">
+		
+		<div class="grid grid-rows-12 gap-6 mb-5">
 
 			<div class="col-span-12 md:col-span-8 lg:col-span-8">
 
@@ -259,74 +259,103 @@
 			</div>
 
 		</div>
-		<!-- END: container -->
+		<!-- END: Trip -->
 
 
-
-
+		<!-- BEGIN: Vehicle -->
 		<h1 class="text-lg">{{ t("vehicle") }}</h1>
 
-		
-		<!-- BEGIN: container -->
-		<div class="grid grid-rows-12 gap-6">
-
+		<div class="grid grid-rows-12 gap-6 mb-5">
 
 			<div class="col-span-12 md:col-span-4 lg:col-span-4">
 				<div class="input-form">
 					<label for="vehicle_id" class="form-label w-full">
-						{{ $t("vehicle") }}
+						{{ $t("plate") }}
 					</label>
+					
+					{{ tripVehicle.plate }}
+
 					<input
-						v-model.trim="validate.vehicle_id.$model"
-						id="vehicle_id"
+						v-model.trim="tripVehicle.plate"
+						id="plate"
+						name="plate"
 						type="text"
-						name="vehicle_id"
 						class="form-control"
-						:class="{ 'border-danger': validate.plate.$error }"
 					/>
-					<template v-if="validate.vehicle_id.$error">
-						<div v-for="(error, index) in validate.vehicle_id.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
+
+
 				</div>
 
 			</div>
-			
+
 		</div>
-		<!-- END: container -->
+		<!-- END: Vehicle -->
+
+
+		
 
 
 
 
-		<!-- BEGIN: container -->
-		<div class="grid grid-rows-12 gap-6">
 
+
+
+
+
+
+		<!-- BEGIN: Employee -->
+
+		<h1 class="text-lg">{{ t("employee") }}</h1>
+
+		<div class="grid grid-rows-12 gap-6 mb-5">
 
 			<div class="col-span-4 md:col-span-4 lg:col-span-4">
 
 				<div class="input-form">
 					<label for="employee_id" class="form-label w-full">
-						{{ $t("employee") }}
+						{{ $t("name") }}
 					</label>
 					<input
-						v-model.trim="validate.employee_id.$model"
-						id="employee_id"
+						v-model.trim="tripEmployee.name"
+						id="employee_name"
 						type="text"
-						name="employee_id"
+						name="employee_name"
 						class="form-control"
-						:class="{ 'border-danger': validate.employee_id.$error }"
 					/>
-					<template v-if="validate.employee_id.$error">
-						<div v-for="(error, index) in validate.employee_id.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
+					
+				</div>
+
+			</div>
+
+			<div class="col-span-2 md:col-span-4 lg:col-span-4">
+				<div class="input-form">
+					<label for="driver_id" class="form-label w-full">
+						{{ $t("surname") }}
+					</label>
+					<input
+						v-model.trim="tripEmployee.surname"
+						id="surname"
+						type="text"
+						name="surname"
+						class="form-control"
+					/>
+					
 				</div>
 
 			</div>
 
 
+
+		<!-- END: Employee -->
+		</div>
+
+			
+
+
+		<!-- BEGIN: Driver -->
+		<h1 class="text-lg">{{ t("driver") }}</h1>
+
+		<div class="grid grid-rows-12 gap-6 mb-5">
 
 			<div class="col-span-4 md:col-span-4 lg:col-span-4">
 				<div class="input-form">
@@ -334,24 +363,36 @@
 						{{ $t("driver") }}
 					</label>
 					<input
-						v-model.trim="validate.driver_id.$model"
-						id="driver_id"
+						v-model.trim="tripDriver.name"
+						id="driver_name"
 						type="text"
-						name="driver_id"
+						name="driver_name"
 						class="form-control"
-						:class="{ 'border-danger': validate.driver_id.$error }"
 					/>
-					<template v-if="validate.driver_id.$error">
-						<div v-for="(error, index) in validate.driver_id.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
+					
+				</div>
+
+			</div>
+
+			<div class="col-span-4 md:col-span-4 lg:col-span-4">
+				<div class="input-form">
+					<label for="driver_id" class="form-label w-full">
+						{{ $t("surname") }}
+					</label>
+					<input
+						v-model.trim="tripDriver.surname"
+						id="driver_surname"
+						type="text"
+						name="driver_surname"
+						class="form-control"
+					/>
+					
 				</div>
 
 			</div>
 
 		</div>
-		<!-- END: container -->
+		<!-- END: Driver -->
 
 
 
@@ -359,7 +400,7 @@
 
 
 		<!-- BEGIN: container -->
-		<div class="grid grid-rows-12 gap-6">
+		<div class="grid grid-rows-12 gap-6 first:mb-5">
 			
 		</div>
 		<!-- END: container -->
@@ -370,14 +411,14 @@
 
 
 		<!-- BEGIN: container -->
-		<div class="grid grid-rows-12 gap-6">
+		<div class="grid grid-rows-12 gap-6 p-5">
 
 			<!-- BEGIN: Buttons -->
 			<div class="col-span-12 md:col-span-12 lg:col-span-12">
 				<div class="flex justify-center">
-					<button type="submit" class="btn btn-primary mr-5">
+					<!-- <button type="submit" class="btn btn-primary mr-5">
 						{{ $t("save") }}
-					</button>
+					</button> -->
 					<button @click.prevent="emit('cancelEdit')" class="btn btn-danger">
 						{{ $t("cancel") }}
 					</button>
@@ -397,7 +438,7 @@
 </template>
 <script setup>
 
-	import { onMounted, reactive, toRefs, ref } from 'vue';
+	import { onMounted, onBeforeMount, reactive, toRefs, ref } from 'vue';
 	import useTrips from '@/composables/trips';
 	import useTripPriority from '@/composables/trip_priorities';
 	import useTripStatus from '@/composables/trip_statuses';
@@ -431,6 +472,13 @@
 	const selectPriority = ref('');
 	const selectStatus = ref('');
 	const selectCommStatus = ref('');
+
+
+
+	const tripVehicle = ref('');
+	const tripEmployee = ref('');
+	const tripDriver = ref('');
+
 
 
 
@@ -524,7 +572,7 @@
 		}
 	};
 
-	onMounted(async () => {
+	onBeforeMount(async () => {
 		await getTrip(props.tripId);
 		await getTripPriorities();
 		await getTripStatuses();
@@ -536,7 +584,23 @@
 
 
 
-		formData.vehicle_id = trip.value.vehicle_id;
+		//formData.vehicle_id = trip.value.vehicle_id;
+
+
+		if(trip.value.vehicle){
+			tripVehicle.value = trip.value.vehicle;
+		}
+		
+
+		if(trip.value.employee){
+			tripEmployee.value = trip.value.employee;
+		}
+
+		if(trip.value.driver){
+			tripDriver.value = trip.value.driver;
+		}
+
+
 		formData.plate = trip.value.vehicle.plate;
 		formData.employee_id = trip.value.employee_id;
 		formData.company_id = trip.value.company_id;
