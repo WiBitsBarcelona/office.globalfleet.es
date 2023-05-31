@@ -761,14 +761,9 @@ const buildNewChat = async (id, name, type) => {
         messageBody.scrollTop =
           messageBody.scrollHeight - messageBody.clientHeight;
       });
-
-      document
-        .getElementById(
-          document.getElementById("chat-header").getAttribute("ChatId")
-        )
-        .classList.add("selected");
     }
   }
+  document.getElementById(id).classList.add("selected");
 };
 
 // Funció per carregar/reiniciar els xats
