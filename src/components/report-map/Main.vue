@@ -573,7 +573,7 @@ const init = async (initializeMap) => {
     apiKey: "AIzaSyCMlwJPBGrPWXJE2oaZ7arA7VxkJI2EdxY",
     config(google) {
       return {
-        zoom: 6,
+        zoom: 5,
         styles: darkMode.value ? darkTheme : lightTheme,
         zoomControl: true,
         zoomControlOptions: {
@@ -581,8 +581,8 @@ const init = async (initializeMap) => {
         },
         streetViewControl: false,
         center: {
-          lat: 40.2085,
-          lng:  -3.713,
+          lat: 48.85341,
+          lng:  2.3488,
         },
       };
     },
