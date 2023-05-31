@@ -28,25 +28,23 @@ export default function useChat() {
     }
   };
 
-  // Funció per llistar tots els xats
-  const getConversationsList = async (user_uid) => {
+  // Funció per a obtenir una llista dels usuaris registrats a la app
+  const getRegistredUsers = async () => {
     const options = {
       method: "GET",
       headers: {
         accept: "application/json",
-        onBehalfOf: user_uid,
         apikey: cometData.value.company.cometchat.rest_api_key,
       },
     };
 
     const response = await fetch(
-      `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/conversations`,
+      `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/users?perPage=100&page=1`,
       options
     )
-      .then(async (response) => await response.json())
+      .then((response) => response.json())
       .then((response) => {
-        conversationList.value = response.data;
-        return response.data;
+        return response;
       })
       .catch((err) => console.error(err));
 
@@ -99,23 +97,25 @@ export default function useChat() {
     return response;
   };
 
-  // Funció per a obtenir una llista dels usuaris registrats a la app
-  const getRegistredUsers = async () => {
+  // Funció per llistar tots els xats
+  const getConversationsList = async (user_uid) => {
     const options = {
       method: "GET",
       headers: {
         accept: "application/json",
+        onBehalfOf: user_uid,
         apikey: cometData.value.company.cometchat.rest_api_key,
       },
     };
 
     const response = await fetch(
-      `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/users?perPage=100&page=1`,
+      `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/conversations`,
       options
     )
-      .then((response) => response.json())
+      .then(async (response) => await response.json())
       .then((response) => {
-        return response;
+        conversationList.value = response.data;
+        return response.data;
       })
       .catch((err) => console.error(err));
 
