@@ -160,10 +160,10 @@ import FleetModeSwitcher from "@/components/fleet-dark-mode/Main.vue";
 import MainColorSwitcher from "@/components/main-color-switcher/Main.vue";
 import { linkTo, nestedMenu, enter, leave } from "@/layouts/side-menu";
 import dom from "@left4code/tw-starter/dist/js/dom";
-
+import { useAuthenticationStore } from "@/stores/auth/authentications";
 // Chat hooks
 import useChat from "@/composables/chat";
-const { unreadMessageCount, checkUnreadMessages } = useChat();
+const { unreadMessageCount, checkUnreadMessages, getCometChatCredentials } = useChat();
 
 const route = useRoute();
 const router = useRouter();
@@ -184,11 +184,14 @@ watch(
   }
 );
 
-onMounted(() => {
+onMounted(async () => {
   dom("body").removeClass("error-page").removeClass("login").addClass("main");
   formattedMenu.value = $h.toRaw(simpleMenu.value);
+  
+  if (!localStorage.getItem("token") || useAuthenticationStore().user.employee !== null) {    
+    await checkUnreadMessages();
+    setInterval(await checkUnreadMessages, 5000);
+  }
 
-  checkUnreadMessages();
-  setInterval(checkUnreadMessages, 5000);
 });
 </script>

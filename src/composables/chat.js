@@ -1,30 +1,34 @@
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 import axios from "axios";
+import { useAuthenticationStore } from "@/stores/auth/authentications";
 
 export default function useChat() {
   const cometData = ref({});
   const conversationList = ref("");
   const unreadMessageCount = ref(0);
-
-  let config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  };
+  const token = () => localStorage.getItem("token");
 
   // Función para conseguir los datos de cometchat del usuario que se ha logueado
   const getCometChatCredentials = async () => {
-    try {
-      let response = await axios.get(
-        `${import.meta.env.VITE_API_URL_GLOBALFLEET}employees/cometchat`,
-        config
-      );
+    if (localStorage.getItem("token")) {
+      try {
+        let config = reactive({
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token()}`,
+          },
+        });
 
-      cometData.value = response.data.data;
-      return response.data.data;
-    } catch (e) {
-      console.log(e);
+        let response = await axios.get(
+          `${import.meta.env.VITE_API_URL_GLOBALFLEET}employees/cometchat`,
+          config
+        );
+
+        cometData.value = response.data.data;
+        return response.data.data;
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 
@@ -302,15 +306,20 @@ export default function useChat() {
   };
 
   const checkUnreadMessages = async () => {
-    let values = 0;
-    const user = await getCometChatCredentials();
-    const user_uid = user.cometchat_uid;
+    if (
+      !localStorage.getItem("token") ||
+      useAuthenticationStore().user.employee === null
+    ) {
+      return 0;
+    }
 
+    await getCometChatCredentials();
+    const user_uid = useAuthenticationStore().user.employee.cometchat_uid;
     const response = await getConversationsList(user_uid);
 
-    response.map((conversation) => {
-      values += parseInt(conversation.unreadMessageCount);
-    });
+    const values = response.reduce((total, conversation) => {
+      return total + parseInt(conversation.unreadMessageCount);
+    }, 0);
 
     unreadMessageCount.value = values;
     return values;

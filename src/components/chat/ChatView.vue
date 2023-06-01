@@ -111,7 +111,7 @@
               "
               class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-green-500 text-white rounded-full inner-messages-balloon"
             >
-              <p class="w-full text-center mt-[2px] ml-[1px]">
+              <p class="w-full text-center mt-[1px]">
                 {{ conversation.unreadMessageCount }}
               </p>
             </div>
@@ -122,7 +122,7 @@
               "
               class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-green-500 text-white rounded-full inner-messages-balloon"
             >
-              <p class="w-full text-center mt-[2px] ml-[1px]">+99</p>
+              <p class="w-full text-center mt-[1px]">+99</p>
             </div>
           </div>
           <p :id="'last-' + conversation.conversationId">
@@ -131,9 +131,9 @@
               conversation.lastMessage &&
               conversation.lastMessage.data &&
               conversation.lastMessage.data.text
-                ? conversation.lastMessage.data.text.length < 35
+                ? conversation.lastMessage.data.text.length < 30
                   ? conversation.lastMessage.data.text
-                  : conversation.lastMessage.data.text.substring(0, 35) + "..."
+                  : conversation.lastMessage.data.text.substring(0, 30) + "..."
                 : ""
             }}
           </p>
