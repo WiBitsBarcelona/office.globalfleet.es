@@ -494,7 +494,7 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
                               ? "py-2 px-3 bg-[#0096b2] text-white rounded-lg w-fit"
                               : "rounded-lg w-fit py-2 px-3 bg-gray-200"
                           } max-w-md">
-                            <p style="margin: 0px;">${
+                            <p style="margin: 0px; display: flex; word-break: break-word;">${
                               conversation.data.text
                             }</p>
                             <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
@@ -859,7 +859,7 @@ const printTextMessage = async (textMessage) => {
     senderClass === "missatgePropi" ? "flex-end" : "flex-start"
   };">
       <div class="flex gap-3 py-2 px-3 ${bgColorClass} rounded-lg max-w-md">
-        <p style="margin: 0;">${messageText}</p>
+        <p style="margin: 0px; display: flex; word-break: break-word;">${messageText}</p>
         <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
           <p style="font-size: 12px; margin: 0; heigh: 100%">${messageDate}</p>
         </div>
