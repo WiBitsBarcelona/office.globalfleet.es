@@ -12,35 +12,9 @@
               href=""
               class="flex items-center w-full px-3 py-2 rounded-md bg-primary text-white font-medium"
             >
-              <PlaneIcon class="w-4 h-4 mr-2" /> Viajes
+              <PlaneIcon class="w-4 h-4 mr-2" /> Documentos Generales
             </a>
-            <div class="flex w-full items-center justify-end gap-2">
-              <p class="text-xl font-semibold">-</p>
-              <a
-                href=""
-                class="flex items-center px-3 py-2 rounded-md bg-primary text-white font-medium w-10/12 cursor-pointer"
-              >
-                <CarIcon class="w-4 h-4 mr-2" /> Subviaje 1
-              </a>
-            </div>
-            <div class="flex w-full items-center justify-end gap-2">
-              <p class="text-xl font-semibold">-</p>
-              <a
-                href=""
-                class="flex items-center px-3 py-2 rounded-md bg-primary text-white font-medium w-10/12 cursor-pointer"
-              >
-                <CarIcon class="w-4 h-4 mr-2" /> Subviaje 2
-              </a>
-            </div>
-            <div class="flex w-full items-center justify-end gap-2">
-              <p class="text-xl font-semibold">-</p>
-              <a
-                href=""
-                class="flex items-center px-3 py-2 rounded-md bg-primary text-white font-medium w-10/12 cursor-pointer"
-              >
-                <CarIcon class="w-4 h-4 mr-2" /> Subviaje 3
-              </a>
-            </div>
+            
           </div>
 
           <div class="flex flex-col gap-2 items-end">
@@ -48,7 +22,7 @@
               href=""
               class="flex items-center w-full px-3 py-2 rounded-md bg-primary text-white font-medium"
             >
-              <TruckIcon class="w-4 h-4 mr-2" /> Vehiculos
+              <TruckIcon class="w-4 h-4 mr-2" /> Aitor Menta
             </a>
             <div class="flex w-full items-center justify-end gap-2">
               <p class="text-xl font-semibold">-</p>
@@ -56,7 +30,7 @@
                 href=""
                 class="flex items-center px-3 py-2 rounded-md bg-primary text-white font-medium w-10/12 cursor-pointer"
               >
-                <CarIcon class="w-4 h-4 mr-2" /> Subvehiculo 1
+                <CarIcon class="w-4 h-4 mr-2" /> Archivos chat
               </a>
             </div>
             <div class="flex w-full items-center justify-end gap-2">
@@ -65,7 +39,7 @@
                 href=""
                 class="flex items-center px-3 py-2 rounded-md bg-primary text-white font-medium w-10/12 cursor-pointer"
               >
-                <BusIcon class="w-4 h-4 mr-2" /> Subvehiculo 2
+                <BusIcon class="w-4 h-4 mr-2" /> Viajes
               </a>
             </div>
           </div>
