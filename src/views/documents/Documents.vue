@@ -17,15 +17,30 @@
             
           </div>
 
+
           <div class="flex flex-col gap-2 items-end">
             <a
               href=""
               class="flex items-center w-full px-3 py-2 rounded-md bg-primary text-white font-medium"
             >
-              <TruckIcon class="w-4 h-4 mr-2" /> Aitor Menta
+              <PlaneIcon class="w-4 h-4 mr-2" /> Por Viajes
+            </a>
+            
+          </div>
+
+
+
+
+
+          <div class="flex flex-col gap-2 items-end" v-for="employeeDriver in employeeDrivers" :key="employeeDriver.id">
+            <a
+              href=""
+              class="flex items-center w-full px-3 py-2 rounded-md bg-primary text-white font-medium"
+            >
+              <TruckIcon class="w-4 h-4 mr-2" /> {{employeeDriver.driver.name}}
             </a>
             <div class="flex w-full items-center justify-end gap-2">
-              <p class="text-xl font-semibold">-</p>
+              <p class="text-xl font-semibold"></p>
               <a
                 href=""
                 class="flex items-center px-3 py-2 rounded-md bg-primary text-white font-medium w-10/12 cursor-pointer"
@@ -34,7 +49,7 @@
               </a>
             </div>
             <div class="flex w-full items-center justify-end gap-2">
-              <p class="text-xl font-semibold">-</p>
+              <p class="text-xl font-semibold"></p>
               <a
                 href=""
                 class="flex items-center px-3 py-2 rounded-md bg-primary text-white font-medium w-10/12 cursor-pointer"
@@ -311,12 +326,28 @@
   </div>
 </template>
 
-<script>
-  import { ref } from 'vue';
-  import { faker } from '../../utils/faker'
+<script setup>
+  import { ref, onBeforeMount } from 'vue';
+  import { faker } from '../../utils/faker';
+
+  import useEmployeeDrivers from "@/composables/employee_drivers";
+
+
+  const { employeeDrivers, getEmployeeDrivers} = useEmployeeDrivers();
+
 
   let selectedFolder = ref('viajes');
   let foldersToShow = ref(faker);
 
-  console.log(faker)
+
+  //console.log(faker)
+
+
+  onBeforeMount(async() => {
+
+    await getEmployeeDrivers();
+
+  });
+
+
 </script>
