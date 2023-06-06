@@ -1,6 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="20" height="31.064" viewBox="0 0 20 31.064">
-  <g id="Group_18" data-name="Group 18" transform="translate(-408 -150)">
-    <path id="Subtraction_21" data-name="Subtraction 21" d="M10,31.064v0L1.462,15.208A10,10,0,1,1,20,10a9.9,9.9,0,0,1-1.078,4.522l-.056.108c-.037.071-.077.146-.121.223L10,31.062ZM10,2a8,8,0,1,0,8,8A8.009,8.009,0,0,0,10,2Z" transform="translate(408 150)" fill="#cad1d9a8"/>
-    <circle id="Ellipse_26" data-name="Ellipse 26" cx="6" cy="6" r="6" transform="translate(412 154)" fill="#cad1d9a8"/>
-  </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 27.5.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="31.063" x="0px" y="0px"
+	 viewBox="0 0 20 31.064" style="enable-background:new 0 0 20 31.064;" xml:space="preserve">
+<path d="M17.3333,3.3333L12,8l-7.3333,2L1.9852,8.649l0.6815,2.6843L0,20h0.6667l6.6666-5.3333h6l2,5.3333H16l3.3333-8.6666
+	L17.3333,3.3333z M19.4733,13.6729L18,18l1.3333,2H20L19.4733,13.6729z M7.3333,20L7.125,16l-2.318,2l1.8597,2H7.3333z M16,0.6667
+	h-4L10.6667,2H7.3333L8,4l4,2l5.3333-2.6666L18.6667,0L16,0.6667z M12.6667,2.6667C12.2985,2.6667,12,2.3682,12,2
+	c0-0.3682,0.2985-0.6666,0.6667-0.6666c0.3682,0,0.6666,0.2985,0.6666,0.6666C13.3333,2.3682,13.0349,2.6667,12.6667,2.6667z
+	 M10,31.064l4.4052-7.63H5.5948L10,31.064z" fill="#cad1d9a8"/>
 </svg>

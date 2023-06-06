@@ -43,6 +43,7 @@
     "current_trips": "Viajes en Curso",
     "pending_trips": "Viajes Pendientes",
     "finished_trips": "Viajes Finalizados",
+    "graph_new_trips": "Viajes Nuevos",
     "vehicles_title": "Vehículos",
     "filter_plate": "Filtrar por matrícula",
     "vehicles_subtitle1": "Mostrando ",

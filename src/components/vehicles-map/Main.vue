@@ -581,7 +581,7 @@ const init = async (initializeMap) => {
         },
         streetViewControl: false,
         center: {
-          lat: 43.85341,
+          lat: 46.85341,
           lng:  9.3488,
         },
       };
@@ -605,7 +605,7 @@ const init = async (initializeMap) => {
               ${markerElem.name}
             </div>
             <div class="mt-1 text-gray-600">
-              Latitude: ${markerElem.latitude}, Longitude: ${markerElem.longitude}
+              Latitud: ${markerElem.latitude}, Longitud: ${markerElem.longitude}
             </div>`;
       const marker = new google.maps.Marker({
         map: map,
