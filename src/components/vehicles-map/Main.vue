@@ -5,7 +5,7 @@
 <script setup>
 import { watch, computed } from "vue";
 import MarkerClusterer from "@googlemaps/markerclustererplus";
-import { useDarkModeStore } from "@/stores/dark-mode";
+//import { useDarkModeStore } from "@/stores/dark-mode";
 import location from "@/assets/json/location.json";
 
 const props = defineProps({
@@ -22,8 +22,8 @@ const props = defineProps({
 const imageAssets = import.meta.globEager(
   `/src/assets/images/*.{jpg,jpeg,png,svg}`
 );
-const darkModeStore = useDarkModeStore();
-const darkMode = computed(() => darkModeStore.darkMode);
+// const darkModeStore = useDarkModeStore();
+// const darkMode = computed(() => darkModeStore.darkMode);
 const latlngbounds = new google.maps.LatLngBounds();
 
 const init = async (initializeMap) => {

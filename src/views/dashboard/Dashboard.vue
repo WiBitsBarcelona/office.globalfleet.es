@@ -131,7 +131,7 @@
 
 <script setup>
 import ReportPieChart from "@/components/report-pie-chart/Main.vue";
-import VehiclesMap from "@/components/vehicles-map/Main.vue";
+//import VehiclesMap from "@/components/vehicles-map/Main.vue";
 
 
 

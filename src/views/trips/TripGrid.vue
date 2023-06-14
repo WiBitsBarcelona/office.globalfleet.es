@@ -111,6 +111,8 @@
               </div>
             </div>
           </div>
+
+
           <!-- SEARCH INPUT -->
           <div class="col-span-12 xl:col-span-6 intro-y">
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
@@ -124,8 +126,10 @@
               </div>
             </div>
           </div>
+          
         </div>
         <!-- END HEADER -->
+        
         <!-- DATA BEGINS -->
         <!-- Element 1 -->
         <div
