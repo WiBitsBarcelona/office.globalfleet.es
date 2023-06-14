@@ -115,7 +115,7 @@
             {{ $t("dashboard.vehicles_subtitle1") }} <span class="text-2xl text-primary dark:text-light">10 </span>{{
               $t("dashboard.vehicles_subtitle2") }}
           </div>
-          <ReportMap class="report-maps mt-5 bg-slate-200 rounded-md" />
+          <VehiclesMap class="report-maps mt-5 bg-slate-200 rounded-md" />
         </div>
       </div>
       <!-- END: Vehicles Map -->
@@ -131,7 +131,7 @@
 
 <script setup>
 import ReportPieChart from "@/components/report-pie-chart/Main.vue";
-import ReportMap from "@/components/report-map/Main.vue";
+import VehiclesMap from "@/components/vehicles-map/Main.vue";
 
 
 
