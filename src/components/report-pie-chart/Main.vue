@@ -28,15 +28,16 @@ const props = defineProps({
 const darkMode = computed(() => useDarkModeStore().darkMode);
 const colorScheme = computed(() => useColorSchemeStore().colorScheme);
 
-const chartData = [25, 10, 65];
+const chartData = [18.33, 18.33, 18.33, 45];
 const chartColors = () => [
+  colors.success(0.9),
   colors.warning(0.9),
   colors.light(1),
   colors.primary(0.9),
 ];
 const data = computed(() => {
   return {
-    labels: ["Finalizados","Pendientes", "En curso"],
+    labels: ["Finalizados","Pendientes", "Nuevos", "En curso"],
     datasets: [
       {
         data: chartData,

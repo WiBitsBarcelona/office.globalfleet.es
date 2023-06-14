@@ -53,12 +53,12 @@ const routes = [
       {
         path: "trips",
         name: "trips",
-        component: () => import('@/views/trips/TripList.vue'),
+        component: () => import('@/views/trips/TripGrid.vue'),
       },
       {
         path: "vehicles",
         name: "vehicles",
-        component: () => import('@/views/vehicles/VehicleList.vue'),
+        component: () => import('@/views/vehicles/VehiclesMap.vue'),
       },
       {
         path: "employees",
