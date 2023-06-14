@@ -5,7 +5,7 @@
 <script setup>
 import { watch, computed } from "vue";
 import MarkerClusterer from "@googlemaps/markerclustererplus";
-//import { useDarkModeStore } from "@/stores/dark-mode";
+import { useDarkModeStore } from "@/stores/dark-mode";
 import location from "@/assets/json/location.json";
 
 const props = defineProps({
@@ -24,6 +24,8 @@ const imageAssets = import.meta.globEager(
 );
 const darkModeStore = useDarkModeStore();
 const darkMode = computed(() => darkModeStore.darkMode);
+const latlngbounds = new google.maps.LatLngBounds();
+
 const init = async (initializeMap) => {
   const darkTheme = [
     {
@@ -573,7 +575,7 @@ const init = async (initializeMap) => {
     apiKey: "AIzaSyCMlwJPBGrPWXJE2oaZ7arA7VxkJI2EdxY",
     config(google) {
       return {
-        zoom: 5,
+        // zoom: 5,
         styles: darkMode.value ? darkTheme : lightTheme,
         zoomControl: true,
         zoomControlOptions: {
@@ -581,10 +583,11 @@ const init = async (initializeMap) => {
         },
         streetViewControl: false,
         mapTypeControl: false,
-        center: {
-          lat: 43.85341,
+        scaleControl: true,
+/*         center: {
+          lat: 46.85341,
           lng:  9.3488,
-        },
+        }, */
       };
     },
   });
@@ -593,6 +596,8 @@ const init = async (initializeMap) => {
     minWidth: 400,
     maxWidth: 400,
   });
+
+  
 
   new MarkerClusterer(
     map,
@@ -633,6 +638,7 @@ const init = async (initializeMap) => {
 
         infoWindow.open(map, marker);
       });
+      latlngbounds.extend(marker.position);
       return marker;
     }),
     {
@@ -658,6 +664,9 @@ const init = async (initializeMap) => {
 
   centerControlDiv.appendChild(centerControl);
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(centerControlDiv);
+
+  map.setCenter(latlngbounds.getCenter());
+  map.fitBounds(latlngbounds);
 
   const stop = watch(darkMode, () => {
     init(initializeMap);
@@ -689,8 +698,8 @@ function createCenterControl(map) {
   controlButton.title = "Reiniciar el mapa";
   controlButton.type = "button";
   controlButton.addEventListener("click", () => {
-    //map.setCenter(latlngbounds.getCenter());
-    //map.fitBounds(latlngbounds);
+    map.setCenter(latlngbounds.getCenter());
+    map.fitBounds(latlngbounds);
   });
   return controlButton;
 }
