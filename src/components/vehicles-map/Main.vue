@@ -5,7 +5,7 @@
 <script setup>
 import { watch, computed, ref } from "vue";
 import MarkerClusterer from "@googlemaps/markerclustererplus";
-//import { useDarkModeStore } from "@/stores/dark-mode";
+import { useDarkModeStore } from "@/stores/dark-mode";
 import location from "@/assets/json/location.json";
 
 const props = defineProps({
