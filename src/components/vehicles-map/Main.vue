@@ -22,8 +22,8 @@ const props = defineProps({
 const imageAssets = import.meta.globEager(
   `/src/assets/images/*.{jpg,jpeg,png,svg}`
 );
-// const darkModeStore = useDarkModeStore();
-// const darkMode = computed(() => darkModeStore.darkMode);
+const darkModeStore = useDarkModeStore();
+const darkMode = computed(() => darkModeStore.darkMode);
 const latlngbounds = new google.maps.LatLngBounds();
 
 const init = async (initializeMap) => {
