@@ -24,8 +24,8 @@ const imageAssets = import.meta.globEager(
 );
 const darkModeStore = useDarkModeStore();
 const darkMode = computed(() => darkModeStore.darkMode);
-const latlngbounds = new google.maps.LatLngBounds();
-
+//DEFINE CONSTANT TO SAVE BOUNDS
+let latlngbounds;
 const init = async (initializeMap) => {
   const darkTheme = [
     {
