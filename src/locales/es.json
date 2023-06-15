@@ -117,6 +117,10 @@
   "vehicles": "Vehículos",
   "stage": "Etapa",
   "stages": "Etapas",
-  "tow": "Remolque"
+  "tow": "Remolque",
+  "trip_completed":"Viajes finalizados",
+  "trip_created":"Nuevos viajes",
+  "trip_pending":"Viajes pendientes",
+  "trip_progress":"Viajes en curso"
 
 }
