@@ -58,7 +58,7 @@ const routes = [
       {
         path: "vehicles",
         name: "vehicles",
-        component: () => import('@/views/vehicles/VehicleList.vue'),
+        component: () => import('@/views/vehicles/VehiclesMap.vue'),
       },
       {
         path: "employees",
