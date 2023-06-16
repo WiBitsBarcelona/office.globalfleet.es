@@ -61,68 +61,41 @@
           </div>
         </div>
       </div>
-
-      <!-- BEGIN: Trips Report -->
-      <div class="col-span-8 sm:col-span-6 lg:col-span-3 mt-6">
-        <div class="intro-y flex items-center h-10">
-          <h2 class="text-lg font-medium truncate mr-5">{{ $t("dashboard.trips_graph_title") }}</h2>
-          <a href="/trips" class="ml-auto text-primary truncate dark:text-light">{{ $t("dashboard.show_more") }}</a>
-        </div>
-        <div class="intro-y box p-5 mt-5">
-          <div class="text-right">
-            <span class="text-2xl text-primary mr-1 dark:text-light">5</span> {{ $t("dashboard.trips") }}
-          </div>
-          <withDirectives>
-            <ReportPieChart :height="213" />
-          </withDirectives>
-          <div class="w-52 sm:w-auto mx-auto mt-8">
-            <div class="flex items-center">
-              <div class="w-2 h-2 bg-primary rounded-full mr-3"></div>
-              <span class="truncate">{{ $t("dashboard.current_trips") }} </span>
-              <span class="font-medium ml-auto">2</span>
-            </div>
-            <div class="flex items-center mt-4">
-              <div class="w-2 h-2 bg-success rounded-full mr-3"></div>
-              <span class="truncate">{{ $t("dashboard.finished_trips") }}</span>
-              <span class="font-medium ml-auto">1</span>
-            </div>
-            <div class="flex items-center mt-4">
-              <div class="w-2 h-2 bg-warning rounded-full mr-3"></div>
-              <span class="truncate">{{ $t("dashboard.pending_trips") }}</span>
-              <span class="font-medium ml-auto">1</span>
-            </div>
-            <div class="flex items-center mt-4">
-              <div class="w-2 h-2 bg-light rounded-full mr-3"></div>
-              <span class="truncate">{{ $t("dashboard.graph_new_trips") }}</span>
-              <span class="font-medium ml-auto">1</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- END: Trips Report -->
-
       <!-- BEGIN: Vehicles Map -->
-      <div class="col-span-12 xl:col-span-9 mt-6">
+      <div class="col-span-12 xl:col-span-12 mt-6">
         <div class="intro-y block sm:flex items-center">
           <h2 class="text-lg font-medium truncate mr-5">{{ $t("dashboard.vehicles_title") }}</h2>
+
           <div class="sm:ml-auto mt-3 sm:mt-0 relative text-slate-500">
-            <MapPinIcon class="w-4 h-4 z-10 absolute my-auto inset-y-0 ml-3 left-0" />
-            <input type="text" class="form-control sm:w-56 box pl-10" placeholder="Filtrar por matrícula" />
+            <div class="inline-flex">
+              <span class="text-lg font-medium mt-2 mr-3">Seleccionar Matrícula:</span>
+              <TomSelect v-model="select" :options="{
+                  placeholder: 'Seleccionar Matrícula...',
+
+                }" class="form-control w-full sm:w-56">
+                <option :value="0">Todas</option>
+                <option :value="vehicle.position.latitude + ',' + vehicle.position.longitude" v-for="vehicle in vehicles" :key="vehicle">{{ vehicle.plate }}</option>
+              </TomSelect>
+            </div>
           </div>
         </div>
         <div class="intro-y box p-5 mt-12 sm:mt-5">
           <div>
-            {{ $t("dashboard.vehicles_subtitle1") }} <span class="text-2xl text-primary dark:text-light">10 </span>{{
-              $t("dashboard.vehicles_subtitle2") }}
+            {{ $t("dashboard.vehicles_subtitle1") }} <span class="text-2xl text-primary dark:text-light">{{ totalVehicles
+            }} </span>{{
+  $t("dashboard.vehicles_subtitle2") }}
           </div>
-          <VehiclesMap class="report-maps mt-5 bg-slate-200 rounded-md" />
+          <withDirectives>
+            <VehiclesMap class="report-maps mt-5 bg-slate-200 rounded-md" />
+          </withDirectives>
         </div>
       </div>
       <!-- END: Vehicles Map -->
 
       <!-- BEGIN: Footer Text -->
       <div class="col-span-12 mt-5 mb-1 text-center">
-        <p class="text-slate-600 dark:text-slate-200">&copy; {{new Date().getFullYear()}} - GlobalFleet - {{ $t("auth_footer.all_rights") }}</p>
+        <p class="text-slate-600 dark:text-slate-200">&copy; {{ new Date().getFullYear() }} - GlobalFleet - {{
+          $t("auth_footer.all_rights") }}</p>
       </div>
     </div>
   </div>
@@ -130,8 +103,29 @@
 </template>
 
 <script setup>
-import ReportPieChart from "@/components/report-pie-chart/Main.vue";
+//import ReportPieChart from "@/components/report-pie-chart/Main.vue";
+import { computed } from 'vue';
 import VehiclesMap from "@/components/vehicles-map/Main.vue";
+import useVehicles from "@/composables/vehicles";
+import { ref } from "vue";
+
+const select = ref("");
+
+const { vehicles, getVehicles } = useVehicles();
+
+const totalVehicles = ref(0);
+
+const findData = async () => {
+  await getVehicles();
+  console.log({ ...vehicles });
+  totalVehicles.value = computed(() => vehicles.value.length);
+  console.log(totalVehicles.value);
+  
+}
+
+findData();
+
+
 
 
 
