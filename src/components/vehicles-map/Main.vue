@@ -594,7 +594,7 @@ const init = async (initializeMap) => {
   latlngbounds = new window.google.maps.LatLngBounds();
 
   const infoWindow = new google.maps.InfoWindow({
-    minWidth: 400,
+    minWidth: 300,
     maxWidth: 400,
   });
 
@@ -610,7 +610,8 @@ const init = async (initializeMap) => {
               ${markerElem.name}
             </div>
             <div class="mt-1 text-gray-600">
-              Latitud: ${markerElem.latitude}, Longitud: ${markerElem.longitude}
+              Latitud: ${markerElem.latitude} <br>
+              Longitud: ${markerElem.longitude}
             </div>`;
       const marker = new google.maps.Marker({
         map: map,

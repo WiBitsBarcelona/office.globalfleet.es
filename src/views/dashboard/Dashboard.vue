@@ -62,29 +62,41 @@
         </div>
       </div>
 
-
       <!-- BEGIN: Vehicles Map -->
       <div class="col-span-12 xl:col-span-12 mt-6">
         <div class="intro-y block sm:flex items-center">
           <h2 class="text-lg font-medium truncate mr-5">{{ $t("dashboard.vehicles_title") }}</h2>
+
           <div class="sm:ml-auto mt-3 sm:mt-0 relative text-slate-500">
-            <MapPinIcon class="w-4 h-4 z-10 absolute my-auto inset-y-0 ml-3 left-0" />
-            <input type="text" class="form-control sm:w-56 box pl-10" placeholder="Filtrar por matrícula" />
+            <div class="inline-flex">
+              <span class="text-lg font-medium mt-2 mr-3">Seleccionar Matrícula:</span>
+              <TomSelect v-model="select" :options="{
+                  placeholder: 'Seleccionar Matrícula...',
+
+                }" class="form-control w-full sm:w-56">
+                <option :value="0">Todas</option>
+                <option :value="vehicle.position.latitude + ',' + vehicle.position.longitude" v-for="vehicle in vehicles" :key="vehicle">{{ vehicle.plate }}</option>
+              </TomSelect>
+            </div>
           </div>
         </div>
         <div class="intro-y box p-5 mt-12 sm:mt-5">
           <div>
-            {{ $t("dashboard.vehicles_subtitle1") }} <span class="text-2xl text-primary dark:text-light">10 </span>{{
-              $t("dashboard.vehicles_subtitle2") }}
+            {{ $t("dashboard.vehicles_subtitle1") }} <span class="text-2xl text-primary dark:text-light">{{ totalVehicles
+            }} </span>{{
+  $t("dashboard.vehicles_subtitle2") }}
           </div>
-          <VehiclesMap class="report-maps mt-5 bg-slate-200 rounded-md" />
+          <withDirectives>
+            <VehiclesMap class="report-maps mt-5 bg-slate-200 rounded-md" />
+          </withDirectives>
         </div>
       </div>
       <!-- END: Vehicles Map -->
 
       <!-- BEGIN: Footer Text -->
       <div class="col-span-12 mt-5 mb-1 text-center">
-        <p class="text-slate-600 dark:text-slate-200">&copy; {{new Date().getFullYear()}} - GlobalFleet - {{ $t("auth_footer.all_rights") }}</p>
+        <p class="text-slate-600 dark:text-slate-200">&copy; {{ new Date().getFullYear() }} - GlobalFleet - {{
+          $t("auth_footer.all_rights") }}</p>
       </div>
     </div>
   </div>
@@ -92,11 +104,13 @@
 </template>
 
 <script setup>
-  import { onMounted, ref } from "vue";
-  import VehiclesMap from "@/components/vehicles-map/Main.vue";
-  import useDashboard from '@/composables/dashboard.js';
+import { computed, ref, onMounted } from 'vue';
+import VehiclesMap from "@/components/vehicles-map/Main.vue";
+import useVehicles from "@/composables/vehicles";
+import useDashboard from '@/composables/dashboard.js';
 
-  const {dashboard, getDashboard} = useDashboard();
+
+const {dashboard, getDashboard} = useDashboard();
 
 
   const trip_completed_nb = ref('');
@@ -104,13 +118,30 @@
   const trip_pending_nb = ref('');
   const trip_progress_nb = ref('');
 
+
+
+const select = ref("");
+
+const { vehicles, getVehicles } = useVehicles();
+
+const totalVehicles = ref(0);
+
+const findData = async () => {
+  await getVehicles();
+  console.log({ ...vehicles });
+  totalVehicles.value = computed(() => vehicles.value.length);
+  console.log(totalVehicles.value);
   
+}
+
 
 
 
   onMounted(async() => {
     await getDashboard();
-    //console.log("objjj", dashboard);
+
+    findData();
+    
     trip_completed_nb.value = dashboard.value.trip_completed_nb;
     trip_created_nb.value = dashboard.value.trip_created_nb;
     trip_pending_nb.value = dashboard.value.trip_pending_nb;
