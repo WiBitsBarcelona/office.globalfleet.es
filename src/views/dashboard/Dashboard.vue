@@ -111,13 +111,10 @@
   onMounted(async() => {
     await getDashboard();
     //console.log("objjj", dashboard);
-    
     trip_completed_nb.value = dashboard.value.trip_completed_nb;
     trip_created_nb.value = dashboard.value.trip_created_nb;
     trip_pending_nb.value = dashboard.value.trip_pending_nb;
     trip_progress_nb.value = dashboard.value.trip_progress_nb;
-
-
 
   });
 
