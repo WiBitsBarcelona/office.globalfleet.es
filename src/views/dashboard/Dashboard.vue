@@ -126,22 +126,15 @@ const { vehicles, getVehicles } = useVehicles();
 
 const totalVehicles = ref(0);
 
-const findData = async () => {
-  await getVehicles();
-  console.log({ ...vehicles });
-  totalVehicles.value = computed(() => vehicles.value.length);
-  console.log(totalVehicles.value);
-  
-}
+
 
 
 
 
   onMounted(async() => {
     await getDashboard();
-
-    findData();
-    
+    await getVehicles();
+    totalVehicles.value = computed(() => vehicles.value.length);
     trip_completed_nb.value = dashboard.value.trip_completed_nb;
     trip_created_nb.value = dashboard.value.trip_created_nb;
     trip_pending_nb.value = dashboard.value.trip_pending_nb;
