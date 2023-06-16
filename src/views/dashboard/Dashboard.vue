@@ -96,6 +96,43 @@
   import VehiclesMap from "@/components/vehicles-map/Main.vue";
   import useDashboard from '@/composables/dashboard.js';
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
   const {dashboard, getDashboard} = useDashboard();
 
 
