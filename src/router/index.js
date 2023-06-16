@@ -60,11 +60,11 @@ const routes = [
         name: "vehicles",
         component: () => import('@/views/vehicles/VehiclesMap.vue'),
       },
-      {
-        path: "employees",
-        name: "employees",
-        component: () => import('@/views/employees/EmployeeList.vue'),
-      },
+      // {
+      //   path: "employees",
+      //   name: "employees",
+      //   component: () => import('@/views/employees/EmployeeList.vue'),
+      // },
       {
         path: "documents",
         name: "documents",

@@ -32,7 +32,7 @@ export default function useTrips(){
 
 
     const storeTrip = async (data) => {
-        errors.value = ''
+        errors.value = '';
         try {
             await axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/store`, data, config)
             await router.push({ name: 'note.index' })
@@ -48,7 +48,7 @@ export default function useTrips(){
     }
 
     const updateTrip = async (id, data) => {
-        errors.value = ''
+        errors.value = '';
         try {
             await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/update/${id}`, data, config)
             await router.push({ name: 'note.index' })
