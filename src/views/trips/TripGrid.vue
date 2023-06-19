@@ -135,22 +135,17 @@
 
         <!-- DATA BEGINS -->
         <!-- Element 1 -->
-
+        
         <TripCard
-          v-for="trip in trips"
+          v-for="trip in trips.slice(pageStart, pageEnd)"
           :key="trip.id"
-          :reference_number="trip.reference_number"
-          :vehicle_plate="trip.vehicle.plate"
-          :tow_plate="trip.tows[0].tow.plate"
-          :driver_name="trip.driver.name"
-
+          :trip="trip"
 
         />
 
 
 
       </div>
-
 
 
       <!-- BEGIN: Pagination -->
@@ -160,21 +155,21 @@
         <nav class="w-full sm:w-auto sm:mr-auto">
           <ul class="pagination">
             <li class="page-item">
-              <a class="page-link" href="#">
+              <button class="page-link" href="#" :disabled="pageStart <= 0">
                 <ChevronsLeftIcon class="w-4 h-4" />
-              </a>
+              </button>
             </li>
             <li class="page-item">
-              <a class="page-link" href="#">
+              <button class="page-link" href="#" @click.prevent="previus" :disabled="pageStart <= 0">
                 <ChevronLeftIcon class="w-4 h-4" />
-              </a>
+              </button>
             </li>
             <li class="page-item active">
-              <a class="page-link" href="#">1</a>
+              <a class="page-link" href="#">{{ currentPage }}</a>
             </li>
-            <li class="page-item">
+            <!-- <li class="page-item">
               <a class="page-link" href="#">2</a>
-            </li>
+            </li> -->
             <!--                         <li class="page-item">
                             <a class="page-link" href="#">3</a>
                         </li>
@@ -182,18 +177,18 @@
                             <a class="page-link" href="#">...</a>
                         </li> -->
             <li class="page-item">
-              <a class="page-link" href="#">
+              <button class="page-link" href="#" @click.prevent="next" :disabled="pageEnd >= trips.length">
                 <ChevronRightIcon class="w-4 h-4" />
-              </a>
+              </button>
             </li>
             <li class="page-item">
-              <a class="page-link" href="#">
+              <button class="page-link" href="#" :disabled="pageEnd >= trips.length">
                 <ChevronsRightIcon class="w-4 h-4" />
-              </a>
+              </button>
             </li>
           </ul>
         </nav>
-        <select class="w-20 form-select box mt-3 sm:mt-0">
+        <select class="w-20 form-select box mt-3 sm:mt-0" v-model="postXpage" :onChange="onChangeSelect">
           <option>5</option>
           <option>10</option>
           <option>25</option>
@@ -202,6 +197,7 @@
           <option>Todos</option>
         </select>
       </div>
+      
       <!-- END: Pagination -->
 
 
@@ -210,35 +206,56 @@
 </template>
 
 <script setup>
-  import { onMounted } from 'vue';
+  import { onMounted, ref } from 'vue';
   import useTrips from "@/composables/trips";
   import TripCard from '@/components/trips/TripCard.vue';
 
   const { trips, getTrips } = useTrips();
 
 
+  const postXpage = ref(5);
+  const pageStart = ref(0);
+  const pageEnd = ref(postXpage.value);
+
+  const totalPage = ref(0);
+  const currentPage = ref(1);
+
+  // const last_page = ref(postXpage);
+  // const pageN = ref(1);
+  // const pageSelected = ref(1);
+
+
   const onlineFilter = "";
 
 
 
-  onMounted(async() => {
-    await getTrips();
-  });
+  /**
+  * Paginate
+  */
+  const next = () =>{
+    pageStart.value = pageStart.value + postXpage.value;
+    pageEnd.value = pageEnd.value + postXpage.value;
+    currentPage.value = currentPage.value + 1;
+  }
 
-
-
-  const checkStage = (stages) => {
-
-    stages.map(() => {
-      
-    });
-
+  const previus = () =>{
+    pageStart.value = pageStart.value - postXpage.value;
+    pageEnd.value = pageEnd.value - postXpage.value;
+    currentPage.value = currentPage.value -1;
   }
 
 
+  const onChangeSelect = () => {
+    pageStart.value = 0;
+    pageEnd.value = postXpage.value;
+    currentPage.value = 1;
+  }
 
 
-
+  onMounted(async() => {
+    await getTrips();
+    totalPage.value = trips.value.length / postXpage.value;
+  });
 
 </script>
 

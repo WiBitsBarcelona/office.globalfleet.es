@@ -1,3 +1,4 @@
+import { ref } from 'vue';
 <template>
     <!-- DATA BEGINS -->
     <!-- Element 1 -->
@@ -200,21 +201,21 @@
                 </div>
               </div>
               <!-- trip number-->
-              <div class="rounded-md bg-blue-100 p-2 pb-1">
+              <div class="rounded-md p-2 pb-1" :class="bg_trip">
                 <h5 class="text-xs font-light text-gray-400">{{ $t("trip") }}</h5>
-                <p class="text-md font-normal leading-6 text-gray-500 ">{{ reference_number }}</p>
+                <p class="text-md font-normal leading-6 text-gray-500 ">{{ trip.reference_number }}</p>
               </div>
               <div
                 class="rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400"
               >
                 <h5 class="text-xs font-light text-gray-400">{{ $t("vehicle") }}</h5>
-                <p class="text-md font-normal leading-6 text-gray-500">{{ vehicle_plate }}</p>
+                <p class="text-md font-normal leading-6 text-gray-500">{{ trip.vehicle_plate }}</p>
               </div>
               <div
                 class="rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400"
               >
                 <h5 class="text-xs font-light text-gray-400">{{ $t("tow") }}</h5>
-                <p class="text-md font-normal leading-6 text-gray-500">{{tow_plate }}</p>
+                <p class="text-md font-normal leading-6 text-gray-500">{{ tow_plate }}</p>
               </div>
               <div
                 class="col-span-2 rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400"
@@ -239,68 +240,63 @@
                   class="rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400"
                 >
                   <h5 class="text-xs font-light text-gray-400">{{ $t("stages") }}</h5>
-                  <p class="text-md font-normal leading-6 text-gray-500">2</p>
+                  <p class="text-md font-normal leading-6 text-gray-500">{{ stage_count }}</p>
                 </div>
               </div>
               <div
                 class="rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400"
               >
                 <h5 class="text-xs font-light text-gray-400">{{ $t("trip_comm_status") }}</h5>
-                <p class="text-md font-normal leading-6 text-gray-500">Leido</p>
+                <p class="text-md font-normal leading-6 text-gray-500">{{ trip.comm.name }}</p>
               </div>
 
 
-              <!--    TODO   -->
-
-              <div class="rounded-md bg-blue-100 p-2 pb-1">
+              <div class="rounded-md p-2 pb-1" :class="bg_trip">
                 <h5 class="text-xs font-light text-gray-400">{{ $t("trip_status") }}</h5>
-                <p class="text-md font-bold leading-6 text-gray-500">Creado</p>
+                <p class="text-md font-bold leading-6 text-gray-500">{{ trip.status.name }}</p>
               </div>
-
-
-              <!--    TODO   -->
 
               <div class="grid grid-cols-2 justify-items-stretch gap-1">
                 <div
                   class="rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400"
                 >
-                  <h5 class="text-xs font-light text-gray-400">Status</h5>
+                  <h5 class="text-xs font-light text-gray-400">{{ $t("status") }}</h5>
                   <Tippy
                     tag="button"
                     class="tooltip primary ml-4 mr-2"
                     content="Conduciendo"
                     :options="{ theme: 'dark' }"
                   >
-                    <p class="text-md font-normal leading-6 text-gray-500">C</p>
+                    <p class="text-md font-normal leading-6 text-gray-500">-</p>
                   </Tippy>
                 </div>
                 <div
                   class="rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400"
                 >
-                  <h5 class="text-xs font-light text-gray-400">Veloc.</h5>
+                  <h5 class="text-xs font-light text-gray-400">{{ $t("velocity_acrom") }}</h5>
                   <p class="text-md font-normal leading-6 text-gray-500">78</p>
                 </div>
               </div>
               <div
                 class="rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400"
               >
-                <h5 class="text-xs font-light text-gray-400">Tacógrafo Restante</h5>
+                <h5 class="text-xs font-light text-gray-400">{{ $t("tacograf") }}</h5>
                 <p class="text-md font-normal leading-6 text-gray-500">--</p>
               </div>
               <div
                 class="col-span-2 rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400"
               >
-                <h5 class="text-xs font-light text-gray-400">Origen</h5>
+                <h5 class="text-xs font-light text-gray-400">{{ $t("origin") }}</h5>
                 <p class="text-md font-normal leading-6 text-gray-500">
-                  Zaragoza plaza <span class="font-bold"> (ES)</span>
+                  Zaragoza plaza - {{ origin }}
                 </p>
               </div>
               <div
                 class="col-span-2 rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400"
               >
-                <h5 class="text-xs font-light text-gray-400">Destino</h5>
+                <h5 class="text-xs font-light text-gray-400">{{ $t("destination") }}</h5>
                 <p class="text-md font-normal leading-6 text-gray-500">
-                  Hannover<span class="font-bold"> (DE)</span>
+                  Hannover - {{ destination }}
                 </p>
               </div>
               <div
@@ -350,14 +346,66 @@
 </template>
 
 <script setup>
+    import { ref } from 'vue';
+
     const props = defineProps([
-        'reference_number',
-        'vehicle_plate',
-        'tow_plate',
-        'driver_name'
+        'trip',
     ]);
 
+    const trip = ref('');
+    const bg_trip = ref('');
+    const driver_name = ref('');
+    const tow_plate = ref('-');
+    const stage_count = ref(0);
+    const origin = ref('');
+    const destination = ref('');
+
+
+
+    trip.value = props.trip;
+
+    console.log({ ...trip});
+
+
+    if(trip.value.trip_status_id === 1 || trip.value.trip_status_id === 2){
+      bg_trip.value = 'bg-gray-100';
+    }
+
+    if(trip.value.trip_status_id === 3 || trip.value.trip_status_id === 4){
+      bg_trip.value = 'bg-orange-100';
+    }
+
+    if(trip.value.trip_status_id === 5){
+      bg_trip.value = 'bg-blue-100';
+    }
+
+    if(trip.value.trip_status_id === 6){
+      bg_trip.value = 'bg-green-100';
+    }
     
+
+    driver_name.value = trip.value.driver.name + ' ' + trip.value.driver.surname;
+
+
+    if(trip.value.tows.length > 0){
+      tow_plate.value = trip.value.tows[0].tow.plate;
+    }
+
+    stage_count.value = trip.value.stages.length;
+
+
+    console.log(trip.stages);
+
+    if(trip.value.stages.length > 0){
+        origin.value = trip.value.stages[0].name;
+        destination.value = trip.value.stages[trip.value.stages.length - 1].name;
+      
+    }
+
+    
+
+
+
 
 
 </script>
