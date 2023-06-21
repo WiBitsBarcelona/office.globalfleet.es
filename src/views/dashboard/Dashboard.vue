@@ -147,7 +147,6 @@ const findData = async () => {
     trip_pending_nb.value = dashboard.value.trip_pending_nb;
     trip_progress_nb.value = dashboard.value.trip_progress_nb;
 
-
   });
 
 </script>
