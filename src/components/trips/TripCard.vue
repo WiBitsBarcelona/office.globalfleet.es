@@ -203,7 +203,7 @@ import { ref } from 'vue';
               <!-- trip number-->
               <div class="rounded-md p-2 pb-1" :class="bg_trip">
                 <h5 class="text-xs font-light text-gray-400">{{ $t("trip") }}</h5>
-                <p class="text-md font-normal leading-6 text-gray-500 ">{{ trip.reference_number }}</p>
+                <p class="text-md font-normal leading-6 text-gray-500 ">{{ trip.reference_number }} - {{ trip.id }}</p>
               </div>
               <div
                 class="rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400"
@@ -288,7 +288,7 @@ import { ref } from 'vue';
               >
                 <h5 class="text-xs font-light text-gray-400">{{ $t("origin") }}</h5>
                 <p class="text-md font-normal leading-6 text-gray-500">
-                  Zaragoza plaza - {{ origin }}
+                  {{ origin }}
                 </p>
               </div>
               <div
@@ -296,7 +296,7 @@ import { ref } from 'vue';
               >
                 <h5 class="text-xs font-light text-gray-400">{{ $t("destination") }}</h5>
                 <p class="text-md font-normal leading-6 text-gray-500">
-                  Hannover - {{ destination }}
+                  {{ destination }}
                 </p>
               </div>
               <div
@@ -312,7 +312,7 @@ import { ref } from 'vue';
               >
                 <h5 class="text-xs font-light text-gray-400">Etapa Actual</h5>
                 <p class="text-md font-normal uppercase leading-6 text-gray-500">
-                  Descarga Hannover
+                  Descarga Hannover - {{ last_stage }}
                 </p>
               </div>
               <div
@@ -359,12 +359,13 @@ import { ref } from 'vue';
     const stage_count = ref(0);
     const origin = ref('');
     const destination = ref('');
+    const last_stage = ref('');
 
 
 
     trip.value = props.trip;
 
-    console.log({ ...trip});
+    //console.log({ ...trip});
 
 
     if(trip.value.trip_status_id === 1 || trip.value.trip_status_id === 2){
@@ -394,13 +395,59 @@ import { ref } from 'vue';
     stage_count.value = trip.value.stages.length;
 
 
-    console.log(trip.stages);
+    //console.log(trip.value.vehicle);
+
 
     if(trip.value.stages.length > 0){
+
         origin.value = trip.value.stages[0].name;
         destination.value = trip.value.stages[trip.value.stages.length - 1].name;
       
+       
+
+
+        let firstFind = trip.value.stages.find(obj => {
+          return obj.stage_status_id > 1 && obj.stage_status_id < 6;
+        });
+        
+        if(firstFind){
+
+          last_stage.value = firstFind.name;
+
+        }else{
+
+          let secondFind = trip.value.stages.find(obj => {
+            //console.log({...obj});
+            return obj.stage_status_id === 1;
+          });
+
+          if(secondFind){
+            last_stage.value = secondFind.name;
+          }
+
+        }
+
+        
+
+
+
+
+        // trip.value.stages.forEach(obj => {
+        //   //console.log({...obj});
+        //   //console.log(obj.id);
+        //   if( obj.stage_status_id > 1 && obj.stage_status_id < 6){
+        //     last_stage.value = obj.name;
+        //     isFind = true;
+        //   }
+        // });
+
+      
+
     }
+
+
+
+
 
     
 

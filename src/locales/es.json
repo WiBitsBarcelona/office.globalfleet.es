@@ -125,6 +125,7 @@
   "velocity_acrom": "Veloc",
   "tacograf": "Tacógrafo",
   "origin": "Origen",
-  "destination": "Destino"
+  "destination": "Destino",
+  "status": "Estatus"
 
 }

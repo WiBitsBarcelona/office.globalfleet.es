@@ -119,6 +119,7 @@
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
               <div class="relative text-slate-500">
                 <input
+                  v-model="filter"
                   type="text"
                   class="form-control box pr-10"
                   placeholder="Buscar..."
@@ -137,7 +138,7 @@
         <!-- Element 1 -->
         
         <TripCard
-          v-for="trip in trips.slice(pageStart, pageEnd)"
+          v-for="trip in searchedTrips.slice(pageStart, pageEnd)"
           :key="trip.id"
           :trip="trip"
 
@@ -206,7 +207,7 @@
 </template>
 
 <script setup>
-  import { onMounted, ref } from 'vue';
+  import { onMounted, ref, computed } from 'vue';
   import useTrips from "@/composables/trips";
   import TripCard from '@/components/trips/TripCard.vue';
 
@@ -225,7 +226,13 @@
   // const pageSelected = ref(1);
 
 
+  const filter = ref('');
+
+
   const onlineFilter = "";
+
+
+
 
 
 
@@ -241,7 +248,7 @@
   const previus = () =>{
     pageStart.value = pageStart.value - postXpage.value;
     pageEnd.value = pageEnd.value - postXpage.value;
-    currentPage.value = currentPage.value -1;
+    currentPage.value = currentPage.value - 1;
   }
 
 
@@ -250,6 +257,26 @@
     pageEnd.value = postXpage.value;
     currentPage.value = 1;
   }
+
+
+
+
+
+
+
+
+  
+
+  const searchedTrips = computed(() => {
+    return trips.value.filter((trip) => {
+          return (
+            trip.reference_number.toLowerCase().indexOf(filter.value.toLowerCase()) != -1
+          );
+      });
+  });
+
+
+
 
 
   onMounted(async() => {
