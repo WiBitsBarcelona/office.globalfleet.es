@@ -138,6 +138,24 @@ const helpers = {
     }
     return tempColors;
   },
+  toKmsHour(metersseg){
+    const kmHour = ((parseFloat(metersseg)*18)/5).toFixed(0);
+    return kmHour;
+  },
+  toDate(stamp){
+    const currentDate = new Date(parseFloat(stamp)*1000);
+    const formattedDate = currentDate.toLocaleString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour:'numeric', minute:'numeric', second:'numeric', hour12:false } );
+    return formattedDate;
+  },
+  getDirection(angle) {
+    var directions = ['Norte', 'Nordeste', 'Este', 'Sureste', 'Sur', 'Suroeste', 'Este', 'Noreste'];
+    var index = Math.round(((angle %= 360) < 0 ? angle + 360 : angle) / 45) % 8;
+    return directions[index];
+  },
+  toKms(meters) {
+    let accuracy = parseFloat(meters) / 1000;
+    return accuracy;
+  }
 };
 
 const install = (app) => {

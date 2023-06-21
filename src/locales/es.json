@@ -46,8 +46,9 @@
     "graph_new_trips": "Viajes Nuevos",
     "vehicles_title": "Vehículos",
     "filter_plate": "Filtrar por matrícula",
+    "select_plate": "Seleccionar Matrícula:",
     "vehicles_subtitle1": "Mostrando ",
-    "vehicles_subtitle2": " vehículos en el mapa.",
+    "vehicles_subtitle2": " Vehículos en el mapa.",
     "info_demo_title": "ATENCIÓN: ",
     "info_demo_text": "La información mostrada en este dashboard NO es real y se muestra para el propósito de demostraciones."
   },

@@ -1,14 +1,34 @@
 <template>
-  <GoogleMapLoader :init="init" />
+  <!-- BEGIN: Vehicles Map -->
+  <div class="col-span-12 xl:col-span-12 mt-6">
+    <div class="intro-y block sm:flex items-center mb-5">
+      <h2 class="text-lg font-medium truncate ml-3"> <span class="text-2xl text-primary dark:text-light">{{ totalVehicles }} </span>{{$t("dashboard.vehicles_subtitle2") }}</h2>
+      <div class="sm:ml-auto mt-3 sm:mt-0 relative text-slate-500">
+        <div class="inline-flex">
+          <span class="text-lg font-medium mt-2 mr-3">{{ $t("dashboard.select_plate") }}</span>
+            <TomSelect v-model="selected_plate" name="plate_selector" @change="onChange()" :options="{
+              placeholder: 'Seleccionar Matrícula...',
+            }" class="form-control w-full sm:w-56">
+            <option :value="0">Todas</option>
+            <option :value="vehicle.plate + ',' + vehicle.position.latitude + ',' + vehicle.position.longitude" v-for="vehicle in vehicles"
+              :key="vehicle.plate">{{ vehicle.plate }}</option>
+          </TomSelect>
+        </div>
+      </div>
+    </div>
+    <div class="intro-y box p-3">
+      <GoogleMapLoader :init="init" class="report-maps bg-slate-200 rounded-md" />
+    </div>
+  </div>
+  <!-- END: Vehicles Map -->
 </template>
 
 <script setup>
-import { watch, computed, ref, toRaw, defineProps } from "vue";
+import { watch, computed, ref, toRaw, defineProps, VueElement } from "vue";
 import MarkerClusterer from "@googlemaps/markerclustererplus";
 import { useDarkModeStore } from "@/stores/dark-mode";
-import location from "@/assets/json/location.json";
-
-
+import useVehicles from "@/composables/vehicles";
+import { helper as $h } from "@/utils/helper";
 
 const props = defineProps({
   width: {
@@ -19,13 +39,16 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
-  locations: {
-    type: Array,
-  }
 });
 
-console.log(props.locations);
+//REFERENCE TO VARIABLE MAP
+let mapa;
+//ARRAY TO SAVE ALL MAKERS ID'S
+let plates = [];
 
+const { vehicles, getVehicles } = useVehicles();
+const totalVehicles = ref(0);
+const selected_plate = ref("");
 const imageAssets = import.meta.globEager(
   `/src/assets/images/*.{jpg,jpeg,png,svg}`
 );
@@ -33,12 +56,19 @@ const darkModeStore = useDarkModeStore();
 const darkMode = computed(() => darkModeStore.darkMode);
 
 
-//console.log(location);
-
-
 //DEFINE CONSTANT TO SAVE BOUNDS
 let latlngbounds;
+let infoWindow;
 const init = async (initializeMap) => {
+
+  await getVehicles();
+
+  const locations = vehicles.value;
+  totalVehicles.value = computed(() => vehicles.value.length);
+
+  const markers = JSON.parse(JSON.stringify(locations));
+  console.log(markers);
+
   const darkTheme = [
     {
       elementType: "geometry",
@@ -453,7 +483,7 @@ const init = async (initializeMap) => {
       elementType: "labels",
       stylers: [
         {
-          visibility: "off",
+          visibility: "on",
         },
       ],
     },
@@ -480,7 +510,7 @@ const init = async (initializeMap) => {
       elementType: "labels",
       stylers: [
         {
-          visibility: "off",
+          visibility: "on",
         },
       ],
     },
@@ -497,7 +527,7 @@ const init = async (initializeMap) => {
       featureType: "road.local",
       stylers: [
         {
-          visibility: "off",
+          visibility: "on",
         },
       ],
     },
@@ -506,7 +536,7 @@ const init = async (initializeMap) => {
       elementType: "labels",
       stylers: [
         {
-          visibility: "off",
+          visibility: "on",
         },
       ],
     },
@@ -533,7 +563,7 @@ const init = async (initializeMap) => {
       elementType: "geometry.fill",
       stylers: [
         {
-          visibility: "off",
+          visibility: "on",
         },
       ],
     },
@@ -551,7 +581,7 @@ const init = async (initializeMap) => {
       elementType: "geometry.fill",
       stylers: [
         {
-          visibility: "off",
+          visibility: "on",
         },
       ],
     },
@@ -597,7 +627,7 @@ const init = async (initializeMap) => {
         mapTypeControl: false,
         center: {
           lat: 43.85341,
-          lng:  9.3488,
+          lng: 9.3488,
         },
       };
     },
@@ -605,31 +635,39 @@ const init = async (initializeMap) => {
 
   latlngbounds = new window.google.maps.LatLngBounds();
 
-  const infoWindow = new google.maps.InfoWindow({
+  infoWindow = new google.maps.InfoWindow({
     minWidth: 300,
-    maxWidth: 300,
+    maxWidth: 400,
   });
-
-  await marcadores();
 
   new MarkerClusterer(
     map,
-    location.map(function (markerElem) {
+    markers.map(function (markerElem) {
       const point = new google.maps.LatLng(
-        parseFloat(markerElem.latitude),
-        parseFloat(markerElem.longitude)
+        parseFloat(markerElem.position.latitude),
+        parseFloat(markerElem.position.longitude)
       );
+      const lastDate = $h.toDate(markerElem.position.timestamp);
+      const speed = $h.toKmsHour(markerElem.position.speed);
+      const direction = $h.getDirection(markerElem.position.heading);
       const infowincontent = `
             <div class="font-medium">
-              ${markerElem.name}
+              ${markerElem.plate}
             </div>
             <div class="mt-1 text-gray-600">
-              Latitud: ${markerElem.latitude} <br>
-              Longitud: ${markerElem.longitude}
+              <span class="font-medium mr-1">Conductor:</span> ${!markerElem.position.driver_name ? 'No existen datos.' : markerElem.position.driver_name} <br>
+              <span class="font-medium mr-1">Latitud:</span> ${markerElem.position.latitude} <br>
+              <span class="font-medium mr-1">Longitud:</span> ${markerElem.position.longitude}<br>
+              <span class="font-medium mr-1">Posición GPS:</span>${!markerElem.position.gps_positioning ? 'No existen datos.' : markerElem.position.gps_positioning} <br>
+              <span class="font-medium mr-1">Exactitud:</span> ${markerElem.position.accuracy} metros.<br>
+              <span class="font-medium mr-1">Velocidad:</span> ${!speed ? 'No existen datos.' : speed} km/h.<br>
+              <span class="font-medium mr-1">Dirección:</span>${!direction ? 'No existen datos.' : direction} <br><br>
+              <span class="font-medium mr-1">Última actualización:</span>${!lastDate ? 'No existen datos.' : lastDate} <br>
             </div>`;
       const marker = new google.maps.Marker({
         map: map,
         position: point,
+        id: markerElem.plate,
         icon: {
           url: !darkMode.value
             ? imageAssets["/src/assets/images/map-marker.svg"].default
@@ -654,7 +692,9 @@ const init = async (initializeMap) => {
         });
 
         infoWindow.open(map, marker);
+        
       });
+      plates.push(marker);
       return marker;
     }),
     {
@@ -666,7 +706,7 @@ const init = async (initializeMap) => {
           url: !darkMode.value
             ? imageAssets["/src/assets/images/map-marker-region.svg"].default
             : imageAssets["/src/assets/images/map-marker-region-dark.svg"]
-                .default,
+              .default,
           anchor: [0, 0],
           anchorText: [17, 0],
           fontWeight: "bold",
@@ -685,6 +725,8 @@ const init = async (initializeMap) => {
   map.setCenter(latlngbounds.getCenter());
   map.fitBounds(latlngbounds);
 
+  mapa = map;
+
   const stop = watch(darkMode, () => {
     init(initializeMap);
     stop();
@@ -694,7 +736,6 @@ const init = async (initializeMap) => {
 //FUNCTION FOR CREATE A BUTTON ELEMENT TO RESET MAP TO DEFAULT BOUNDS.
 function createCenterControl(map) {
   const controlButton = document.createElement("button");
-
   // Set CSS for the control.
   controlButton.style.backgroundColor = "#fff";
   controlButton.style.backgroundImage = "url('../../../src/assets/images/refresh.png')";
@@ -718,15 +759,35 @@ function createCenterControl(map) {
   controlButton.type = "button";
   controlButton.addEventListener("click", () => {
     //BUTTON ON CLICK RESET MAP TO BOUNDS.
+    if(infoWindow){
+      infoWindow.close();
+    }
     map.setCenter(latlngbounds.getCenter());
     map.fitBounds(latlngbounds);
   });
   return controlButton;
 }
 
+function onChange() {
+  if(infoWindow){
+      infoWindow.close();  
+  }
+  if(selected_plate.value == 0){
+    mapa.setCenter(latlngbounds.getCenter());
+    mapa.fitBounds(latlngbounds);
+  }else{
+    const ltlngArr = selected_plate.value.split(',');
+    mapa.setCenter({lat:parseFloat(ltlngArr[1]), lng:parseFloat(ltlngArr[2])});
 
-const marcadores = async () => {
-  const markers = JSON.parse(JSON.stringify(props.locations));
-  console.log(markers);
+
+    plates.forEach(el => {
+      if(ltlngArr[0] == el.id){
+        google.maps.event.trigger(el, 'click');
+      }
+    });
+
+    
+  }
 }
+
 </script>
