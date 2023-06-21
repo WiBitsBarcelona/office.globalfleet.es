@@ -118,9 +118,14 @@
   "stage": "Etapa",
   "stages": "Etapas",
   "tow": "Remolque",
-  "trip_completed":"Viajes finalizados",
-  "trip_created":"Nuevos viajes",
-  "trip_pending":"Viajes pendientes",
-  "trip_progress":"Viajes en curso"
+  "trip_completed": "Viajes finalizados",
+  "trip_created": "Nuevos viajes",
+  "trip_pending": "Viajes pendientes",
+  "trip_progress": "Viajes en curso",
+  "velocity_acrom": "Veloc",
+  "tacograf": "Tacógrafo",
+  "origin": "Origen",
+  "destination": "Destino",
+  "status": "Estatus"
 
 }
