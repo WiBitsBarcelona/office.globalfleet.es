@@ -2,14 +2,14 @@
   <!-- BEGIN: Vehicles Map -->
   <div class="col-span-12 xl:col-span-12 mt-6">
     <div class="intro-y block sm:flex items-center mb-5">
-      <h2 class="text-lg font-medium truncate ml-3"> <span class="text-2xl text-primary dark:text-light">{{ totalVehicles }} </span>{{$t("dashboard.vehicles_subtitle2") }}</h2>
+      <h2 class="text-lg font-medium truncate ml-3"> <span class="text-2xl text-primary dark:text-light">{{ totalDevices }} </span>{{$t("dashboard.devices_on_map") }}</h2>
       <div class="sm:ml-auto mt-3 sm:mt-0 relative text-slate-500">
         <div class="inline-flex">
-          <span class="text-lg font-medium mt-2 mr-3">{{ $t("dashboard.select_plate") }}</span>
+          <span class="text-lg font-medium mt-2 mr-3">{{ $t("dashboard.select_driver") }}</span>
             <TomSelect v-model="selected_plate" name="plate_selector" @change="onChange()" :options="{
-              placeholder: 'Seleccionar Matrícula...',
+              placeholder: $t('dashboard.select_driver_placeholder'),
             }" class="form-control w-full sm:w-56">
-            <option :value="0">Todas</option>
+            <option :value="0">{{ $t("dashboard.select_all")}}</option>
             <option :value="vehicle.plate + ',' + vehicle.position.latitude + ',' + vehicle.position.longitude" v-for="vehicle in vehicles"
               :key="vehicle.plate">{{ vehicle.plate }}</option>
           </TomSelect>
@@ -28,6 +28,7 @@ import { watch, computed, ref, toRaw, defineProps, VueElement } from "vue";
 import MarkerClusterer from "@googlemaps/markerclustererplus";
 import { useDarkModeStore } from "@/stores/dark-mode";
 import useVehicles from "@/composables/vehicles";
+import useDriverPosition from "@/composables/driver_positions"
 import { helper as $h } from "@/utils/helper";
 
 const props = defineProps({
@@ -46,8 +47,12 @@ let mapa;
 //ARRAY TO SAVE ALL MAKERS ID'S
 let plates = [];
 
+
+const { driver_positions, getDriverPositions} = useDriverPosition();
+
 const { vehicles, getVehicles } = useVehicles();
 const totalVehicles = ref(0);
+const totalDevices = ref(0);
 const selected_plate = ref("");
 const imageAssets = import.meta.globEager(
   `/src/assets/images/*.{jpg,jpeg,png,svg}`
@@ -63,8 +68,12 @@ const init = async (initializeMap) => {
 
   await getVehicles();
 
+  await getDriverPositions();
+
   const locations = vehicles.value;
+  const devices = driver_positions.value;
   totalVehicles.value = computed(() => vehicles.value.length);
+  totalDevices.value = computed(() => driver_positions.value.length);
 
   const markers = JSON.parse(JSON.stringify(locations));
   console.log(markers);
@@ -655,14 +664,14 @@ const init = async (initializeMap) => {
               ${markerElem.plate}
             </div>
             <div class="mt-1 text-gray-600">
-              <span class="font-medium mr-1">Conductor:</span> ${!markerElem.position.driver_name ? 'No existen datos.' : markerElem.position.driver_name} <br>
+              <span class="font-medium mr-1">Conductor:</span> ${!markerElem.position.driver_name ? $t('dashboard.no_data') : markerElem.position.driver_name} <br>
               <span class="font-medium mr-1">Latitud:</span> ${markerElem.position.latitude} <br>
               <span class="font-medium mr-1">Longitud:</span> ${markerElem.position.longitude}<br>
-              <span class="font-medium mr-1">Posición GPS:</span>${!markerElem.position.gps_positioning ? 'No existen datos.' : markerElem.position.gps_positioning} <br>
+              <span class="font-medium mr-1">Posición GPS:</span>${!markerElem.position.gps_positioning ? $t('dashboard.no_data') : markerElem.position.gps_positioning} <br>
               <span class="font-medium mr-1">Exactitud:</span> ${markerElem.position.accuracy} metros.<br>
-              <span class="font-medium mr-1">Velocidad:</span> ${!speed ? 'No existen datos.' : speed} km/h.<br>
-              <span class="font-medium mr-1">Dirección:</span>${!direction ? 'No existen datos.' : direction} <br><br>
-              <span class="font-medium mr-1">Última actualización:</span>${!lastDate ? 'No existen datos.' : lastDate} <br>
+              <span class="font-medium mr-1">Velocidad:</span> ${!speed ? $t('dashboard.no_data') : speed} km/h.<br>
+              <span class="font-medium mr-1">Dirección:</span>${!direction ? $t('dashboard.no_data') : direction} <br><br>
+              <span class="font-medium mr-1">Última actualización:</span>${!lastDate ? $t('dashboard.no_data') : lastDate} <br>
             </div>`;
       const marker = new google.maps.Marker({
         map: map,
@@ -755,7 +764,7 @@ function createCenterControl(map) {
   controlButton.style.padding = "5px";
   controlButton.style.textAlign = "center";
   controlButton.textContent = "";
-  controlButton.title = "Reiniciar el mapa";
+  controlButton.title = $t('dashboard.reload_map');
   controlButton.type = "button";
   controlButton.addEventListener("click", () => {
     //BUTTON ON CLICK RESET MAP TO BOUNDS.
