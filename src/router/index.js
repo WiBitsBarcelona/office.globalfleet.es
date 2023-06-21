@@ -36,8 +36,8 @@ const routes = [
   {
     path: "/",
     name: "main",
-    component: () => import('@/layouts/simple-menu/Main.vue'),
-    //component: () => import('@/layouts/top-menu/Main.vue'),
+    component: () => import('@/layouts/simple-menu/Main.vue'), // Change view layout: component: () => import('@/layouts/top-menu/Main.vue'),
+    redirect: '/dashboard',
     beforeEnter: requireAuth,
     children: [
       {
