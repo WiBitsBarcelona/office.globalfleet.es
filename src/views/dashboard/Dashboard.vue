@@ -72,12 +72,12 @@
         </div>
       </div>
 
-      <!-- BEGIN: Vehicles Map -->
-        <VehiclesMap />
-      <!-- END: Vehicles Map -->
+      <!-- BEGIN: Devices Map -->
+        <DevicesMap />
+      <!-- END: Devices Map -->
       <!-- BEGIN: Footer Text -->
       <div class="col-span-12 mt-5 mb-1 text-center">
-        <p class="text-slate-600 dark:text-slate-200">&copy; {{ new Date().getFullYear() }} - GlobalFleet - {{
+        <p class="text-slate-600 dark:text-slate-200">&copy; {{ new Date().getFullYear() }} - GlobalFleet - {{ vueVersion }} - {{
           $t("auth_footer.all_rights") }}</p>
       </div>
     </div>
@@ -87,39 +87,24 @@
 
 <script setup>
 import { computed, ref, onMounted } from 'vue';
-//import VehiclesMap from "@/components/vehicles-map/Main.vue";
-import VehiclesMap from "@/components/dashboard-map/Main.vue";
-//import useVehicles from "@/composables/vehicles";
+import DevicesMap from "@/components/dashboard-map/Main.vue";
 import useDashboard from '@/composables/dashboard.js';
-
+import { version as vueVersion } from 'vue/package.json'
 
 const { dashboard, getDashboard } = useDashboard();
-
-//const locations = ref('');
 
 const trip_completed_nb = ref('');
 const trip_created_nb = ref('');
 const trip_pending_nb = ref('');
 const trip_progress_nb = ref('');
-
-
-
 const select = ref("");
-
-//const { vehicles, getVehicles } = useVehicles();
-
-//const totalVehicles = ref(0);
-
 
 onMounted(async () => {
   await getDashboard();
-  //await getVehicles();
-  //totalVehicles.value = computed(() => vehicles.value.length);
   trip_completed_nb.value = dashboard.value.trip_completed_nb;
   trip_created_nb.value = dashboard.value.trip_created_nb;
   trip_pending_nb.value = dashboard.value.trip_pending_nb;
   trip_progress_nb.value = dashboard.value.trip_progress_nb;
-  //locations.value = vehicles.value;
 });
 
 </script>

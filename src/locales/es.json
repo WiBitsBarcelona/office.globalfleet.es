@@ -30,6 +30,13 @@
     "password_repeat_placeholder": "Repite la contraseña",
     "btn_save": "Guardar"
   },
+  "menu": {
+    "home": "Inicio",
+    "trips": "Viajes",
+    "devices": "Dispositivos",
+    "documents": "Documentos",
+    "chat": "Chat"
+  },
   "dashboard": {
     "title": "Visión General",
     "reload": "Recargar Datos",
@@ -143,5 +150,9 @@
     "speed": "Velocidad:",
     "direction": "Dirección:",
     "last_update": "Última actualización:"
-  }
+  },
+  "devices": "Dispositivos",
+  "filter_by_driver": "Filtrar por Conductor",
+  "driving": "Circulando",
+  "stopped": "Parado"
 }
