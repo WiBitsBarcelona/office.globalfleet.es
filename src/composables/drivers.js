@@ -20,7 +20,7 @@ export default function useDriver() {
 	const getDrivers = async () => {
 		errors.value = '';
 		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}drivers/list`, config);
+			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}office/drivers/list`, config);
 			drivers.value = response.data.data;
 		} catch (e) {
 			console.log(e);
@@ -36,7 +36,7 @@ export default function useDriver() {
 	const getDriver = async (id) => {
 		errors.value = '';
 		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}drivers/show/${id}`, config);
+			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}office/drivers/show/${id}`, config);
 			driver.value = response.data.data;
 		} catch (e) {
 			console.log(e);
@@ -52,7 +52,7 @@ export default function useDriver() {
 	const storeDriver = async (data) => {
 		errors.value = '';
 		try {
-			await axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}drivers/store`, data, config);
+			await axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}office/drivers/store`, data, config);
 			//await router.push({ name: 'driver.index' });
 		} catch (e) {
 			console.log(e);
@@ -68,7 +68,7 @@ export default function useDriver() {
 	const updateDriver = async (id, data) => {
 		errors.value = '';
 		try {
-			await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}drivers/update/${id}`, data, config);
+			await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}office/drivers/update/${id}`, data, config);
 			//await router.push({ name: 'driver.index' });
 		} catch (e) {
 			console.log(e);
@@ -83,7 +83,7 @@ export default function useDriver() {
 
 	const destroyDriver = async (id) => {
 		try {
-			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}drivers/destroy/${id}`, config);
+			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}office/drivers/destroy/${id}`, config);
 		} catch (e) {
 			console.log(e);
 			// if (e.response.status === 422) {

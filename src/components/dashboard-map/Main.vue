@@ -2,16 +2,17 @@
   <!-- BEGIN: Vehicles Map -->
   <div class="col-span-12 xl:col-span-12 mt-6">
     <div class="intro-y block sm:flex items-center mb-5">
-      <h2 class="text-lg font-medium truncate ml-3"> <span class="text-2xl text-primary dark:text-light">{{ totalDevices }} </span>{{$t("dashboard.devices_on_map") }}</h2>
+      <h2 class="text-lg font-medium truncate ml-3"> <span class="text-2xl text-primary dark:text-light">{{ totalDevices
+      }} </span>{{ $t("dashboard.devices_on_map") }}</h2>
       <div class="sm:ml-auto mt-3 sm:mt-0 relative text-slate-500">
         <div class="inline-flex">
           <span class="text-lg font-medium mt-2 mr-3">{{ $t("dashboard.select_driver") }}</span>
-            <TomSelect v-model="selected_plate" name="plate_selector" @change="onChange()" :options="{
+          <TomSelect v-model="selected_driver" name="plate_driver" @change="onChange()" :options="{
               placeholder: $t('dashboard.select_driver_placeholder'),
             }" class="form-control w-full sm:w-56">
-            <option :value="0">{{ $t("dashboard.select_all")}}</option>
-            <option :value="vehicle.plate + ',' + vehicle.position.latitude + ',' + vehicle.position.longitude" v-for="vehicle in vehicles"
-              :key="vehicle.plate">{{ vehicle.plate }}</option>
+            <option :value="0">{{ $t("dashboard.select_all") }}</option>
+            <option :value="driver.id + ',' + driver.position.latitude + ',' + driver.position.longitude"
+              v-for="driver in drivers" :key="driver.id">{{ driver.name }} {{ driver.surname }}</option>
           </TomSelect>
         </div>
       </div>
@@ -27,10 +28,11 @@
 import { watch, computed, ref, toRaw, defineProps, VueElement } from "vue";
 import MarkerClusterer from "@googlemaps/markerclustererplus";
 import { useDarkModeStore } from "@/stores/dark-mode";
-import useVehicles from "@/composables/vehicles";
-import useDriverPosition from "@/composables/driver_positions"
+import useDriver from "@/composables/drivers"
 import { helper as $h } from "@/utils/helper";
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const props = defineProps({
   width: {
     type: Number,
@@ -41,43 +43,37 @@ const props = defineProps({
     default: 0,
   },
 });
-
 //REFERENCE TO VARIABLE MAP
 let mapa;
 //ARRAY TO SAVE ALL MAKERS ID'S
-let plates = [];
-
-
-const { driver_positions, getDriverPositions} = useDriverPosition();
-
-const { vehicles, getVehicles } = useVehicles();
-const totalVehicles = ref(0);
+let driversArr = [];
+//VARIABLE TO SET BG ON INFOWINDOW
+let bg_trip = 'bg-gray-100';
+const { drivers, getDrivers } = useDriver();
 const totalDevices = ref(0);
-const selected_plate = ref("");
+const selected_driver = ref("");
 const imageAssets = import.meta.globEager(
   `/src/assets/images/*.{jpg,jpeg,png,svg}`
 );
 const darkModeStore = useDarkModeStore();
 const darkMode = computed(() => darkModeStore.darkMode);
-
-
 //DEFINE CONSTANT TO SAVE BOUNDS
 let latlngbounds;
 let infoWindow;
+let plate;
+let trip_id;
+let trip_status;
+let trip_origin;
+let trip_destination;
+
 const init = async (initializeMap) => {
 
-  await getVehicles();
+  await getDrivers();
+  const devices = drivers.value;
+  totalDevices.value = computed(() => drivers.value.length);
 
-  await getDriverPositions();
-
-  const locations = vehicles.value;
-  const devices = driver_positions.value;
-  totalVehicles.value = computed(() => vehicles.value.length);
-  totalDevices.value = computed(() => driver_positions.value.length);
-
-  const markers = JSON.parse(JSON.stringify(locations));
-  console.log(markers);
-
+  const markers = JSON.parse(JSON.stringify(devices));
+  //console.log(markers);
   const darkTheme = [
     {
       elementType: "geometry",
@@ -645,8 +641,8 @@ const init = async (initializeMap) => {
   latlngbounds = new window.google.maps.LatLngBounds();
 
   infoWindow = new google.maps.InfoWindow({
-    minWidth: 300,
-    maxWidth: 400,
+    minWidth: 350,
+    maxWidth: 450,
   });
 
   new MarkerClusterer(
@@ -659,24 +655,62 @@ const init = async (initializeMap) => {
       const lastDate = $h.toDate(markerElem.position.timestamp);
       const speed = $h.toKmsHour(markerElem.position.speed);
       const direction = $h.getDirection(markerElem.position.heading);
+      const direction_icon = $h.getDirectionIcon(direction);
+      additionalInfoWindowData(markerElem.driver_trips);
       const infowincontent = `
-            <div class="font-medium">
-              ${markerElem.plate}
-            </div>
-            <div class="mt-1 text-gray-600">
-              <span class="font-medium mr-1">Conductor:</span> ${!markerElem.position.driver_name ? $t('dashboard.no_data') : markerElem.position.driver_name} <br>
-              <span class="font-medium mr-1">Latitud:</span> ${markerElem.position.latitude} <br>
-              <span class="font-medium mr-1">Longitud:</span> ${markerElem.position.longitude}<br>
-              <span class="font-medium mr-1">Posición GPS:</span>${!markerElem.position.gps_positioning ? $t('dashboard.no_data') : markerElem.position.gps_positioning} <br>
-              <span class="font-medium mr-1">Exactitud:</span> ${markerElem.position.accuracy} metros.<br>
-              <span class="font-medium mr-1">Velocidad:</span> ${!speed ? $t('dashboard.no_data') : speed} km/h.<br>
-              <span class="font-medium mr-1">Dirección:</span>${!direction ? $t('dashboard.no_data') : direction} <br><br>
-              <span class="font-medium mr-1">Última actualización:</span>${!lastDate ? $t('dashboard.no_data') : lastDate} <br>
-            </div>`;
+              <div class="grid gap-y-8">
+                <div class="grid grid-cols-2 gap-x-1 gap-y-1 text-left sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12">
+                  <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 text-center dark:bg-gray-800 dark:text-gray-400">
+                    <p class="text-md text-xl font-bold leading-5 text-gray-500">${markerElem.name} ${markerElem.surname} / ${plate}</p>
+                  </div>
+                  <div class="col-span-6 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.trip") }</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${trip_id}</p>
+                  </div>
+                  <div class="col-span-6 rounded-md ${bg_trip} p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.status") }</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${trip_status}</p>
+                  </div>
+                  <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.origin") }</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${trip_origin}</p>
+                  </div>
+                  <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.destination") }</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${trip_destination}</p>
+                  </div>
+                  <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.gps_position") }</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">A10, 37260 Saint-Épain, Francia</p>
+                  </div>
+                  <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.accuracy") }</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${markerElem.position.accuracy} m.</p>
+                  </div>
+                  <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.speed") }</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500"> ${!speed ? t('dashboard.no_data') : speed} km/h.</p>
+                  </div>
+                  <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.direction") }</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${direction_icon}<span class="text-xs"> ${direction} </span></p>
+                  </div>
+                  <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.last_update") }</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${!lastDate ? t('dashboard.no_data') : lastDate}</p>
+                  </div>
+                </div>
+              </div>`;
+
+/*  BLOCK TO DISPLAY COORDINATES ON THE INFOWINDOW. DISABLED AT THIS MOMENT.           
+<div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+  <h5 class="text-xs font-light text-gray-400">${ t("infowindow.coords") }</h5>
+  <p class="text-md font-normal leading-6 text-gray-500">${markerElem.position.latitude},${markerElem.position.longitude}</p>
+</div> */
       const marker = new google.maps.Marker({
         map: map,
         position: point,
-        id: markerElem.plate,
+        id: markerElem.id,
         icon: {
           url: !darkMode.value
             ? imageAssets["/src/assets/images/map-marker.svg"].default
@@ -701,9 +735,9 @@ const init = async (initializeMap) => {
         });
 
         infoWindow.open(map, marker);
-        
+
       });
-      plates.push(marker);
+      driversArr.push(marker);
       return marker;
     }),
     {
@@ -764,11 +798,11 @@ function createCenterControl(map) {
   controlButton.style.padding = "5px";
   controlButton.style.textAlign = "center";
   controlButton.textContent = "";
-  controlButton.title = $t('dashboard.reload_map');
+  controlButton.title = t('dashboard.reload_map');
   controlButton.type = "button";
   controlButton.addEventListener("click", () => {
     //BUTTON ON CLICK RESET MAP TO BOUNDS.
-    if(infoWindow){
+    if (infoWindow) {
       infoWindow.close();
     }
     map.setCenter(latlngbounds.getCenter());
@@ -778,24 +812,86 @@ function createCenterControl(map) {
 }
 
 function onChange() {
-  if(infoWindow){
-      infoWindow.close();  
+  if (infoWindow) {
+    infoWindow.close();
   }
-  if(selected_plate.value == 0){
+  if (selected_driver.value == 0) {
     mapa.setCenter(latlngbounds.getCenter());
     mapa.fitBounds(latlngbounds);
-  }else{
-    const ltlngArr = selected_plate.value.split(',');
-    mapa.setCenter({lat:parseFloat(ltlngArr[1]), lng:parseFloat(ltlngArr[2])});
-
-
-    plates.forEach(el => {
-      if(ltlngArr[0] == el.id){
+  } else {
+    const ltlngArr = selected_driver.value.split(',');
+    mapa.setCenter({ lat: parseFloat(ltlngArr[1]), lng: parseFloat(ltlngArr[2]) });
+    driversArr.forEach(el => {
+      if (ltlngArr[0] == el.id) {
         google.maps.event.trigger(el, 'click');
       }
     });
+  }
+}
 
-    
+function additionalInfoWindowData(data){
+  plate = '--';
+  trip_id = '--';
+  trip_status = '--';
+  trip_origin = '--';
+  trip_destination = '--';
+  let active_trip = null;
+  let exist = 0;
+  
+  data.forEach((trip) => {
+    switch(trip.trip_status_id){
+      case 5:
+        if(exist < trip.trip_status_id){
+          active_trip = trip;
+          exist = 5;
+          bg_trip = 'bg-blue-100';
+        }
+        break;
+      case 4:
+        if(exist < trip.trip_status_id){
+          active_trip = trip;
+          exist = 4;
+          bg_trip ='bg-orange-100';
+        }
+        break;
+      case 3:
+        if(exist < trip.trip_status_id){
+          active_trip = trip;
+          exist = 3;
+          bg_trip ='bg-orange-100';
+        }
+        break;
+      case 2:
+        if(exist < trip.trip_status_id){
+          active_trip = trip;
+          exist = 2;
+          bg_trip ='bg-gray-100';
+        }
+        break;
+      case 1:
+        if(exist < trip.trip_status_id){
+          active_trip = trip;
+          exist = 1;
+          bg_trip ='bg-gray-100';
+        }
+        break;
+      default:
+        break;
+    }
+  });
+
+  if(active_trip){
+    plate = active_trip.vehicle.plate;
+    trip_id = active_trip.reference_number;
+    trip_status = active_trip.status.name;
+    let stageArr = [];
+    active_trip.stages.forEach((stage) => {
+      if(stage.activity){
+        stageArr.push(stage.name);
+      }
+    });
+    trip_origin = stageArr[0];
+    trip_destination = stageArr[stageArr.length -1];
   }
 }
 

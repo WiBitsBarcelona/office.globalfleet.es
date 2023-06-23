@@ -148,13 +148,45 @@ const helpers = {
     return formattedDate;
   },
   getDirection(angle) {
-    var directions = ['Norte', 'Nordeste', 'Este', 'Sureste', 'Sur', 'Suroeste', 'Este', 'Noreste'];
+    var directions = ['Norte', 'Noreste', 'Este', 'Sureste', 'Sur', 'Suroeste', 'Oeste', 'Noroeste'];
     var index = Math.round(((angle %= 360) < 0 ? angle + 360 : angle) / 45) % 8;
     return directions[index];
   },
   toKms(meters) {
     let accuracy = parseFloat(meters) / 1000;
     return accuracy;
+  },
+  getDirectionIcon(direction){
+    let icon;
+    switch(direction) {
+      case "Norte":
+        icon = '<img src = "../../../src/assets/images/icons/north.svg" alt="Norte"/>';
+        break;
+      case "Noreste":
+        icon = '<img src = "../../../src/assets/images/icons/north_east.svg" alt="Nordeste"/>';
+        break; 
+      case "Este":
+        icon = '<img src = "../../../src/assets/images/icons/east.svg" alt="Este"/>';
+        break;
+      case "Sureste":
+        icon = '<img src = "../../../src/assets/images/icons/south_east.svg" alt="Sureste"/>';
+        break;
+      case "Sur":
+        icon = '<img src = "../../../src/assets/images/icons/south.svg" alt="Sur"/>';
+        break;
+      case "Suroeste":
+        icon = '<img src = "../../../src/assets/images/icons/south_west.svg" alt="Suroeste"/>';
+        break;
+      case "Oeste":
+        icon = '<img src = "../../../src/assets/images/icons/west.svg" alt="Oeste"/>';
+        break;
+      case "Noroeste":
+        icon = '<img src = "../../../src/assets/images/icons/north_west.svg" alt="Noroeste"/>';
+        break;
+      default:
+        icon = '';           
+    }
+    return icon;
   }
 };
 

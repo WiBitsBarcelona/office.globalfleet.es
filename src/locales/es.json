@@ -53,7 +53,7 @@
     "select_all": "Todos",
     "select_driver_placeholder": "Selecciona un conductor...",
     "reload_map": "Reiniciar Mapa",
-    "no_data": "No existen datos para mostrar.",
+    "no_data": "--",
     "info_demo_text": "La información mostrada en este dashboard NO es real y se muestra para el propósito de demostraciones."
   },
   "profile": "Perfil",
@@ -131,6 +131,17 @@
   "tacograf": "Tacógrafo",
   "origin": "Origen",
   "destination": "Destino",
-  "status": "Estatus"
-
+  "status": "Estatus",
+  "infowindow": {
+    "trip": "Viaje:",
+    "status": "Estado:",
+    "origin": "Origen:",
+    "destination": "Destino:",
+    "coords": "Coordenadas GPS:",
+    "gps_position": "Posición GPS:",
+    "accuracy": "Exactitud:",
+    "speed": "Velocidad:",
+    "direction": "Dirección:",
+    "last_update": "Última actualización:"
+  }
 }
