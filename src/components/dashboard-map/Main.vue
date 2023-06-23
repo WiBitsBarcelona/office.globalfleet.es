@@ -1,13 +1,38 @@
 <template>
-  <GoogleMapLoader :init="init" />
+  <!-- BEGIN: Vehicles Map -->
+  <div class="col-span-12 xl:col-span-12 mt-6">
+    <div class="intro-y block sm:flex items-center mb-5">
+      <h2 class="text-lg font-medium truncate ml-3"> <span class="text-2xl text-primary dark:text-light">{{ totalDevices
+      }} </span>{{ $t("dashboard.devices_on_map") }}</h2>
+      <div class="sm:ml-auto mt-3 sm:mt-0 relative text-slate-500">
+        <div class="inline-flex">
+          <span class="text-lg font-medium mt-2 mr-3">{{ $t("dashboard.select_driver") }}</span>
+          <TomSelect v-model="selected_driver" name="plate_driver" @change="onChange()" :options="{
+              placeholder: $t('dashboard.select_driver_placeholder'),
+            }" class="form-control w-full sm:w-56">
+            <option :value="0">{{ $t("dashboard.select_all") }}</option>
+            <option :value="driver.id + ',' + driver.position.latitude + ',' + driver.position.longitude"
+              v-for="driver in drivers" :key="driver.id">{{ driver.name }} {{ driver.surname }}</option>
+          </TomSelect>
+        </div>
+      </div>
+    </div>
+    <div class="intro-y box p-3">
+      <GoogleMapLoader :init="init" class="report-maps bg-slate-200 rounded-md" />
+    </div>
+  </div>
+  <!-- END: Vehicles Map -->
 </template>
 
 <script setup>
-import { watch, computed } from "vue";
+import { watch, computed, ref, toRaw, defineProps, VueElement } from "vue";
 import MarkerClusterer from "@googlemaps/markerclustererplus";
 import { useDarkModeStore } from "@/stores/dark-mode";
-import location from "@/assets/json/location.json";
+import useDriver from "@/composables/drivers"
+import { helper as $h } from "@/utils/helper";
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const props = defineProps({
   width: {
     type: Number,
@@ -18,15 +43,37 @@ const props = defineProps({
     default: 0,
   },
 });
-
+//REFERENCE TO VARIABLE MAP
+let mapa;
+//ARRAY TO SAVE ALL MAKERS ID'S
+let driversArr = [];
+//VARIABLE TO SET BG ON INFOWINDOW
+let bg_trip = 'bg-gray-100';
+const { drivers, getDrivers } = useDriver();
+const totalDevices = ref(0);
+const selected_driver = ref("");
 const imageAssets = import.meta.globEager(
   `/src/assets/images/*.{jpg,jpeg,png,svg}`
 );
 const darkModeStore = useDarkModeStore();
 const darkMode = computed(() => darkModeStore.darkMode);
-const latlngbounds = new google.maps.LatLngBounds();
+//DEFINE CONSTANT TO SAVE BOUNDS
+let latlngbounds;
+let infoWindow;
+let plate;
+let trip_id;
+let trip_status;
+let trip_origin;
+let trip_destination;
 
 const init = async (initializeMap) => {
+
+  await getDrivers();
+  const devices = drivers.value;
+  totalDevices.value = computed(() => drivers.value.length);
+
+  const markers = JSON.parse(JSON.stringify(devices));
+  //console.log(markers);
   const darkTheme = [
     {
       elementType: "geometry",
@@ -441,7 +488,7 @@ const init = async (initializeMap) => {
       elementType: "labels",
       stylers: [
         {
-          visibility: "off",
+          visibility: "on",
         },
       ],
     },
@@ -468,7 +515,7 @@ const init = async (initializeMap) => {
       elementType: "labels",
       stylers: [
         {
-          visibility: "off",
+          visibility: "on",
         },
       ],
     },
@@ -485,7 +532,7 @@ const init = async (initializeMap) => {
       featureType: "road.local",
       stylers: [
         {
-          visibility: "off",
+          visibility: "on",
         },
       ],
     },
@@ -494,7 +541,7 @@ const init = async (initializeMap) => {
       elementType: "labels",
       stylers: [
         {
-          visibility: "off",
+          visibility: "on",
         },
       ],
     },
@@ -521,7 +568,7 @@ const init = async (initializeMap) => {
       elementType: "geometry.fill",
       stylers: [
         {
-          visibility: "off",
+          visibility: "on",
         },
       ],
     },
@@ -539,7 +586,7 @@ const init = async (initializeMap) => {
       elementType: "geometry.fill",
       stylers: [
         {
-          visibility: "off",
+          visibility: "on",
         },
       ],
     },
@@ -575,7 +622,7 @@ const init = async (initializeMap) => {
     apiKey: "AIzaSyCMlwJPBGrPWXJE2oaZ7arA7VxkJI2EdxY",
     config(google) {
       return {
-        // zoom: 5,
+        zoom: 5,
         styles: darkMode.value ? darkTheme : lightTheme,
         zoomControl: true,
         zoomControlOptions: {
@@ -583,45 +630,96 @@ const init = async (initializeMap) => {
         },
         streetViewControl: false,
         mapTypeControl: false,
-        scaleControl: true,
-/*         center: {
-          lat: 46.85341,
-          lng:  9.3488,
-        }, */
+        center: {
+          lat: 43.85341,
+          lng: 9.3488,
+        },
       };
     },
   });
 
-  const infoWindow = new google.maps.InfoWindow({
-    minWidth: 400,
-    maxWidth: 400,
-  });
+  latlngbounds = new window.google.maps.LatLngBounds();
 
-  
+  infoWindow = new google.maps.InfoWindow({
+    minWidth: 350,
+    maxWidth: 450,
+  });
 
   new MarkerClusterer(
     map,
-    location.map(function (markerElem) {
+    markers.map(function (markerElem) {
       const point = new google.maps.LatLng(
-        parseFloat(markerElem.latitude),
-        parseFloat(markerElem.longitude)
+        parseFloat(markerElem.position.latitude),
+        parseFloat(markerElem.position.longitude)
       );
+      const lastDate = $h.toDate(markerElem.position.timestamp);
+      const speed = $h.toKmsHour(markerElem.position.speed);
+      const direction = $h.getDirection(markerElem.position.heading);
+      const direction_icon = $h.getDirectionIcon(direction);
+      additionalInfoWindowData(markerElem.driver_trips);
       const infowincontent = `
-            <div class="font-medium">
-              ${markerElem.name}
-            </div>
-            <div class="mt-1 text-gray-600">
-              Latitud: ${markerElem.latitude}, Longitud: ${markerElem.longitude}
-            </div>`;
+              <div class="grid gap-y-8">
+                <div class="grid grid-cols-2 gap-x-1 gap-y-1 text-left sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12">
+                  <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 text-center dark:bg-gray-800 dark:text-gray-400">
+                    <p class="text-md text-xl font-bold leading-5 text-gray-500">${markerElem.name} ${markerElem.surname} / ${plate}</p>
+                  </div>
+                  <div class="col-span-6 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.trip") }</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${trip_id}</p>
+                  </div>
+                  <div class="col-span-6 rounded-md ${bg_trip} p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.status") }</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${trip_status}</p>
+                  </div>
+                  <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.origin") }</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${trip_origin}</p>
+                  </div>
+                  <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.destination") }</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${trip_destination}</p>
+                  </div>
+                  <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.gps_position") }</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">A10, 37260 Saint-Épain, Francia</p>
+                  </div>
+                  <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.accuracy") }</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${markerElem.position.accuracy} m.</p>
+                  </div>
+                  <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.speed") }</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500"> ${!speed ? t('dashboard.no_data') : speed} km/h.</p>
+                  </div>
+                  <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.direction") }</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${direction_icon}<span class="text-xs"> ${direction} </span></p>
+                  </div>
+                  <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.last_update") }</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${!lastDate ? t('dashboard.no_data') : lastDate}</p>
+                  </div>
+                </div>
+              </div>`;
+
+/*  BLOCK TO DISPLAY COORDINATES ON THE INFOWINDOW. DISABLED AT THIS MOMENT.           
+<div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+  <h5 class="text-xs font-light text-gray-400">${ t("infowindow.coords") }</h5>
+  <p class="text-md font-normal leading-6 text-gray-500">${markerElem.position.latitude},${markerElem.position.longitude}</p>
+</div> */
       const marker = new google.maps.Marker({
         map: map,
         position: point,
+        id: markerElem.id,
         icon: {
           url: !darkMode.value
             ? imageAssets["/src/assets/images/map-marker.svg"].default
             : imageAssets["/src/assets/images/map-marker-dark.svg"].default,
         },
       });
+
+      //ADD CURRENT MARKER POSITION TO BOUNDS
+      latlngbounds.extend(marker.position);
 
       google.maps.event.addListener(marker, "click", function () {
         infoWindow.setContent(infowincontent);
@@ -637,8 +735,9 @@ const init = async (initializeMap) => {
         });
 
         infoWindow.open(map, marker);
+
       });
-      latlngbounds.extend(marker.position);
+      driversArr.push(marker);
       return marker;
     }),
     {
@@ -650,7 +749,7 @@ const init = async (initializeMap) => {
           url: !darkMode.value
             ? imageAssets["/src/assets/images/map-marker-region.svg"].default
             : imageAssets["/src/assets/images/map-marker-region-dark.svg"]
-                .default,
+              .default,
           anchor: [0, 0],
           anchorText: [17, 0],
           fontWeight: "bold",
@@ -659,14 +758,17 @@ const init = async (initializeMap) => {
     }
   );
 
+  //INSERT CUSTOM BUTTOM TO RESET MAP IN MAP.
   const centerControlDiv = document.createElement("div");
   const centerControl = createCenterControl(map);
-
   centerControlDiv.appendChild(centerControl);
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(centerControlDiv);
 
+  //SET DEFAULT CENTER AND ZOOM TO CURRENT BOUNDS.
   map.setCenter(latlngbounds.getCenter());
   map.fitBounds(latlngbounds);
+
+  mapa = map;
 
   const stop = watch(darkMode, () => {
     init(initializeMap);
@@ -674,12 +776,13 @@ const init = async (initializeMap) => {
   });
 };
 
+//FUNCTION FOR CREATE A BUTTON ELEMENT TO RESET MAP TO DEFAULT BOUNDS.
 function createCenterControl(map) {
   const controlButton = document.createElement("button");
-
   // Set CSS for the control.
   controlButton.style.backgroundColor = "#fff";
   controlButton.style.backgroundImage = "url('../../../src/assets/images/refresh.png')";
+  //controlButton.style.backgroundImage = "url(imageAssets['/src/assets/images/map-marker-region-dark.svg'])";
   controlButton.style.backgroundSize = "cover"
   controlButton.style.width = "40px";
   controlButton.style.height = "40px";
@@ -695,12 +798,101 @@ function createCenterControl(map) {
   controlButton.style.padding = "5px";
   controlButton.style.textAlign = "center";
   controlButton.textContent = "";
-  controlButton.title = "Reiniciar el mapa";
+  controlButton.title = t('dashboard.reload_map');
   controlButton.type = "button";
   controlButton.addEventListener("click", () => {
+    //BUTTON ON CLICK RESET MAP TO BOUNDS.
+    if (infoWindow) {
+      infoWindow.close();
+    }
     map.setCenter(latlngbounds.getCenter());
     map.fitBounds(latlngbounds);
   });
   return controlButton;
 }
+
+function onChange() {
+  if (infoWindow) {
+    infoWindow.close();
+  }
+  if (selected_driver.value == 0) {
+    mapa.setCenter(latlngbounds.getCenter());
+    mapa.fitBounds(latlngbounds);
+  } else {
+    const ltlngArr = selected_driver.value.split(',');
+    mapa.setCenter({ lat: parseFloat(ltlngArr[1]), lng: parseFloat(ltlngArr[2]) });
+    driversArr.forEach(el => {
+      if (ltlngArr[0] == el.id) {
+        google.maps.event.trigger(el, 'click');
+      }
+    });
+  }
+}
+
+function additionalInfoWindowData(data){
+  plate = '--';
+  trip_id = '--';
+  trip_status = '--';
+  trip_origin = '--';
+  trip_destination = '--';
+  let active_trip = null;
+  let exist = 0;
+  
+  data.forEach((trip) => {
+    switch(trip.trip_status_id){
+      case 5:
+        if(exist < trip.trip_status_id){
+          active_trip = trip;
+          exist = 5;
+          bg_trip = 'bg-blue-100';
+        }
+        break;
+      case 4:
+        if(exist < trip.trip_status_id){
+          active_trip = trip;
+          exist = 4;
+          bg_trip ='bg-orange-100';
+        }
+        break;
+      case 3:
+        if(exist < trip.trip_status_id){
+          active_trip = trip;
+          exist = 3;
+          bg_trip ='bg-orange-100';
+        }
+        break;
+      case 2:
+        if(exist < trip.trip_status_id){
+          active_trip = trip;
+          exist = 2;
+          bg_trip ='bg-gray-100';
+        }
+        break;
+      case 1:
+        if(exist < trip.trip_status_id){
+          active_trip = trip;
+          exist = 1;
+          bg_trip ='bg-gray-100';
+        }
+        break;
+      default:
+        break;
+    }
+  });
+
+  if(active_trip){
+    plate = active_trip.vehicle.plate;
+    trip_id = active_trip.reference_number;
+    trip_status = active_trip.status.name;
+    let stageArr = [];
+    active_trip.stages.forEach((stage) => {
+      if(stage.activity){
+        stageArr.push(stage.name);
+      }
+    });
+    trip_origin = stageArr[0];
+    trip_destination = stageArr[stageArr.length -1];
+  }
+}
+
 </script>

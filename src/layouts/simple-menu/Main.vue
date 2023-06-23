@@ -33,7 +33,7 @@
                 }"
                 @click="linkTo(menu, router, $event)"
               >
-                <div class="side-menu__icon mb-4">
+                <div class="side-menu__icon mt-4 mb-4">
                   <span
                     v-if="menu.pageName == 'chat' && unreadMessageCount"
                     class="ml-5 px-2 py-1 text-white rounded-full bg-primary relative z-50"

@@ -1,4 +1,6 @@
 import { defineStore } from "pinia";
+import { useI18n } from 'vue-i18n';
+
 
 export const useSimpleMenuStore = defineStore("simpleMenu", {
   state: () => ({
@@ -13,16 +15,16 @@ export const useSimpleMenuStore = defineStore("simpleMenu", {
         pageName: "trips",
         title: "Viajes",
       },
-/*       {
-        icon: "UserIcon",
-        pageName: "employees",
-        title: "Empleados",
-      }, */
       {
+        icon: "CastIcon",
+        pageName: "devices",
+        title: "Dispositivos",
+      },
+/*       {
         icon: "TruckIcon",
         pageName: "vehicles",
         title: "Vehículos",
-      },
+      }, */
       {
         icon: "FilesIcon",
         pageName: "documents",

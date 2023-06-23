@@ -30,6 +30,13 @@
     "password_repeat_placeholder": "Repite la contraseña",
     "btn_save": "Guardar"
   },
+  "menu": {
+    "home": "Inicio",
+    "trips": "Viajes",
+    "devices": "Dispositivos",
+    "documents": "Documentos",
+    "chat": "Chat"
+  },
   "dashboard": {
     "title": "Visión General",
     "reload": "Recargar Datos",
@@ -46,9 +53,14 @@
     "graph_new_trips": "Viajes Nuevos",
     "vehicles_title": "Vehículos",
     "filter_plate": "Filtrar por matrícula",
-    "vehicles_subtitle1": "Mostrando ",
-    "vehicles_subtitle2": " vehículos en el mapa.",
-    "info_demo_title": "ATENCIÓN: ",
+    "select_plate": "Seleccionar Matrícula:",
+    "select_driver": "Selecciona el dispositivo del conductor:",
+    "vehicles_subtitle2": " Vehículos en el mapa.",
+    "devices_on_map": " Dispositivos en el mapa.",
+    "select_all": "Todos",
+    "select_driver_placeholder": "Selecciona un conductor...",
+    "reload_map": "Reiniciar Mapa",
+    "no_data": "--",
     "info_demo_text": "La información mostrada en este dashboard NO es real y se muestra para el propósito de demostraciones."
   },
   "profile": "Perfil",
@@ -126,6 +138,21 @@
   "tacograf": "Tacógrafo",
   "origin": "Origen",
   "destination": "Destino",
-  "status": "Estatus"
-
+  "status": "Estatus",
+  "infowindow": {
+    "trip": "Viaje:",
+    "status": "Estado:",
+    "origin": "Origen:",
+    "destination": "Destino:",
+    "coords": "Coordenadas GPS:",
+    "gps_position": "Posición GPS:",
+    "accuracy": "Exactitud:",
+    "speed": "Velocidad:",
+    "direction": "Dirección:",
+    "last_update": "Última actualización:"
+  },
+  "devices": "Dispositivos",
+  "filter_by_driver": "Filtrar por Conductor",
+  "driving": "Circulando",
+  "stopped": "Parado"
 }

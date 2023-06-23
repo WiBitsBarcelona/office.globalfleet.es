@@ -19,11 +19,14 @@
                                         {{ vehicle.plate }}
                                     </td>
                                     <td>
-                                        <Tippy tag="button" class="tooltip primary ml-4 mr-2" content="Circulando"
+                                        <Tippy v-if="vehicle.position.speed >= 5" tag="button" class="tooltip primary ml-4 mr-2" content="Circulando"
                                             :options="{ theme: 'light' }">
                                             <TruckIcon class="w-5 h-5 text-primary"></TruckIcon>
                                         </Tippy>
-
+                                        <Tippy v-else tag="button" class="tooltip primary ml-4 mr-2" content="Parado"
+                                            :options="{ theme: 'light' }">
+                                            <TruckIcon class="w-5 h-5 text-warning"></TruckIcon>
+                                        </Tippy>
                                     </td>
                                 </tr>
 

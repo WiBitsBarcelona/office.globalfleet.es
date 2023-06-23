@@ -1,15 +1,53 @@
 <template>
-  <GoogleMapLoader :init="init" />
+  <!-- BEGIN: Devices Map -->
+  <div class="col-span-2 w-full intro-y">
+    <div class="sm:ml-auto mt-3 mb-3 w-full sm:mt-0 relative text-slate-500">
+      <UserIcon class="w-4 h-4 z-10 absolute my-auto inset-y-0 ml-3 left-0" />
+      <input type="search" class="form-control sm:w-full box pl-10 search-cancel" :placeholder= "$t('filter_by_driver')"
+        v-model="searchDrivers" />
+    </div>
+    <div class="box p-3 intro-x h-[650px] overflow-y-auto">
+      <div>
+        <table id="drivers" class="table table-hover hover:cursor-pointer overflow-scroll w-full">
+          <tbody v-for="driver in searchedDrivers" :key="driver" class="overflow-y-auto">
+            <tr>
+              <td :id="driver.id" class="text-md leading-6 text-gray-500" @click="zoomDriver(driver.id)">
+                {{ driver.name }} {{ driver.surname }}
+              </td>
+              <td>
+                <Tippy v-if="driver.position.speed >= 5" tag="button" class="tooltip primary ml-4 mr-2"
+                  :content="$t('driving')" :options="{ theme: 'light' }">
+                  <TruckIcon class="w-5 h-5 text-primary"></TruckIcon>
+                </Tippy>
+                <Tippy v-else tag="button" class="tooltip primary ml-4 mr-2" :content="$t('stopped')"
+                  :options="{ theme: 'light' }">
+                  <TruckIcon class="w-5 h-5 text-warning"></TruckIcon>
+                </Tippy>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-span-10 w-full intro-y">
+    <div class="box p-1 intro-x h-[700px]">
+      <GoogleMapLoader :init="init" class="vehicles-maps bg-slate-200 rounded-md" />
+    </div>
+  </div>
+  <!-- END: Devices Map -->
 </template>
 
 <script setup>
-import { watch, computed, ref, toRaw, defineProps } from "vue";
+import { watch, computed, ref, toRaw, defineProps, VueElement } from "vue";
 import MarkerClusterer from "@googlemaps/markerclustererplus";
 import { useDarkModeStore } from "@/stores/dark-mode";
-import location from "@/assets/json/location.json";
+import useDriver from "@/composables/drivers"
+import { helper as $h } from "@/utils/helper";
+import { useI18n } from 'vue-i18n';
 
-
-
+const { t } = useI18n();
 const props = defineProps({
   width: {
     type: Number,
@@ -19,26 +57,38 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
-  locations: {
-    type: Array,
-  }
 });
-
-console.log(props.locations);
-
+//REFERENCE TO VARIABLE MAP
+let mapa;
+//ARRAY TO SAVE ALL MAKERS ID'S
+let driversArr = [];
+//VARIABLE TO SET BG ON INFOWINDOW
+let bg_trip = 'bg-gray-100';
+const { drivers, getDrivers } = useDriver();
+const totalDevices = ref(0);
+const selected_driver = ref("");
 const imageAssets = import.meta.globEager(
   `/src/assets/images/*.{jpg,jpeg,png,svg}`
 );
 const darkModeStore = useDarkModeStore();
 const darkMode = computed(() => darkModeStore.darkMode);
-
-
-//console.log(location);
-
-
 //DEFINE CONSTANT TO SAVE BOUNDS
 let latlngbounds;
+let infoWindow;
+let plate;
+let trip_id;
+let trip_status;
+let trip_origin;
+let trip_destination;
+
 const init = async (initializeMap) => {
+
+  await getDrivers();
+  const devices = drivers.value;
+  totalDevices.value = computed(() => drivers.value.length);
+
+  const markers = JSON.parse(JSON.stringify(devices));
+  console.log(markers);
   const darkTheme = [
     {
       elementType: "geometry",
@@ -453,7 +503,7 @@ const init = async (initializeMap) => {
       elementType: "labels",
       stylers: [
         {
-          visibility: "off",
+          visibility: "on",
         },
       ],
     },
@@ -480,7 +530,7 @@ const init = async (initializeMap) => {
       elementType: "labels",
       stylers: [
         {
-          visibility: "off",
+          visibility: "on",
         },
       ],
     },
@@ -497,7 +547,7 @@ const init = async (initializeMap) => {
       featureType: "road.local",
       stylers: [
         {
-          visibility: "off",
+          visibility: "on",
         },
       ],
     },
@@ -506,7 +556,7 @@ const init = async (initializeMap) => {
       elementType: "labels",
       stylers: [
         {
-          visibility: "off",
+          visibility: "on",
         },
       ],
     },
@@ -533,7 +583,7 @@ const init = async (initializeMap) => {
       elementType: "geometry.fill",
       stylers: [
         {
-          visibility: "off",
+          visibility: "on",
         },
       ],
     },
@@ -551,7 +601,7 @@ const init = async (initializeMap) => {
       elementType: "geometry.fill",
       stylers: [
         {
-          visibility: "off",
+          visibility: "on",
         },
       ],
     },
@@ -597,7 +647,7 @@ const init = async (initializeMap) => {
         mapTypeControl: false,
         center: {
           lat: 43.85341,
-          lng:  9.3488,
+          lng: 9.3488,
         },
       };
     },
@@ -605,31 +655,77 @@ const init = async (initializeMap) => {
 
   latlngbounds = new window.google.maps.LatLngBounds();
 
-  const infoWindow = new google.maps.InfoWindow({
-    minWidth: 300,
-    maxWidth: 300,
+  infoWindow = new google.maps.InfoWindow({
+    minWidth: 350,
+    maxWidth: 450,
   });
-
-  await marcadores();
 
   new MarkerClusterer(
     map,
-    location.map(function (markerElem) {
+    markers.map(function (markerElem) {
       const point = new google.maps.LatLng(
-        parseFloat(markerElem.latitude),
-        parseFloat(markerElem.longitude)
+        parseFloat(markerElem.position.latitude),
+        parseFloat(markerElem.position.longitude)
       );
+      const lastDate = $h.toDate(markerElem.position.timestamp);
+      const speed = $h.toKmsHour(markerElem.position.speed);
+      const direction = $h.getDirection(markerElem.position.heading);
+      const direction_icon = $h.getDirectionIcon(direction);
+      additionalInfoWindowData(markerElem.driver_trips);
       const infowincontent = `
-            <div class="font-medium">
-              ${markerElem.name}
-            </div>
-            <div class="mt-1 text-gray-600">
-              Latitud: ${markerElem.latitude} <br>
-              Longitud: ${markerElem.longitude}
-            </div>`;
+              <div class="grid gap-y-8">
+                <div class="grid grid-cols-2 gap-x-1 gap-y-1 text-left sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12">
+                  <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 text-center dark:bg-gray-800 dark:text-gray-400">
+                    <p class="text-md text-xl font-bold leading-5 text-gray-500">${markerElem.name} ${markerElem.surname} / ${plate}</p>
+                  </div>
+                  <div class="col-span-6 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${t("infowindow.trip")}</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${trip_id}</p>
+                  </div>
+                  <div class="col-span-6 rounded-md ${bg_trip} p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${t("infowindow.status")}</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${trip_status}</p>
+                  </div>
+                  <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${t("infowindow.origin")}</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${trip_origin}</p>
+                  </div>
+                  <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${t("infowindow.destination")}</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${trip_destination}</p>
+                  </div>
+                  <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${t("infowindow.gps_position")}</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${!markerElem.position.gps_positioning ? t('dashboard.no_data') : markerElem.position.gps_positioning}</p>
+                  </div>
+                  <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${t("infowindow.accuracy")}</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${markerElem.position.accuracy} m.</p>
+                  </div>
+                  <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${t("infowindow.speed")}</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500"> ${!speed ? t('dashboard.no_data') : speed} km/h.</p>
+                  </div>
+                  <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${t("infowindow.direction")}</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${direction_icon}<span class="text-xs"> ${direction} </span></p>
+                  </div>
+                  <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">${t("infowindow.last_update")}</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">${!lastDate ? t('dashboard.no_data') : lastDate}</p>
+                  </div>
+                </div>
+              </div>`;
+
+      /*  BLOCK TO DISPLAY COORDINATES ON THE INFOWINDOW. DISABLED AT THIS MOMENT.           
+      <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+        <h5 class="text-xs font-light text-gray-400">${ t("infowindow.coords") }</h5>
+        <p class="text-md font-normal leading-6 text-gray-500">${markerElem.position.latitude},${markerElem.position.longitude}</p>
+      </div> */
       const marker = new google.maps.Marker({
         map: map,
         position: point,
+        id: markerElem.id,
         icon: {
           url: !darkMode.value
             ? imageAssets["/src/assets/images/map-marker.svg"].default
@@ -654,7 +750,9 @@ const init = async (initializeMap) => {
         });
 
         infoWindow.open(map, marker);
+
       });
+      driversArr.push(marker);
       return marker;
     }),
     {
@@ -666,7 +764,7 @@ const init = async (initializeMap) => {
           url: !darkMode.value
             ? imageAssets["/src/assets/images/map-marker-region.svg"].default
             : imageAssets["/src/assets/images/map-marker-region-dark.svg"]
-                .default,
+              .default,
           anchor: [0, 0],
           anchorText: [17, 0],
           fontWeight: "bold",
@@ -685,6 +783,8 @@ const init = async (initializeMap) => {
   map.setCenter(latlngbounds.getCenter());
   map.fitBounds(latlngbounds);
 
+  mapa = map;
+
   const stop = watch(darkMode, () => {
     init(initializeMap);
     stop();
@@ -694,7 +794,6 @@ const init = async (initializeMap) => {
 //FUNCTION FOR CREATE A BUTTON ELEMENT TO RESET MAP TO DEFAULT BOUNDS.
 function createCenterControl(map) {
   const controlButton = document.createElement("button");
-
   // Set CSS for the control.
   controlButton.style.backgroundColor = "#fff";
   controlButton.style.backgroundImage = "url('../../../src/assets/images/refresh.png')";
@@ -714,19 +813,107 @@ function createCenterControl(map) {
   controlButton.style.padding = "5px";
   controlButton.style.textAlign = "center";
   controlButton.textContent = "";
-  controlButton.title = "Reiniciar el mapa";
+  controlButton.title = t('dashboard.reload_map');
   controlButton.type = "button";
   controlButton.addEventListener("click", () => {
     //BUTTON ON CLICK RESET MAP TO BOUNDS.
+    if (infoWindow) {
+      infoWindow.close();
+    }
     map.setCenter(latlngbounds.getCenter());
     map.fitBounds(latlngbounds);
   });
   return controlButton;
 }
 
+function additionalInfoWindowData(data) {
+  plate = '--';
+  trip_id = '--';
+  trip_status = '--';
+  trip_origin = '--';
+  trip_destination = '--';
+  let active_trip = null;
+  let exist = 0;
 
-const marcadores = async () => {
-  const markers = JSON.parse(JSON.stringify(props.locations));
-  console.log(markers);
+  data.forEach((trip) => {
+    switch (trip.trip_status_id) {
+      case 5:
+        if (exist < trip.trip_status_id) {
+          active_trip = trip;
+          exist = 5;
+          bg_trip = 'bg-blue-100';
+        }
+        break;
+      case 4:
+        if (exist < trip.trip_status_id) {
+          active_trip = trip;
+          exist = 4;
+          bg_trip = 'bg-orange-100';
+        }
+        break;
+      case 3:
+        if (exist < trip.trip_status_id) {
+          active_trip = trip;
+          exist = 3;
+          bg_trip = 'bg-orange-100';
+        }
+        break;
+      case 2:
+        if (exist < trip.trip_status_id) {
+          active_trip = trip;
+          exist = 2;
+          bg_trip = 'bg-gray-100';
+        }
+        break;
+      case 1:
+        if (exist < trip.trip_status_id) {
+          active_trip = trip;
+          exist = 1;
+          bg_trip = 'bg-gray-100';
+        }
+        break;
+      default:
+        break;
+    }
+  });
+
+  if (active_trip) {
+    plate = active_trip.vehicle.plate;
+    trip_id = active_trip.reference_number;
+    trip_status = active_trip.status.name;
+    let stageArr = [];
+    active_trip.stages.forEach((stage) => {
+      if (stage.activity) {
+        stageArr.push(stage.name);
+      }
+    });
+    trip_origin = stageArr[0];
+    trip_destination = stageArr[stageArr.length - 1];
+  }
 }
+
+const searchDrivers = ref("");
+
+const searchedDrivers = computed(() => {
+    return drivers.value.filter((driver) => {
+        let fullname = driver.name + ' ' + driver.surname;
+        return (
+            fullname
+                .toLowerCase()
+                .indexOf(searchDrivers.value.toLowerCase()) != -1  
+        );
+    });
+});
+
+function zoomDriver(drv) {
+  if (infoWindow) {
+    infoWindow.close();
+  }
+  driversArr.forEach(el => {
+    if (drv == el.id) {
+      google.maps.event.trigger(el, 'click');
+    }
+  });
+}
+
 </script>
