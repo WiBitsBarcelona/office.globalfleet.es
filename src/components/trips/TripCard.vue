@@ -209,7 +209,7 @@ import { ref } from 'vue';
                 class="rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400"
               >
                 <h5 class="text-xs font-light text-gray-400">{{ $t("vehicle") }}</h5>
-                <p class="text-md font-normal leading-6 text-gray-500">{{ trip.vehicle_plate }}</p>
+                <p class="text-md font-normal leading-6 text-gray-500">{{ trip.vehicle.plate }}</p>
               </div>
               <div
                 class="rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400"
@@ -413,16 +413,13 @@ import { ref } from 'vue';
     if(trip.value.tows.length > 0){
       tow_plate.value = trip.value.tows[0].tow.plate;
     }
-
    
-
 
 
     /**
      * Stages
      */
-    stage_count.value = trip.value.stages.length;
-
+    let countStage = 0;
     if(trip.value.stages.length > 0){
 
         let find = trip.value.stages.find(element => element.activity !== null);
@@ -432,10 +429,9 @@ import { ref } from 'vue';
         trip.value.stages.forEach(element => {
           if(element.activity !== null){
             destination.value = element.name;
+            countStage++;
           }
         });
-
-
 
         // let flag = false;
         // let ele;
@@ -450,10 +446,6 @@ import { ref } from 'vue';
         // });
         // console.log(ele);
 
-
-      
-
-
         let stageFind = trip.value.stages.find(stage => {
           return stage.activity != null && (stage.stage_status_id >= 1 && stage.stage_status_id < 6);
         });
@@ -461,29 +453,16 @@ import { ref } from 'vue';
         if(stageFind){
           current_stage.value = stageFind.name;
           current_stage_execution_at.value = stageFind.execution_at;
-          current_stage_now.value = 'FEcha';
           current_stage_status.value = stageFind.status.name;
         }
 
-        console.log(stageFind);
+        
+        current_stage_now.value = $h.nowTimestamp();
 
-        // if(firstFind){
-
-        //   last_stage.value = firstFind.name;
-
-        // }else{
-
-        //   let secondFind = trip.value.stages.find(obj => {
-        //     //console.log({...obj});
-        //     return obj.stage_status_id === 1;
-        //   });
-
-        //   if(secondFind){
-        //     last_stage.value = secondFind.name;
-        //   }
-
-        // }
     }
+
+    stage_count.value = countStage;
+
 
 
 
