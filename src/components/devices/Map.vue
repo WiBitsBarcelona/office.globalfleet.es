@@ -17,11 +17,11 @@
               <td>
                 <Tippy v-if="driver.position.speed >= 5" tag="button" class="tooltip primary ml-4 mr-2"
                   :content="$t('driving')" :options="{ theme: 'light' }">
-                  <TruckIcon class="w-5 h-5 text-primary"></TruckIcon>
+                  <img src="/src/assets/images/markers/map-marker-blue.svg" class="w-7 h-7">
                 </Tippy>
                 <Tippy v-else tag="button" class="tooltip primary ml-4 mr-2" :content="$t('stopped')"
                   :options="{ theme: 'light' }">
-                  <TruckIcon class="w-5 h-5 text-warning"></TruckIcon>
+                  <img src="/src/assets/images/markers/map-marker-orange.svg" class="w-7 h-7">
                 </Tippy>
               </td>
             </tr>
@@ -64,11 +64,13 @@ let mapa;
 let driversArr = [];
 //VARIABLE TO SET BG ON INFOWINDOW
 let bg_trip = 'bg-gray-100';
+//VARIABLE TO SET MARKER
+let markerIcon = '';
 const { drivers, getDrivers } = useDriver();
 const totalDevices = ref(0);
 const selected_driver = ref("");
 const imageAssets = import.meta.globEager(
-  `/src/assets/images/*.{jpg,jpeg,png,svg}`
+  `/src/assets/images/markers/*.{jpg,jpeg,png,svg}`
 );
 const darkModeStore = useDarkModeStore();
 const darkMode = computed(() => darkModeStore.darkMode);
@@ -80,6 +82,7 @@ let trip_id;
 let trip_status;
 let trip_origin;
 let trip_destination;
+let cluster;
 
 const init = async (initializeMap) => {
 
@@ -88,7 +91,7 @@ const init = async (initializeMap) => {
   totalDevices.value = computed(() => drivers.value.length);
 
   const markers = JSON.parse(JSON.stringify(devices));
-  console.log(markers);
+  //console.log(markers);
   const darkTheme = [
     {
       elementType: "geometry",
@@ -660,7 +663,7 @@ const init = async (initializeMap) => {
     maxWidth: 450,
   });
 
-  new MarkerClusterer(
+  cluster = new MarkerClusterer(
     map,
     markers.map(function (markerElem) {
       const point = new google.maps.LatLng(
@@ -717,6 +720,12 @@ const init = async (initializeMap) => {
                 </div>
               </div>`;
 
+      if(speed >= 5){
+        markerIcon = "/src/assets/images/markers/map-marker-blue.svg";
+      }else{
+        markerIcon = "/src/assets/images/markers/map-marker-orange.svg";
+      };
+
       /*  BLOCK TO DISPLAY COORDINATES ON THE INFOWINDOW. DISABLED AT THIS MOMENT.           
       <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
         <h5 class="text-xs font-light text-gray-400">${ t("infowindow.coords") }</h5>
@@ -726,11 +735,7 @@ const init = async (initializeMap) => {
         map: map,
         position: point,
         id: markerElem.id,
-        icon: {
-          url: !darkMode.value
-            ? imageAssets["/src/assets/images/map-marker.svg"].default
-            : imageAssets["/src/assets/images/map-marker-dark.svg"].default,
-        },
+        icon: markerIcon,
       });
 
       //ADD CURRENT MARKER POSITION TO BOUNDS
@@ -762,9 +767,8 @@ const init = async (initializeMap) => {
           height: 55,
           textColor: "white",
           url: !darkMode.value
-            ? imageAssets["/src/assets/images/map-marker-region.svg"].default
-            : imageAssets["/src/assets/images/map-marker-region-dark.svg"]
-              .default,
+          ? imageAssets["/src/assets/images/markers/map-marker-group-100.svg"].default
+            : imageAssets["/src/assets/images/markers/map-marker-group-100.svg"].default,
           anchor: [0, 0],
           anchorText: [17, 0],
           fontWeight: "bold",

@@ -49,11 +49,13 @@ let mapa;
 let driversArr = [];
 //VARIABLE TO SET BG ON INFOWINDOW
 let bg_trip = 'bg-gray-100';
+//VARIABLE TO SET MARKER
+let markerIcon = '';
 const { drivers, getDrivers } = useDriver();
 const totalDevices = ref(0);
 const selected_driver = ref("");
 const imageAssets = import.meta.globEager(
-  `/src/assets/images/*.{jpg,jpeg,png,svg}`
+  `/src/assets/images/markers/*.{jpg,jpeg,png,svg}`
 );
 const darkModeStore = useDarkModeStore();
 const darkMode = computed(() => darkModeStore.darkMode);
@@ -65,6 +67,7 @@ let trip_id;
 let trip_status;
 let trip_origin;
 let trip_destination;
+let cluster;
 
 const init = async (initializeMap) => {
 
@@ -645,7 +648,7 @@ const init = async (initializeMap) => {
     maxWidth: 450,
   });
 
-  new MarkerClusterer(
+  cluster = new MarkerClusterer(
     map,
     markers.map(function (markerElem) {
       const point = new google.maps.LatLng(
@@ -681,7 +684,7 @@ const init = async (initializeMap) => {
                   </div>
                   <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
                     <h5 class="text-xs font-light text-gray-400">${ t("infowindow.gps_position") }</h5>
-                    <p class="text-md font-normal leading-4 text-gray-500">A10, 37260 Saint-Épain, Francia</p>
+                    <p class="text-md font-normal leading-4 text-gray-500">${!markerElem.position.gps_positioning ? t('dashboard.no_data') : markerElem.position.gps_positioning}</p>
                   </div>
                   <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
                     <h5 class="text-xs font-light text-gray-400">${ t("infowindow.accuracy") }</h5>
@@ -702,6 +705,13 @@ const init = async (initializeMap) => {
                 </div>
               </div>`;
 
+      if(speed >= 5){
+        markerIcon = "/src/assets/images/markers/map-marker-blue.svg";
+      }else{
+        markerIcon = "/src/assets/images/markers/map-marker-orange.svg";
+      };
+
+
 /*  BLOCK TO DISPLAY COORDINATES ON THE INFOWINDOW. DISABLED AT THIS MOMENT.           
 <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
   <h5 class="text-xs font-light text-gray-400">${ t("infowindow.coords") }</h5>
@@ -712,9 +722,7 @@ const init = async (initializeMap) => {
         position: point,
         id: markerElem.id,
         icon: {
-          url: !darkMode.value
-            ? imageAssets["/src/assets/images/map-marker.svg"].default
-            : imageAssets["/src/assets/images/map-marker-dark.svg"].default,
+          url: markerIcon,
         },
       });
 
@@ -747,9 +755,8 @@ const init = async (initializeMap) => {
           height: 55,
           textColor: "white",
           url: !darkMode.value
-            ? imageAssets["/src/assets/images/map-marker-region.svg"].default
-            : imageAssets["/src/assets/images/map-marker-region-dark.svg"]
-              .default,
+            ? imageAssets["/src/assets/images/markers/map-marker-group-100.svg"].default
+            : imageAssets["/src/assets/images/markers/map-marker-group-100.svg"].default,
           anchor: [0, 0],
           anchorText: [17, 0],
           fontWeight: "bold",
@@ -770,6 +777,8 @@ const init = async (initializeMap) => {
 
   mapa = map;
 
+  console.log(cluster);
+
   const stop = watch(darkMode, () => {
     init(initializeMap);
     stop();
@@ -781,7 +790,7 @@ function createCenterControl(map) {
   const controlButton = document.createElement("button");
   // Set CSS for the control.
   controlButton.style.backgroundColor = "#fff";
-  controlButton.style.backgroundImage = "url('../../../src/assets/images/refresh.png')";
+  controlButton.style.backgroundImage = "url('/src/assets/images/refresh.png')";
   //controlButton.style.backgroundImage = "url(imageAssets['/src/assets/images/map-marker-region-dark.svg'])";
   controlButton.style.backgroundSize = "cover"
   controlButton.style.width = "40px";
