@@ -13,50 +13,50 @@
                 :class="[onlineFilter === '' && 'selected']"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
-                Todos
+                {{ $t('trip_all') }}
                 <span
                   class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-primary text-white"
-                  >50</span
+                  >{{ trip_all }}</span
                 >
               </button>
               <button
                 type="button"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
-                Pendientes
+              {{ $t('trip_created') }}
                 <span
                   class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-primary text-white"
-                  >5</span
+                  >{{ trip_created }}</span
                 >
               </button>
               <button
                 type="button"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
-                Pendientes de Confirmar
+              {{ $t('trip_pending') }}
                 <span
                   class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-primary text-white"
-                  >2</span
+                  >{{ trip_pending }}</span
                 >
               </button>
               <button
                 type="button"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
-                En curso
+                {{ $t('trip_progress') }}
                 <span
                   class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-primary text-white"
-                  >20</span
+                  >{{ trip_progress }}</span
                 >
               </button>
               <button
                 type="button"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
-                Realizados
+                {{ $t('trip_completed') }}
                 <span
                   class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-primary text-white"
-                  >5</span
+                  >{{ trip_completed }}</span
                 >
               </button>
             </div>
@@ -79,7 +79,7 @@
                 <label
                   class="form-check-label font-normal text-gray-600"
                   for="radio-switch-4"
-                  >ID Viaje</label
+                  >{{ $t('trip') }}</label
                 >
               </div>
               <div class="form-check mr-2 mt-2 sm:mt-0">
@@ -93,7 +93,7 @@
                 <label
                   class="form-check-label font-normal text-gray-600"
                   for="radio-switch-5"
-                  >Vehículo</label
+                  >{{ $t('vehicle') }}</label
                 >
               </div>
               <div class="form-check mr-2 mt-2 sm:mt-0">
@@ -107,7 +107,7 @@
                 <label
                   class="form-check-label font-normal text-gray-600"
                   for="radio-switch-6"
-                  >Conductor</label
+                  >{{ $t('driver') }}</label
                 >
               </div>
             </div>
@@ -195,7 +195,6 @@
           <option>25</option>
           <option>35</option>
           <option>50</option>
-          <option>Todos</option>
         </select>
       </div>
       
@@ -213,55 +212,44 @@
 
   const { trips, getTrips } = useTrips();
 
-
   const postXpage = ref(5);
   const pageStart = ref(0);
   const pageEnd = ref(postXpage.value);
-
   const totalPage = ref(0);
   const currentPage = ref(1);
 
-  // const last_page = ref(postXpage);
-  // const pageN = ref(1);
-  // const pageSelected = ref(1);
-
-
   const filter = ref('');
-
 
   const onlineFilter = "";
 
-
-
-
+  const trip_completed = ref(0);
+  const trip_created = ref(0);
+  const trip_pending = ref(0);
+  const trip_progress = ref(0);
+  const trip_all = ref(0);
 
 
   /**
   * Paginate
   */
   const next = () =>{
-    pageStart.value = pageStart.value + postXpage.value;
-    pageEnd.value = pageEnd.value + postXpage.value;
-    currentPage.value = currentPage.value + 1;
+    pageStart.value = parseInt(pageStart.value) + parseInt(postXpage.value);
+    pageEnd.value = parseInt(pageEnd.value) + parseInt(postXpage.value);
+    currentPage.value = parseInt(currentPage.value) + 1;
   }
 
   const previus = () =>{
-    pageStart.value = pageStart.value - postXpage.value;
-    pageEnd.value = pageEnd.value - postXpage.value;
-    currentPage.value = currentPage.value - 1;
+    pageStart.value = parseInt(pageStart.value) - parseInt(postXpage.value);
+    pageEnd.value = parseInt(pageEnd.value) - parseInt(postXpage.value);
+    currentPage.value = parseInt(currentPage.value) - 1;
   }
 
 
   const onChangeSelect = () => {
     pageStart.value = 0;
-    pageEnd.value = postXpage.value;
+    pageEnd.value = parseInt(postXpage.value);
     currentPage.value = 1;
   }
-
-
-
-
-
 
 
 
@@ -282,6 +270,29 @@
   onMounted(async() => {
     await getTrips();
     totalPage.value = trips.value.length / postXpage.value;
+
+    trips.value.forEach(element => {
+
+      if(element.trip_status_id == 1 || element.trip_status_id == 2){
+        trip_created.value++;
+      }
+
+      if(element.trip_status_id == 3 || element.trip_status_id == 4){
+        trip_pending.value++;
+      }
+
+      if(element.trip_status_id == 5){
+        trip_progress.value++;
+      }
+
+      if(element.trip_status_id == 6){
+        trip_completed.value++;
+      }
+      
+    });
+
+    trip_all.value = trips.value.length;
+
   });
 
 </script>
