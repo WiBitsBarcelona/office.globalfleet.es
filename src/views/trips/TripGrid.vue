@@ -208,10 +208,8 @@
   import { onMounted, ref, computed } from 'vue';
   import useTrips from "@/composables/trips";
   import TripCard from '@/components/trips/TripCard.vue';
-  import { useAuthenticationStore } from '@/stores/auth/authentications';
 
   
-  const useAuthentication = useAuthenticationStore();
   const { trips, getTrips } = useTrips();
 
   //Paginate
@@ -224,7 +222,6 @@
   const filter = ref('');
   const onlineFilter = "";
 
-  //Trips
   const trip_completed = ref(0);
   const trip_created = ref(0);
   const trip_pending = ref(0);
@@ -304,8 +301,7 @@
 
     trip_all.value = trips.value.length;
 
-    const user = useAuthentication.user;
-    console.log(user.employee);
+    
 
   });
 

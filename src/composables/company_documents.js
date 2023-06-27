@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import axios from 'axios';
+import { useAuthenticationStore } from '@/stores/auth/authentications';
 
 
 export default function useCompanyDriver() {
@@ -7,6 +8,8 @@ export default function useCompanyDriver() {
 	const companyDriver = ref([]);
 	const companyDrivers = ref([]);
 	const errors = ref('');
+
+    const useAuthentication = useAuthenticationStore();
 
 	let config = {
 		headers: {
@@ -17,8 +20,9 @@ export default function useCompanyDriver() {
 
 	const getCompanyDrivers = async () => {
 		errors.value = '';
+        const user = useAuthentication.user;
 		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}company-drivers/list`, config);
+			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}company-drivers/${user.company_id}/list`, config);
 			companyDrivers.value = response.data.data;
 		} catch (e) {
 			console.log(e);

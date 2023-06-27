@@ -8,7 +8,7 @@ const requireAuth = async(to, from, next) => {
   try {
       const user = await useAuthentication.currentUser();
       
-      console.log(user);
+      //console.log(user);
 
       next();
       
