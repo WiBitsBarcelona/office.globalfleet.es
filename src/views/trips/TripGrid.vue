@@ -138,10 +138,9 @@
         <!-- Element 1 -->
         
         <TripCard
-          v-for="trip in searchedTrips.slice(pageStart, pageEnd)"
+          v-for="trip in searchedTrips"
           :key="trip.id"
           :trip="trip"
-
         />
 
 
@@ -209,9 +208,13 @@
   import { onMounted, ref, computed } from 'vue';
   import useTrips from "@/composables/trips";
   import TripCard from '@/components/trips/TripCard.vue';
+  import { useAuthenticationStore } from '@/stores/auth/authentications';
 
+  
+  const useAuthentication = useAuthenticationStore();
   const { trips, getTrips } = useTrips();
 
+  //Paginate
   const postXpage = ref(5);
   const pageStart = ref(0);
   const pageEnd = ref(postXpage.value);
@@ -219,9 +222,9 @@
   const currentPage = ref(1);
 
   const filter = ref('');
-
   const onlineFilter = "";
 
+  //Trips
   const trip_completed = ref(0);
   const trip_created = ref(0);
   const trip_pending = ref(0);
@@ -252,18 +255,26 @@
   }
 
 
-
-  
-
   const searchedTrips = computed(() => {
-    return trips.value.filter((trip) => {
+      const q = trips.value.filter((trip) => {
           return (
-            trip.reference_number.toLowerCase().indexOf(filter.value.toLowerCase()) != -1
+            //trip.reference_number.toLowerCase().indexOf(filter.value.toLowerCase()) != -1
+            trip.reference_number
+                .toLowerCase()
+                .indexOf(filter.value.toLowerCase()) != -1
           );
       });
+
+      if(filter.value != ''){
+        // console.log("start",pageStart.value);
+        // console.log("end", pageEnd.value);
+        // console.log("current", currentPage.value);
+        return q;
+      }
+
+
+      return q.slice(pageStart.value, pageEnd.value);
   });
-
-
 
 
 
@@ -292,6 +303,9 @@
     });
 
     trip_all.value = trips.value.length;
+
+    const user = useAuthentication.user;
+    console.log(user.employee);
 
   });
 
