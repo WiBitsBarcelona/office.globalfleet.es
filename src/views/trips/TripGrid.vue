@@ -210,15 +210,16 @@
   import TripCard from '@/components/trips/TripCard.vue';
 
 
-  import useCompanyDriver from '@/composable/company_documents';
+  import useCompanyDocument from '@/composables/company_documents';
 
 
-
-
-
-  
-  const { trips, getCompany } = useCompanyDriver();
   const { trips, getTrips } = useTrips();
+
+
+  const { companyDocuments, getCompanyDocuments } = useCompanyDocument();
+
+
+
 
   //Paginate
   const postXpage = ref(5);
@@ -309,6 +310,11 @@
 
     trip_all.value = trips.value.length;
 
+
+    await getCompanyDocuments();
+
+
+    console.log(companyDocuments);
     
 
   });

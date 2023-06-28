@@ -25,15 +25,10 @@ export default function useCompanyDocument() {
 		errors.value = '';
         const user = useAuthentication.user;
 		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}company-documents/${user.company_id}/list`, config);
+			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}company-documents/${user.employee.company_id}/list`, config);
 			companyDocuments.value = response.data.data;
 		} catch (e) {
 			console.log(e);
-			// if (e.response.status_code === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
 		}
 	}
 
@@ -45,11 +40,6 @@ export default function useCompanyDocument() {
 			companyDocument.value = response.data.data;
 		} catch (e) {
 			console.log(e);
-			// if (e.response.status_code === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
 		}
 	}
 
@@ -61,11 +51,6 @@ export default function useCompanyDocument() {
 			//await router.push({ name: 'companyDocument.index' });
 		} catch (e) {
 			console.log(e);
-			// if (e.response.status_code === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
 		}
 	}
 
@@ -77,11 +62,6 @@ export default function useCompanyDocument() {
 			//await router.push({ name: 'companyDocument.index' });
 		} catch (e) {
 			console.log(e);
-			// if (e.response.status === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
 		}
 	}
 
@@ -91,11 +71,6 @@ export default function useCompanyDocument() {
 			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}company-documents/destroy/${id}`, config);
 		} catch (e) {
 			console.log(e);
-			// if (e.response.status === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
 		}
 	}
 
