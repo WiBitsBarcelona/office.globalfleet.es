@@ -2,6 +2,14 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 
 
+const config = {
+  headers: {
+      "Content-Type": "application/json",
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+  }
+}
+
+
 export const useAuthenticationStore = defineStore("authStore", {
     state: () => ({
         token: null,
@@ -72,6 +80,38 @@ export const useAuthenticationStore = defineStore("authStore", {
                         reject(e);
                     })
             }) 
+
+
+            // try {
+            //   const res = await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}office/auth/user`, {
+            //       method: "GET",
+            //       headers: {
+            //         "Content-Type": "application/json",
+            //         'Authorization': `Bearer ${this.token}`
+            //       }
+            //     });
+            //     const response = await res.json();
+
+
+            //     console.log(response);
+
+            //     if (response.success){
+            //       this.token = null;
+            //       this.user = response.data;
+            //     }else{
+            //       this.errors = response.errors;
+            //     }
+              
+            // } catch (error) {
+            //   if(localStorage.getItem('token')){
+            //       localStorage.removeItem('token');
+            //   }
+            //   console.log(e);
+            //   this.errors = e;
+            //   this.token = null;
+            // }
+
+
         },
         async logout(){
 
