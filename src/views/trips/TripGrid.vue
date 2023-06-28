@@ -209,7 +209,15 @@
   import useTrips from "@/composables/trips";
   import TripCard from '@/components/trips/TripCard.vue';
 
+
+  import useCompanyDriver from '@/composable/company_documents';
+
+
+
+
+
   
+  const { trips, getCompany } = useCompanyDriver();
   const { trips, getTrips } = useTrips();
 
   //Paginate
