@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthenticationStore } from '@/stores/auth/authentications';
 
-
 const requireAuth = async(to, from, next) => {
   document.title = `${to.name} - ${import.meta.env.VITE_APP_TITLE}`;
   const useAuthentication = useAuthenticationStore();
@@ -68,7 +67,12 @@ const routes = [
       {
         path: "documents",
         name: "documents",
-        component: () => import('@/views/documents/Documents.vue'),
+        component: () => import('@/views/documents/Main.vue'),
+      },
+      {
+        path: "driver_documents/:id",
+        name: "Driver Documents",
+        component: () => import('@/views/documents/drivers/General.vue'),
       },
       {
         path: "chat",

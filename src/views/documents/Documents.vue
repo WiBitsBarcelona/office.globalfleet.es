@@ -12,49 +12,36 @@
               href=""
               class="flex items-center w-full px-3 py-2 rounded-md bg-primary text-white font-medium"
             >
-              <PlaneIcon class="w-4 h-4 mr-2" /> Documentos Generales
+              <FileTextIcon class="w-4 h-4 mr-2" /> Documentos Generales
             </a>
             
           </div>
-
-
-          <div class="flex flex-col gap-2 items-end">
-            <a
-              href=""
-              class="flex items-center w-full px-3 py-2 rounded-md bg-primary text-white font-medium"
-            >
-              <PlaneIcon class="w-4 h-4 mr-2" /> Por Viajes
-            </a>
-            
-          </div>
-
-
 
 
 
           <div class="flex flex-col gap-2 items-end" v-for="employeeDriver in employeeDrivers" :key="employeeDriver.id">
             <a
               href=""
-              class="flex items-center w-full px-3 py-2 rounded-md bg-primary text-white font-medium"
+              class="flex items-center w-full px-3 py-2 rounded-md bg-gray-400 text-white font-medium"
             >
-              <TruckIcon class="w-4 h-4 mr-2" /> {{employeeDriver.driver.name}}
+              <UserIcon class="w-4 h-4 mr-2" /> {{employeeDriver.driver.name}} {{employeeDriver.driver.surname}}
             </a>
             <div class="flex w-full items-center justify-end gap-2">
               <p class="text-xl font-semibold"></p>
               <a
                 href=""
-                class="flex items-center px-3 py-2 rounded-md bg-primary text-white font-medium w-10/12 cursor-pointer"
+                class="flex items-center px-3 py-2 rounded-md bg-gray-300 text-white font-medium w-10/12 cursor-pointer"
               >
-                <CarIcon class="w-4 h-4 mr-2" /> Archivos chat
+                <MessageCircleIcon class="w-4 h-4 mr-2" /> Archivos chat
               </a>
             </div>
             <div class="flex w-full items-center justify-end gap-2">
               <p class="text-xl font-semibold"></p>
               <a
                 href=""
-                class="flex items-center px-3 py-2 rounded-md bg-primary text-white font-medium w-10/12 cursor-pointer"
+                class="flex items-center px-3 py-2 rounded-md bg-gray-300 text-white font-medium w-10/12 cursor-pointer"
               >
-                <BusIcon class="w-4 h-4 mr-2" /> Viajes
+                <NavigationIcon class="w-4 h-4 mr-2" /> Viajes
               </a>
             </div>
           </div>
