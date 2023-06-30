@@ -165,6 +165,7 @@
     "title": "Gestor de Documentos",
     "current_folder_lbl": "Mostrando el contenido de la carpeta:",
     "general_files": "Documentos Generales",
+    "driver_files": "Documentos de Conductores",
     "chat_files": "Documentos del Chat",
     "trip_files": "Documentos de Viajes",
     "upload_document": "Subir Documento",
@@ -173,7 +174,7 @@
       "type": "Tipo",
       "like": "Contiene",
       "value": "Valor",
-      "search_placeholder": "Buscar...",
+      "search_placeholder": "Buscar Documento...",
       "search_btn": "Buscar",
       "reset_search_btn": "Limpiar"
     },

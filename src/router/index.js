@@ -69,7 +69,7 @@ const routes = [
       {
         path: "documents",
         name: "documents",
-        component: () => import('@/views/documents/Main.vue'),
+        component: () => import('@/views/documents/MainNew.vue'),
       },
       {
         path: "driver_documents/:id",

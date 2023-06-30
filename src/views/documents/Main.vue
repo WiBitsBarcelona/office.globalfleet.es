@@ -136,7 +136,24 @@
               <ModalBody class="px-5 py-10">
                 <div class="text-center">
                   <div class="mb-5">
-                    Contenido del modal para subir un archivo
+                    <Dropzone
+              ref-key="dropzoneMultipleRef"
+              :options="{
+                url: 'https://httpbin.org/post',
+                thumbnailWidth: 150,
+                maxFilesize: 0.5,
+                headers: { 'My-Awesome-Header': 'header value' },
+              }"
+              class="dropzone"
+            >
+              <div class="text-lg font-medium">
+                Drop files here or click to upload.
+              </div>
+              <div class="text-gray-600">
+                This is just a demo dropzone. Selected files are
+                <span class="font-medium">not</span> actually uploaded.
+              </div>
+            </Dropzone>
                   </div>
                   <button
                     type="button"
@@ -158,8 +175,24 @@
               <ModalBody class="px-5 py-10">
                 <div class="text-center">
                   <div class="mb-5">
-                    Contenido del modal ver los detalles del archivo. Lista de conductores con el enviado/recibido/visto con fechas y horas.
-                  </div>
+                    <Dropzone
+              ref-key="dropzoneMultipleRef"
+              :options="{
+                url: 'https://httpbin.org/post',
+                thumbnailWidth: 150,
+                maxFilesize: 0.5,
+                headers: { 'My-Awesome-Header': 'header value' },
+              }"
+              class="dropzone"
+            >
+              <div class="text-lg font-medium">
+                Drop files here or click to upload.
+              </div>
+              <div class="text-gray-600">
+                This is just a demo dropzone. Selected files are
+                <span class="font-medium">not</span> actually uploaded.
+              </div>
+            </Dropzone>                  </div>
                   <button
                     type="button"
                     @click="detailsModal = false"
@@ -184,7 +217,10 @@ import { createIcons, icons } from "lucide";
 import Tabulator from "tabulator-tables";
 import dom from "@left4code/tw-starter/dist/js/dom";
 import useEmployeeDrivers from "@/composables/employee_drivers";
+import useCompanyDocument from "@/composables/company_documents";
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const addFileModal= ref(false);
 const detailsModal= ref(false);
 
@@ -210,6 +246,8 @@ let fakeGeneralData = [
 
 
 const { employeeDrivers, getEmployeeDrivers } = useEmployeeDrivers();
+const { companyDocuments, getCompanyDocuments } = useCompanyDocument();
+
 let selectedFolder = ref('viajes');
 let foldersToShow = ref(faker);
 
@@ -431,6 +469,9 @@ onMounted(() => {
 onBeforeMount(async () => {
 
   await getEmployeeDrivers();
+  await getCompanyDocuments();
+  const documentsData = JSON.parse(JSON.stringify(companyDocuments));
+  console.log(documentsData);
 
 });
 
