@@ -312,8 +312,6 @@
 
 
     await getCompanyDocuments();
-
-
     console.log(companyDocuments);
     
 

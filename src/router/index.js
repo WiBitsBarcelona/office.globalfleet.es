@@ -5,9 +5,9 @@ const requireAuth = async(to, from, next) => {
   document.title = `${to.name} - ${import.meta.env.VITE_APP_TITLE}`;
   const useAuthentication = useAuthenticationStore();
   try {
-      const user = await useAuthentication.currentUser();
-      
-      //console.log(user);
+      await useAuthentication.currentUser();
+
+      //console.log(useAuthentication.user);
 
       next();
       
