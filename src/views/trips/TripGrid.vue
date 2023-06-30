@@ -10,6 +10,7 @@
             <div class="inline-flex rounded-md shadow-sm">
               <button
                 type="button"
+                @click="onClickAll()"
                 :class="[classBtnFilter === classBtnAll && 'selected']"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
@@ -23,7 +24,7 @@
 
               <button
                 type="button"
-                @click="btnCreated()"
+                @click="onClickCreated()"
                 :class="[classBtnFilter === classBtnCreated && 'selected']"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
@@ -38,7 +39,8 @@
 
               <button
                 type="button"
-                :class="[classFilter === classBtnPending && 'selected']"
+                @click="onClickPending()"
+                :class="[classBtnFilter === classBtnPending && 'selected']"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
               {{ $t('trip_pending') }}
@@ -51,6 +53,7 @@
 
               <button
                 type="button"
+                @click="onClickProgress()"
                 :class="[classBtnFilter === classBtnProgress && 'selected']"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
@@ -62,6 +65,7 @@
               </button>
               <button
                 type="button"
+                @click="onClickCompleted()"
                 :class="[classBtnFilter === classBtnCompleted && 'selected']"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
@@ -309,14 +313,32 @@
       return q.slice(pageStart.value, pageEnd.value);
   });
 
-  
-  const btnCreated = () => {
+
+  const onClickAll = () => {
     console.log("pasa");
-
-    classFilter.value = 'btn_created';
-
+    classBtnFilter.value = classBtnAll;
+  }
+  
+  const onClickCreated = () => {
+    console.log("pasa");
+    classBtnFilter.value = classBtnCreated;
   }
 
+  const onClickPending = () => {
+    console.log("pasa");
+    classBtnFilter.value = classBtnPending;
+  }
+
+  const onClickProgress = () => {
+    console.log("pasa");
+    classBtnFilter.value = classBtnProgress;
+  }
+
+
+  const onClickCompleted = () => {
+    console.log("pasa");
+    classBtnFilter.value = classBtnCompleted;
+  }
 
   
 
