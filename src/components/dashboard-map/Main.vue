@@ -654,11 +654,6 @@ const init = async (initializeMap) => {
   cluster = new MarkerClusterer(
     map,
     markers.map(function (markerElem) {
-      if(markerElem.position){
-
-      }else{
-
-      };
       const point = new google.maps.LatLng(
         parseFloat(markerElem.position.latitude),
         parseFloat(markerElem.position.longitude)
