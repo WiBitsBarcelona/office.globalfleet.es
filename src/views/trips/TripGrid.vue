@@ -10,7 +10,7 @@
             <div class="inline-flex rounded-md shadow-sm">
               <button
                 type="button"
-                :class="[onlineFilter === '' && 'selected']"
+                :class="[classBtnFilter === classBtnAll && 'selected']"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
                 {{ $t('trip_all') }}
@@ -18,9 +18,13 @@
                   class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-primary text-white"
                   >{{ trip_all }}</span
                 >
-              </button>
+              </button> <!-- button -->
+
+
               <button
                 type="button"
+                @click="btnCreated()"
+                :class="[classBtnFilter === classBtnCreated && 'selected']"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
               {{ $t('trip_created') }}
@@ -28,9 +32,13 @@
                   class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-primary text-white"
                   >{{ trip_created }}</span
                 >
-              </button>
+              </button> <!-- button -->
+
+
+
               <button
                 type="button"
+                :class="[classFilter === classBtnPending && 'selected']"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
               {{ $t('trip_pending') }}
@@ -39,8 +47,11 @@
                   >{{ trip_pending }}</span
                 >
               </button>
+
+
               <button
                 type="button"
+                :class="[classBtnFilter === classBtnProgress && 'selected']"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
                 {{ $t('trip_progress') }}
@@ -51,6 +62,7 @@
               </button>
               <button
                 type="button"
+                :class="[classBtnFilter === classBtnCompleted && 'selected']"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
                 {{ $t('trip_completed') }}
@@ -221,6 +233,20 @@
 
 
 
+  // Btn
+
+  const classBtnAll = 'class_btn_all';
+  const classBtnCreated = 'class_btn_created';
+  const classBtnPending = 'class_btn_pending';
+  const classBtnProgress = 'class_btn_progress';
+  const classBtnCompleted = 'class_btn_completed';
+
+  const classBtnFilter = ref(classBtnAll);
+
+
+
+
+
   //Paginate
   const postXpage = ref(5);
   const pageStart = ref(0);
@@ -229,13 +255,16 @@
   const currentPage = ref(1);
 
   const filter = ref('');
-  const onlineFilter = "";
-
+  
   const trip_completed = ref(0);
   const trip_created = ref(0);
   const trip_pending = ref(0);
   const trip_progress = ref(0);
   const trip_all = ref(0);
+
+
+
+
 
 
   /**
@@ -265,9 +294,9 @@
       const q = trips.value.filter((trip) => {
           return (
             //trip.reference_number.toLowerCase().indexOf(filter.value.toLowerCase()) != -1
-            trip.reference_number
-                .toLowerCase()
-                .indexOf(filter.value.toLowerCase()) != -1
+            trip.reference_number.toLowerCase().indexOf(filter.value.toLowerCase()) != -1 ||
+            trip.vehicle.plate.toLowerCase().indexOf(filter.value.toLowerCase()) != -1 ||
+            trip.driver.name.toLowerCase().indexOf(filter.value.toLowerCase()) != -1 
           );
       });
 
@@ -277,10 +306,23 @@
         // console.log("current", currentPage.value);
         return q;
       }
-
-
       return q.slice(pageStart.value, pageEnd.value);
   });
+
+  
+  const btnCreated = () => {
+    console.log("pasa");
+
+    classFilter.value = 'btn_created';
+
+  }
+
+
+  
+
+
+
+
 
 
 
