@@ -8,8 +8,8 @@
         <div class="inline-flex">
           <span class="text-lg font-medium mt-2 mr-3">{{ $t("dashboard.select_driver") }}</span>
           <TomSelect v-model="selected_driver" name="plate_driver" @change="onChange()" :options="{
-              placeholder: $t('dashboard.select_driver_placeholder'),
-            }" class="form-control w-full sm:w-56">
+            placeholder: $t('dashboard.select_driver_placeholder'),
+          }" class="form-control w-full sm:w-56">
             <option :value="0">{{ $t("dashboard.select_all") }}</option>
             <option :value="driver.id + ',' + driver.position.latitude + ',' + driver.position.longitude"
               v-for="driver in drivers" :key="driver.id">{{ driver.name }} {{ driver.surname }}</option>
@@ -53,6 +53,7 @@ let bg_trip = 'bg-gray-100';
 let markerIcon = '';
 const { drivers, getDrivers } = useDriver();
 const totalDevices = ref(0);
+const totalDevicesNew = ref(0);
 const selected_driver = ref("");
 const imageAssets = import.meta.globEager(
   `/src/assets/images/markers/*.{jpg,jpeg,png,svg}`
@@ -73,10 +74,12 @@ const init = async (initializeMap) => {
 
   await getDrivers();
   const devices = drivers.value;
+
   totalDevices.value = computed(() => drivers.value.length);
 
+
   const markers = JSON.parse(JSON.stringify(devices));
-  //console.log(markers);
+
   const darkTheme = [
     {
       elementType: "geometry",
@@ -651,6 +654,11 @@ const init = async (initializeMap) => {
   cluster = new MarkerClusterer(
     map,
     markers.map(function (markerElem) {
+      if(markerElem.position){
+
+      }else{
+
+      };
       const point = new google.maps.LatLng(
         parseFloat(markerElem.position.latitude),
         parseFloat(markerElem.position.longitude)
@@ -667,56 +675,56 @@ const init = async (initializeMap) => {
                     <p class="text-md text-xl font-bold leading-5 text-gray-500">${markerElem.name} ${markerElem.surname} / ${plate}</p>
                   </div>
                   <div class="col-span-6 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
-                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.trip") }</h5>
+                    <h5 class="text-xs font-light text-gray-400">${t("infowindow.trip")}</h5>
                     <p class="text-md font-normal leading-4 text-gray-500">${trip_id}</p>
                   </div>
                   <div class="col-span-6 rounded-md ${bg_trip} p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
-                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.status") }</h5>
+                    <h5 class="text-xs font-light text-gray-400">${t("infowindow.status")}</h5>
                     <p class="text-md font-normal leading-4 text-gray-500">${trip_status}</p>
                   </div>
                   <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
-                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.origin") }</h5>
+                    <h5 class="text-xs font-light text-gray-400">${t("infowindow.origin")}</h5>
                     <p class="text-md font-normal leading-4 text-gray-500">${trip_origin}</p>
                   </div>
                   <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
-                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.destination") }</h5>
+                    <h5 class="text-xs font-light text-gray-400">${t("infowindow.destination")}</h5>
                     <p class="text-md font-normal leading-4 text-gray-500">${trip_destination}</p>
                   </div>
                   <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
-                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.gps_position") }</h5>
+                    <h5 class="text-xs font-light text-gray-400">${t("infowindow.gps_position")}</h5>
                     <p class="text-md font-normal leading-4 text-gray-500">${!markerElem.position.gps_positioning ? t('dashboard.no_data') : markerElem.position.gps_positioning}</p>
                   </div>
                   <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
-                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.accuracy") }</h5>
+                    <h5 class="text-xs font-light text-gray-400">${t("infowindow.accuracy")}</h5>
                     <p class="text-md font-normal leading-4 text-gray-500">${markerElem.position.accuracy} m.</p>
                   </div>
                   <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
-                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.speed") }</h5>
+                    <h5 class="text-xs font-light text-gray-400">${t("infowindow.speed")}</h5>
                     <p class="text-md font-normal leading-4 text-gray-500"> ${!speed ? t('dashboard.no_data') : speed} km/h.</p>
                   </div>
                   <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
-                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.direction") }</h5>
+                    <h5 class="text-xs font-light text-gray-400">${t("infowindow.direction")}</h5>
                     <p class="text-md font-normal leading-4 text-gray-500">${direction_icon}<span class="text-xs"> ${direction} </span></p>
                   </div>
                   <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
-                    <h5 class="text-xs font-light text-gray-400">${ t("infowindow.last_update") }</h5>
+                    <h5 class="text-xs font-light text-gray-400">${t("infowindow.last_update")}</h5>
                     <p class="text-md font-normal leading-4 text-gray-500">${!lastDate ? t('dashboard.no_data') : lastDate}</p>
                   </div>
                 </div>
               </div>`;
 
-      if(speed >= 5){
+      if (speed >= 5) {
         markerIcon = "/src/assets/images/markers/map-marker-blue.svg";
-      }else{
+      } else {
         markerIcon = "/src/assets/images/markers/map-marker-orange.svg";
       };
 
 
-/*  BLOCK TO DISPLAY COORDINATES ON THE INFOWINDOW. DISABLED AT THIS MOMENT.           
-<div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
-  <h5 class="text-xs font-light text-gray-400">${ t("infowindow.coords") }</h5>
-  <p class="text-md font-normal leading-6 text-gray-500">${markerElem.position.latitude},${markerElem.position.longitude}</p>
-</div> */
+      /*  BLOCK TO DISPLAY COORDINATES ON THE INFOWINDOW. DISABLED AT THIS MOMENT.           
+      <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+        <h5 class="text-xs font-light text-gray-400">${ t("infowindow.coords") }</h5>
+        <p class="text-md font-normal leading-6 text-gray-500">${markerElem.position.latitude},${markerElem.position.longitude}</p>
+      </div> */
       const marker = new google.maps.Marker({
         map: map,
         position: point,
@@ -777,7 +785,6 @@ const init = async (initializeMap) => {
 
   mapa = map;
 
-  console.log(cluster);
 
   const stop = watch(darkMode, () => {
     init(initializeMap);
@@ -838,7 +845,7 @@ function onChange() {
   }
 }
 
-function additionalInfoWindowData(data){
+function additionalInfoWindowData(data) {
   plate = '--';
   trip_id = '--';
   trip_status = '--';
@@ -846,42 +853,42 @@ function additionalInfoWindowData(data){
   trip_destination = '--';
   let active_trip = null;
   let exist = 0;
-  
+
   data.forEach((trip) => {
-    switch(trip.trip_status_id){
+    switch (trip.trip_status_id) {
       case 5:
-        if(exist < trip.trip_status_id){
+        if (exist < trip.trip_status_id) {
           active_trip = trip;
           exist = 5;
           bg_trip = 'bg-blue-100';
         }
         break;
       case 4:
-        if(exist < trip.trip_status_id){
+        if (exist < trip.trip_status_id) {
           active_trip = trip;
           exist = 4;
-          bg_trip ='bg-orange-100';
+          bg_trip = 'bg-orange-100';
         }
         break;
       case 3:
-        if(exist < trip.trip_status_id){
+        if (exist < trip.trip_status_id) {
           active_trip = trip;
           exist = 3;
-          bg_trip ='bg-orange-100';
+          bg_trip = 'bg-orange-100';
         }
         break;
       case 2:
-        if(exist < trip.trip_status_id){
+        if (exist < trip.trip_status_id) {
           active_trip = trip;
           exist = 2;
-          bg_trip ='bg-gray-100';
+          bg_trip = 'bg-gray-100';
         }
         break;
       case 1:
-        if(exist < trip.trip_status_id){
+        if (exist < trip.trip_status_id) {
           active_trip = trip;
           exist = 1;
-          bg_trip ='bg-gray-100';
+          bg_trip = 'bg-gray-100';
         }
         break;
       default:
@@ -889,18 +896,18 @@ function additionalInfoWindowData(data){
     }
   });
 
-  if(active_trip){
+  if (active_trip) {
     plate = active_trip.vehicle.plate;
     trip_id = active_trip.reference_number;
     trip_status = active_trip.status.name;
     let stageArr = [];
     active_trip.stages.forEach((stage) => {
-      if(stage.activity){
+      if (stage.activity) {
         stageArr.push(stage.name);
       }
     });
     trip_origin = stageArr[0];
-    trip_destination = stageArr[stageArr.length -1];
+    trip_destination = stageArr[stageArr.length - 1];
   }
 }
 

@@ -1,13 +1,14 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthenticationStore } from '@/stores/auth/authentications';
 
-
 const requireAuth = async(to, from, next) => {
   document.title = `${to.name} - ${import.meta.env.VITE_APP_TITLE}`;
   const useAuthentication = useAuthenticationStore();
   try {
-      const currentUser = await useAuthentication.currentUser();
-      
+      await useAuthentication.currentUser();
+
+      //console.log(useAuthentication.user);
+
       next();
       
   } catch (e) {
@@ -68,7 +69,12 @@ const routes = [
       {
         path: "documents",
         name: "documents",
-        component: () => import('@/views/documents/Documents.vue'),
+        component: () => import('@/views/documents/MainNew.vue'),
+      },
+      {
+        path: "driver_documents/:id",
+        name: "Driver Documents",
+        component: () => import('@/views/documents/drivers/General.vue'),
       },
       {
         path: "chat",

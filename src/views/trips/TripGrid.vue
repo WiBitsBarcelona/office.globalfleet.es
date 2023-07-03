@@ -10,53 +10,69 @@
             <div class="inline-flex rounded-md shadow-sm">
               <button
                 type="button"
-                :class="[onlineFilter === '' && 'selected']"
+                @click.prevent="onClickAll()"
+                :class="[classBtnFilter === classBtnAll && 'selected']"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
-                Todos
+                {{ $t('trip_all') }}
                 <span
                   class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-primary text-white"
-                  >50</span
+                  >{{ trip_all }}</span
+                >
+              </button> <!-- button -->
+
+
+              <button
+                type="button"
+                @click.prevent="onClickCreated()"
+                :class="[classBtnFilter === classBtnCreated && 'selected']"
+                class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
+              >
+              {{ $t('trip_created') }}
+                <span
+                  class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-primary text-white"
+                  >{{ trip_created }}</span
+                >
+              </button> <!-- button -->
+
+
+
+              <button
+                type="button"
+                @click.prevent="onClickPending()"
+                :class="[classBtnFilter === classBtnPending && 'selected']"
+                class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
+              >
+              {{ $t('trip_pending') }}
+                <span
+                  class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-primary text-white"
+                  >{{ trip_pending }}</span
+                >
+              </button>
+
+
+              <button
+                type="button"
+                @click.prevent="onClickProgress()"
+                :class="[classBtnFilter === classBtnProgress && 'selected']"
+                class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
+              >
+                {{ $t('trip_progress') }}
+                <span
+                  class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-primary text-white"
+                  >{{ trip_progress }}</span
                 >
               </button>
               <button
                 type="button"
+                @click.prevent="onClickCompleted()"
+                :class="[classBtnFilter === classBtnCompleted && 'selected']"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
-                Pendientes
+                {{ $t('trip_completed') }}
                 <span
                   class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-primary text-white"
-                  >5</span
-                >
-              </button>
-              <button
-                type="button"
-                class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
-              >
-                Pendientes de Confirmar
-                <span
-                  class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-primary text-white"
-                  >2</span
-                >
-              </button>
-              <button
-                type="button"
-                class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
-              >
-                En curso
-                <span
-                  class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-primary text-white"
-                  >20</span
-                >
-              </button>
-              <button
-                type="button"
-                class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
-              >
-                Realizados
-                <span
-                  class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-primary text-white"
-                  >5</span
+                  >{{ trip_completed }}</span
                 >
               </button>
             </div>
@@ -79,7 +95,7 @@
                 <label
                   class="form-check-label font-normal text-gray-600"
                   for="radio-switch-4"
-                  >ID Viaje</label
+                  >{{ $t('trip') }}</label
                 >
               </div>
               <div class="form-check mr-2 mt-2 sm:mt-0">
@@ -93,7 +109,7 @@
                 <label
                   class="form-check-label font-normal text-gray-600"
                   for="radio-switch-5"
-                  >Vehículo</label
+                  >{{ $t('vehicle') }}</label
                 >
               </div>
               <div class="form-check mr-2 mt-2 sm:mt-0">
@@ -107,7 +123,7 @@
                 <label
                   class="form-check-label font-normal text-gray-600"
                   for="radio-switch-6"
-                  >Conductor</label
+                  >{{ $t('driver') }}</label
                 >
               </div>
             </div>
@@ -138,10 +154,10 @@
         <!-- Element 1 -->
         
         <TripCard
-          v-for="trip in searchedTrips.slice(pageStart, pageEnd)"
+          v-for="trip in searchedTrips"
           :key="trip.id"
           :trip="trip"
-
+          :classBtnFilter="classBtnFilter"
         />
 
 
@@ -195,7 +211,6 @@
           <option>25</option>
           <option>35</option>
           <option>50</option>
-          <option>Todos</option>
         </select>
       </div>
       
@@ -207,29 +222,51 @@
 </template>
 
 <script setup>
-  import { onMounted, ref, computed } from 'vue';
+  import { onMounted, ref, computed, watch } from 'vue';
   import useTrips from "@/composables/trips";
   import TripCard from '@/components/trips/TripCard.vue';
+
+
+  // import useCompanyDocument from '@/composables/company_documents';
+  // const { companyDocuments, getCompanyDocuments } = useCompanyDocument();
+
 
   const { trips, getTrips } = useTrips();
 
 
+  
+
+
+
+
+  // Btn
+
+  const classBtnAll = 'class_btn_all';
+  const classBtnCreated = 'class_btn_created';
+  const classBtnPending = 'class_btn_pending';
+  const classBtnProgress = 'class_btn_progress';
+  const classBtnCompleted = 'class_btn_completed';
+
+  const classBtnFilter = ref(classBtnAll);
+
+
+
+
+
+  //Paginate
   const postXpage = ref(5);
   const pageStart = ref(0);
   const pageEnd = ref(postXpage.value);
-
   const totalPage = ref(0);
   const currentPage = ref(1);
 
-  // const last_page = ref(postXpage);
-  // const pageN = ref(1);
-  // const pageSelected = ref(1);
-
-
   const filter = ref('');
-
-
-  const onlineFilter = "";
+  
+  const trip_completed = ref(0);
+  const trip_created = ref(0);
+  const trip_pending = ref(0);
+  const trip_progress = ref(0);
+  const trip_all = ref(0);
 
 
 
@@ -240,40 +277,109 @@
   * Paginate
   */
   const next = () =>{
-    pageStart.value = pageStart.value + postXpage.value;
-    pageEnd.value = pageEnd.value + postXpage.value;
-    currentPage.value = currentPage.value + 1;
+    pageStart.value = parseInt(pageStart.value) + parseInt(postXpage.value);
+    pageEnd.value = parseInt(pageEnd.value) + parseInt(postXpage.value);
+    currentPage.value = parseInt(currentPage.value) + 1;
   }
 
   const previus = () =>{
-    pageStart.value = pageStart.value - postXpage.value;
-    pageEnd.value = pageEnd.value - postXpage.value;
-    currentPage.value = currentPage.value - 1;
+    pageStart.value = parseInt(pageStart.value) - parseInt(postXpage.value);
+    pageEnd.value = parseInt(pageEnd.value) - parseInt(postXpage.value);
+    currentPage.value = parseInt(currentPage.value) - 1;
   }
 
 
   const onChangeSelect = () => {
     pageStart.value = 0;
-    pageEnd.value = postXpage.value;
+    pageEnd.value = parseInt(postXpage.value);
     currentPage.value = 1;
   }
 
 
+  const searchedTrips = computed(() => {
+
+
+      const q = trips.value.filter((trip) => {
+          return (
+            //trip.reference_number.toLowerCase().indexOf(filter.value.toLowerCase()) != -1
+            trip.reference_number.toLowerCase().indexOf(filter.value.toLowerCase()) != -1 ||
+            trip.vehicle.plate.toLowerCase().indexOf(filter.value.toLowerCase()) != -1 ||
+            trip.driver.name.toLowerCase().indexOf(filter.value.toLowerCase()) != -1 
+          );
+      });
+
+      // if(filter.value != ''){
+      //   return q;
+      // }
+
+      //console.log(classBtnFilter.value);
+
+      if(classBtnFilter.value === classBtnCreated){
+        return q.filter((trip) => {
+          return (
+            trip.trip_status_id == 1 || trip.trip_status_id == 2
+          );
+        });
+      }
+
+
+      if(classBtnFilter.value === classBtnPending){
+        return q.filter((trip) => {
+          return (
+            trip.trip_status_id == 3 || trip.trip_status_id == 4
+          );
+        });
+      }
+
+
+      if(classBtnFilter.value === classBtnProgress){
+        return q.filter((trip) => {
+          return (
+            trip.trip_status_id == 5
+          );
+        });
+      }
+
+
+      if(classBtnFilter.value === classBtnCompleted){
+        return q.filter((trip) => {
+          return (
+            trip.trip_status_id == 6
+          );
+        });
+      }
+      
+      return q.slice(pageStart.value, pageEnd.value);
+  });
 
 
 
 
 
+  const onClickAll = () => {
+    classBtnFilter.value = classBtnAll;
+  }
+  
+  const onClickCreated = () => {
+    classBtnFilter.value = classBtnCreated;
+  }
+
+  const onClickPending = () => {
+    classBtnFilter.value = classBtnPending;
+  }
+
+  const onClickProgress = () => {
+    classBtnFilter.value = classBtnProgress;
+  }
+
+
+  const onClickCompleted = () => {
+    classBtnFilter.value = classBtnCompleted;
+  }
 
   
 
-  const searchedTrips = computed(() => {
-    return trips.value.filter((trip) => {
-          return (
-            trip.reference_number.toLowerCase().indexOf(filter.value.toLowerCase()) != -1
-          );
-      });
-  });
+
 
 
 
@@ -282,6 +388,34 @@
   onMounted(async() => {
     await getTrips();
     totalPage.value = trips.value.length / postXpage.value;
+
+    trips.value.forEach(element => {
+
+      if(element.trip_status_id == 1 || element.trip_status_id == 2){
+        trip_created.value++;
+      }
+
+      if(element.trip_status_id == 3 || element.trip_status_id == 4){
+        trip_pending.value++;
+      }
+
+      if(element.trip_status_id == 5){
+        trip_progress.value++;
+      }
+
+      if(element.trip_status_id == 6){
+        trip_completed.value++;
+      }
+      
+    });
+
+    trip_all.value = trips.value.length;
+
+
+    // await getCompanyDocuments();
+    // console.log(companyDocuments);
+    
+
   });
 
 </script>
@@ -292,6 +426,9 @@
 
 <style>
 .selected {
+  background-color: rgb(0, 150, 178, 0.6);
+}
+.selected:hover {
   background-color: rgb(0, 150, 178, 0.6);
 }
 </style>
