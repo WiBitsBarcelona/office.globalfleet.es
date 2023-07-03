@@ -280,8 +280,8 @@
               <div
                 class="rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400"
               >
-                <h5 class="text-xs font-light text-gray-400">{{ $t("tacograf") }}</h5>
-                <p class="text-md font-normal leading-6 text-gray-500">--</p>
+                <h5 class="text-xs font-light text-gray-400">{{ $t("execution_at") }}</h5>
+                <p class="text-md font-normal leading-6 text-gray-500">{{ trip.execution_at }}</p>
               </div>
               <div
                 class="col-span-2 rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400"
