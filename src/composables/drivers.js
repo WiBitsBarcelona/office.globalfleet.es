@@ -35,11 +35,11 @@ export default function useDriver() {
 			driver.value = response.data.data;
 		} catch (e) {
 			console.log(e);
-			// if (e.response.status_code === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
+			if (e.response.status_code === 422) {
+			    for (const key in e.response.data.errors) {
+			        errors.value = e.response.data.errors
+			    }
+			}
 		}
 	}
 

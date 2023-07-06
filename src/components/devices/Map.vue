@@ -3,29 +3,33 @@
   <div class="col-span-2 w-full intro-y">
     <div class="sm:ml-auto mt-3 mb-3 w-full sm:mt-0 relative text-slate-500">
       <UserIcon class="w-4 h-4 z-10 absolute my-auto inset-y-0 ml-3 left-0" />
-      <input type="search" class="form-control sm:w-full box pl-10 search-cancel" :placeholder= "$t('filter_by_driver')"
+      <input type="search" class="form-control sm:w-full box pl-10 search-cancel" :placeholder="$t('filter_by_driver')"
         v-model="searchDrivers" />
     </div>
-    <div class="box p-3 intro-x h-[650px] overflow-y-auto">
+    <div class="box p-1 intro-x h-[650px] overflow-y-auto">
       <div>
         <table id="drivers" class="table table-hover hover:cursor-pointer overflow-scroll w-full">
           <tbody v-for="driver in searchedDrivers" :key="driver" class="overflow-y-auto">
-            <tr>
-              <td :id="driver.id" class="text-md leading-6 text-gray-500" @click="zoomDriver(driver.id)">
-                {{ driver.name }} {{ driver.surname }}
-              </td>
-              <td>
-                <Tippy v-if="driver.position.speed >= 5" tag="button" class="tooltip primary ml-4 mr-2"
-                  :content="$t('driving')" :options="{ theme: 'light' }">
-                  <img src="/src/assets/images/markers/map-marker-blue.svg" class="w-7 h-7">
-                </Tippy>
-                <Tippy v-else tag="button" class="tooltip primary ml-4 mr-2" :content="$t('stopped')"
-                  :options="{ theme: 'light' }">
-                  <img src="/src/assets/images/markers/map-marker-orange.svg" class="w-7 h-7">
-                </Tippy>
-              </td>
-            </tr>
+            <template v-if="driver.position">
 
+              <tr>
+                <td :id="driver.id" class="text-sm leading-6 text-gray-500 !p-1"
+                  @click="zoomDriver(driver.id)">
+                  <span class="font-bold">{{ driver.name }} {{ driver.surname }}</span><br/>
+                  <span class="text-xs">{{ $h.toDate(driver.position.timestamp) }}</span>
+                </td>
+                <td class="text-right !p-1">
+                  <Tippy v-if="driver.position.speed >= 5" tag="button" class="tooltip primary ml-4 mr-2"
+                    :content="$t('driving')" :options="{ theme: 'light' }">
+                    <img src="/src/assets/images/markers/driving-status-icon-green.svg" class="w-5 h-5">
+                  </Tippy>
+                  <Tippy v-else tag="button" class="tooltip primary ml-4 mr-2" :content="$t('stopped')"
+                    :options="{ theme: 'light' }">
+                    <img src="/src/assets/images/markers/driving-status-icon-red.svg" class="w-5 h-5">
+                  </Tippy>
+                </td>
+              </tr>
+            </template>
           </tbody>
         </table>
       </div>
@@ -62,6 +66,7 @@ const props = defineProps({
 let mapa;
 //ARRAY TO SAVE ALL MAKERS ID'S
 let driversArr = [];
+let markersArr = [];
 //VARIABLE TO SET BG ON INFOWINDOW
 let bg_trip = 'bg-gray-100';
 //VARIABLE TO SET MARKER
@@ -88,9 +93,14 @@ const init = async (initializeMap) => {
 
   await getDrivers();
   const devices = drivers.value;
-  totalDevices.value = computed(() => drivers.value.length);
+  devices.forEach((d) => {
+    if (d.position) {
+      totalDevices.value++;
+      markersArr.push(d);
+    }
+  });
 
-  const markers = JSON.parse(JSON.stringify(devices));
+  const markers = JSON.parse(JSON.stringify(markersArr));
   //console.log(markers);
   const darkTheme = [
     {
@@ -720,10 +730,10 @@ const init = async (initializeMap) => {
                 </div>
               </div>`;
 
-      if(speed >= 5){
-        markerIcon = "/src/assets/images/markers/map-marker-blue.svg";
-      }else{
-        markerIcon = "/src/assets/images/markers/map-marker-orange.svg";
+      if (speed >= 5) {
+        markerIcon = "/src/assets/images/markers/map-marker-green.svg";
+      } else {
+        markerIcon = "/src/assets/images/markers/map-marker-red.svg";
       };
 
       /*  BLOCK TO DISPLAY COORDINATES ON THE INFOWINDOW. DISABLED AT THIS MOMENT.           
@@ -767,7 +777,7 @@ const init = async (initializeMap) => {
           height: 55,
           textColor: "white",
           url: !darkMode.value
-          ? imageAssets["/src/assets/images/markers/map-marker-group-100.svg"].default
+            ? imageAssets["/src/assets/images/markers/map-marker-group-100.svg"].default
             : imageAssets["/src/assets/images/markers/map-marker-group-100.svg"].default,
           anchor: [0, 0],
           anchorText: [17, 0],
@@ -784,8 +794,10 @@ const init = async (initializeMap) => {
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(centerControlDiv);
 
   //SET DEFAULT CENTER AND ZOOM TO CURRENT BOUNDS.
-  map.setCenter(latlngbounds.getCenter());
-  map.fitBounds(latlngbounds);
+  if (markers.length > 0) {
+    map.setCenter(latlngbounds.getCenter());
+    map.fitBounds(latlngbounds);
+  }
 
   mapa = map;
 
@@ -899,14 +911,14 @@ function additionalInfoWindowData(data) {
 const searchDrivers = ref("");
 
 const searchedDrivers = computed(() => {
-    return drivers.value.filter((driver) => {
-        let fullname = driver.name + ' ' + driver.surname;
-        return (
-            fullname
-                .toLowerCase()
-                .indexOf(searchDrivers.value.toLowerCase()) != -1  
-        );
-    });
+  return drivers.value.filter((driver) => {
+    let fullname = driver.name + ' ' + driver.surname;
+    return (
+      fullname
+        .toLowerCase()
+        .indexOf(searchDrivers.value.toLowerCase()) != -1
+    );
+  });
 });
 
 function zoomDriver(drv) {

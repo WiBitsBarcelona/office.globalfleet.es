@@ -222,21 +222,14 @@
 </template>
 
 <script setup>
-  import { onMounted, ref, computed, watch } from 'vue';
+  import { onMounted, ref, computed } from 'vue';
   import useTrips from "@/composables/trips";
   import TripCard from '@/components/trips/TripCard.vue';
-
 
   // import useCompanyDocument from '@/composables/company_documents';
   // const { companyDocuments, getCompanyDocuments } = useCompanyDocument();
 
-
   const { trips, getTrips } = useTrips();
-
-
-  
-
-
 
 
   // Btn
@@ -299,7 +292,7 @@
   const searchedTrips = computed(() => {
 
 
-      const q = trips.value.filter((trip) => {
+      let q = trips.value.filter((trip) => {
           return (
             //trip.reference_number.toLowerCase().indexOf(filter.value.toLowerCase()) != -1
             trip.reference_number.toLowerCase().indexOf(filter.value.toLowerCase()) != -1 ||
@@ -313,6 +306,16 @@
       // }
 
       //console.log(classBtnFilter.value);
+
+
+
+      q = q.sort((a, b) => {
+        //return a.vehicle.plate.localeCompare(b.vehicle.plate);
+        return b.vehicle.plate.localeCompare(a.vehicle.plate);
+      });
+
+
+
 
       if(classBtnFilter.value === classBtnCreated){
         return q.filter((trip) => {
@@ -348,6 +351,14 @@
           );
         });
       }
+
+
+
+
+      
+
+
+
       
       return q.slice(pageStart.value, pageEnd.value);
   });
