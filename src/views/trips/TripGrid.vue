@@ -10,6 +10,7 @@
             <div class="inline-flex rounded-md shadow-sm">
               <button
                 type="button"
+                @click.prevent="onClickAll()"
                 :class="[classBtnFilter === classBtnAll && 'selected']"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
@@ -23,7 +24,7 @@
 
               <button
                 type="button"
-                @click="btnCreated()"
+                @click.prevent="onClickCreated()"
                 :class="[classBtnFilter === classBtnCreated && 'selected']"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
@@ -38,7 +39,8 @@
 
               <button
                 type="button"
-                :class="[classFilter === classBtnPending && 'selected']"
+                @click.prevent="onClickPending()"
+                :class="[classBtnFilter === classBtnPending && 'selected']"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
               {{ $t('trip_pending') }}
@@ -51,6 +53,7 @@
 
               <button
                 type="button"
+                @click.prevent="onClickProgress()"
                 :class="[classBtnFilter === classBtnProgress && 'selected']"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
@@ -62,6 +65,7 @@
               </button>
               <button
                 type="button"
+                @click.prevent="onClickCompleted()"
                 :class="[classBtnFilter === classBtnCompleted && 'selected']"
                 class="py-3 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-700 align-middle hover:bg-gray-100 focus:z-10 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               >
@@ -153,6 +157,7 @@
           v-for="trip in searchedTrips"
           :key="trip.id"
           :trip="trip"
+          :classBtnFilter="classBtnFilter"
         />
 
 
@@ -221,16 +226,10 @@
   import useTrips from "@/composables/trips";
   import TripCard from '@/components/trips/TripCard.vue';
 
-
-  import useCompanyDocument from '@/composables/company_documents';
-
+  // import useCompanyDocument from '@/composables/company_documents';
+  // const { companyDocuments, getCompanyDocuments } = useCompanyDocument();
 
   const { trips, getTrips } = useTrips();
-
-
-  const { companyDocuments, getCompanyDocuments } = useCompanyDocument();
-
-
 
 
   // Btn
@@ -291,7 +290,9 @@
 
 
   const searchedTrips = computed(() => {
-      const q = trips.value.filter((trip) => {
+
+
+      let q = trips.value.filter((trip) => {
           return (
             //trip.reference_number.toLowerCase().indexOf(filter.value.toLowerCase()) != -1
             trip.reference_number.toLowerCase().indexOf(filter.value.toLowerCase()) != -1 ||
@@ -300,23 +301,92 @@
           );
       });
 
-      if(filter.value != ''){
-        // console.log("start",pageStart.value);
-        // console.log("end", pageEnd.value);
-        // console.log("current", currentPage.value);
-        return q;
+      // if(filter.value != ''){
+      //   return q;
+      // }
+
+      //console.log(classBtnFilter.value);
+
+
+
+      q = q.sort((a, b) => {
+        //return a.vehicle.plate.localeCompare(b.vehicle.plate);
+        return b.vehicle.plate.localeCompare(a.vehicle.plate);
+      });
+
+
+
+
+      if(classBtnFilter.value === classBtnCreated){
+        return q.filter((trip) => {
+          return (
+            trip.trip_status_id == 1 || trip.trip_status_id == 2
+          );
+        });
       }
+
+
+      if(classBtnFilter.value === classBtnPending){
+        return q.filter((trip) => {
+          return (
+            trip.trip_status_id == 3 || trip.trip_status_id == 4
+          );
+        });
+      }
+
+
+      if(classBtnFilter.value === classBtnProgress){
+        return q.filter((trip) => {
+          return (
+            trip.trip_status_id == 5
+          );
+        });
+      }
+
+
+      if(classBtnFilter.value === classBtnCompleted){
+        return q.filter((trip) => {
+          return (
+            trip.trip_status_id == 6
+          );
+        });
+      }
+
+
+
+
+      
+
+
+
+      
       return q.slice(pageStart.value, pageEnd.value);
   });
 
+
+
+
+
+  const onClickAll = () => {
+    classBtnFilter.value = classBtnAll;
+  }
   
-  const btnCreated = () => {
-    console.log("pasa");
-
-    classFilter.value = 'btn_created';
-
+  const onClickCreated = () => {
+    classBtnFilter.value = classBtnCreated;
   }
 
+  const onClickPending = () => {
+    classBtnFilter.value = classBtnPending;
+  }
+
+  const onClickProgress = () => {
+    classBtnFilter.value = classBtnProgress;
+  }
+
+
+  const onClickCompleted = () => {
+    classBtnFilter.value = classBtnCompleted;
+  }
 
   
 
@@ -353,8 +423,8 @@
     trip_all.value = trips.value.length;
 
 
-    await getCompanyDocuments();
-    console.log(companyDocuments);
+    // await getCompanyDocuments();
+    // console.log(companyDocuments);
     
 
   });
@@ -367,6 +437,9 @@
 
 <style>
 .selected {
+  background-color: rgb(0, 150, 178, 0.6);
+}
+.selected:hover {
   background-color: rgb(0, 150, 178, 0.6);
 }
 </style>

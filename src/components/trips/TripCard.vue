@@ -1,4 +1,3 @@
-import { ref } from 'vue';
 <template>
     <!-- DATA BEGINS -->
     <!-- Element 1 -->
@@ -136,7 +135,8 @@ import { ref } from 'vue';
     </div> -->
 
     <!-- DATA BEGINS -->
-    <div class="box p-1 mb-2 intro-x hover:cursor-pointer hover:ring-2 hover:ring-primary"
+    <div 
+      class="box p-1 mb-2 intro-x hover:cursor-pointer hover:ring-2 hover:ring-primary"
     >
           <div class="grid gap-y-8">
             <div
@@ -280,8 +280,8 @@ import { ref } from 'vue';
               <div
                 class="rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400"
               >
-                <h5 class="text-xs font-light text-gray-400">{{ $t("tacograf") }}</h5>
-                <p class="text-md font-normal leading-6 text-gray-500">--</p>
+                <h5 class="text-xs font-light text-gray-400">{{ $t("execution_at") }}</h5>
+                <p class="text-md font-normal leading-6 text-gray-500">{{ trip.execution_at }}</p>
               </div>
               <div
                 class="col-span-2 rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400"
@@ -353,7 +353,7 @@ import { ref } from 'vue';
     const { t } = useI18n();  
 
     const props = defineProps([
-        'trip',
+        'trip'
     ]);
 
     const trip = ref('');
@@ -375,10 +375,6 @@ import { ref } from 'vue';
     const current_stage_now = ref('');
     const current_stage_status = ref('');
 
-    
-
-
-
     trip.value = props.trip;
 
     //console.log({ ...trip});
@@ -389,6 +385,7 @@ import { ref } from 'vue';
      */
     if(trip.value.trip_status_id === 1 || trip.value.trip_status_id === 2){
       bg_trip.value = 'bg-gray-100';
+
     }
 
     if(trip.value.trip_status_id === 3 || trip.value.trip_status_id === 4){
@@ -481,6 +478,9 @@ import { ref } from 'vue';
       }
       gps_positioning.value = trip.value.driver.position.gps_positioning;
     }
+
+
+    
 
 
 </script>
