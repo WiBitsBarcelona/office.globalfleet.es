@@ -183,10 +183,21 @@
     "export_CSV": "Exportar CSV",
     "export_JSON": "Exportar JSON",
     "export_XLSX": "Exportar XLXS",
-    "export_HTML": "Exportar HTML"
+    "export_HTML": "Exportar HTML",
+    "swal": {
+      "are_you_sure": "¿Estas seguro de?",
+      "delete": "Eliminar el documento: ",
+      "yes": "Sí, eliminar",
+      "no": "No, cancelar",
+      "document_not_allowed": "No tienes permisos para eliminar este Documento.",
+      "document_deleted": "Documento eliminado correctamente.",
+      "all_right_btn": "De acuerdo",
+      "document_uploaded": "Documento enviado correctamente.",
+      "document_error_uploading": "Ha sucedido un error al subir el archivo."
+    }
   },
   "pagination":{
-    "page_size":"Tamañp Página",
+    "page_size":"Tamaño Página",
       "page_title":"Show Page",
       "first":"First", 
       "first_title":"First Page", 
@@ -203,5 +214,23 @@
           "rows": "rows",
           "pages": "pages"
       }
+  },
+  "Dropzone": {
+    "title": "Selecciona el fichero que quieres subir.",
+    "upload_general_document": "Los fichero subidos en esta sección seran visibles para todos tus conductores.",
+    "btn_upload": "Enviar Archivo",
+    "btn_close": "Cerrar",
+    "no_file": "ERROR: Debes seleccionar un Archivo antes de enviarlo."
+  },
+  "Tabulator": {
+    "General_columns": {
+      "id": "Identificador",
+      "document": "DOCUMENTO",
+      "type": "TIPO",
+      "created_by": "CREADO POR",
+      "created_at": "FECHA"
+    },
+    "actions": "ACCIONES"
+    
   }
 }

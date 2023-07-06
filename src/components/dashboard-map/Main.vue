@@ -11,8 +11,9 @@
             placeholder: $t('dashboard.select_driver_placeholder'),
           }" class="form-control w-full sm:w-56">
             <option :value="0">{{ $t("dashboard.select_all") }}</option>
-            <option :value="driver.id + ',' + driver.position.latitude + ',' + driver.position.longitude"
-              v-for="driver in drivers" :key="driver.id">{{ driver.name }} {{ driver.surname }}</option>
+            <template v-for="driver in drivers" :key="driver.id">
+              <option v-if="driver.position" :value="driver.id + ',' + driver.position.latitude + ',' + driver.position.longitude">{{ driver.name }} {{ driver.surname }}</option>
+            </template>
           </TomSelect>
         </div>
       </div>
@@ -47,13 +48,13 @@ const props = defineProps({
 let mapa;
 //ARRAY TO SAVE ALL MAKERS ID'S
 let driversArr = [];
+let markersArr = [];
 //VARIABLE TO SET BG ON INFOWINDOW
 let bg_trip = 'bg-gray-100';
 //VARIABLE TO SET MARKER
 let markerIcon = '';
 const { drivers, getDrivers } = useDriver();
 const totalDevices = ref(0);
-const totalDevicesNew = ref(0);
 const selected_driver = ref("");
 const imageAssets = import.meta.globEager(
   `/src/assets/images/markers/*.{jpg,jpeg,png,svg}`
@@ -75,10 +76,14 @@ const init = async (initializeMap) => {
   await getDrivers();
   const devices = drivers.value;
 
-  totalDevices.value = computed(() => drivers.value.length);
+  devices.forEach((d) => {
+      if (d.position) {
+        totalDevices.value ++;
+        markersArr.push(d);
+      }
+    });
 
-
-  const markers = JSON.parse(JSON.stringify(devices));
+  const markers = JSON.parse(JSON.stringify(markersArr));
 
   const darkTheme = [
     {
@@ -655,12 +660,12 @@ const init = async (initializeMap) => {
     map,
     markers.map(function (markerElem) {
       const point = new google.maps.LatLng(
-        parseFloat(markerElem.position.latitude),
-        parseFloat(markerElem.position.longitude)
+        parseFloat(markerElem.position ? markerElem.position.latitude : '1'),
+        parseFloat(markerElem.position ? markerElem.position.longitude : '1')
       );
-      const lastDate = $h.toDate(markerElem.position.timestamp);
-      const speed = $h.toKmsHour(markerElem.position.speed);
-      const direction = $h.getDirection(markerElem.position.heading);
+      const lastDate = $h.toDate(markerElem.position ? markerElem.position.timestamp : '');
+      const speed = $h.toKmsHour(markerElem.position ? markerElem.position.speed : '0');
+      const direction = $h.getDirection(markerElem.position ? markerElem.position.heading : '0');
       const direction_icon = $h.getDirectionIcon(direction);
       additionalInfoWindowData(markerElem.driver_trips);
       const infowincontent = `
@@ -687,11 +692,11 @@ const init = async (initializeMap) => {
                   </div>
                   <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
                     <h5 class="text-xs font-light text-gray-400">${t("infowindow.gps_position")}</h5>
-                    <p class="text-md font-normal leading-4 text-gray-500">${!markerElem.position.gps_positioning ? t('dashboard.no_data') : markerElem.position.gps_positioning}</p>
+                    <p class="text-md font-normal leading-4 text-gray-500">${!markerElem.position ? t('dashboard.no_data') : markerElem.position.gps_positioning}</p>
                   </div>
                   <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
                     <h5 class="text-xs font-light text-gray-400">${t("infowindow.accuracy")}</h5>
-                    <p class="text-md font-normal leading-4 text-gray-500">${markerElem.position.accuracy} m.</p>
+                    <p class="text-md font-normal leading-4 text-gray-500">${!markerElem.position ? t('dashboard.no_data') : markerElem.position.accuracy} m.</p>
                   </div>
                   <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
                     <h5 class="text-xs font-light text-gray-400">${t("infowindow.speed")}</h5>
@@ -709,17 +714,11 @@ const init = async (initializeMap) => {
               </div>`;
 
       if (speed >= 5) {
-        markerIcon = "/src/assets/images/markers/map-marker-blue.svg";
+        markerIcon = "/src/assets/images/markers/map-marker-green.svg";
       } else {
-        markerIcon = "/src/assets/images/markers/map-marker-orange.svg";
+        markerIcon = "/src/assets/images/markers/map-marker-red.svg";
       };
 
-
-      /*  BLOCK TO DISPLAY COORDINATES ON THE INFOWINDOW. DISABLED AT THIS MOMENT.           
-      <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
-        <h5 class="text-xs font-light text-gray-400">${ t("infowindow.coords") }</h5>
-        <p class="text-md font-normal leading-6 text-gray-500">${markerElem.position.latitude},${markerElem.position.longitude}</p>
-      </div> */
       const marker = new google.maps.Marker({
         map: map,
         position: point,
@@ -775,8 +774,11 @@ const init = async (initializeMap) => {
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(centerControlDiv);
 
   //SET DEFAULT CENTER AND ZOOM TO CURRENT BOUNDS.
-  map.setCenter(latlngbounds.getCenter());
-  map.fitBounds(latlngbounds);
+  if(markers.length > 0){
+    map.setCenter(latlngbounds.getCenter());
+    map.fitBounds(latlngbounds);
+  }
+
 
   mapa = map;
 

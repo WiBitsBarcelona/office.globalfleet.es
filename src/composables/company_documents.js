@@ -8,6 +8,7 @@ export default function useCompanyDocument() {
 
 	const companyDocument = ref([]);
 	const companyDocuments = ref([]);
+	const companyDocumentData = ref([]);
 	const errors = ref('');
 	//const router = useRouter();
 
@@ -17,6 +18,15 @@ export default function useCompanyDocument() {
 	let config = {
 		headers: {
 			"Content-Type": "application/json",
+			"Authorization": `Bearer ${localStorage.getItem('token')}`
+		}
+	}
+
+	let fileconfig = {
+		headers: {
+			"Access-Control-Allow-Origin" : "*",
+			"Access-Control-Allow-Methods" : "GET, POST, OPTIONS, PUT, DELETE",
+			"Content-Type": "application/x-www-form-urlencoded",
 			"Authorization": `Bearer ${localStorage.getItem('token')}`
 		}
 	}
@@ -43,7 +53,6 @@ export default function useCompanyDocument() {
 		}
 	}
 
-
 	const storeCompanyDocument = async (data) => {
 		errors.value = '';
 		try {
@@ -62,18 +71,38 @@ export default function useCompanyDocument() {
 			//await router.push({ name: 'companyDocument.index' });
 		} catch (e) {
 			console.log(e);
+			errors.value = e.response.data.errors.e;
 		}
 	}
 
 
 	const destroyCompanyDocument = async (id) => {
+		errors.value = '';
 		try {
-			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}company-documents/destroy/${id}`, config);
+			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}company-documents/delete/${id}`, config);
+		} catch (e) {
+			if (e.response.data.status_code === 422) {
+					errors.value = e.response.data.errors.e;
+            }
+		}
+	}
+
+	const downloadCompanyDocument = async (path) => {
+		errors.value = '';
+		try {
+			const res = await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}downloads/document?p=${path}`, {
+				method: "GET",
+				headers: {
+				  "Content-Type": "application/json",
+				  'Authorization': `Bearer ${localStorage.getItem('token')}`,
+				}
+			  });
+			  const response = await res.json();
+			  companyDocumentData.value = response.data;
 		} catch (e) {
 			console.log(e);
 		}
 	}
-
 
 	return {
 		errors,
@@ -84,6 +113,8 @@ export default function useCompanyDocument() {
 		storeCompanyDocument,
 		updateCompanyDocument,
 		destroyCompanyDocument,
+		downloadCompanyDocument,
+		companyDocumentData,
 	}
 
 }
