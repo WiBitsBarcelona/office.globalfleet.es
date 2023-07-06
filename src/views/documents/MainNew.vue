@@ -16,7 +16,7 @@
               </TabPanel>
               <TabPanel>
                 <div class="col-span-12">
-                  <p>Documentos de Conductores</p>
+                  <DriversDocuments />
                 </div>
               </TabPanel>
               <TabPanel>
@@ -33,4 +33,5 @@
 
 <script setup>
   import GeneralDocuments from "@/components/documents/General.vue";
+  import DriversDocuments from "@/components/documents/Drivers.vue";
 </script>

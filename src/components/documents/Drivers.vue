@@ -171,14 +171,14 @@ const initTabulator = () => {
       {
         title: t("Tabulator.General_columns.document"),
         minWidth: 400,
-        width: 450,
+        width: 200,
         responsive: 0,
         field: "file_name",
         vertAlign: "middle",
         print: false,
         download: false,
       },
-      {
+/*       {
         title: t("Tabulator.General_columns.type"),
         minWidth: 100,
         field: "type",
@@ -189,7 +189,7 @@ const initTabulator = () => {
         formatter: function (cell, formatterParams, onRendered) {
           return "<span class='uppercase'>" + cell.getValue() + "</span>"
         },
-      },
+      }, */
       {
         title: t("Tabulator.General_columns.created_by"),
         minWidth: 200,
@@ -201,6 +201,43 @@ const initTabulator = () => {
       },
       {
         title: t("Tabulator.General_columns.created_at"),
+        minWidth: 200,
+        field: "created_at",
+        hozAlign: "center",
+        vertAlign: "middle",
+        tooltip: "created_at",
+        print: false,
+        download: false,
+        formatter: function (cell) {          
+          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss')
+        },
+      },
+      {
+        title: 'Fecha Envío',
+        minWidth: 200,
+        field: "created_at",
+        hozAlign: "center",
+        vertAlign: "middle",
+        print: false,
+        download: false,
+        formatter: function (cell) {          
+          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss')
+        },
+      },
+      {
+        title: 'Fecha Confirmación',
+        minWidth: 200,
+        field: "created_at",
+        hozAlign: "center",
+        vertAlign: "middle",
+        print: false,
+        download: false,
+        formatter: function (cell) {          
+          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss')
+        },
+      },
+      {
+        title: 'Fecha Lectura',
         minWidth: 200,
         field: "created_at",
         hozAlign: "center",
