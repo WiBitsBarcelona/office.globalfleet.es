@@ -28,10 +28,12 @@
           </TabGroup>
       </div>
     </div>
+    <FleetFooter/>
   </div>
 </template>
 
 <script setup>
   import GeneralDocuments from "@/components/documents/General.vue";
   import DriversDocuments from "@/components/documents/Drivers.vue";
+  import FleetFooter from "@/components/fleet-footer/Main.vue"; 
 </script>

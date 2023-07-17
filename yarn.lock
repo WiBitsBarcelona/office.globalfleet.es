@@ -493,6 +493,11 @@
   resolved "https://registry.npmjs.org/@googlemaps/markerclustererplus/-/markerclustererplus-1.2.10.tgz"
   integrity sha512-HY4ev+D3kO1+9oQjtKTojxVtJIS/kSWJfry6cpKoXC97kBQc5Vguqu5x6pLnh+70N0Au+16Yl7iu4LZaIOTstw==
 
+"@googlemaps/markerwithlabel@^2.0.22":
+  version "2.0.22"
+  resolved "https://registry.yarnpkg.com/@googlemaps/markerwithlabel/-/markerwithlabel-2.0.22.tgz#d2cbf0e0bd7d3c3de0308b28386b97a226a231f9"
+  integrity sha512-m8zkPw3xIeFS/3klX8Ou2xniIiRtBwEfIAmYtYE3wvjV4alSUZf+od6j1BKOgHhxN26Bzm7S7qUpn63fGmfB0g==
+
 "@intlify/bundle-utils@^4.0.0":
   version "4.0.0"
   resolved "https://registry.npmjs.org/@intlify/bundle-utils/-/bundle-utils-4.0.0.tgz"
@@ -886,6 +891,11 @@ adler-32@~1.3.0:
   version "1.3.1"
   resolved "https://registry.npmjs.org/adler-32/-/adler-32-1.3.1.tgz"
   integrity sha512-ynZ4w/nUUv5rrsR8UUGoe1VC9hZj6V5hU9Qw1HlMDJGEJw5S7TfTErWTjMys6M7vr0YWcPqs3qAr4ss0nDfP+A==
+
+animate.css@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/animate.css/-/animate.css-4.1.1.tgz#614ec5a81131d7e4dc362a58143f7406abd68075"
+  integrity sha512-+mRmCTv6SbCmtYJCN4faJMNFVNN5EuCTTprDTAo7YzIGji2KADmakjVA3+8mVDkZ2Bf09vayB35lSQIex2+QaQ==
 
 any-promise@^1.0.0:
   version "1.3.0"

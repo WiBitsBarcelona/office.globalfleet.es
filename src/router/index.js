@@ -77,6 +77,11 @@ const routes = [
         component: () => import('@/views/documents/drivers/General.vue'),
       },
       {
+        path: "incidents",
+        name: "incidents",
+        component: () => import('@/views/incidences/Incidences.vue'),
+      },
+      {
         path: "chat",
         name: "chat",
         component: () => import('@/views/chat/Chat.vue'),

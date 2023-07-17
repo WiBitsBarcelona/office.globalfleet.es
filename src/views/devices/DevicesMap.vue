@@ -9,9 +9,11 @@
             <!-- END: Devices Map -->
 
         </div>
+        <FleetFooter/>
     </div>
 </template>
 
 <script setup>
 import DevicesMap from "@/components/devices/Map.vue";
+import FleetFooter from "@/components/fleet-footer/Main.vue"; 
 </script>

@@ -151,7 +151,9 @@
             <!-- END: Modal Content -->
 
     </div>
+    
   </div>
+  <FleetFooter/>
 </template>
 
 <script setup>
@@ -163,6 +165,7 @@ import Tabulator from "tabulator-tables";
 import dom from "@left4code/tw-starter/dist/js/dom";
 import useEmployeeDrivers from "@/composables/employee_drivers";
 import { useRoute } from 'vue-router';
+import FleetFooter from "@/components/fleet-footer/Main.vue"; 
 
 const addFileModal= ref(false);
 const driver_fullname = ref('');

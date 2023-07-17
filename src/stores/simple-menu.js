@@ -31,6 +31,11 @@ export const useSimpleMenuStore = defineStore("simpleMenu", {
         title: "Documentos",
       },
       {
+        icon: "AlertTriangleIcon",
+        pageName: "incidents",
+        title: "Incidencias",
+      },
+      {
         icon: "MessageCircleIcon",
         pageName: "chat",
         title: "Chat",
