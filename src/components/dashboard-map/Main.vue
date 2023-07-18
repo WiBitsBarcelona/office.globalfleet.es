@@ -32,6 +32,7 @@ import { useDarkModeStore } from "@/stores/dark-mode";
 import useDriver from "@/composables/drivers"
 import { helper as $h } from "@/utils/helper";
 import { useI18n } from 'vue-i18n';
+import { MarkerWithLabel } from '@googlemaps/markerwithlabel';
 
 const { t } = useI18n();
 const props = defineProps({
@@ -654,6 +655,7 @@ const init = async (initializeMap) => {
   infoWindow = new google.maps.InfoWindow({
     minWidth: 350,
     maxWidth: 450,
+    pixelOffset: new google.maps.Size(0, -60),
   });
 
   cluster = new MarkerClusterer(
@@ -719,10 +721,18 @@ const init = async (initializeMap) => {
         markerIcon = "/src/assets/images/markers/map-marker-red.svg";
       };
 
-      const marker = new google.maps.Marker({
+      // const marker = new google.maps.Marker({
+      const marker = new MarkerWithLabel({
         map: map,
+        clickable: true,
         position: point,
         id: markerElem.id,
+        //animation: google.maps.Animation.DROP,
+        labelContent: markerElem.name + ' ' + markerElem.surname,
+        labelAnchor: new google.maps.Point(0, -65),
+        labelClass: "labels " + bg_trip,
+        labelInBackground: true,
+
         icon: {
           url: markerIcon,
         },
@@ -734,16 +744,16 @@ const init = async (initializeMap) => {
       google.maps.event.addListener(marker, "click", function () {
         infoWindow.setContent(infowincontent);
         google.maps.event.addListener(infoWindow, "domready", function () {
-          cash(".arrow_box").closest(".gm-style-iw-d").removeAttr("style");
+/*           cash(".arrow_box").closest(".gm-style-iw-d").removeAttr("style");
           cash(".arrow_box")
             .closest(".gm-style-iw-d")
             .attr("style", "overflow:visible");
           cash(".arrow_box")
             .closest(".gm-style-iw-d")
-            .parent()
-            .removeAttr("style");
+            .parent() 
+            .removeAttr("style");*/
         });
-
+        infoWindow.setPosition(marker.getPosition());
         infoWindow.open(map, marker);
 
       });
@@ -853,6 +863,13 @@ function additionalInfoWindowData(data) {
 
   data.forEach((trip) => {
     switch (trip.trip_status_id) {
+      case 6:
+      if (exist < trip.trip_status_id) {
+          active_trip = trip;
+          exist = 5;
+          bg_trip = 'bg-green-100';
+        }
+        break;
       case 5:
         if (exist < trip.trip_status_id) {
           active_trip = trip;
@@ -889,6 +906,9 @@ function additionalInfoWindowData(data) {
         }
         break;
       default:
+        active_trip = trip;  
+        exist = 0;
+        bg_trip = 'bg-primary !text-white';
         break;
     }
   });
@@ -909,3 +929,15 @@ function additionalInfoWindowData(data) {
 }
 
 </script>
+
+<style>
+.labels {
+  color: rgb(14, 14, 14);
+  font-size: 14px;
+  text-align: center;
+  width: auto;
+  padding: 6px;
+  border-radius: 5px;
+  box-shadow: 2px 2px 4px #000000;
+}
+</style>

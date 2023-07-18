@@ -218,6 +218,7 @@
 
 
     </div>
+    <FleetFooter/>
   </div>
 </template>
 
@@ -225,7 +226,7 @@
   import { onMounted, ref, computed } from 'vue';
   import useTrips from "@/composables/trips";
   import TripCard from '@/components/trips/TripCard.vue';
-
+  import FleetFooter from "@/components/fleet-footer/Main.vue"; 
   // import useCompanyDocument from '@/composables/company_documents';
   // const { companyDocuments, getCompanyDocuments } = useCompanyDocument();
 

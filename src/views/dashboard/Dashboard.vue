@@ -69,10 +69,11 @@
         <DevicesMap />
       <!-- END: Devices Map -->
       <!-- BEGIN: Footer Text -->
-      <div class="col-span-12 mt-5 mb-1 text-center">
+      <FleetFooter/>
+<!--       <div class="col-span-12 mt-5 mb-1 text-center">
         <p class="text-slate-600 dark:text-slate-200">&copy; {{ new Date().getFullYear() }} - GlobalFleet - {{ vueVersion }} - {{
           $t("auth_footer.all_rights") }}</p>
-      </div>
+      </div> -->
     </div>
   </div>
   <!-- END: Page Layout -->
@@ -82,7 +83,8 @@
 import { computed, ref, onMounted } from 'vue';
 import DevicesMap from "@/components/dashboard-map/Main.vue";
 import useDashboard from '@/composables/dashboard.js';
-import { version as vueVersion } from 'vue/package.json'
+import { version as vueVersion } from 'vue/package.json';
+import FleetFooter from "@/components/fleet-footer/Main.vue";
 
 const { dashboard, getDashboard } = useDashboard();
 

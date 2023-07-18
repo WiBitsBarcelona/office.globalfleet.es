@@ -14,6 +14,15 @@ const helpers = {
       return text;
     }
   },
+  cutFileName( filename, length) {
+    if (filename.length > length){
+      let nameArray = filename.split(".");
+      const cuttedFileName = nameArray[0].slice(0, length -15);
+      return cuttedFileName + '...' + nameArray[1];
+    }else{
+      return filename;
+    }
+  },
   formatDate(date, format) {
     return dayjs(date).format(format);
   },
@@ -143,8 +152,23 @@ const helpers = {
     return kmHour;
   },
   toDate(stamp){
-    const currentDate = new Date(parseFloat(stamp)*1000);
-    const formattedDate = currentDate.toLocaleString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour:'numeric', minute:'numeric', second:'numeric', hour12:false } );
+    const currentDate = new Date(parseFloat(stamp));
+    
+    const yyyy = currentDate.getFullYear();
+    let mm = currentDate.getMonth() + 1; // Months start at 0!
+    let dd = currentDate.getDate();
+    let hr = currentDate.getHours();
+    let min = currentDate.getMinutes();
+    let seg = currentDate.getSeconds();
+
+    if (dd < 10) dd = '0' + dd;
+    if (mm < 10) mm = '0' + mm;
+    if (hr < 10 ) hr = '0' + hr;
+    if (min < 10 ) min = '0' + min;
+    if (seg < 10 ) seg = '0' + seg;
+
+    const formattedDate =  dd + '/' + mm + '/' + yyyy + " " + hr + ":" + min + ":" + seg;
+
     return formattedDate;
   },
   getDirection(angle) {
@@ -198,6 +222,17 @@ const helpers = {
     if (mm < 10) mm = '0' + mm;
 
     return  dd + '/' + mm + '/' + yyyy + " " + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  },
+  formatBytes(bytes, decimals = 2){
+    if (!+bytes) return '0 Bytes'
+
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ['Bytes', 'Kb', 'Mb', 'Gb', 'Tb', 'Pb', 'Eb', 'Zb', 'Yb']
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
   }
 };
 

@@ -5,6 +5,7 @@
       <ChatView />
     </div>
   </div>
+  
 </template>
 
 <script>
@@ -13,6 +14,7 @@ import ChatView from "../../components/chat/ChatView.vue";
 import { useAuthenticationStore } from "@/stores/auth/authentications";
 import Swal from "sweetalert2";
 import { useRouter } from 'vue-router';
+import FleetFooter from "@/components/fleet-footer/Main.vue"; 
 
 export default {
   components: {

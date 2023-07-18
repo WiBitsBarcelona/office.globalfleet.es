@@ -6,13 +6,14 @@
           <input id="tabulator-html-filter-value" v-model="filter.value" type="text"
             class="w-full xl:w-[600px] form-control mt-2 sm:mt-0"
             :placeholder="$t('documents.filters.search_placeholder')" @keyup="onFilter" />
-            <XCircleIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer" @click="onResetFilter" />
+          <XCircleIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer"
+            @click="onResetFilter" />
         </div>
       </form>
       <div class="flex mt-5 sm:mt-0">
         <div class="col-span-12 lg:col-span-2 2xl:col-span-2 ml-auto">
           <div class="w-full sm:w-auto flex">
-            <button class="btn btn-primary shadow-md mr-2" @click="addFileModal = true">
+            <button class="btn btn-primary shadow-md mr-2" @click="addFilesModal = true">
               <PlusCircleIcon class="w-5 h-5 mr-2" />
               {{ $t("documents.upload_document") }}
             </button>
@@ -51,27 +52,62 @@
   </div>
   <!-- END: HTML Table Data -->
 
-  <!-- BEGIN: Add Document Modal Content -->
-  <Modal backdrop="static" :show="addFileModal" @hidden="addFileModal = false">
-    <ModalBody class="px-5 py-10">
-      <div class="text-center">
-        <div class="mb-10">
-          <div class="mb-3">
-            <label class="text-xl font-bold" for="file">{{ $t("Dropzone.title") }}</label><br/>
-          </div>
-          <input type="file" ref="file_selected" class="btn btn-primary shadow-md"  @change="uploadFile" />
-          <p class="mt-2">{{ $t("Dropzone.upload_general_document") }}</p>
-          <p class="mt-2 font-medium text-danger intro-x" v-show="showNoFileError" @hidden="showNoFileError = false">{{ $t("Dropzone.no_file") }}</p>
-        </div>
-        <button type="button" @click="sendFile" class="btn btn-success text-white w-40 mr-2">
-          <UploadIcon class="w-5 h-5 mr-2" />
-          {{ $t("Dropzone.btn_upload") }}
-        </button>
-        <button type="button" @click="hideModal" class="btn btn-danger w-40">
-          <XCircleIcon class="w-5 h-5 mr-2" />
-          {{ $t("Dropzone.btn_close") }}
-        </button>
+  <!-- BEGIN: Add Documents Modal Content -->
+  <Modal backdrop="static" :show="addFilesModal" @hidden="addFilesModal = false">
+    <ModalBody class="px-2 py-5 text-center">
+      <h2 class="text-lg font-medium text-left ml-5">{{ $t("Dropzone.modal_title") }}</h2>
+      <XIcon class="absolute top-0 right-0 mt-3 mr-3 w-8 h-8 text-slate-400 hover:cursor-pointer" @click="hideModal" >
+      </XIcon>
+      <div @click="dropZoneClick" :class="{ 'opacity-25': uploading != 0 }"
+        class="flex flex-col items-center justify-center upload_file_box mt-2 hover:cursor-pointer">
+        <PlusCircleIcon class="w-16 h-16 text-primary"></PlusCircleIcon>
+        <p class="mt-5 font-bold text-primary">{{ $t("Dropzone.title") }}</p>
+        <p class="mt-2 text-slate-400">{{ $t("Dropzone.subtitle") }}</p>
       </div>
+
+      <div class="grid grid-cols-12 gap-6 mx-3 mt-5 items-center justify-center">
+        <div v-for="file in state.files" :key="file.index" class="col-span-12">
+          <div class="file_container">
+            <div class="grid grid-cols-12">
+              <div class="col-span-2">
+                <FileIcon class="w-10 h-10 text-primary opacity-25"></FileIcon>
+              </div>
+              <div class="col-span-9 text-left font-bold">
+                <p class="text-xs"> {{ $h.cutFileName(file.name, 50) }}</p>
+                <p class="text-xs font-light"> {{ $h.formatBytes(file.size) }}</p>
+                <!--                     <div class="progress">
+                      <div id="progress_file" class="progress-bar w-1/12" :class="{'hidden' : uploading == 0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div> -->
+              </div>
+              <div class="col-span-1 text-right">
+                <XIcon class="w-4 h-4 text-primary ml-3 hover:cursor-pointer" @click="dropZoneClearFile(file.name)"
+                  :class="{ 'hidden': uploading != 0 }"></XIcon>
+                  <LoadingIcon icon="oval" color="#0097b2" class="w-4 h-4" :class="{ 'hidden': uploading == 0 }" />
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <template v-if="!selected_file == ''">
+          <div class="col-span-1" :class="{ 'opacity-25': uploading != 0 }">
+            <InfoIcon></InfoIcon>
+          </div>
+          <div class="col-span-11 text-left" :class="{ 'opacity-25': uploading != 0 }">
+            {{ $t("Dropzone.upload_general_document") }}
+          </div>
+          <div class="col-span-12 flex" :class="{ 'opacity-25': uploading != 0 }">
+            <button type="button" @click="hideModal" class="btn btn-secondary w-60 mr-5">
+              {{ $t("Dropzone.btn_close") }}
+            </button>
+            <button type="button" @click="dropZoneSendFiles" class="btn btn-primary text-white w-60">
+              {{ $t("Dropzone.btn_upload") }}
+            </button>
+          </div>
+        </template>
+      </div>
+
+      <input type="file" id="input_files" ref="file_selected" accept="application/pdf, image/*"
+        class="btn btn-primary shadow-md hidden" multiple @change="dropZoneAddFiles($event)" />
     </ModalBody>
   </Modal>
   <!-- END: Modal Content -->
@@ -87,31 +123,13 @@ import useCompanyDocument from "@/composables/company_documents";
 import { useI18n } from 'vue-i18n';
 import { helper as $h } from "@/utils/helper";
 import Swal from "sweetalert2";
-
+import 'animate.css';
 
 const { t } = useI18n();
 const addFileModal = ref(false);
 const showNoFileError = ref(false);
 const tableData = reactive([]);
-let fakeGeneralData = [
-  { id: 1, filename: "Manual Uso GlobalFleet Driver.pdf", size: "10,4Mb.", file_type: "Documento PDF", user: "Gerencia", created_at: "01/06/2023", url: "/public/docs/doc.pdf" },
-  { id: 2, filename: "Teléfonos de contacto Internos.xlsx", size: "2,34Mb.", file_type: "Hoja de Cálculo", user: "Gestor de tráfico 1", created_at: "02/06/2023", url: "/public/docs/doc.pdf" },
-  { id: 3, filename: "Comunicado a conductores.pdf", size: "2,4Mb.", file_type: "Documento PDF", user: "Gestor de tráfico 1", created_at: "02/06/2023", url: "/public/docs/doc.pdf" },
-  { id: 4, filename: "Normativa Interna.pdf", size: "2,8Mb.", file_type: "Documento PDF", user: "Gerencia", created_at: "10/06/2023", url: "/public/docs/doc.pdf" },
-  { id: 5, filename: "Normativa Seguridad Vehículos.pdf", size: "5,6Mb.", file_type: "Documento PDF", user: "Gerencia", created_at: "11/06/2023", url: "/public/docs/doc.pdf" },
-  { id: 6, filename: "Comunicado a conductores.pdf", size: "2,4Mb.", file_type: "Documento PDF", user: "Gestor de tráfico 1", created_at: "12/06/2023", url: "/public/docs/doc.pdf" },
-  { id: 7, filename: "Procedimientos de Carga.pdf", size: "1,4Mb.", file_type: "Documento PDF", user: "Gerencia", created_at: "11/06/2023", url: "/public/docs/doc.pdf" },
-  { id: 8, filename: "Procedimientos de Descarga.pdf", size: "1,4Mb.", file_type: "Documento PDF", user: "Gerencia", created_at: "11/06/2023", url: "/public/docs/doc.pdf" },
-  { id: 9, filename: "Precedimientos para iniciar un viaje.pdf", size: "6,2Mb.", file_type: "Documento PDF", user: "Gestor de tráfico 1", created_at: "12/06/2023", url: "/public/docs/doc.pdf" },
-  { id: 10, filename: "Protocolo de comunicación con vuestro Gestor de tráfico.pdf", size: "1,4Mb.", file_type: "Documento PDF", user: "Gestor de tráfico 1", created_at: "12/06/2023", url: "/public/docs/doc.pdf" },
-  { id: 11, filename: "Cómo colocar cartel de seguridad en el vehículo.jpg", size: "3,85Mb.", file_type: "Imágen", user: "Gestor de tráfico 1", created_at: "12/06/2023", url: "/public/docs/doc.pdf" },
-  { id: 12, filename: "Comunicado a conductores.pdf", size: "2,4Mb.", file_type: "Documento PDF", user: "Gestor de tráfico 1", created_at: "13/06/2023", url: "/public/docs/doc.pdf" },
-  { id: 13, filename: "Comunicado a conductores.pdf", size: "2,4Mb.", file_type: "Documento PDF", user: "Gestor de tráfico 1", created_at: "14/06/2023", url: "/public/docs/doc.pdf" },
-  { id: 14, filename: "Comunicado a conductores.pdf", size: "2,4Mb.", file_type: "Documento PDF", user: "Gestor de tráfico 1", created_at: "15/06/2023", url: "/public/docs/doc.pdf" },
-  { id: 15, filename: "Comunicado a conductores.pdf", size: "2,4Mb.", file_type: "Documento PDF", user: "Gestor de tráfico 1", created_at: "16/06/2023", url: "/public/docs/doc.pdf" },
-  { id: 16, filename: "Comunicado a conductores.pdf", size: "2,4Mb.", file_type: "Documento PDF", user: "Gestor de tráfico 1", created_at: "17/06/2023", url: "/public/docs/doc.pdf" },
-  { id: 17, filename: "Comunicado a conductores.pdf", size: "2,4Mb.", file_type: "Documento PDF", user: "Gestor de tráfico 1", created_at: "18/06/2023", url: "/public/docs/doc.pdf" },
-];
+
 const { companyDocuments, getCompanyDocuments, destroyCompanyDocument, errors, storeCompanyDocument, downloadCompanyDocument, companyDocumentData } = useCompanyDocument();
 const tableRef = ref();
 const tabulator = ref();
@@ -122,7 +140,15 @@ const filter = reactive({
 });
 const file = ref(null);
 const file_selected = ref('');
-let fileJson = {};
+let selected_file = ref('');
+const uploading = ref(0);
+let fileJson = [];
+const fileNameScreen = ref('');
+const fileSizeScreen = ref(0);
+
+let files = [];
+const state = reactive({ files });
+const addFilesModal = ref(false);
 
 const findData = async () => {
   await getCompanyDocuments();
@@ -133,6 +159,18 @@ const findData = async () => {
 const imageAssets = import.meta.globEager(
   `/src/assets/images/*.{jpg,jpeg,png,svg}`
 );
+
+const viewIcon = function (cell, formatterParams) {
+  return "<i data-lucide='eye' class='w-6 h-6 mr-1 text-primary'></i>";
+};
+
+const downloadIcon = function (cell, formatterParams) {
+  return "<i data-lucide='download' class='w-6 h-6 mr-1 text-success'></i>";
+};
+
+const deleteIcon = function (cell, formatterParams) {
+  return "<i data-lucide='trash-2' class='w-6 h-6 mr-1 text-danger'></i>";
+};
 
 const initTabulator = () => {
   tabulator.value = new Tabulator(tableRef.value, {
@@ -161,6 +199,7 @@ const initTabulator = () => {
       },
 
       // For HTML table
+      //{formatter:"rowSelection", titleFormatter:"rowSelection", width: 70, hozAlign:"center", headerSort:false},
       {
         title: t("Tabulator.General_columns.id"),
         field: "id",
@@ -171,7 +210,6 @@ const initTabulator = () => {
       {
         title: t("Tabulator.General_columns.document"),
         minWidth: 400,
-        width: 450,
         responsive: 0,
         field: "file_name",
         vertAlign: "middle",
@@ -181,6 +219,7 @@ const initTabulator = () => {
       {
         title: t("Tabulator.General_columns.type"),
         minWidth: 100,
+        width: 120,
         field: "type",
         hozAlign: "center",
         vertAlign: "middle",
@@ -193,6 +232,7 @@ const initTabulator = () => {
       {
         title: t("Tabulator.General_columns.created_by"),
         minWidth: 200,
+        width:300,
         field: "employee.name",
         hozAlign: "center",
         vertAlign: "middle",
@@ -202,49 +242,48 @@ const initTabulator = () => {
       {
         title: t("Tabulator.General_columns.created_at"),
         minWidth: 200,
+        width: 300,
         field: "created_at",
         hozAlign: "center",
         vertAlign: "middle",
         print: false,
         download: false,
-        formatter: function (cell) {          
+        formatter: function (cell) {
           return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss')
         },
       },
       {
-        title: t("Tabulator.actions"),
-        minWidth: 200,
-        field: "actions",
-        responsive: 1,
+        formatter: viewIcon,
+        width: 50,
         hozAlign: "center",
-        vertAlign: "middle",
         headerSort: false,
-        print: false,
-        download: false,
-        formatter(cell) {
-          const a = dom(`<div class="flex lg:justify-center items-center">
-            <a id="view_btn" class="flex items-center text-primary mr-2" href="javascript:;">
-                  <i data-lucide="eye" class="w-4 h-4 mr-1"></i> Ver Documento
-                </a>
-                <a id="delete_btn" class="flex items-center text-danger" href="javascript:;">
-                  <i data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Borrar
-                </a>
-              </div>`);
-          dom(a).on("click", function (event) {
-            if (event.target.id == 'delete_btn') {
-              event.preventDefault();
-              deleteDoc(cell.getData().id, cell.getData().file_name);
-            }
-
-            if (event.target.id == 'view_btn'){
-              event.preventDefault();
-              openFile(cell.getData().path);
-            }
-          });
-
-          return a[0];
-        },
+        tooltip: t("Tabulator.ToolTips.View"),
+        cellClick: function (e, cell) {
+          openFile(cell.getData().path);
+        }
       },
+      {
+        formatter: downloadIcon,
+        width: 50,
+        hozAlign: "center",
+        headerSort: false,
+        tooltip: t("Tabulator.ToolTips.Download"),
+        cellClick: function (e, cell) {
+          downloadFile(cell.getData().path, cell.getData().file_name);
+        }
+      },
+      {
+        formatter:
+        deleteIcon, 
+        width: 50,
+        hozAlign: "center",
+        headerSort: false,
+        tooltip: t("Tabulator.ToolTips.Delete"),
+        cellClick: function (e, cell) {
+          deleteDoc(cell.getData().id, cell.getData().file_name);
+        }
+      },
+
 
       // For print format
       {
@@ -335,101 +374,183 @@ const onPrint = () => {
 const deleteDoc = async (id, filename) => {
   Swal.fire({
     icon: 'warning',
-    iconColor: 'red',
+    //iconColor: 'red',
     title: t("documents.swal.are_you_sure"),
-    html: '<span class="font-medium">' + t("documents.swal.delete") +'</span><br /><div class="mt-2 text-sm italic"> '+ filename + '</div>',
+    html: '<span class="font-medium">' + t("documents.swal.delete") + '</span><br /><div class="mt-2 text-sm italic"> ' + filename + '</div>',
     showCancelButton: true,
+    buttonsStyling: false,
+    customClass: {
+      confirmButton: 'btn btn-primary shadow-md',
+      cancelButton: 'btn btn-secondary shadow-md ml-3',
+    },
     confirmButtonText: t("documents.swal.yes"),
-    confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_ALERT,
     cancelButtonText: t("documents.swal.no"),
-    cancelButtonColor:import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
-  }).then(async(result) => {
+  }).then(async (result) => {
     if (result.isConfirmed) {
       await destroyCompanyDocument(id);
-      if(errors.value == 'Role not allowed'){
+      if (errors.value == 'Role not allowed') {
         Swal.fire({
           icon: 'error',
           title: '',
           text: t("documents.swal.document_not_allowed"),
           confirmButtonText: t("documents.swal.all_right_btn"),
-          confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_ALERT,
+          buttonsStyling: false,
+          customClass: {
+            confirmButton: 'btn btn-primary shadow-md',
+          },
         });
-      }else{
+      } else {
         tableData.value = await findData();
         initTabulator();
         Swal.fire({
           icon: 'success',
           title: '',
           text: t("documents.swal.document_deleted"),
-          confirmButtonText: t("documents.swal.all_right_btn"),
-          confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
+          toast: true,
+          position: 'top',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
         });
       }
     }
   });
 }
 
-const uploadFile = (event) => {
+const dropZoneClick = (event) => {
+  document.getElementById('input_files').click();
+};
+
+const dropZoneAddFiles = async(event) => {
+  selected_file = '1';
+  state.files.push(event.target.files[0]);
   file.value = event.target.files[0];
   const fileName = computed(() => file.value?.name);
   const fileExtension = computed(() => fileName.value?.substr(fileName.value?.lastIndexOf(".") + 1));
   const fileMimeType = computed(() => file.value?.type);
   const fileSize = computed(() => file.value?.size);
-  toBase64(file.value).then(fileData => { 
-    fileJson = { file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData };
+  await toBase64(file.value).then(fileData => {
+    fileJson.push({file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData});
   });
+}
 
-};
+const dropZoneClearFile = (currentFile) => {
+  uploading.value = 0;
+  const index = state.files.map(i => i.name).indexOf(currentFile);
+  state.files.splice(index,1);
+  fileJson.splice(index,1);
+  if(state.files.length == 0){
+    selected_file = '';
+  }
+}
 
 const toBase64 = file => new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = () => resolve(reader.result);
+  reader.onerror = reject;
 });
 
-const sendFile= async () => {
-  if(file_selected.value.value > ''){
-  addFileModal.value = false;
-  file_selected.value.value = '';
-  await storeCompanyDocument(fileJson);
-  if(errors.value === ''){
+const dropZoneSendFiles = async () => {
+  uploading.value = 1;
+  for(const element of fileJson) {
+    await storeCompanyDocument(element);
+  }
+  addFilesModal.value = false;
+  selected_file = '';
+  state.files.length = 0;
+  fileJson.length = 0;
+  uploading.value = 0;
+  if (errors.value === '') {
     //ARCHIVO ENVIADO CORRECTAMENTE
     tableData.value = await findData();
-        initTabulator();
-        Swal.fire({
-          icon: 'success',
-          title: '',
-          text: t("documents.swal.document_uploaded"),
-          confirmButtonText: t("documents.swal.all_right_btn"),
-          confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
-        });
-  }else{
+    initTabulator();
+    Swal.fire({
+      icon: 'success',
+      title: '',
+      text: t("documents.swal.document_uploaded"),
+      toast: true,
+      position: 'top',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+    });
+  } else {
     //HUBO UN ERROR
     Swal.fire({
-          icon: 'error',
-          title: '',
-          text: t("documents.swal.document_error_uploading"),
-          confirmButtonText: t("documents.swal.all_right_btn"),
-          confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_ALERT,
-        });
+      icon: 'error',
+      title: '',
+      text: t("documents.swal.document_error_uploading"),
+      confirmButtonText: t("documents.swal.all_right_btn"),
+      buttonsStyling: false,
+      customClass: {
+        confirmButton: 'btn btn-primary shadow-md',
+      },
+    });
   }
-  }else{
-    showNoFileError.value = true;
-  }
-};
+
+}
 
 const hideModal = async () => {
-  file_selected.value.value = '';
-  addFileModal.value = false;
+  selected_file = '';
+  addFilesModal.value = false;
   showNoFileError.value = false;
-
+  uploading.value = 0;
+  state.files.length = 0;
+  fileJson.length = 0;
 };
 
 const openFile = async (path) => {
+  Swal.fire({
+      icon: 'info',
+      title: '',
+      text: t("documents.swal.document_wait_viewing"),
+      //toast: true,
+      position: 'center',
+      showConfirmButton: false,
+    });
   await downloadCompanyDocument(path);
-  console.log(companyDocumentData.value);
-  window.open(companyDocumentData.value);
+  Swal.close();
+  switch (companyDocumentData.value.type) {
+    case 'pdf':
+      window.open(companyDocumentData.value.data);
+      break;
+    case 'png':
+    case 'jpg':
+    case 'jpeg':
+      window.open(URL.createObjectURL(new Blob(["<img src='" + companyDocumentData.value.data + "' />"], { type: "text/html" })));
+      break;
+    default:
+      Swal.fire({
+        icon: 'error',
+        title: '',
+        text: t("documents.swal.document_error_viewing"),
+        confirmButtonText: t("documents.swal.all_right_btn"),
+        buttonsStyling: false,
+        customClass: {
+          confirmButton: 'btn btn-primary shadow-md',
+        },
+      });
+  }
+}
+
+const downloadFile = async (path, file_name) => {
+  Swal.fire({
+      icon: 'info',
+      title: '',
+      text: t("documents.swal.document_wait_download"),
+      //toast: true,
+      position: 'center',
+      showConfirmButton: false,
+    });
+  await downloadCompanyDocument(path);
+  const linkSource = companyDocumentData.value.data;
+  const downloadLink = document.createElement("a");
+  const fileName = file_name;
+  downloadLink.href = linkSource;
+  downloadLink.download = fileName;
+  Swal.close();
+  downloadLink.click();
 }
 
 onMounted(async () => {
@@ -438,7 +559,6 @@ onMounted(async () => {
   reInitOnResizeWindow();
 });
 
-
 onBeforeMount(async () => {
 
 });
@@ -446,10 +566,28 @@ onBeforeMount(async () => {
 </script>
 
 <style>
-input[type=file]::file-selector-button {
-  background-color: transparent;
-  border: 0px solid #000;
-  color: white;
-  font-weight: 900;
+.upload_file_box {
+  text-align: center !important;
+  width: auto;
+  border: solid;
+  border-width: 1px;
+  border-color: rgb(0 150 178);
+  border-style: dashed;
+  border-radius: 5px;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  height: 200px;
+}
+
+.file_container {
+  text-align: left !important;
+  width: auto;
+  border: solid;
+  border-width: 1px;
+  border-color: rgba(0, 150, 178, 0.3);
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
 }
 </style>

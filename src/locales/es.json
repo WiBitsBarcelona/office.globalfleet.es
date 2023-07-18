@@ -35,6 +35,7 @@
     "trips": "Viajes",
     "devices": "Dispositivos",
     "documents": "Documentos",
+    "incidents": "Incidencias",
     "chat": "Chat"
   },
   "dashboard": {
@@ -168,13 +169,15 @@
     "driver_files": "Documentos de Conductores",
     "chat_files": "Documentos del Chat",
     "trip_files": "Documentos de Viajes",
-    "upload_document": "Subir Documento",
+    "upload_document": "Subir Documentos",
     "filters": {
       "field": "Campo",
       "type": "Tipo",
       "like": "Contiene",
       "value": "Valor",
       "search_placeholder": "Buscar Documento...",
+      "search_driver_placeholder": "Buscar conductor...",
+      "search_trip_placeholder": "Buscar viaje...",
       "search_btn": "Buscar",
       "reset_search_btn": "Limpiar"
     },
@@ -184,6 +187,7 @@
     "export_JSON": "Exportar JSON",
     "export_XLSX": "Exportar XLXS",
     "export_HTML": "Exportar HTML",
+    "return": "Volver",
     "swal": {
       "are_you_sure": "¿Estas seguro de?",
       "delete": "Eliminar el documento: ",
@@ -192,34 +196,20 @@
       "document_not_allowed": "No tienes permisos para eliminar este Documento.",
       "document_deleted": "Documento eliminado correctamente.",
       "all_right_btn": "De acuerdo",
-      "document_uploaded": "Documento enviado correctamente.",
-      "document_error_uploading": "Ha sucedido un error al subir el archivo."
+      "document_uploaded": "Documentos enviados correctamente.",
+      "document_error_uploading": "Ha sucedido un error al subir el archivo.",
+      "document_error_viewing": "No podemos mostrar este tipo de Archivo. Descargarlo, para visualizarlo.",
+      "document_wait_viewing": "Abriendo documento, un momento por favor...",
+      "document_wait_download": "Descargando documento, un momento por favor..."
     }
   },
-  "pagination":{
-    "page_size":"Tamaño Página",
-      "page_title":"Show Page",
-      "first":"First", 
-      "first_title":"First Page", 
-      "last":"Last",
-      "last_title":"Last Page",
-      "prev":"Prev",
-      "prev_title":"Prev Page",
-      "next":"Next",
-      "next_title":"Next Page",
-      "all":"All",
-      "counter":{
-          "showing": "Showing",
-          "of": "of",
-          "rows": "rows",
-          "pages": "pages"
-      }
-  },
   "Dropzone": {
-    "title": "Selecciona el fichero que quieres subir.",
-    "upload_general_document": "Los fichero subidos en esta sección seran visibles para todos tus conductores.",
-    "btn_upload": "Enviar Archivo",
-    "btn_close": "Cerrar",
+    "modal_title": "Envío de Archivos",
+    "title": "Selecciona tus Archivos.",
+    "subtitle": "Solo archivos tipo JPG, PNG o PDF.",
+    "upload_general_document": "Los ficheros subidos en esta sección seran visibles para todos tus conductores.",
+    "btn_upload": "Enviar Archivos",
+    "btn_close": "Cancelar",
     "no_file": "ERROR: Debes seleccionar un Archivo antes de enviarlo."
   },
   "Tabulator": {
@@ -230,7 +220,47 @@
       "created_by": "CREADO POR",
       "created_at": "FECHA"
     },
-    "actions": "ACCIONES"
-    
+    "actions": "ACCIONES",
+    "Driver_columns": {
+      "driver": "Selecciona el Conductor"
+    },
+    "Driver_documents_columns": {
+      "document": "DOCUMENTO",
+      "type": "TIPO",
+      "created_by": "CREADO POR",
+      "created_at": "Fecha envío",
+      "receptioned_at": "Fecha recepción",
+      "confirmed_at": "Fecha confirmación",
+      "readed_at": "Fecha lectura"
+    },
+    "ToolTips": {
+      "View": "Ver Documento",
+      "Download": "Descargar Documento",
+      "Delete": "Eliminar Documento"
+    }
+  },
+  "incidences": {
+    "driver_incidences": "Incidencias de Conductores",
+    "trip_incidences": "Incidencias en Viajes",
+    "stage_incidences": "Incidencias en Etapas",
+    "task_incidences": "Incidencias en Tareas",
+    "filters": {
+      "search_driver_placeholder": "Buscar conductor..."
+    },
+    "Tabulator": {
+      "status_tooltip": "Incidencia NO leida",
+      "view_tooltip": "Ver incidencia",
+      "driver": "Conductor",
+      "type": "Tipo de incidencia",
+      "comment": "Comentario",
+      "sended_at": "Enviada el",
+      "received_at": "Recibida el",
+      "readed_at": "Leida el"
+    },
+    "Modal": {
+      "title": "Detalles Incidencia",
+      "btn_readed": "Marcar como Leida",
+      "btn_close": "Cerrar"
+    }
   }
 }
