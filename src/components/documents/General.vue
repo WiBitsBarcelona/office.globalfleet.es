@@ -199,7 +199,7 @@ const initTabulator = () => {
       },
 
       // For HTML table
-      {formatter:"rowSelection", titleFormatter:"rowSelection", width: 70, hozAlign:"center", headerSort:false},
+      //{formatter:"rowSelection", titleFormatter:"rowSelection", width: 70, hozAlign:"center", headerSort:false},
       {
         title: t("Tabulator.General_columns.id"),
         field: "id",
@@ -535,13 +535,21 @@ const openFile = async (path) => {
 }
 
 const downloadFile = async (path, file_name) => {
+  Swal.fire({
+      icon: 'info',
+      title: '',
+      text: t("documents.swal.document_wait_download"),
+      //toast: true,
+      position: 'center',
+      showConfirmButton: false,
+    });
   await downloadCompanyDocument(path);
-
   const linkSource = companyDocumentData.value.data;
   const downloadLink = document.createElement("a");
   const fileName = file_name;
   downloadLink.href = linkSource;
   downloadLink.download = fileName;
+  Swal.close();
   downloadLink.click();
 }
 

@@ -199,7 +199,8 @@
       "document_uploaded": "Documentos enviados correctamente.",
       "document_error_uploading": "Ha sucedido un error al subir el archivo.",
       "document_error_viewing": "No podemos mostrar este tipo de Archivo. Descargarlo, para visualizarlo.",
-      "document_wait_viewing": "Abriendo documento, un momento por favor..."
+      "document_wait_viewing": "Abriendo documento, un momento por favor...",
+      "document_wait_download": "Descargando documento, un momento por favor..."
     }
   },
   "Dropzone": {
@@ -223,6 +224,15 @@
     "Driver_columns": {
       "driver": "Selecciona el Conductor"
     },
+    "Driver_documents_columns": {
+      "document": "DOCUMENTO",
+      "type": "TIPO",
+      "created_by": "CREADO POR",
+      "created_at": "Fecha envío",
+      "receptioned_at": "Fecha recepción",
+      "confirmed_at": "Fecha confirmación",
+      "readed_at": "Fecha lectura"
+    },
     "ToolTips": {
       "View": "Ver Documento",
       "Download": "Descargar Documento",
@@ -244,10 +254,13 @@
       "type": "Tipo de incidencia",
       "comment": "Comentario",
       "sended_at": "Enviada el",
-      "received_at": "Recibida el"
+      "received_at": "Recibida el",
+      "readed_at": "Leida el"
     },
     "Modal": {
-      "title": "Detalles Incidencia"
+      "title": "Detalles Incidencia",
+      "btn_readed": "Marcar como Leida",
+      "btn_close": "Cerrar"
     }
   }
 }

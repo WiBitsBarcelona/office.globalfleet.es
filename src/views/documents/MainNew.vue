@@ -16,7 +16,7 @@
               </TabPanel>
               <TabPanel>
                 <div class="col-span-12">
-                  <DriversDocuments />
+                  <DriversDocuments /> 
                 </div>
               </TabPanel>
               <TabPanel>

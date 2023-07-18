@@ -46,17 +46,46 @@
   <!-- FOOTER -->
   <FleetFooter/>
 
-<!-- BEGIN: Add Documents Modal Content -->
+<!-- BEGIN: View Incidence Modal Content -->
 <Modal backdrop="static" :show="viewIncidenceModal" @hidden="viewIncidenceModalModal = false">
     <ModalBody class="px-2 py-5 text-center">
       <h2 class="text-lg font-medium text-left ml-5">{{ $t("incidences.Modal.title") }}</h2>
       <XIcon class="absolute top-0 right-0 mt-3 mr-3 w-8 h-8 text-slate-400 hover:cursor-pointer" @click="hideModal" >
       </XIcon>
       <div class="grid grid-cols-12 gap-6 mx-3 mt-5 items-center justify-center">
-
-        <button type="button" @click="hideModal" class="btn btn-secondary w-60 mr-5">
-              {{ $t("Dropzone.btn_close") }}
+        <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 text-center dark:bg-gray-800 dark:text-gray-400">
+          <p class="text-md text-l font-bold leading-5 text-gray-500">NOMBRE Y APELLIDO CONDUCTOR / MATRICULA</p>
+        </div>
+        <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 text-left dark:bg-gray-800 dark:text-gray-400">
+          <h5 class="text-xs font-light text-gray-400">{{ $t("incidences.Tabulator.type") }}</h5>
+          <p class="text-md font-normal leading-4 text-gray-500">Avería del camión</p>
+        </div>
+        <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 text-left dark:bg-gray-800 dark:text-gray-400">
+          <h5 class="text-xs font-light text-gray-400">{{ $t("incidences.Tabulator.comment") }}</h5>
+          <p class="text-md font-normal leading-4 text-gray-500">Se ha recalentado el motor a causa de la retención y he tenido que solicitar asistencia.</p>
+        </div>
+        <div class="col-span-6 rounded-md bg-gray-100 p-1 pb-1 text-left dark:bg-gray-800 dark:text-gray-400">
+          <h5 class="text-xs font-light text-gray-400">{{ $t("incidences.Tabulator.sended_at") }}</h5>
+          <p class="text-md font-normal leading-4 text-gray-500">11/07/2023 11:40:50</p>
+        </div>
+        <div class="col-span-6 rounded-md bg-gray-100 p-1 pb-1 text-left dark:bg-gray-800 dark:text-gray-400">
+          <h5 class="text-xs font-light text-gray-400">{{ $t("incidences.Tabulator.received_at") }}</h5>
+          <p class="text-md font-normal leading-4 text-gray-500">11/07/2023 11:41:00</p>
+        </div>
+        <div class="col-span-3"></div>
+        <div class="col-span-6 rounded-md bg-gray-100 p-1 pb-1 text-left dark:bg-gray-800 dark:text-gray-400">
+          <h5 class="text-xs font-light text-gray-400">{{ $t("incidences.Tabulator.readed_at") }}</h5>
+          <p class="text-md font-normal leading-4 text-gray-500">--</p>
+        </div> 
+        <div class="col-span-3"></div>      
+        <div class="col-span-12 flex mt-5">
+          <button type="button" @click="hideModal" class="btn btn-primary w-60 mr-5">
+              {{ $t("incidences.Modal.btn_readed") }}
             </button>
+        <button type="button" @click="hideModal" class="btn btn-secondary w-60 mr-5">
+              {{ $t("incidences.Modal.btn_close") }}
+            </button>
+        </div>
       </div>
     </ModalBody>
   </Modal>
