@@ -153,14 +153,42 @@
         <!-- DATA BEGINS -->
         <!-- Element 1 -->
         
-        <TripCard
-          v-for="trip in searchedTrips"
-          :key="trip.id"
-          :trip="trip"
-          :classBtnFilter="classBtnFilter"
-        />
+        <div v-if="searchedTrips.length > 0">
+          <TripCard
+            v-for="trip in searchedTrips"
+            :key="trip.id"
+            :trip="trip"
+            :classBtnFilter="classBtnFilter"
+          />
+        </div>
+        <div v-else>
+          <!-- <div class="pb-6 pt-6">
+            <p class="text-md text-gray-500">{{ $t("no_display_data") }}</p>
+          </div> -->
+          
+          <div class="box p-1 mb-2 intro-x hover:cursor-pointer hover:ring-2 hover:ring-primary">
+            <div class="grid gap-y-8 bg-gray-100">
+              <div
+                class="flex text-left pt-10 pb-10 pl-5">
+                <div
+                  class="flex rounded-md  text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+                  <!-- alert -->
+                  
+                    
+                    <p class="text-md">{{ $t("no_display_data") }}</p>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
 
 
+
+
+
+
+
+        </div>
 
       </div>
 
@@ -234,7 +262,6 @@
 
 
   // Btn
-
   const classBtnAll = 'class_btn_all';
   const classBtnCreated = 'class_btn_created';
   const classBtnPending = 'class_btn_pending';
