@@ -714,11 +714,14 @@ const init = async (initializeMap) => {
                   </div>
                 </div>
               </div>`;
-
+              
+      //TODO aquii
       if (speed >= 5) {
-        markerIcon = "./src/assets/images/markers/map-marker-green.svg";
+        //markerIcon = "./src/assets/images/markers/map-marker-green.svg";
+        markerIcon = imageAssets["/src/assets/images/markers/map-marker-green.svg"].default;
       } else {
-        markerIcon = "./src/assets/images/markers/map-marker-red.svg";
+        //markerIcon = "/src/assets/images/markers/map-marker-red.svg";
+        markerIcon = imageAssets["/src/assets/images/markers/map-marker-red.svg"].default;
       };
 
       // const marker = new google.maps.Marker({
