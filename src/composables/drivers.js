@@ -77,6 +77,7 @@ export default function useDriver() {
 
 
 	const destroyDriver = async (id) => {
+		errors.value = '';
 		try {
 			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}office/drivers/destroy/${id}`, config);
 		} catch (e) {
