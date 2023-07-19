@@ -716,9 +716,9 @@ const init = async (initializeMap) => {
               </div>`;
 
       if (speed >= 5) {
-        markerIcon = "/src/assets/images/markers/map-marker-green.svg";
+        markerIcon = "./src/assets/images/markers/map-marker-green.svg";
       } else {
-        markerIcon = "/src/assets/images/markers/map-marker-red.svg";
+        markerIcon = "./src/assets/images/markers/map-marker-red.svg";
       };
 
       // const marker = new google.maps.Marker({
