@@ -733,9 +733,11 @@ const init = async (initializeMap) => {
               </div>`;
 
       if (speed >= 5) {
-        markerIcon = "/src/assets/images/markers/map-marker-green.svg";
+        markerIcon = imageAssets["/src/assets/images/markers/map-marker-green.svg"].default;
+        //markerIcon = "/src/assets/images/markers/map-marker-green.svg";
       } else {
-        markerIcon = "/src/assets/images/markers/map-marker-red.svg";
+        markerIcon = imageAssets["/src/assets/images/markers/map-marker-red.svg"].default;
+        //markerIcon = "/src/assets/images/markers/map-marker-red.svg";
       };
 
       /*  BLOCK TO DISPLAY COORDINATES ON THE INFOWINDOW. DISABLED AT THIS MOMENT.           
@@ -821,7 +823,8 @@ function createCenterControl(map) {
   const controlButton = document.createElement("button");
   // Set CSS for the control.
   controlButton.style.backgroundColor = "#fff";
-  controlButton.style.backgroundImage = "url('../../../src/assets/images/refresh.png')";
+  controlButton.style.backgroundImage = "url('" + imageAssets["/src/assets/images/markers/refresh.png"].default + "')";
+  //controlButton.style.backgroundImage = "url('../../../src/assets/images/refresh.png')";
   //controlButton.style.backgroundImage = "url(imageAssets['/src/assets/images/map-marker-region-dark.svg'])";
   controlButton.style.backgroundSize = "cover"
   controlButton.style.width = "40px";
