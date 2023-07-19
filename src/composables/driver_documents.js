@@ -59,6 +59,15 @@ export default function useDriverDocument() {
 		}
 	}
 
+	const storeDriverDocument = async (data) => {
+		errors.value = '';
+		try {
+			await axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}driver-documents/store`, data, config);
+		} catch (e) {
+			console.log(e);
+		}
+	}
+
 
 
 
@@ -73,6 +82,7 @@ export default function useDriverDocument() {
 		getDriverDocuments,
 		downloadDriverDocument,
 		destroyDriverDocument,
+		storeDriverDocument,
 	}
 
 }

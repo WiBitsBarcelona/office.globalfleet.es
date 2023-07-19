@@ -20,11 +20,11 @@
     <div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
       <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
         <div class="relative sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
-          <input id="tabulator-html-filter-value" v-model="driver_docs_filter.value" type="text"
+          <input id="tabulator-html-filter-value" v-model="filter.value" type="text"
             class="w-full xl:w-[600px] form-control mt-2 sm:mt-0"
-            :placeholder="$t('documents.filters.search_placeholder')" @keyup="onDriverDocumentsFilter" />
+            :placeholder="$t('documents.filters.search_placeholder')" @keyup="onFilter" />
           <XCircleIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer"
-            @click="onDriverDocumentsResetFilter" />
+            @click="onResetFilter" />
         </div>
       </form>
       <div class="flex items-start mt-2 xl:w-[600px]">
@@ -141,12 +141,6 @@ const filter = reactive({
   type: "like",
   value: "",
 });
-
-const driver_docs_filter = reactive({
-  field: "file_name",
-  type: "like",
-  value: "",
-})
 
 const file_selected = ref('');
 const driver_selected = ref(0);
@@ -562,17 +556,6 @@ const onResetFilter = () => {
   filter.type = "like";
   filter.value = "";
   onFilter();
-};
-
-const onDriverDocumentsFilter = () => {
-  tabulator.value.setFilter(driver_docs_filter.field, driver_docs_filter.type, driver_docs_filter.value);
-};
-
-const onDriverDocumentsResetFilter = () => {
-  driver_docs_filter.field = "file_name";
-  driver_docs_filter.type = "like";
-  driver_docs_filter.value = "";
-  onDriverDocumentsFilter();
 };
 
 const returnDrivers = () => {

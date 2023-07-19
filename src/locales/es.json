@@ -61,8 +61,7 @@
     "select_all": "Todos",
     "select_driver_placeholder": "Selecciona un conductor...",
     "reload_map": "Reiniciar Mapa",
-    "no_data": "--",
-    "info_demo_text": "La información mostrada en este dashboard NO es real y se muestra para el propósito de demostraciones."
+    "no_data": "--"
   },
   "profile": "Perfil",
   "reset_password": "Resetear Password",
@@ -208,6 +207,7 @@
     "title": "Selecciona tus Archivos.",
     "subtitle": "Solo archivos tipo JPG, PNG o PDF.",
     "upload_general_document": "Los ficheros subidos en esta sección seran visibles para todos tus conductores.",
+    "upload_driver_document": "Los ficheros subidos en esta sección seran visibles para el conductor: ",
     "btn_upload": "Enviar Archivos",
     "btn_close": "Cancelar",
     "no_file": "ERROR: Debes seleccionar un Archivo antes de enviarlo."
