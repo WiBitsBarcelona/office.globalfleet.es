@@ -3,6 +3,10 @@ import duration from "dayjs/plugin/duration";
 
 dayjs.extend(duration);
 
+const iconsAssets = import.meta.globEager(
+  `/src/assets/images/icons/*.{jpg,jpeg,png,svg}`
+);
+
 const helpers = {
   cutText(text, length) {
     if (text.split(" ").length > 1) {
@@ -184,28 +188,28 @@ const helpers = {
     let icon;
     switch(direction) {
       case "Norte":
-        icon = '<img src = "/src/assets/images/icons/north.svg" alt="Norte"/>';
+        icon = '<img src = "' + iconsAssets["/src/assets/images/icons/north.svg"].default +  '" alt="Norte"/>';
         break;
       case "Noreste":
-        icon = '<img src = "/src/assets/images/icons/north_east.svg" alt="Nordeste"/>';
+        icon = '<img src = "' + iconsAssets["/src/assets/images/icons/north_east.svg"].default +  '" alt="Noreste"/>';
         break; 
       case "Este":
-        icon = '<img src = "/src/assets/images/icons/east.svg" alt="Este"/>';
+        icon = '<img src = "' + iconsAssets["/src/assets/images/icons/east.svg"].default +  '" alt="Este"/>';
         break;
       case "Sureste":
-        icon = '<img src = "/src/assets/images/icons/south_east.svg" alt="Sureste"/>';
+        icon = '<img src = "' + iconsAssets["/src/assets/images/icons/south_east.svg"].default +  '" alt="Sureste"/>';
         break;
       case "Sur":
-        icon = '<img src = "/src/assets/images/icons/south.svg" alt="Sur"/>';
+        icon = '<img src = "' + iconsAssets["/src/assets/images/icons/south.svg"].default +  '" alt="Sur"/>';
         break;
       case "Suroeste":
-        icon = '<img src = "/src/assets/images/icons/south_west.svg" alt="Suroeste"/>';
+        icon = '<img src = "' + iconsAssets["/src/assets/images/icons/south_west.svg"].default +  '" alt="Suroeste"/>';
         break;
       case "Oeste":
-        icon = '<img src = "/src/assets/images/icons/west.svg" alt="Oeste"/>';
+        icon = '<img src = "' + iconsAssets["/src/assets/images/icons/west.svg"].default +  '" alt="Oeste"/>';
         break;
       case "Noroeste":
-        icon = '<img src = "/src/assets/images/icons/north_west.svg" alt="Noroeste"/>';
+        icon = '<img src = "' + iconsAssets["/src/assets/images/icons/north_west.svg"].default +  '" alt="Noroeste"/>';
         break;
       default:
         icon = '';           
