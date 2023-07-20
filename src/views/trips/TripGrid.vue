@@ -82,10 +82,10 @@
           <!-- ORDER OPTIONS -->
           <div class="col-span-12 xl:col-span-6 intro-y">
             <div class="flex flex-col sm:flex-row mt-2">
-              <div class="ml-2 mr-5 font-light text-gray-600">Ordenar por:</div>
+              <div class="ml-2 mr-5 font-light text-gray-600">{{ $t("order_by") }}</div>
               <div class="form-check mr-2">
                 <input
-                  id="radio-switch-4"
+                  id="radio-trip-date"
                   class="form-check-input"
                   type="radio"
                   checked
@@ -94,13 +94,28 @@
                 />
                 <label
                   class="form-check-label font-normal text-gray-600"
-                  for="radio-switch-4"
-                  >{{ $t('trip') }}</label
+                  for="radio-trip-date"
+                  >{{ $t('trip_date') }}</label
+                >
+              </div>
+              <div class="form-check mr-2">
+                <input
+                  id="radio-trip-id"
+                  class="form-check-input"
+                  type="radio"
+                  checked
+                  name="horizontal_radio_button"
+                  value="horizontal-radio-chris-evans"
+                />
+                <label
+                  class="form-check-label font-normal text-gray-600"
+                  for="radio-trip-id"
+                  >{{ $t('trip_id') }}</label
                 >
               </div>
               <div class="form-check mr-2 mt-2 sm:mt-0">
                 <input
-                  id="radio-switch-5"
+                  id="radio-vehicle"
                   class="form-check-input"
                   type="radio"
                   name="horizontal_radio_button"
@@ -108,13 +123,13 @@
                 />
                 <label
                   class="form-check-label font-normal text-gray-600"
-                  for="radio-switch-5"
+                  for="radio-vehicle"
                   >{{ $t('vehicle') }}</label
                 >
               </div>
               <div class="form-check mr-2 mt-2 sm:mt-0">
                 <input
-                  id="radio-switch-6"
+                  id="radio-driver"
                   class="form-check-input"
                   type="radio"
                   name="horizontal_radio_button"
@@ -122,7 +137,7 @@
                 />
                 <label
                   class="form-check-label font-normal text-gray-600"
-                  for="radio-switch-6"
+                  for="radio-driver"
                   >{{ $t('driver') }}</label
                 >
               </div>
@@ -138,7 +153,7 @@
                   v-model="filter"
                   type="text"
                   class="form-control box pr-10"
-                  placeholder="Buscar..."
+                  :placeholder="$t('find_by')"
                 />
                 <SearchIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" />
               </div>

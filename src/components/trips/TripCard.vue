@@ -172,7 +172,7 @@
         <!-- trip number-->
         <div class="rounded-md p-2 pb-1" :class="bg_trip">
           <h5 class="text-xs font-light text-gray-400">{{ $t("trip") }}</h5>
-          <p class="text-md font-normal leading-6 text-gray-500 ">{{ trip.reference_number }}</p>
+          <p class="text-md font-normal leading-6 text-gray-500">{{ trip.reference_number }}</p>
         </div>
         <div class="rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400">
           <h5 class="text-xs font-light text-gray-400">{{ $t("vehicle") }}</h5>
