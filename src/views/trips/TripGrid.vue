@@ -85,12 +85,13 @@
               <div class="ml-2 mr-5 font-light text-gray-600">{{ $t("order_by") }}</div>
               <div class="form-check mr-2">
                 <input
+                  v-model="radio_order_by"
                   id="radio-trip-date"
                   class="form-check-input"
                   type="radio"
                   checked
-                  name="horizontal_radio_button"
-                  value="horizontal-radio-chris-evans"
+                  value="radio-trip-date"
+                  @change="onClickRadioTripDate"
                 />
                 <label
                   class="form-check-label font-normal text-gray-600"
@@ -100,12 +101,12 @@
               </div>
               <div class="form-check mr-2">
                 <input
+                  v-model="radio_order_by"
                   id="radio-trip-id"
                   class="form-check-input"
                   type="radio"
-                  checked
-                  name="horizontal_radio_button"
-                  value="horizontal-radio-chris-evans"
+                  value="radio-trip-id"
+                  @change="onClickRadioTripDate"
                 />
                 <label
                   class="form-check-label font-normal text-gray-600"
@@ -115,11 +116,12 @@
               </div>
               <div class="form-check mr-2 mt-2 sm:mt-0">
                 <input
+                  v-model="radio_order_by"
                   id="radio-vehicle"
                   class="form-check-input"
                   type="radio"
-                  name="horizontal_radio_button"
-                  value="horizontal-radio-liam-neeson"
+                  value="radio-vehicle"
+                  @change="onClickRadioTripDate"
                 />
                 <label
                   class="form-check-label font-normal text-gray-600"
@@ -129,11 +131,12 @@
               </div>
               <div class="form-check mr-2 mt-2 sm:mt-0">
                 <input
+                  v-model="radio_order_by"
                   id="radio-driver"
                   class="form-check-input"
                   type="radio"
-                  name="horizontal_radio_button"
-                  value="horizontal-radio-daniel-craig"
+                  value="radio-driver"
+                  @change="onClickRadioTripDate"
                 />
                 <label
                   class="form-check-label font-normal text-gray-600"
@@ -276,12 +279,7 @@
   const { trips, getTrips } = useTrips();
 
 
-  // Btn
-  const classBtnAll = 'class_btn_all';
-  const classBtnCreated = 'class_btn_created';
-  const classBtnPending = 'class_btn_pending';
-  const classBtnProgress = 'class_btn_progress';
-  const classBtnCompleted = 'class_btn_completed';
+  
 
   const classBtnFilter = ref(classBtnAll);
 
@@ -298,12 +296,32 @@
 
   const filter = ref('');
   
+  /**
+   * Menu Buttons
+   */
+  const classBtnAll = 'class_btn_all';
+  const classBtnCreated = 'class_btn_created';
+  const classBtnPending = 'class_btn_pending';
+  const classBtnProgress = 'class_btn_progress';
+  const classBtnCompleted = 'class_btn_completed';
+
   const trip_completed = ref(0);
   const trip_created = ref(0);
   const trip_pending = ref(0);
   const trip_progress = ref(0);
   const trip_all = ref(0);
 
+
+
+  /**
+   * Order by
+   */
+  const radioTripDate = 'radio-trip-date';
+  const radioTripId = 'radio-trip-id';
+  const radioVehicle = 'radio-vehicle';
+  const radioDriver = 'radio-driver';
+
+  const radio_order_by = ref('radio-trip-date');
 
 
 
@@ -350,16 +368,36 @@
 
       //console.log(classBtnFilter.value);
 
-
-
-      q = q.sort((a, b) => {
-        //return a.vehicle.plate.localeCompare(b.vehicle.plate);
-        return b.vehicle.plate.localeCompare(a.vehicle.plate);
-      });
-
+      // q = q.sort((a, b) => {
+      //   //return a.vehicle.plate.localeCompare(b.vehicle.plate);
+      //   return b.vehicle.plate.localeCompare(a.vehicle.plate);
+      // });
 
 
 
+      if(radio_order_by.value == radioTripDate){
+        q = q.sort((a, b) => {
+          return b.execution_at.localeCompare(a.execution_at);
+        });
+      }else if(radio_order_by.value == radioTripId){
+        q = q.sort((a, b) => {
+          return b.reference_number.localeCompare(a.reference_number);
+        });
+      }else if(radio_order_by.value == radioVehicle){
+        q = q.sort((a, b) => {
+          return b.vehicle.plate.localeCompare(a.vehicle.plate);
+        });
+      }else if(radio_order_by.value == radioDriver){
+        q = q.sort((a, b) => {
+          return b.driver.name.localeCompare(a.driver.name);
+        });
+      }
+
+
+
+      /**
+       * Menu buttons
+       */
       if(classBtnFilter.value === classBtnCreated){
         return q.filter((trip) => {
           return (
@@ -394,14 +432,7 @@
           );
         });
       }
-
-
-
-
       
-
-
-
       
       return q.slice(pageStart.value, pageEnd.value);
   });
@@ -430,12 +461,6 @@
   const onClickCompleted = () => {
     classBtnFilter.value = classBtnCompleted;
   }
-
-  
-
-
-
-
 
 
 
