@@ -1,26 +1,26 @@
 <template>
-  <div class="intro-y box p-5 mt-0 {}" :class="{'hidden' : !driver_selected == 0}">
+  <div class="intro-y box p-5 mt-0 {}" :class="{'hidden' : !trip_selected == 0}">
     <div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
       <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
         <div class="relative sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
-          <input id="tabulator-html-filter-value" v-model="filter.value" type="text"
+          <input id="tabulator-html-filter-value" v-model="trips_filter.value" type="text"
             class="w-full xl:w-[600px] form-control mt-2 sm:mt-0"
-            :placeholder="$t('documents.filters.search_driver_placeholder')" @keyup="onFilter" />
+            :placeholder="$t('documents.filters.search_trip_placeholder')" @keyup="onTripsFilter" />
           <XCircleIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer"
-            @click="onResetFilter" />
+            @click="onResetTripsFilter" />
         </div>
       </form>
     </div>
     <div class="overflow-x-auto scrollbar-hidden">
-      <div id="tabulator" ref="tableRef" class="mt-5 table-report table-report--tabulator"></div>
+      <div id="trips_tabulator" ref="tableTripsRef" class="mt-5 table-report table-report--tabulator"></div>
     </div>
   </div>
   <!-- END: HTML Table Data -->
-  <div class="intro-y box p-5 mt-0 {}" :class="{'hidden' : driver_selected == 0}">
+<!--   <div class="intro-y box p-5 mt-0 {}" :class="{'hidden' : trip_selected == 0}">
     <div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
       <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
         <div class="relative sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
-          <input id="tabulator-html-filter-value" v-model="filter.value" type="text"
+          <input id="tabulator-html-filter-value" v-model="trip_documents_filter.value" type="text"
             class="w-full xl:w-[600px] form-control mt-2 sm:mt-0"
             :placeholder="$t('documents.filters.search_placeholder')" @keyup="onFilter" />
           <XCircleIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer"
@@ -28,7 +28,7 @@
         </div>
       </form>
       <div class="flex items-start mt-2 xl:w-[600px]">
-        <h2 class="text-xl font-medium text-primary animate__animated animate__fadeInUp truncate mr-5">{{ driver_name_selected }}</h2>
+        <h2 class="text-xl font-medium text-primary animate__animated animate__fadeInUp truncate mr-5">{{ driver_name_selected }}</h2> 
       </div>
       <div class="flex mt-5 sm:mt-0">
         <div class="col-span-12 lg:col-span-2 2xl:col-span-2 ml-auto">
@@ -48,10 +48,10 @@
   <div class="overflow-x-auto scrollbar-hidden">
       <div id="tabulator_driver_documents" ref="tableRefDriverDocuments" class="mt-5 table-report table-report--tabulator"></div>
     </div>
-  </div>
+  </div> -->
 
   <!-- BEGIN: Add Driver Documents Modal Content -->
-  <Modal backdrop="static" :show="addDriverFilesModal" @hidden="addDriverFilesModal = false">
+  <!-- <Modal backdrop="static" :show="addDriverFilesModal" @hidden="addDriverFilesModal = false">
     <ModalBody class="px-2 py-5 text-center">
       <h2 class="text-lg font-medium text-left ml-5">{{ $t("Dropzone.modal_title") }}</h2>
       <XIcon class="absolute top-0 right-0 mt-3 mr-3 w-8 h-8 text-slate-400 hover:cursor-pointer" @click="hideDriverModal" >
@@ -73,9 +73,9 @@
               <div class="col-span-9 text-left font-bold">
                 <p class="text-xs"> {{ $h.cutFileName(driverFile.name, 50) }}</p>
                 <p class="text-xs font-light"> {{ $h.formatBytes(driverFile.size) }}</p>
-                <!--                     <div class="progress">
+                                    <div class="progress">
                       <div id="progress_file" class="progress-bar w-1/12" :class="{'hidden' : uploading == 0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div> -->
+                    </div>
               </div>
               <div class="col-span-1 text-right">
                 <XIcon class="w-4 h-4 text-primary ml-3 hover:cursor-pointer" @click="dropZoneDriverClearFile(driverFile.name)"
@@ -107,13 +107,265 @@
       <input type="file" id="input_driver_files" ref="file_driver_selected" accept="application/pdf, image/*"
         class="btn btn-primary shadow-md hidden" multiple @change="dropZoneDriverAddFiles($event)" />
     </ModalBody>
-  </Modal>
+  </Modal> -->
   <!-- END: Modal Content -->
 </template>
 
 <script setup>
 import { ref, onBeforeMount, reactive, onMounted, computed } from 'vue';
-import xlsx from "xlsx";
+import Tabulator from "tabulator-tables";
+import useTrips from "@/composables/trips";
+import { useI18n } from 'vue-i18n';
+import { helper as $h } from "@/utils/helper";
+import { createIcons, icons, createElement, MinusSquare, PlusSquare, CornerDownRight } from "lucide";
+
+const { t } = useI18n();
+const trip_selected = ref(0);
+const trips_filter = reactive({
+  field: "trip",
+  type: "like",
+  value: "",
+});
+const trip_documents_filter = reactive({
+  field: "name",
+  type: "like",
+  value: "",
+});
+const { trips, getTrips, errors } = useTrips();
+const tableTripsData = reactive([]);
+let dataTripsArr = [];
+const tableTripsRef = ref();
+const trips_tabulator = ref();
+
+
+// BEGIN OF TRIPS TABULATOR & FUNCTIONS
+const findTripsData = async () => {
+  await getTrips();
+  const dataArrTmp = JSON.parse(JSON.stringify(trips.value));
+  let dataStagesTmp = [];
+  dataArrTmp.forEach(element => {
+    const full_name = element.driver.name + ' ' + element.driver.surname;
+    dataStagesTmp = [];
+    if(element.stages.length > 0){
+      element.stages.forEach(stage => {
+        if(stage.activity){
+          dataStagesTmp.push({
+            id: stage.id,
+            trip: stage.name,
+            status_id: stage.status.id,
+            status: stage.status.name,
+            driver: full_name,
+            execution_at: stage.execution_at,
+            type: "stage", 
+          });
+        };
+      });
+    }
+    dataTripsArr.push({
+      id: element.id,
+      trip: element.name,
+      status_id: element.status.id,
+      status: element.status.name,
+      driver: full_name,
+      execution_at: element.execution_at,
+      type: "trip",
+      _children: dataStagesTmp, 
+    });
+  });
+  return dataTripsArr;
+}
+
+const minusIcon = createElement(MinusSquare);
+minusIcon.setAttribute('stroke-width', '1.5');
+minusIcon.setAttribute('color', 'rgb(0,150,178)');
+const plusIcon = createElement(PlusSquare);
+plusIcon.setAttribute('stroke-width', '1.5');
+plusIcon.setAttribute('color', 'rgb(0,150,178)');
+
+const rightIcon = createElement(CornerDownRight);
+plusIcon.setAttribute('stroke-width', '1.5');
+
+const initTripsTabulator = async () => {
+  trips_tabulator.value = new Tabulator(tableTripsRef.value, {
+    reactiveData: true,
+    locale: true,
+    data: tableTripsData.value,
+    dataTree:true,
+    dataTreeCollapseElement: minusIcon,
+    dataTreeExpandElement: plusIcon,
+    //dataTreeBranchElement:rightIcon,
+    printAsHtml: true,
+    printStyled: true,
+    pagination: "local",
+    paginationSize: 15,
+    paginationSizeSelector: [15, 30, 45, 60],
+    layout: "fitColumns",
+    responsiveLayout: "collapse",
+    placeholder: t("message.no_matching_records_found"),
+    initialSort: [
+      { column: "execution_at", dir: "desc" }
+    ],
+    columns: [
+      {
+        formatter: "responsiveCollapse",
+        hozAlign: "left",
+        resizable: false,
+        headerSort: false,
+      },
+
+      // For HTML table
+      {
+        title: t("Tabulator.General_columns.id"),
+        field: "id",
+        visible: false,
+        sorter: 'number',
+
+      },
+      {
+        title: t("Tabulator.Trips_columns.trip"),
+        minWidth: 450,
+        responsive: 0,
+        field: "trip",
+        vertAlign: "middle",
+        hozAlign: "left",
+        print: false,
+        download: false,
+        formatter: function (cell, formatterParams, onRendered) {
+          const a = dom(`
+            <a id="select_trip" href="javascript:;" class='w-full flex flex-inline hover:ml-3 hover:font-medium'>` + cell.getValue() + `</a>`);
+          dom(a).on("click", function (event) {
+            if (event.target.id == 'select_trip') {
+              event.preventDefault();
+              console.log(cell.getData().type);
+              //driver_selected.value = cell.getData().id;
+              //driver_name_selected.value = cell.getValue();
+              //findDriverDocuments(cell.getData().id);
+            }
+          });
+          return a[0];
+        },
+      },
+      {
+        field: "status_id",
+        visible: false
+      },
+      {
+        title: t("Tabulator.Trips_columns.status"),
+        responsive: 0,
+        field: "status",
+        vertAlign: "middle",
+        hozAlign: "center",
+        print: false,
+        download: false,
+        formatter: function (cell, formatterParams, onRendered) {
+          let pill_bg = '';
+          let status = cell.getData().status_id;
+          switch(status) {
+            case 1:
+            case 2:
+              pill_bg = "bg-gray-100";
+              break;
+            case 3:
+            case 4:
+              pill_bg = "bg-orange-100";
+              break;
+            case 5:
+              pill_bg = "bg-blue-100";
+              break;
+            case 6:
+              pill_bg = "bg-green-100";
+              break;
+          }
+          return '<span class="inline-flex items-center py-1.5 px-1.5 rounded-lg text-xs font-medium ' + pill_bg + '">' + cell.getValue() + '</span>'
+        }       
+      },
+      {
+        title: t("Tabulator.Trips_columns.driver"),
+        responsive: 0,
+        field: "driver",
+        vertAlign: "middle",
+        hozAlign: "left",
+        print: false,
+        download: false,        
+      },
+      {
+        title: t("Tabulator.Trips_columns.execution_at"),
+        field: "execution_at",
+        hozAlign: "center",
+        vertAlign: "middle",
+        print: false,
+        download: false,
+        formatter: function (cell) {
+          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss')
+        },        
+      },
+      {
+        field: "type",
+        visible: false,
+      },
+      
+    ],
+    renderComplete() {
+      createIcons({
+        icons,
+        "stroke-width": 1.5,
+        nameAttr: "data-lucide",
+      });
+    },
+  });
+};
+
+// Filter function
+const onTripsFilter = () => {
+  trips_tabulator.value.setFilter(trips_filter.field, trips_filter.type, trips_filter.value);
+};
+
+// On reset filter
+const onResetTripsFilter = () => {
+  trips_filter.field = "trip";
+  trips_filter.type = "like";
+  trips_filter.value = "";
+  onTripsFilter();
+};
+
+const reInitTripsOnResizeWindow = () => {
+  window.addEventListener("resize", () => {
+    trips_tabulator.value.redraw();
+    createIcons({
+      icons,
+      "stroke-width": 1.5,
+      nameAttr: "data-lucide",
+    });
+  });
+};
+
+const findTripDocuments = async (id) => {
+  //await getDriverDocuments(id);
+  //const dataDriverDocuments = JSON.parse(JSON.stringify(driverDocuments.value));
+  //initDriverDocumentsTabulator();
+}
+
+const findStageDocuments = async (id) => {
+  //await getDriverDocuments(id);
+  //const dataDriverDocuments = JSON.parse(JSON.stringify(driverDocuments.value));
+  //initDriverDocumentsTabulator();
+}
+// END OF TRIPS TABULATOR & FUNCTIONS
+
+
+// BEGIN OF TRIP DOCUMENTS TABULATOR & FUNCTIONS
+
+
+// END OF TRIP DOCUMENTS TABULATOR & FUNCTIONS
+
+
+// BEGIN OF STAGE DOCUMENTS TABULATOR & FUNCTIONS
+
+
+// END OF STAGE DOCUMENTS TABULATOR & FUNCTIONS
+
+
+/*import xlsx from "xlsx";
 import { createIcons, icons } from "lucide";
 import Tabulator from "tabulator-tables";
 import dom from "@left4code/tw-starter/dist/js/dom";
@@ -323,7 +575,7 @@ const initDriverDocumentsTabulator = () => {
         vertAlign: "middle",
         print: false,
         download: false,
-      }, */
+      }, 
       {
         title: t("Tabulator.Driver_documents_columns.created_at"),
         minWidth: 200,
@@ -651,11 +903,12 @@ const dropZoneDriverSendFiles = async () => {
   }
 
 }
+ */
 
 onMounted(async () => {
-  tableData.value = await findData();
-  initTabulator();
-  reInitOnResizeWindow();
+  tableTripsData.value = await findTripsData();
+  await initTripsTabulator();
+  reInitTripsOnResizeWindow();
 });
 
 

@@ -234,6 +234,12 @@
       "confirmed_at": "Fecha confirmación",
       "readed_at": "Fecha lectura"
     },
+    "Trips_columns": {
+      "trip": "VIAJE",
+      "status": "Estado",
+      "driver": "Conductor",
+      "execution_at": "Fecha ETA"
+    },
     "ToolTips": {
       "View": "Ver Documento",
       "Download": "Descargar Documento",
