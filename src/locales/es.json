@@ -174,6 +174,8 @@
     "chat_files": "Documentos del Chat",
     "trip_files": "Documentos de Viajes",
     "upload_document": "Subir Documentos",
+    "trip": "Viaje: ",
+    "stage": "Etapa: ",
     "filters": {
       "field": "Campo",
       "type": "Tipo",
@@ -213,6 +215,8 @@
     "subtitle": "Solo archivos tipo JPG, PNG o PDF.",
     "upload_general_document": "Los ficheros subidos en esta sección seran visibles para todos tus conductores.",
     "upload_driver_document": "Los ficheros subidos en esta sección seran visibles para el conductor: ",
+    "upload_trip_document": "Los ficheros subidos en esta sección seran visibles en el viaje: ",
+    "upload_stage_document": "Los ficheros subidos en esta sección seran visibles en la etapa: ",
     "btn_upload": "Enviar Archivos",
     "btn_close": "Cancelar",
     "no_file": "ERROR: Debes seleccionar un Archivo antes de enviarlo."
@@ -243,6 +247,15 @@
       "status": "Estado",
       "driver": "Conductor",
       "execution_at": "Fecha ETA"
+    },
+    "Trip_documents_columns": {
+      "document": "DOCUMENTO",
+      "type": "TIPO",
+      "created_by": "CREADO POR",
+      "created_at": "Fecha envío",
+      "receptioned_at": "Fecha recepción",
+      "confirmed_at": "Fecha confirmación",
+      "readed_at": "Fecha lectura"
     },
     "ToolTips": {
       "View": "Ver Documento",
