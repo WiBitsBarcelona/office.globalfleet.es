@@ -21,7 +21,6 @@ export default function useTripDocument() {
 		}
 	}
 	const getTripDocuments = async (trip_id) => {
-		console.log(trip_id);
 		errors.value = '';
         const user = useAuthentication.user;
 		try {
