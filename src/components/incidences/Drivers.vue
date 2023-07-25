@@ -3,15 +3,15 @@
     <div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
       <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
         <div class="relative sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
-          <input id="tabulator-html-filter-value" v-model="filter.value" type="text"
+          <input id="tabulator-html-filter-value" v-model="driver_filter.value" type="text"
             class="w-full xl:w-[600px] form-control mt-2 sm:mt-0"
-            :placeholder="$t('incidences.filters.search_driver_placeholder')" @keyup="onFilter" />
+            :placeholder="$t('incidences.filters.search_driver_placeholder')" @keyup="onDriverFilter" />
           <XCircleIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer"
-            @click="onResetFilter" />
+            @click="onResetDriverFilter" />
         </div>
       </form>
       <div class="flex mt-5 sm:mt-0">
-        <button id="tabulator-print" class="btn btn-outline-secondary w-1/2 sm:w-auto mr-2" @click="onPrint">
+        <button id="tabulator-print" class="btn btn-outline-secondary w-1/2 sm:w-auto mr-2" @click="onDriverPrint">
           <PrinterIcon class="w-4 h-4 mr-2" /> {{ $t("documents.print") }}
         </button>
         <Dropdown class="w-1/2 sm:w-auto">
@@ -21,16 +21,16 @@
           </DropdownToggle>
           <DropdownMenu class="w-40">
             <DropdownContent>
-              <DropdownItem @click="onExportCsv">
+              <DropdownItem @click="onDriverExportCsv">
                 <FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("documents.export_CSV") }}
               </DropdownItem>
-              <DropdownItem @click="onExportJson">
+              <DropdownItem @click="onDriverExportJson">
                 <FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("documents.export_JSON") }}
               </DropdownItem>
-              <DropdownItem @click="onExportXlsx">
+              <DropdownItem @click="onDriverExportXlsx">
                 <FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("documents.export_XLSX") }}
               </DropdownItem>
-              <DropdownItem @click="onExportHtml">
+              <DropdownItem @click="onDriverExportHtml">
                 <FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("documents.export_HTML") }}
               </DropdownItem>
             </DropdownContent>
@@ -39,7 +39,7 @@
       </div>
     </div>
     <div class="overflow-x-auto scrollbar-hidden">
-      <div id="tabulator" ref="tableRef" class="mt-5 table-report table-report--tabulator"></div>
+      <div id="driver_tabulator" ref="tableDriverRef" class="mt-5 table-report table-report--tabulator"></div>
     </div>
   </div>
   <!-- END: HTML Table Data -->
@@ -47,10 +47,10 @@
   <FleetFooter/>
 
 <!-- BEGIN: View Incidence Modal Content -->
-<Modal backdrop="static" :show="viewIncidenceModal" @hidden="viewIncidenceModalModal = false">
+<Modal backdrop="static" :show="viewDriverIncidenceModal" @hidden="viewDriverIncidenceModal = false">
     <ModalBody class="px-2 py-5 text-center">
       <h2 class="text-lg font-medium text-left ml-5">{{ $t("incidences.Modal.title") }}</h2>
-      <XIcon class="absolute top-0 right-0 mt-3 mr-3 w-8 h-8 text-slate-400 hover:cursor-pointer" @click="hideModal" >
+      <XIcon class="absolute top-0 right-0 mt-3 mr-3 w-8 h-8 text-slate-400 hover:cursor-pointer" @click="hideDriverModal" >
       </XIcon>
       <div class="grid grid-cols-12 gap-6 mx-3 mt-5 items-center justify-center">
         <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 text-center dark:bg-gray-800 dark:text-gray-400">
@@ -79,10 +79,10 @@
         </div> 
         <div class="col-span-3"></div>      
         <div class="col-span-12 flex mt-5">
-          <button type="button" @click="hideModal" class="btn btn-primary w-60 mr-5">
+          <button type="button" @click="hideDriverModal" class="btn btn-primary w-60 mr-5">
               {{ $t("incidences.Modal.btn_readed") }}
             </button>
-        <button type="button" @click="hideModal" class="btn btn-secondary w-60 mr-5">
+        <button type="button" @click="hideDriverModal" class="btn btn-secondary w-60 mr-5">
               {{ $t("incidences.Modal.btn_close") }}
             </button>
         </div>
@@ -110,9 +110,9 @@ const addFileModal = ref(false);
 const showNoFileError = ref(false);
 const tableData = reactive([]);
 
-const tableRef = ref();
-const tabulator = ref();
-const filter = reactive({
+const tableDriverRef = ref();
+const driver_tabulator = ref();
+const driver_filter = reactive({
   field: "driver",
   type: "like",
   value: "",
@@ -127,7 +127,7 @@ const fileSizeScreen = ref(0);
 
 let files = [];
 const state = reactive({ files });
-const viewIncidenceModal = ref(false);
+const viewDriverIncidenceModal = ref(false);
 
 let fakeIncidencesData = [
   {id:4, driver:"Aitor Menta", incidence_type: "Avería del camión", comment: "Se ha recalentado el motor a causa de la retención y he tenido que solicitar asistencia.", sended_at: "11/07/2023 11:40:50", receptioned_at: "11/07/2023 11:41:00", readed_at: ""},
@@ -144,8 +144,8 @@ const viewIcon = function (cell, formatterParams) {
   return "<i data-lucide='eye' class='w-6 h-6 mr-3 text-primary'></i>";
 };
 
-const initTabulator = () => {
-  tabulator.value = new Tabulator(tableRef.value, {
+const initDriverTabulator = () => {
+  driver_tabulator.value = new Tabulator(tableDriverRef.value, {
     reactiveData: true,
     locale: true,
     data: fakeIncidencesData,
@@ -179,7 +179,7 @@ const initTabulator = () => {
         field: "id",
         width: 100,
         sorter: 'number',
-
+        visible: false,
       },
       {
         title: t("incidences.Tabulator.driver"),
@@ -243,7 +243,7 @@ const initTabulator = () => {
         tooltip: t("incidences.Tabulator.view_tooltip"),
         cellClick: function (e, cell) {
           //openFile(cell.getData().path);
-          showModal();
+          showDriverModal();
         }
       },
 
@@ -285,7 +285,7 @@ const initTabulator = () => {
 // Redraw table onresize
 const reInitOnResizeWindow = () => {
   window.addEventListener("resize", () => {
-    tabulator.value.redraw();
+    driver_tabulator.value.redraw();
     createIcons({
       icons,
       "stroke-width": 1.5,
@@ -295,28 +295,28 @@ const reInitOnResizeWindow = () => {
 };
 
 // Filter function
-const onFilter = () => {
-  tabulator.value.setFilter(filter.field, filter.type, filter.value);
+const onDriverFilter = () => {
+  tabulator.value.setFilter(driver_filter.field, driver_filter.type, driver_filter.value);
 };
 
 // On reset filter
-const onResetFilter = () => {
-  filter.field = "driver";
-  filter.type = "like";
-  filter.value = "";
-  onFilter();
+const onResetDriverFilter = () => {
+  driver_filter.field = "driver";
+  driver_filter.type = "like";
+  driver_filter.value = "";
+  onDriverFilter();
 };
 
 // Export
-const onExportCsv = () => {
+const onDriverExportCsv = () => {
   tabulator.value.download("csv", "data.csv");
 };
 
-const onExportJson = () => {
+const onDriverExportJson = () => {
   tabulator.value.download("json", "data.json");
 };
 
-const onExportXlsx = () => {
+const onDriverExportXlsx = () => {
   const win = window;
   win.XLSX = xlsx;
   tabulator.value.download("xlsx", "data.xlsx", {
@@ -324,23 +324,23 @@ const onExportXlsx = () => {
   });
 };
 
-const onExportHtml = () => {
+const onDriverExportHtml = () => {
   tabulator.value.download("html", "data.html", {
     style: true,
   });
 };
 
 // Print
-const onPrint = () => {
+const onDriverPrint = () => {
   tabulator.value.print();
 };
 
-const showModal = async () => {
-  viewIncidenceModal.value = true;
+const showDriverModal = async () => {
+  viewDriverIncidenceModal.value = true;
 };
 
-const hideModal = async () => {
-  viewIncidenceModal.value = false;
+const hideDriverModal = async () => {
+  viewDriverIncidenceModal.value = false;
 };
 
 
@@ -358,7 +358,7 @@ const hideModal = async () => {
 
 
 onMounted(async () => {
-  initTabulator();
+  initDriverTabulator();
   reInitOnResizeWindow();
 });
 

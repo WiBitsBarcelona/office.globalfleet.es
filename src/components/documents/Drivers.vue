@@ -311,6 +311,7 @@ const initDriverDocumentsTabulator = () => {
       {
         title: t("Tabulator.Driver_documents_columns.type"),
         minWidth: 100,
+        responsive: 1,
         field: "type",
         hozAlign: "center",
         vertAlign: "middle",
@@ -333,6 +334,7 @@ const initDriverDocumentsTabulator = () => {
       {
         title: t("Tabulator.Driver_documents_columns.created_at"),
         minWidth: 200,
+        responsive: 1,
         field: "created_at",
         hozAlign: "center",
         vertAlign: "middle",
@@ -345,6 +347,7 @@ const initDriverDocumentsTabulator = () => {
       {
         title: t("Tabulator.Driver_documents_columns.receptioned_at"),
         minWidth: 200,
+        responsive: 1,
         field: "receptioned_at",
         hozAlign: "center",
         vertAlign: "middle",
@@ -363,6 +366,7 @@ const initDriverDocumentsTabulator = () => {
       {
         title: t("Tabulator.Driver_documents_columns.confirmed_at"),
         minWidth: 200,
+        responsive: 1,
         field: "confirmed_at",
         hozAlign: "center",
         vertAlign: "middle",
@@ -381,6 +385,7 @@ const initDriverDocumentsTabulator = () => {
       {
         title: t("Tabulator.Driver_documents_columns.readed_at"),
         minWidth: 200,
+        responsive: 1,
         field: "readed_at",
         hozAlign: "center",
         vertAlign: "middle",
@@ -399,6 +404,7 @@ const initDriverDocumentsTabulator = () => {
       {
         formatter: viewIcon,
         width: 50,
+        responsive: 0,
         hozAlign: "center",
         headerSort: false,
         tooltip: t("Tabulator.ToolTips.View"),
@@ -409,6 +415,7 @@ const initDriverDocumentsTabulator = () => {
       {
         formatter: downloadIcon,
         width: 50,
+        responsive: 0,
         hozAlign: "center",
         headerSort: false,
         tooltip: t("Tabulator.ToolTips.Download"),
@@ -420,6 +427,7 @@ const initDriverDocumentsTabulator = () => {
         formatter:
         deleteIcon, 
         width: 50,
+        responsive: 0,
         hozAlign: "center",
         headerSort: false,
         tooltip: t("Tabulator.ToolTips.Delete"),
@@ -599,16 +607,30 @@ const dropZoneDriverClick = (event) => {
 };
 
 const dropZoneDriverAddFiles = async(event) => {
-  driver_selected_file = '1';
-  driverState.driverFiles.push(event.target.files[0]);
-  driverFile.value = event.target.files[0];
-  const fileName = computed(() => driverFile.value?.name);
-  const fileExtension = computed(() => fileName.value?.substr(fileName.value?.lastIndexOf(".") + 1));
-  const fileMimeType = computed(() => driverFile.value?.type);
-  const fileSize = computed(() => driverFile.value?.size);
-  await toBase64(driverFile.value).then(fileData => {
-    driverFileJson.push({driver_id: driver_selected.value, file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData});
-  });
+  if(event.target.files[0].size > 15000000){
+    Swal.fire({
+      icon: 'error',
+      title: '',
+      text: t("documents.swal.file_size_error"),
+      confirmButtonText: t("documents.swal.all_right_btn"),
+      buttonsStyling: false,
+      customClass: {
+        confirmButton: 'btn btn-primary shadow-md',
+        container : 'fileSizeError' 
+      },
+    });
+  }else{
+    driver_selected_file = '1';
+    driverState.driverFiles.push(event.target.files[0]);
+    driverFile.value = event.target.files[0];
+    const fileName = computed(() => driverFile.value?.name);
+    const fileExtension = computed(() => fileName.value?.substr(fileName.value?.lastIndexOf(".") + 1));
+    const fileMimeType = computed(() => driverFile.value?.type);
+    const fileSize = computed(() => driverFile.value?.size);
+    await toBase64(driverFile.value).then(fileData => {
+      driverFileJson.push({driver_id: driver_selected.value, file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData});
+    });
+  }
 }
 
 const dropZoneDriverClearFile = (currentFile) => {

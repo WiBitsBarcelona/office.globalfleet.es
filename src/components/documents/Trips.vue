@@ -405,7 +405,7 @@ const initTripsTabulator = async () => {
       },
       {
         title: t("Tabulator.Trips_columns.status"),
-        responsive: 0,
+        responsive: 1,
         field: "status",
         vertAlign: "middle",
         hozAlign: "center",
@@ -435,7 +435,7 @@ const initTripsTabulator = async () => {
       },
       {
         title: t("Tabulator.Trips_columns.driver"),
-        responsive: 0,
+        responsive: 1,
         field: "driver",
         vertAlign: "middle",
         hozAlign: "left",
@@ -444,6 +444,7 @@ const initTripsTabulator = async () => {
       },
       {
         title: t("Tabulator.Trips_columns.execution_at"),
+        responsive: 1,
         field: "execution_at",
         hozAlign: "center",
         vertAlign: "middle",
@@ -616,6 +617,7 @@ const initTripDocumentsTabulator = async () => {
       },
       {
         title: t("Tabulator.Trip_documents_columns.type"),
+        responsive: 1,
         minWidth: 100,
         field: "type",
         hozAlign: "center",
@@ -628,6 +630,7 @@ const initTripDocumentsTabulator = async () => {
       },
       {
         title: t("Tabulator.Trip_documents_columns.created_at"),
+        responsive: 1,
         minWidth: 200,
         field: "created_at",
         hozAlign: "center",
@@ -658,6 +661,7 @@ const initTripDocumentsTabulator = async () => {
       },
       {
         title: t("Tabulator.Trip_documents_columns.confirmed_at"),
+        responsive: 1,
         minWidth: 200,
         field: "confirmed_at",
         hozAlign: "center",
@@ -676,6 +680,7 @@ const initTripDocumentsTabulator = async () => {
       },
       {
         title: t("Tabulator.Trip_documents_columns.readed_at"),
+        responsive: 1,
         minWidth: 200,
         field: "readed_at",
         hozAlign: "center",
@@ -694,6 +699,7 @@ const initTripDocumentsTabulator = async () => {
       },
       {
         formatter: viewTripDocumentIcon,
+        responsive: 0,
         width: 50,
         hozAlign: "center",
         headerSort: false,
@@ -704,6 +710,7 @@ const initTripDocumentsTabulator = async () => {
       },
       {
         formatter: downloadTripDocumentIcon,
+        responsive: 0,
         width: 50,
         hozAlign: "center",
         headerSort: false,
@@ -713,7 +720,8 @@ const initTripDocumentsTabulator = async () => {
         }
       },
       {
-        formatter:deleteTripDocumentIcon, 
+        formatter:deleteTripDocumentIcon,
+        responsive: 0, 
         width: 50,
         hozAlign: "center",
         headerSort: false,
@@ -846,16 +854,30 @@ const dropZoneTripClick = (event) => {
 };
 
 const dropZoneTripAddFiles = async(event) => {
-  trip_selected_file = '1';
-  tripState.tripFiles.push(event.target.files[0]);
-  tripFile.value = event.target.files[0];
-  const fileName = computed(() => tripFile.value?.name);
-  const fileExtension = computed(() => fileName.value?.substr(fileName.value?.lastIndexOf(".") + 1));
-  const fileMimeType = computed(() => tripFile.value?.type);
-  const fileSize = computed(() => tripFile.value?.size);
-  await toBase64(tripFile.value).then(fileData => {
-    tripFileJson.push({trip_id: trip_selected.value, file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData});
-  });
+  if(event.target.files[0].size > 15000000){
+    Swal.fire({
+      icon: 'error',
+      title: '',
+      text: t("documents.swal.file_size_error"),
+      confirmButtonText: t("documents.swal.all_right_btn"),
+      buttonsStyling: false,
+      customClass: {
+        confirmButton: 'btn btn-primary shadow-md',
+        container : 'fileSizeError' 
+      },
+    });
+  }else{
+    trip_selected_file = '1';
+    tripState.tripFiles.push(event.target.files[0]);
+    tripFile.value = event.target.files[0];
+    const fileName = computed(() => tripFile.value?.name);
+    const fileExtension = computed(() => fileName.value?.substr(fileName.value?.lastIndexOf(".") + 1));
+    const fileMimeType = computed(() => tripFile.value?.type);
+    const fileSize = computed(() => tripFile.value?.size);
+    await toBase64(tripFile.value).then(fileData => {
+      tripFileJson.push({trip_id: trip_selected.value, file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData});
+    });
+  }
 }
 
 const dropZoneTripClearFile = (currentFile) => {
@@ -1213,16 +1235,30 @@ const dropZoneStageClick = (event) => {
 };
 
 const dropZoneStageAddFiles = async(event) => {
-  stage_selected_file = '1';
-  stageState.stageFiles.push(event.target.files[0]);
-  stageFile.value = event.target.files[0];
-  const fileName = computed(() => stageFile.value?.name);
-  const fileExtension = computed(() => fileName.value?.substr(fileName.value?.lastIndexOf(".") + 1));
-  const fileMimeType = computed(() => stageFile.value?.type);
-  const fileSize = computed(() => stageFile.value?.size);
-  await toBase64(stageFile.value).then(fileData => {
-    stageFileJson.push({stage_id: stage_selected.value, file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData});
-  });
+  if(event.target.files[0].size > 15000000){
+    Swal.fire({
+      icon: 'error',
+      title: '',
+      text: t("documents.swal.file_size_error"),
+      confirmButtonText: t("documents.swal.all_right_btn"),
+      buttonsStyling: false,
+      customClass: {
+        confirmButton: 'btn btn-primary shadow-md',
+        container : 'fileSizeError' 
+      },
+    });
+  }else{
+    stage_selected_file = '1';
+    stageState.stageFiles.push(event.target.files[0]);
+    stageFile.value = event.target.files[0];
+    const fileName = computed(() => stageFile.value?.name);
+    const fileExtension = computed(() => fileName.value?.substr(fileName.value?.lastIndexOf(".") + 1));
+    const fileMimeType = computed(() => stageFile.value?.type);
+    const fileSize = computed(() => stageFile.value?.size);
+    await toBase64(stageFile.value).then(fileData => {
+      stageFileJson.push({stage_id: stage_selected.value, file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData});
+    });
+  }
 }
 
 const dropZoneStageClearFile = (currentFile) => {

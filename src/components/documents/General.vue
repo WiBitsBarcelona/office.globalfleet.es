@@ -53,7 +53,7 @@
   <!-- END: HTML Table Data -->
 
   <!-- BEGIN: Add Documents Modal Content -->
-  <Modal backdrop="static" :show="addFilesModal" @hidden="addFilesModal = false">
+  <Modal id="addDocsModal" backdrop="static" :show="addFilesModal" @hidden="addFilesModal = false">
     <ModalBody class="px-2 py-5 text-center">
       <h2 class="text-lg font-medium text-left ml-5">{{ $t("Dropzone.modal_title") }}</h2>
       <XIcon class="absolute top-0 right-0 mt-3 mr-3 w-8 h-8 text-slate-400 hover:cursor-pointer" @click="hideModal" >
@@ -63,6 +63,7 @@
         <PlusCircleIcon class="w-16 h-16 text-primary"></PlusCircleIcon>
         <p class="mt-5 font-bold text-primary">{{ $t("Dropzone.title") }}</p>
         <p class="mt-2 text-slate-400">{{ $t("Dropzone.subtitle") }}</p>
+        <p class="mt-2 text-slate-400">{{ $t("Dropzone.subtitle2") }}</p>
       </div>
 
       <div class="grid grid-cols-12 gap-6 mx-3 mt-5 items-center justify-center">
@@ -233,6 +234,7 @@ const initTabulator = () => {
         title: t("Tabulator.General_columns.created_by"),
         minWidth: 200,
         width:300,
+        responsive: 1,
         field: "employee.name",
         hozAlign: "center",
         vertAlign: "middle",
@@ -243,6 +245,7 @@ const initTabulator = () => {
         title: t("Tabulator.General_columns.created_at"),
         minWidth: 200,
         width: 300,
+        responsive: 1,
         field: "created_at",
         hozAlign: "center",
         vertAlign: "middle",
@@ -255,6 +258,7 @@ const initTabulator = () => {
       {
         formatter: viewIcon,
         width: 50,
+        responsive: 0,
         hozAlign: "center",
         headerSort: false,
         tooltip: t("Tabulator.ToolTips.View"),
@@ -265,6 +269,7 @@ const initTabulator = () => {
       {
         formatter: downloadIcon,
         width: 50,
+        responsive: 0,
         hozAlign: "center",
         headerSort: false,
         tooltip: t("Tabulator.ToolTips.Download"),
@@ -274,7 +279,8 @@ const initTabulator = () => {
       },
       {
         formatter:
-        deleteIcon, 
+        deleteIcon,
+        responsive: 0, 
         width: 50,
         hozAlign: "center",
         headerSort: false,
@@ -422,16 +428,30 @@ const dropZoneClick = (event) => {
 };
 
 const dropZoneAddFiles = async(event) => {
-  selected_file = '1';
-  state.files.push(event.target.files[0]);
-  file.value = event.target.files[0];
-  const fileName = computed(() => file.value?.name);
-  const fileExtension = computed(() => fileName.value?.substr(fileName.value?.lastIndexOf(".") + 1));
-  const fileMimeType = computed(() => file.value?.type);
-  const fileSize = computed(() => file.value?.size);
-  await toBase64(file.value).then(fileData => {
+  if(event.target.files[0].size > 15000000){
+    Swal.fire({
+      icon: 'error',
+      title: '',
+      text: t("documents.swal.file_size_error"),
+      confirmButtonText: t("documents.swal.all_right_btn"),
+      buttonsStyling: false,
+      customClass: {
+        confirmButton: 'btn btn-primary shadow-md',
+        container : 'fileSizeError' 
+      },
+    });
+  }else{
+    selected_file = '1';
+    state.files.push(event.target.files[0]);
+    file.value = event.target.files[0];
+    const fileName = computed(() => file.value?.name);
+    const fileExtension = computed(() => fileName.value?.substr(fileName.value?.lastIndexOf(".") + 1));
+    const fileMimeType = computed(() => file.value?.type);
+    const fileSize = computed(() => file.value?.size);
+    await toBase64(file.value).then(fileData => {
     fileJson.push({file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData});
   });
+  }
 }
 
 const dropZoneClearFile = (currentFile) => {
@@ -589,5 +609,9 @@ onBeforeMount(async () => {
   border-style: solid;
   border-radius: 5px;
   padding: 10px;
+}
+
+.fileSizeError {
+  z-index: 99999;
 }
 </style>

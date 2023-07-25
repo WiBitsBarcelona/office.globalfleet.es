@@ -206,13 +206,15 @@
       "document_error_uploading": "Ha sucedido un error al subir el archivo.",
       "document_error_viewing": "No podemos mostrar este tipo de Archivo. Descargarlo, para visualizarlo.",
       "document_wait_viewing": "Abriendo documento, un momento por favor...",
-      "document_wait_download": "Descargando documento, un momento por favor..."
+      "document_wait_download": "Descargando documento, un momento por favor...",
+      "file_size_error": "ERROR: El fichero seleccionado supera el tamaño aceptado."
     }
   },
   "Dropzone": {
     "modal_title": "Envío de Archivos",
     "title": "Selecciona tus Archivos.",
     "subtitle": "Solo archivos tipo JPG, PNG o PDF.",
+    "subtitle2": "Máximo 15 Megabytes por archivo.",
     "upload_general_document": "Los ficheros subidos en esta sección seran visibles para todos tus conductores.",
     "upload_driver_document": "Los ficheros subidos en esta sección seran visibles para el conductor: ",
     "upload_trip_document": "Los ficheros subidos en esta sección seran visibles en el viaje: ",
