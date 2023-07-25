@@ -9,6 +9,7 @@ export default function useStageDocument() {
 	const stageDocument = ref([]);
 	const stageDocuments = ref([]);
 	const errors = ref('');
+	const stageDocumentData = ref([]);
 	//const router = useRouter();
 
     const useAuthentication = useAuthenticationStore();
@@ -20,11 +21,11 @@ export default function useStageDocument() {
 		}
 	}
 
-	const getStageDocuments = async () => {
+	const getStageDocuments = async (id) => {
 		errors.value = '';
         const user = useAuthentication.user;
 		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}stage-documents/${user.employee.company_id}/list`, config);
+			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}stage-documents/${id}/list`, config);
 			stageDocuments.value = response.data.data;
 		} catch (e) {
 			console.log(e);
@@ -57,14 +58,8 @@ export default function useStageDocument() {
 		errors.value = '';
 		try {
 			await axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}stage-documents/store`, data, config);
-			//await router.push({ name: 'stageDocument.index' });
 		} catch (e) {
 			console.log(e);
-			// if (e.response.status_code === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
 		}
 	}
 
@@ -87,7 +82,7 @@ export default function useStageDocument() {
 
 	const destroyStageDocument = async (id) => {
 		try {
-			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}stage-documents/destroy/${id}`, config);
+			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}stage-documents/delete/${id}`, config);
 		} catch (e) {
 			console.log(e);
 			// if (e.response.status === 422) {
@@ -98,16 +93,35 @@ export default function useStageDocument() {
 		}
 	}
 
+	const downloadStageDocument = async (path) => {
+		errors.value = '';
+		try {
+			const res = await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}downloads/document?p=${path}`, {
+				method: "GET",
+				headers: {
+				  "Content-Type": "application/json",
+				  'Authorization': `Bearer ${localStorage.getItem('token')}`,
+				}
+			  });
+			  const response = await res.json();
+			  stageDocumentData.value = response.data;
+		} catch (e) {
+			console.log(e);
+		}
+	}
+
 
 	return {
 		errors,
 		stageDocument,
 		stageDocuments,
+		stageDocumentData,
 		getStageDocument,
 		getStageDocuments,
 		storeStageDocument,
 		updateStageDocument,
 		destroyStageDocument,
+		downloadStageDocument,
 	}
 
 }

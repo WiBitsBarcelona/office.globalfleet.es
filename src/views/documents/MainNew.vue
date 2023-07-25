@@ -21,7 +21,7 @@
               </TabPanel>
               <TabPanel>
                 <div class="col-span-12">
-                  <p>Documentos de Viajes</p>
+                  <TripsDocuments />
                 </div>
               </TabPanel>
             </TabPanels>
@@ -35,5 +35,6 @@
 <script setup>
   import GeneralDocuments from "@/components/documents/General.vue";
   import DriversDocuments from "@/components/documents/Drivers.vue";
+  import TripsDocuments from "@/components/documents/Trips.vue";
   import FleetFooter from "@/components/fleet-footer/Main.vue"; 
 </script>

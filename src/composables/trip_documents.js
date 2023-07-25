@@ -9,6 +9,7 @@ export default function useTripDocument() {
 	const tripDocument = ref([]);
 	const tripDocuments = ref([]);
 	const errors = ref('');
+	const tripDocumentData = ref([]);
 	//const router = useRouter();
 
     const useAuthentication = useAuthenticationStore();
@@ -19,20 +20,14 @@ export default function useTripDocument() {
 			"Authorization": `Bearer ${localStorage.getItem('token')}`
 		}
 	}
-
-	const getTripDocuments = async () => {
+	const getTripDocuments = async (trip_id) => {
 		errors.value = '';
         const user = useAuthentication.user;
 		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-documents/${user.employee.company_id}/list`, config);
+			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-documents/${trip_id}/list`, config);
 			tripDocuments.value = response.data.data;
 		} catch (e) {
 			console.log(e);
-			// if (e.response.status_code === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
 		}
 	}
 
@@ -57,14 +52,8 @@ export default function useTripDocument() {
 		errors.value = '';
 		try {
 			await axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-documents/store`, data, config);
-			//await router.push({ name: 'tripDocument.index' });
 		} catch (e) {
 			console.log(e);
-			// if (e.response.status_code === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
 		}
 	}
 
@@ -87,27 +76,45 @@ export default function useTripDocument() {
 
 	const destroyTripDocument = async (id) => {
 		try {
-			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-documents/destroy/${id}`, config);
+			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-documents/delete/${id}`, config);
 		} catch (e) {
 			console.log(e);
-			// if (e.response.status === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
+			if (e.response.status === 422) {
+				for (const key in e.response.data.errors) {
+			    	errors.value = e.response.data.errors
+			    }
+			}
 		}
 	}
 
+	const downloadTripDocument = async (path) => {
+		errors.value = '';
+		try {
+			const res = await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}downloads/document?p=${path}`, {
+				method: "GET",
+				headers: {
+				  "Content-Type": "application/json",
+				  'Authorization': `Bearer ${localStorage.getItem('token')}`,
+				}
+			  });
+			  const response = await res.json();
+			  tripDocumentData.value = response.data;
+		} catch (e) {
+			console.log(e);
+		}
+	}
 
 	return {
 		errors,
 		tripDocument,
 		tripDocuments,
+		tripDocumentData,
 		getTripDocument,
 		getTripDocuments,
 		storeTripDocument,
 		updateTripDocument,
 		destroyTripDocument,
+		downloadTripDocument,
 	}
 
 }

@@ -67,8 +67,6 @@ export default function useTrips(){
         await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/delete/${id}`, config)
     }
 
-    
-
     return {
         errors,
         trip,
@@ -77,7 +75,7 @@ export default function useTrips(){
         getTrips,
         storeTrip,
         updateTrip,
-        destroyTrip
+        destroyTrip,
     }
 
 }
