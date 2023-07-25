@@ -33,8 +33,8 @@
     <div id="group-list" class="flex flex-col gap-[6px] h-[76vh] overflow-y-scroll scrollbar-hidden">
       <!-- Per cada xat farem un botó -->
       <button v-if="!inNewChat" v-for="conversation in conversationList" :id="conversation.conversationWith.uid
-          ? conversation.conversationWith.uid
-          : conversation.conversationWith.guid
+        ? conversation.conversationWith.uid
+        : conversation.conversationWith.guid
         " :key="conversation.conversationWith" v-on:click="
     buildChat(
       conversation.conversationId,
@@ -46,17 +46,13 @@
     " class="flex gap-3 p-3 pl-2 h-16 box cursor-pointer border-b bg-white items-center conversations-list-item">
         <!-- En cas de ser un xat amb un usuari -->
         <img v-if="conversation.conversationType === 'user'" class="w-14 h-14 rounded-full" :src="conversation.conversationWith.avatar
-            ? conversation.conversationWith.avatar
-            : `https://ui-avatars.com/api/?name=${conversation.conversationWith.name.charAt(
-              0
-            )}&color=7F9CF5&background=EBF4FF`
+          ? conversation.conversationWith.avatar
+          : `https://ui-avatars.com/api/?name=${chatsTitle(conversation.conversationWith.name)}&color=FFFFFF&background=4EDDFF&font-size=0.33`
           " />
         <!-- En cas de ser un grup -->
         <img v-if="conversation.conversationType === 'group'" class="w-14 h-14 rounded-full" :src="conversation.conversationWith.icon
-            ? conversation.conversationWith.icon
-            : `https://ui-avatars.com/api/?name=${conversation.conversationWith.name.charAt(
-              0
-            )}&color=7F9CF5&background=EBF4FF`
+          ? conversation.conversationWith.icon
+          : `https://ui-avatars.com/api/?name=${chatsTitle(conversation.conversationWith.name)}&color=FFFFFF&background=BCBCBC&font-size=0.33`
           " />
         <div class="flex flex-col justify-between h-full w-full text-left gap-1">
           <div class="flex w-full justify-between">
@@ -66,7 +62,7 @@
             <div v-if="conversation.unreadMessageCount != 0 &&
               conversation.unreadMessageCount < 100
               "
-              class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-green-500 text-white rounded-full inner-messages-balloon">
+              class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-[#FF9F46] text-white rounded-full inner-messages-balloon">
               <p class="w-full text-center mt-[1px]">
                 {{ conversation.unreadMessageCount }}
               </p>
@@ -74,7 +70,7 @@
             <div v-else-if="conversation.unreadMessageCount != 0 &&
               conversation.unreadMessageCount > 100
               "
-              class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-green-500 text-white rounded-full inner-messages-balloon">
+              class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-[#FF9F46] text-white rounded-full inner-messages-balloon">
               <p class="w-full text-center mt-[1px]">+99</p>
             </div>
           </div>
@@ -99,17 +95,13 @@
         " class="flex gap-3 p-3 pl-2 h-16 box cursor-pointer border-b bg-white items-center">
         <!-- En cas de ser un xat amb un usuari -->
         <img v-if="chatList.uid" class="w-14 h-14 rounded-full" :src="chatList.avatar
-            ? chatList.avatar
-            : `https://ui-avatars.com/api/?name=${chatList.name.charAt(
-              0
-            )}&color=7F9CF5&background=EBF4FF`
+          ? chatList.avatar
+          : `https://ui-avatars.com/api/?name=${chatsTitle(chatList.name)}&color=FFFFFF&background=4EDDFF&font-size=0.33`
           " />
         <!-- En cas de ser un grup -->
         <img v-if="chatList.guid" class="w-14 h-14 rounded-full" :src="chatList.icon
-            ? chatList.icon
-            : `https://ui-avatars.com/api/?name=${chatList.name.charAt(
-              0
-            )}&color=7F9CF5&background=EBF4FF`
+          ? chatList.icon
+          : `https://ui-avatars.com/api/?name=${chatsTitle(chatList.name)}&color=FFFFFF&background=BCBCBC&font-size=0.33`
           " />
         <div class="flex flex-col justify-between h-full w-full text-left gap-1">
           <div class="flex w-full justify-between">
@@ -127,9 +119,9 @@
     <div id="current-chat-container" class="flex items-center h-20 w-full gap-3 px-4">
       <img v-if="selectedChat.icon || selectedChat.avatar"
         :src="selectedChat.icon ? selectedChat.icon : selectedChat.avatar" class="rounded-full w-14 h-14" />
-      <img v-else :src="`https://ui-avatars.com/api/?name=${selectedChat.name.charAt(
-        0
-      )}&color=7F9CF5&background=EBF4FF`" class="rounded-full w-14 h-14" />
+      <img v-else :src="`https://ui-avatars.com/api/?name=${chatsTitle(selectedChat.name)}&
+                              ${selectedChat.uid ? 'color=FFFFFF&background=4EDDFF' : 'color=FFFFFF&background=BCBCBC'}`"
+        class="rounded-full w-14 h-14" />
       <h2 id="chat-header" class="w-full font-bold text-2xl" :type="selectedChat.uid ? 'user' : 'group'"
         :chatId="selectedChat.uid ? selectedChat.uid : selectedChat.guid">
         {{ selectedChat.name }}
@@ -165,6 +157,49 @@
         </button>
       </div>
     </form>
+
+    <!-- Modal Checkmark -->
+    <div v-if="modalMessage == true" style="position: absolute; display: flex; justify-content: center; align-items: center; background-color: rgb(0 0 0 / 40%); width: 100%; height: 100%;">
+      
+      <!-- boton modal -->
+      <div v-on:click="showModal(false)" style="background-color: rgb(0 150 178); border-radius: 100%; padding: 5px 10px; position: relative; top: -15%; left:16.5%;">
+        <h1 style="color: white;">X</h1>
+      </div>
+
+      <div style="background: white; border-radius: 10px; padding: 16px;">
+
+        <div style="padding: 10px;">
+          <h2 style="font-size: 20px;">Info del Mensaje</h2>
+          <div style="display: block; margin-top: 8px;">
+
+            <p style="font-size: 16px;">Enviado</p>
+            <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
+              <img src="../../assets/images/checkmark.svg" alt="Checkmark"
+                style="width: 25px; height: 25px; margin-left: 5px;" />
+              <p style="font-size: 18px; margin-left: 5px;">Fecha</p>
+            </div>
+
+            <p style="font-size: 16px;">Entregado</p>
+            <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
+              <img src="../../assets/images/allcheckmark.svg" alt="Checkmark"
+                style="width: 25px; height: 25px; margin-left: 5px;" />
+              <p style="font-size: 18px; margin-left: 5px;">Fecha</p>
+            </div>
+            
+            <p style="font-size: 16px;">Leido</p>
+            <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
+              <img src="../../assets/images/checkallmark.svg" alt="Checkmark"
+                style="width: 25px; height: 25px; margin-left: 5px;" />
+              <p style="font-size: 18px; margin-left: 5px;">Fecha</p>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- Fin Modal Checkmark -->
+
   </div>
   <div v-else class="flex flex-col w-full h-[85vh] justify-between items-center box overflow-hidden"></div>
 </template>
@@ -199,6 +234,8 @@ let inChat = ref(false);
 let inNewChat = ref(false);
 let userInfo;
 let newChatsList = ref("");
+
+const modalMessage = ref(false)
 
 // Funcion que va a correr al iniciar la pagina
 const initialize = async () => {
@@ -365,17 +402,16 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
     const messageClass = userInfo.uid === conversation.sender ? "missatgePropi" : "missatgeEntrant";
 
     chat.innerHTML += `
-    <div class="${messageClass}" style="display: flex; width: 100%; justify-content: flex-${userInfo.uid === conversation.sender ? "end" : "start" };">
-      <div class="flex gap-3 ${userInfo.uid === conversation.sender ? "py-2 px-3 bg-[#0096b2] text-white rounded-lg w-fit" : "rounded-lg w-fit py-2 px-3 bg-gray-200" } max-w-md">
-        <p style="margin: 0px; display: flex; word-break: break-word;">${conversation.data.text }</p>
+    <div class="${messageClass}" style="display: flex; width: 100%; justify-content: flex-${userInfo.uid === conversation.sender ? "end" : "start"};">
+      <div class="flex gap-3 ${userInfo.uid === conversation.sender ? "py-2 px-3 bg-[#0096b2] text-white rounded-lg w-fit" : "rounded-lg w-fit py-2 px-3 bg-gray-200"} max-w-md">
+        <p style="margin: 0px; display: flex; word-break: break-word;">${conversation.data.text}</p>
         <div style="display: flex; justify-content: flex-end; align-items: center">
           <p style="font-size: 12px; margin: 0px;">${convertStringToDate(conversation.sentAt)}</p>
           
           ${userInfo.uid === conversation.sender ?
-            `<img src="${
-            conversation.sentAt > 0 && conversation.deliveredAt == null && conversation.readAt == null ? '../src/assets/images/checkmark.svg' : 
-            conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt == null && 
-            conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt > 0 ? '../src/assets/images/allcheckmark.svg' : 
+        `<img src="${conversation.sentAt > 0 && conversation.deliveredAt == null && conversation.readAt == null ? '../src/assets/images/checkmark.svg' :
+          conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt == null &&
+            conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt > 0 ? '../src/assets/images/allcheckmark.svg' :
             '../src/assets/images/checkallmark.svg'}" 
             alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`: ''}
             
@@ -385,9 +421,18 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
 
   });
 
+  // ${userInfo.uid === conversation.sender ? showModal(true) : ''}"
+
   const messageBody = document.getElementById("chat");
   messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
+
 };
+
+const showModal = (value) => {
+  modalMessage.value = value;
+  console.log(value)
+}
+
 
 // Funció per a alternar la vista de xat a llista de xat
 const toggleInChat = () => {
@@ -514,10 +559,12 @@ const buildNewChat = async (id, name, type) => {
     // Obtenim les dades de l'usuari en cuestió
     const response = await getUserData(id);
     selectedChat.value = response.data;
+    console.log(response.data)
   } else if (type === "group") {
     // Obtenim les dades de l'usuari en cuestió
     const response = await getGroupData(id);
     selectedChat.value = response.data;
+    console.log(response.data)
   }
 
   if (!inChat.value) inChat.value = true;
@@ -742,12 +789,11 @@ const printTextMessage = async (textMessage) => {
         <div style="display: flex; justify-content: flex-end; align-items: center">
           <p style="font-size: 12px; margin: 0; heigh: 100%">${messageDate}</p>
           ${senderClass === "missatgePropi" ?
-            `<img src="${
-              textMessage.sentAt > 0 && textMessage.deliveredAt == null && textMessage.readAt == null ? '../src/assets/images/checkmark.svg' : 
-              textMessage.sentAt > 0 && textMessage.deliveredAt > 0 && textMessage.readAt == null && 
-              textMessage.sentAt > 0 && textMessage.deliveredAt > 0 && textMessage.readAt > 0 ? '../src/assets/images/allcheckmark.svg' : 
-            '../src/assets/images/checkallmark.svg'}" 
-            alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`: ''}
+      `<img src="${textMessage.sentAt > 0 && textMessage.deliveredAt == null && textMessage.readAt == null ? '../src/assets/images/checkmark.svg' :
+        textMessage.sentAt > 0 && textMessage.deliveredAt > 0 && textMessage.readAt == null &&
+          textMessage.sentAt > 0 && textMessage.deliveredAt > 0 && textMessage.readAt > 0 ? '../src/assets/images/allcheckmark.svg' :
+          '../src/assets/images/checkallmark.svg'}" 
+            alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">` : ''}
           
         </div>
       </div>
@@ -776,6 +822,30 @@ const searchConversationByName = async () => {
 
   conversationList.value = r;
 };
+
+const chatsTitle = (value) => {
+
+  const words = value.split(" ");
+
+  if (words.length >= 2) {
+    // Obtén las dos primeras palabras
+    const firstwords = words[0];
+    const secondwords = words[1];
+
+    // Obtiene la primera letra de cada palabra
+    const firstletter1 = firstwords.charAt(0).toUpperCase();
+    const firstletter2 = secondwords.charAt(0).toUpperCase();
+
+    // Combina las primeras letras en un resultado final
+    const finalletters = firstletter1 + firstletter2;
+
+    // Imprime el resultado final
+    return finalletters
+  }
+  else {
+    return value.charAt(0);
+  }
+}
 </script>
 
 <style>
