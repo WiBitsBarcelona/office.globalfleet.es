@@ -103,8 +103,10 @@ import dom from "@left4code/tw-starter/dist/js/dom";
 import { useI18n } from 'vue-i18n';
 import { helper as $h } from "@/utils/helper";
 import Swal from "sweetalert2";
-import FleetFooter from "@/components/fleet-footer/Main.vue"; 
+import FleetFooter from "@/components/fleet-footer/Main.vue";
+import useDriverIncident from "@/composables/driver_incidents";
 
+const { getDriverIncidents, driverIncidents } = useDriverIncident();
 const { t } = useI18n();
 const addFileModal = ref(false);
 const showNoFileError = ref(false);
@@ -124,6 +126,7 @@ const uploading = ref(0);
 let fileJson = [];
 const fileNameScreen = ref('');
 const fileSizeScreen = ref(0);
+let dataArr = [];
 
 let files = [];
 const state = reactive({ files });
@@ -144,11 +147,15 @@ const viewIcon = function (cell, formatterParams) {
   return "<i data-lucide='eye' class='w-6 h-6 mr-3 text-primary'></i>";
 };
 
+const clipIcon = function (cell, formatterParams){
+  return "<i data-lucide='paperclip' class='w-6 h-6 mr-3 text-primary'></i>";
+};
+
 const initDriverTabulator = () => {
   driver_tabulator.value = new Tabulator(tableDriverRef.value, {
     reactiveData: true,
     locale: true,
-    data: fakeIncidencesData,
+    data: dataArr,
     printAsHtml: true,
     printStyled: true,
     pagination: "local",
@@ -158,7 +165,7 @@ const initDriverTabulator = () => {
     responsiveLayout: "collapse",
     placeholder: t("message.no_matching_records_found"),
     rowFormatter:function(row){
-        if(row.getData().readed_at == ""){
+        if(row.getData().readed_at == null){
             row.getElement().style.color = "rgba(0,150,178, 1)";
             row.getElement().style.fontWeight = "bold";
         }
@@ -180,6 +187,18 @@ const initDriverTabulator = () => {
         width: 100,
         sorter: 'number',
         visible: false,
+      },
+      {
+        formatter: clipIcon,
+        width: 50,
+        responsive: 0,
+        hozAlign: "center",
+        headerSort: false,
+        tooltip: t("incidences.Tabulator.view_tooltip"),
+        cellClick: function (e, cell) {
+          //openFile(cell.getData().path);
+          showDriverModal();
+        }
       },
       {
         title: t("incidences.Tabulator.driver"),
@@ -219,9 +238,9 @@ const initDriverTabulator = () => {
         vertAlign: "middle",
         print: false,
         download: false,
-/*         formatter: function (cell) {
+        formatter: function (cell) {
           return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss')
-        }, */
+        },
       },
       {
         title: t("incidences.Tabulator.received_at"),
@@ -231,13 +250,20 @@ const initDriverTabulator = () => {
         vertAlign: "middle",
         print: false,
         download: false,
-/*         formatter: function (cell) {
-          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss')
-        }, */        
+        formatter: function (cell) {
+          let data ='';
+          if(cell.getValue()){
+            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss');
+          }else{
+            data = '--';
+          }
+          return data;
+        },        
       },
       {
         formatter: viewIcon,
         width: 50,
+        responsive: 0,
         hozAlign: "center",
         headerSort: false,
         tooltip: t("incidences.Tabulator.view_tooltip"),
@@ -309,23 +335,23 @@ const onResetDriverFilter = () => {
 
 // Export
 const onDriverExportCsv = () => {
-  tabulator.value.download("csv", "data.csv");
+  driver_tabulator.value.download("csv", "incidencias.csv");
 };
 
 const onDriverExportJson = () => {
-  tabulator.value.download("json", "data.json");
+  driver_tabulator.value.download("json", "incidencias.json");
 };
 
 const onDriverExportXlsx = () => {
   const win = window;
   win.XLSX = xlsx;
-  tabulator.value.download("xlsx", "data.xlsx", {
-    sheetName: "Products",
+  driver_tabulator.value.download("xlsx", "incidencias.xlsx", {
+    sheetName: "Incidencias",
   });
 };
 
 const onDriverExportHtml = () => {
-  tabulator.value.download("html", "data.html", {
+  tabulator.value.download("html", "inicidencias.html", {
     style: true,
   });
 };
@@ -343,7 +369,29 @@ const hideDriverModal = async () => {
   viewDriverIncidenceModal.value = false;
 };
 
-
+const findDriversIncidencesData = async () => {
+  await getDriverIncidents();
+  const dataArrTmp = JSON.parse(JSON.stringify(driverIncidents.value));
+  dataArrTmp.forEach(element => {
+    const full_name = element.driver.name + ' ' + element.driver.surname;
+    let has_attachement = 0;
+    if(element.images){
+        has_attachement = 1;
+    }
+    dataArr.push({
+      id: element.id,
+      driver: full_name,
+      incidence_type: element.type.name,
+      comment: element.description,
+      sended_at: element.created_at,
+      receptioned_at: element.receptioned_at,
+      readed_at: element.readed_at,
+      has_attachement: has_attachement
+    });
+  });
+  console.log(dataArr);
+  return dataArr;
+}
 
 
 
@@ -358,6 +406,7 @@ const hideDriverModal = async () => {
 
 
 onMounted(async () => {
+  findDriversIncidencesData();
   initDriverTabulator();
   reInitOnResizeWindow();
 });
