@@ -47,12 +47,12 @@
         <!-- En cas de ser un xat amb un usuari -->
         <img v-if="conversation.conversationType === 'user'" class="w-14 h-14 rounded-full" :src="conversation.conversationWith.avatar
           ? conversation.conversationWith.avatar
-          : `https://ui-avatars.com/api/?name=${chatsTitle(conversation.conversationWith.name)}&color=FFFFFF&background=4EDDFF&font-size=0.33`
+          : `https://ui-avatars.com/api/?name=${chatsTitle(conversation.conversationWith.name)}&color=FFFFFF&background=4EDDFF&font-size=0.38`
           " />
         <!-- En cas de ser un grup -->
         <img v-if="conversation.conversationType === 'group'" class="w-14 h-14 rounded-full" :src="conversation.conversationWith.icon
           ? conversation.conversationWith.icon
-          : `https://ui-avatars.com/api/?name=${chatsTitle(conversation.conversationWith.name)}&color=FFFFFF&background=BCBCBC&font-size=0.33`
+          : `https://ui-avatars.com/api/?name=${chatsTitle(conversation.conversationWith.name)}&color=FFFFFF&background=BCBCBC&font-size=0.38`
           " />
         <div class="flex flex-col justify-between h-full w-full text-left gap-1">
           <div class="flex w-full justify-between">
@@ -96,12 +96,12 @@
         <!-- En cas de ser un xat amb un usuari -->
         <img v-if="chatList.uid" class="w-14 h-14 rounded-full" :src="chatList.avatar
           ? chatList.avatar
-          : `https://ui-avatars.com/api/?name=${chatsTitle(chatList.name)}&color=FFFFFF&background=4EDDFF&font-size=0.33`
+          : `https://ui-avatars.com/api/?name=${chatsTitle(chatList.name)}&color=FFFFFF&background=4EDDFF&font-size=0.38`
           " />
         <!-- En cas de ser un grup -->
         <img v-if="chatList.guid" class="w-14 h-14 rounded-full" :src="chatList.icon
           ? chatList.icon
-          : `https://ui-avatars.com/api/?name=${chatsTitle(chatList.name)}&color=FFFFFF&background=BCBCBC&font-size=0.33`
+          : `https://ui-avatars.com/api/?name=${chatsTitle(chatList.name)}&color=FFFFFF&background=BCBCBC&font-size=0.38`
           " />
         <div class="flex flex-col justify-between h-full w-full text-left gap-1">
           <div class="flex w-full justify-between">
@@ -119,8 +119,8 @@
     <div id="current-chat-container" class="flex items-center h-20 w-full gap-3 px-4">
       <img v-if="selectedChat.icon || selectedChat.avatar"
         :src="selectedChat.icon ? selectedChat.icon : selectedChat.avatar" class="rounded-full w-14 h-14" />
-      <img v-else :src="`https://ui-avatars.com/api/?name=${chatsTitle(selectedChat.name)}&
-                              ${selectedChat.uid ? 'color=FFFFFF&background=4EDDFF' : 'color=FFFFFF&background=BCBCBC'}`"
+      <img v-else
+        :src="`https://ui-avatars.com/api/?name=${chatsTitle(selectedChat.name)}&${selectedChat.uid ? 'color=FFFFFF&background=4EDDFF&font-size=0.38' : 'color=FFFFFF&background=BCBCBC&font-size=0.38'}`"
         class="rounded-full w-14 h-14" />
       <h2 id="chat-header" class="w-full font-bold text-2xl" :type="selectedChat.uid ? 'user' : 'group'"
         :chatId="selectedChat.uid ? selectedChat.uid : selectedChat.guid">
@@ -128,7 +128,8 @@
       </h2>
     </div>
 
-    <div id="chat" class="flex flex-col gap-2 h-5/6 w-full p-5 overflow-y-scroll scrollbar-hidden"></div>
+    <div id="chat" class="flex flex-col gap-2 h-5/6 w-full p-5 overflow-y-scroll scrollbar-hidden">
+    </div>
 
     <!-- Textarea per escriure i botons per enviar el missatge -->
     <form id="send-message-form" @submit.prevent="" action="#"
@@ -159,14 +160,16 @@
     </form>
 
     <!-- Modal Checkmark -->
-    <div v-if="modalMessage == true" style="position: absolute; display: flex; justify-content: center; align-items: center; background-color: rgb(0 0 0 / 40%); width: 100%; height: 100%;">
-      
-      <!-- boton modal -->
-      <div v-on:click="showModal(false)" style="background-color: rgb(0 150 178); border-radius: 100%; padding: 5px 10px; position: relative; top: -15%; left:16.5%;">
-        <h1 style="color: white;">X</h1>
-      </div>
+    <div v-if="modalMessage == true"
+      style="position: absolute; display: flex; justify-content: center; align-items: center; background-color: rgb(0 0 0 / 40%); width: 100%; height: 100%;">
 
-      <div style="background: white; border-radius: 10px; padding: 16px;">
+      <div style="position: relative; background: white; border-radius: 10px; padding: 16px;">
+
+        <!-- boton modal -->
+        <button v-on:click="showModal(false)"
+          style="position: absolute; top: -13px; right: -15px; background-color: rgb(0 150 178); border-radius: 100%; padding: 5px 10px;">
+          <h1 style="color: white; margin: 0;">X</h1>
+        </button>
 
         <div style="padding: 10px;">
           <h2 style="font-size: 20px;">Info del Mensaje</h2>
@@ -176,21 +179,22 @@
             <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
               <img src="../../assets/images/checkmark.svg" alt="Checkmark"
                 style="width: 25px; height: 25px; margin-left: 5px;" />
-              <p style="font-size: 18px; margin-left: 5px;">Fecha</p>
+              <p style="font-size: 18px; margin-left: 5px;" v-if="sentAt != 'undefined'">{{ convertirAFecha(sentAt) }}</p>
             </div>
 
             <p style="font-size: 16px;">Entregado</p>
             <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
               <img src="../../assets/images/allcheckmark.svg" alt="Checkmark"
                 style="width: 25px; height: 25px; margin-left: 5px;" />
-              <p style="font-size: 18px; margin-left: 5px;">Fecha</p>
+              <p style="font-size: 18px; margin-left: 5px;" v-if="deliveredAt != 'undefined'">{{
+                convertirAFecha(deliveredAt) }}</p>
             </div>
-            
+
             <p style="font-size: 16px;">Leido</p>
             <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
               <img src="../../assets/images/checkallmark.svg" alt="Checkmark"
                 style="width: 25px; height: 25px; margin-left: 5px;" />
-              <p style="font-size: 18px; margin-left: 5px;">Fecha</p>
+              <p style="font-size: 18px; margin-left: 5px;" v-if="readAt != 'undefined'">{{ convertirAFecha(readAt) }}</p>
             </div>
 
           </div>
@@ -207,6 +211,7 @@
 <script setup>
 import { CometChat } from "@cometchat-pro/chat";
 import { ref } from "vue";
+import $ from 'jquery';
 
 // Hooks
 import { useAuthenticationStore } from "@/stores/auth/authentications";
@@ -227,6 +232,7 @@ const {
   sendTextMessage,
   getUserGroups,
   getGroupMembers,
+  mark_user_conversation_as_delivered
 } = useChat();
 
 let selectedChat = ref("");
@@ -236,6 +242,10 @@ let userInfo;
 let newChatsList = ref("");
 
 const modalMessage = ref(false)
+const sentAt = ref("");
+const deliveredAt = ref("");
+const readAt = ref("");
+const CHATID = ref('')
 
 // Funcion que va a correr al iniciar la pagina
 const initialize = async () => {
@@ -381,7 +391,10 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
   inChat.value = true;
 
   const conversations = await loadChatMessages(ConversationId);
+
   const chat = document.getElementById("chat");
+
+
   chat.innerHTML = "";
 
   conversations.data.forEach((conversation) => {
@@ -402,37 +415,52 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
     const messageClass = userInfo.uid === conversation.sender ? "missatgePropi" : "missatgeEntrant";
 
     chat.innerHTML += `
-    <div class="${messageClass}" style="display: flex; width: 100%; justify-content: flex-${userInfo.uid === conversation.sender ? "end" : "start"};">
+    <button class="${messageClass} ${userInfo.uid === conversation.sender ? 'mensaje': ''}" style="display: flex; width: 100%; justify-content: flex-${userInfo.uid === conversation.sender ? "end" : "start"};"
+      date="${conversation.sentAt}-${conversation.deliveredAt}-${conversation.readAt}">
       <div class="flex gap-3 ${userInfo.uid === conversation.sender ? "py-2 px-3 bg-[#0096b2] text-white rounded-lg w-fit" : "rounded-lg w-fit py-2 px-3 bg-gray-200"} max-w-md">
         <p style="margin: 0px; display: flex; word-break: break-word;">${conversation.data.text}</p>
         <div style="display: flex; justify-content: flex-end; align-items: center">
           <p style="font-size: 12px; margin: 0px;">${convertStringToDate(conversation.sentAt)}</p>
           
           ${userInfo.uid === conversation.sender ?
-        `<img src="${conversation.sentAt > 0 && conversation.deliveredAt == null && conversation.readAt == null ? '../src/assets/images/checkmark.svg' :
-          conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt == null &&
-            conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt > 0 ? '../src/assets/images/allcheckmark.svg' :
-            '../src/assets/images/checkallmark.svg'}" 
-            alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`: ''}
+        (conversation.sentAt > 0 && conversation.deliveredAt == null && conversation.readAt == null ?
+          `<img src="../src/assets/images/checkmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
+          :
+          (conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt == null ?
+            `<img src="../src/assets/images/allcheckmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
+            :
+            (conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt > 0 ?
+              `<img src="../src/assets/images/checkallmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
+              : '')))
+        : ''}
             
           </div>
         </div>
-      </div>`;
-
+      </button>`;
   });
-
-  // ${userInfo.uid === conversation.sender ? showModal(true) : ''}"
 
   const messageBody = document.getElementById("chat");
   messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
 
 };
 
+$(document).on('click', '.mensaje', async function () {
+  showModal(true)
+
+  let valores = $(this).attr('date');
+  let [value1, value2, value3] = valores.split('-');
+  console.log(valores)
+
+  sentAt.value = value1
+  deliveredAt.value = value2
+  readAt.value = value3
+})
+
+
 const showModal = (value) => {
   modalMessage.value = value;
   console.log(value)
 }
-
 
 // Funció per a alternar la vista de xat a llista de xat
 const toggleInChat = () => {
@@ -499,10 +527,13 @@ const sendMessage = async () => {
   const chatId = header.getAttribute("chatId");
   const receiverType = header.getAttribute("type");
 
+  CHATID.value = chatId
   // Controlamos que el mensaje no esté vacio
   const value = message.value.trim();
   if (value !== "") {
     sendTextMessage(userInfo.uid, message.value, chatId, receiverType);
+    
+    await mark_user_conversation_as_delivered(userInfo.uid, chatId);
     await LoadChatsList()
   }
 
@@ -726,6 +757,7 @@ const printTextMessage = async (textMessage) => {
   // Comprobem la data del missatge
   const currentMessageDate = getMessageDate(textMessage.sentAt);
 
+
   // Comprobem l'ultim missatge d'aquesta mateixa conversació
   const lastMessageDate = await loadChatMessages(textMessage.conversationId);
   const lastDate =
@@ -746,12 +778,10 @@ const printTextMessage = async (textMessage) => {
     return;
   }
   // En caso de estar en un chat pero no es del que recibimos el mensaje
-  if (
-    header.getAttribute("chatId") !== receiver &&
-    header.getAttribute("chatId") !== sender
-  ) {
+  if ( header.getAttribute("chatId") !== receiver && header.getAttribute("chatId") !== sender ) {
     // Actualizamos lista de xats
     await getConversationsList(userInfo.uid);
+    console.log(CHATID.value)
     // Volvemos a pintar el elemento
 
     document
@@ -759,7 +789,7 @@ const printTextMessage = async (textMessage) => {
       .classList.add("selected");
     // Volvemos a seleccionar el chat con el color gris
     return;
-  }
+  } 
 
   const senderClass =
     textMessage.sender.uid === userInfo.uid
@@ -776,24 +806,27 @@ const printTextMessage = async (textMessage) => {
   if (sender !== userInfo.uid) {
     if (textMessage.receiverType === "group") {
       markGroupConversationAsRead(userInfo.uid, receiver);
+      console.log('aqui', CHATID)
     } else {
       markUserConversationAsRead(userInfo.uid, sender);
+      console.log('aqui', CHATID)
     }
   }
 
   messageBody.innerHTML += `
-    <div class="${senderClass}" style="display: flex; width: 100%; justify-content: ${senderClass === "missatgePropi" ? "flex-end" : "flex-start"
-    };">
+    <div class="${senderClass} mensaje" style="display: flex; width: 100%; justify-content: ${senderClass === "missatgePropi" ? "flex-end" : "flex-start"
+    };" date="${textMessage.sentAt}-${textMessage.deliveredAt}-${textMessage.readAt}">
       <div class="flex gap-3 py-2 px-3 ${bgColorClass} rounded-lg max-w-md">
         <p style="margin: 0px; display: flex; word-break: break-word;">${messageText}</p>
         <div style="display: flex; justify-content: flex-end; align-items: center">
           <p style="font-size: 12px; margin: 0; heigh: 100%">${messageDate}</p>
-          ${senderClass === "missatgePropi" ?
+          
+          ${textMessage.senderClass == "missatgePropi" ? '' :
       `<img src="${textMessage.sentAt > 0 && textMessage.deliveredAt == null && textMessage.readAt == null ? '../src/assets/images/checkmark.svg' :
-        textMessage.sentAt > 0 && textMessage.deliveredAt > 0 && textMessage.readAt == null &&
-          textMessage.sentAt > 0 && textMessage.deliveredAt > 0 && textMessage.readAt > 0 ? '../src/assets/images/allcheckmark.svg' :
-          '../src/assets/images/checkallmark.svg'}" 
-            alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">` : ''}
+        textMessage.sentAt > 0 && textMessage.deliveredAt > 0 && textMessage.readAt == 'null' &&
+          textMessage.sentAt > 0 && textMessage.deliveredAt > 0 && textMessage.readAt > 0 ? '../src/assets/images/checkallmark.svg' :
+          '../src/assets/images/allcheckmark.svg'}" 
+            alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`}
           
         </div>
       </div>
@@ -846,11 +879,46 @@ const chatsTitle = (value) => {
     return value.charAt(0);
   }
 }
+
+const convertirAFecha = (timestamp) => {
+  const fecha = new Date(timestamp * 1000);
+  const opciones = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  };
+  return fecha.toLocaleString("es-ES", opciones);
+}
 </script>
 
 <style>
 .selected {
   --tw-bg-opacity: 1;
   background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+}
+
+.contMensajeRecibido {
+  display: flex;
+  background: #FFFFFF;
+  flex-direction: row;
+  padding: 0px 8px 0px 8px;
+  border-radius: 2px 8px 8px 8px;
+  gap: 8px;
+  margin-bottom: 8px;
+  max-width: 253px;
+}
+
+.contMensajeEnviado {
+  display: flex;
+  background: #CDF5FF;
+  flex-direction: row;
+  padding: 0px 8px 0px 8px;
+  float: right;
+  border-radius: 8px 2px 8px 8px;
+  gap: 8px;
+  margin-bottom: 8px;
+  max-width: 253px;
 }
 </style>
