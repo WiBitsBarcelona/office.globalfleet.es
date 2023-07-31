@@ -182,7 +182,7 @@ const helpers = {
   },
   toKms(meters) {
     let accuracy = parseFloat(meters) / 1000;
-    return accuracy;
+    return accuracy.toFixed(0);
   },
   getDirectionIcon(direction){
     let icon;

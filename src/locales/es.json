@@ -276,6 +276,7 @@
     "Tabulator": {
       "status_tooltip": "Incidencia NO leida",
       "view_tooltip": "Ver incidencia",
+      "attachment_tooltip": "Esta incidencia tiene datos adjuntos",
       "driver": "Conductor",
       "type": "Tipo de incidencia",
       "comment": "Comentario",
@@ -286,7 +287,20 @@
     "Modal": {
       "title": "Detalles Incidencia",
       "btn_readed": "Marcar como Leida",
-      "btn_close": "Cerrar"
+      "btn_close": "Cerrar",
+      "files_title": "Documentos adjuntos",
+      "file_view": "Abrir Documento",
+      "file_download": "Descargar Documento"
+    },
+    "Swal": {
+      "title": "¿Marcar incidencia como leida?",
+      "text": "Solo se marcará la incidencia como leida, no los documentos adjuntos.",
+      "yes": "Si, marcarla",
+      "set_readed_text": "Incidencia marcada como leida correctamente.",
+      "file_title": "¿Marcar documento como leido?",
+      "file_text": "Solo se marcará el documento, no la incidencia.",
+      "file_yes": "Si, marcarlo",
+      "set_readed_file": "Documento marcado como leido."
     }
   }
 }
