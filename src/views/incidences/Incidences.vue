@@ -8,32 +8,32 @@
                 {{ $t("incidences.driver_incidences") }}
                 <span
                   class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-white text-primary"
-                  >{{ newDriverIncidences }}</span>
+                  >{{ newDriverIncidences.emittedValue }}</span>
               </Tab>
               <Tab class="w-full py-1.5 px-2 font-medium inline-flex justify-center items-center gap-2" tag="button">
                 {{ $t("incidences.trip_incidences") }}
                 <span
                   class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-white text-primary"
-                  >{{ newTripIncidences }}</span>
+                  >{{ newTripIncidences.emittedValue }}</span>
               </Tab>
               <Tab class="w-full py-1.5 px-2 font-medium inline-flex justify-center items-center gap-2" tag="button">
                 {{ $t("incidences.stage_incidences") }}
                 <span
                   class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-white text-primary"
-                  >{{ newStageIncidences }}</span>
+                  >{{ newStageIncidences.emittedValue }}</span>
               </Tab>
               <Tab class="w-full py-1.5 px-2 font-medium inline-flex justify-center items-center gap-2" tag="button">
                 {{ $t("incidences.task_incidences") }}
                 <span
                   class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-white text-primary"
-                  >{{ newTaskIncidences }}</span>
+                  >{{ newTaskIncidences.emittedValue }}</span>
               </Tab>
               
             </TabList>
             <TabPanels class="mt-4">
               <TabPanel>
                 <div class="col-span-12">
-                    <DriversIncidences />
+                    <DriversIncidences @totalNewDriverIncidences = 'loadNewDriverIncidences'/>
                 </div>
               </TabPanel>
               <TabPanel>
@@ -59,11 +59,26 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive } from 'vue';
 import DriversIncidences from "@/components/incidences/Drivers.vue";
-const newDriverIncidences = ref(0);
-const newTripIncidences = ref(0);
-const newStageIncidences = ref(0);
-const newTaskIncidences = ref(0);
+let newDriverIncidences = reactive({
+  emittedValue: 0
+});
+
+let newTripIncidences = reactive({
+  emittedValue: 0
+});
+
+let newStageIncidences = reactive({
+  emittedValue: 0
+});
+
+let newTaskIncidences = reactive({
+  emittedValue: 0
+});
+
+const loadNewDriverIncidences= (emittedValue) => {
+  newDriverIncidences.emittedValue = emittedValue;
+}
 
 </script>
