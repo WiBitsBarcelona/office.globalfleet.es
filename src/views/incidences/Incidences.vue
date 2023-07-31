@@ -8,25 +8,25 @@
                 {{ $t("incidences.driver_incidences") }}
                 <span
                   class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-white text-primary"
-                  >3</span>
+                  >{{ newDriverIncidences }}</span>
               </Tab>
               <Tab class="w-full py-1.5 px-2 font-medium inline-flex justify-center items-center gap-2" tag="button">
                 {{ $t("incidences.trip_incidences") }}
                 <span
                   class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-white text-primary"
-                  >1</span>
+                  >{{ newTripIncidences }}</span>
               </Tab>
               <Tab class="w-full py-1.5 px-2 font-medium inline-flex justify-center items-center gap-2" tag="button">
                 {{ $t("incidences.stage_incidences") }}
                 <span
                   class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-white text-primary"
-                  >2</span>
+                  >{{ newStageIncidences }}</span>
               </Tab>
               <Tab class="w-full py-1.5 px-2 font-medium inline-flex justify-center items-center gap-2" tag="button">
                 {{ $t("incidences.task_incidences") }}
                 <span
                   class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-white text-primary"
-                  >0</span>
+                  >{{ newTaskIncidences }}</span>
               </Tab>
               
             </TabList>
@@ -59,6 +59,11 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
 import DriversIncidences from "@/components/incidences/Drivers.vue";
+const newDriverIncidences = ref(0);
+const newTripIncidences = ref(0);
+const newStageIncidences = ref(0);
+const newTaskIncidences = ref(0);
 
 </script>

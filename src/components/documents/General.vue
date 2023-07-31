@@ -449,8 +449,8 @@ const dropZoneAddFiles = async(event) => {
     const fileMimeType = computed(() => file.value?.type);
     const fileSize = computed(() => file.value?.size);
     await toBase64(file.value).then(fileData => {
-    fileJson.push({file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData});
-  });
+      fileJson.push({file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData});
+    });
   }
 }
 

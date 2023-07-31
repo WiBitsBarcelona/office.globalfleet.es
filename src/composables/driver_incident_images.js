@@ -68,14 +68,8 @@ export default function useDriverIncidentImage() {
 		errors.value = '';
 		try {
 			await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}driver-incident-images/update/${id}`, data, config);
-			//await router.push({ name: 'driverIncidentImage.index' });
 		} catch (e) {
 			console.log(e);
-			// if (e.response.status === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
 		}
 	}
 
