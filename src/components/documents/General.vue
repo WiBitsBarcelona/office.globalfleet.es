@@ -56,7 +56,7 @@
   <Modal id="addDocsModal" backdrop="static" :show="addFilesModal" @hidden="addFilesModal = false">
     <ModalBody class="px-2 py-5 text-center">
       <h2 class="text-lg font-medium text-left ml-5">{{ $t("Dropzone.modal_title") }}</h2>
-      <XIcon class="absolute top-0 right-0 mt-3 mr-3 w-8 h-8 text-slate-400 hover:cursor-pointer" @click="hideModal" >
+      <XIcon class="absolute top-0 right-0 mt-3 mr-3 w-8 h-8 text-slate-400 hover:cursor-pointer" @click="hideModal">
       </XIcon>
       <div @click="dropZoneClick" :class="{ 'opacity-25': uploading != 0 }"
         class="flex flex-col items-center justify-center upload_file_box mt-2 hover:cursor-pointer">
@@ -67,34 +67,50 @@
       </div>
 
       <div class="grid grid-cols-12 gap-6 mx-3 mt-5 items-center justify-center">
-        <div v-for="file in state.files" :key="file.index" class="col-span-12">
-          <div class="file_container">
-            <div class="grid grid-cols-12">
-              <div class="col-span-2">
-                <FileIcon class="w-10 h-10 text-primary opacity-25"></FileIcon>
-              </div>
-              <div class="col-span-9 text-left font-bold">
-                <p class="text-xs"> {{ $h.cutFileName(file.name, 50) }}</p>
-                <p class="text-xs font-light"> {{ $h.formatBytes(file.size) }}</p>
-                <!--                     <div class="progress">
-                      <div id="progress_file" class="progress-bar w-1/12" :class="{'hidden' : uploading == 0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div> -->
-              </div>
-              <div class="col-span-1 text-right">
-                <XIcon class="w-4 h-4 text-primary ml-3 hover:cursor-pointer" @click="dropZoneClearFile(file.name)"
-                  :class="{ 'hidden': uploading != 0 }"></XIcon>
+        <div class="col-span-12 text-right" v-if="!selected_file == ''">
+          <p class="text-slate-400 text-xs">{{ $t("Dropzone.check_confirmation") }}</p>
+        </div>
+        <template v-for="file in state.files" :key="file.index">
+          <div class="col-span-11">
+            <div class="file_container">
+              <div class="grid grid-cols-12">
+                <div class="col-span-2">
+                  <FileIcon class="w-10 h-10 text-primary opacity-25"></FileIcon>
+                </div>
+                <div class="col-span-9 text-left font-bold">
+                  <p class="text-xs"> {{ $h.cutFileName(file.name, 50) }}</p>
+                  <p class="text-xs font-light"> {{ $h.formatBytes(file.size) }}</p>
+                </div>
+                <div class="col-span-1 text-right">
+                  <XIcon class="w-4 h-4 text-primary ml-3 hover:cursor-pointer" @click="dropZoneClearFile(file.name)"
+                    :class="{ 'hidden': uploading != 0 }"></XIcon>
                   <LoadingIcon icon="oval" color="#0097b2" class="w-4 h-4" :class="{ 'hidden': uploading == 0 }" />
+                </div>
               </div>
             </div>
-
           </div>
-        </div>
+          <div class="col-span-1">
+            <div class="form-check sm:mt-0">
+              <input class="form-check-input" type="checkbox" :value="file.name" v-model="checkedFiles" />
+            </div>
+          </div>
+        </template>
         <template v-if="!selected_file == ''">
-          <div class="col-span-1" :class="{ 'opacity-25': uploading != 0 }">
-            <InfoIcon></InfoIcon>
+          <div class="col-span-11 text-right">
+            <p class="text-primary text-xs">{{ $t("Dropzone.check_confirmation_all") }}</p>
           </div>
-          <div class="col-span-11 text-left" :class="{ 'opacity-25': uploading != 0 }">
-            {{ $t("Dropzone.upload_general_document") }}
+          <div class="col-span-1">
+            <div class="form-check sm:mt-0">
+              <input class="form-check-input" type="checkbox" value="" @click="selectAllFiles" />
+            </div>
+          </div>
+          <div class="col-span-12 flex p-5 bg-orange-100 self-stretch	rounded-md">
+            <div class="col-span-1 mr-2" :class="{ 'opacity-25': uploading != 0 }">
+              <InfoIcon></InfoIcon>
+            </div>
+            <div class="col-span-11 text-left" :class="{ 'opacity-25': uploading != 0 }">
+              {{ $t("Dropzone.upload_general_document") }}
+            </div>
           </div>
           <div class="col-span-12 flex" :class="{ 'opacity-25': uploading != 0 }">
             <button type="button" @click="hideModal" class="btn btn-secondary w-60 mr-5">
@@ -150,6 +166,8 @@ const fileSizeScreen = ref(0);
 let files = [];
 const state = reactive({ files });
 const addFilesModal = ref(false);
+let checkedFiles = ref([]);
+let allFilesChecked = false;
 
 const findData = async () => {
   await getCompanyDocuments();
@@ -233,7 +251,7 @@ const initTabulator = () => {
       {
         title: t("Tabulator.General_columns.created_by"),
         minWidth: 200,
-        width:300,
+        width: 300,
         responsive: 1,
         field: "employee.name",
         hozAlign: "center",
@@ -279,8 +297,8 @@ const initTabulator = () => {
       },
       {
         formatter:
-        deleteIcon,
-        responsive: 0, 
+          deleteIcon,
+        responsive: 0,
         width: 50,
         hozAlign: "center",
         headerSort: false,
@@ -427,8 +445,8 @@ const dropZoneClick = (event) => {
   document.getElementById('input_files').click();
 };
 
-const dropZoneAddFiles = async(event) => {
-  if(event.target.files[0].size > 15000000){
+const dropZoneAddFiles = async (event) => {
+  if (event.target.files[0].size > 15000000) {
     Swal.fire({
       icon: 'error',
       title: '',
@@ -437,10 +455,10 @@ const dropZoneAddFiles = async(event) => {
       buttonsStyling: false,
       customClass: {
         confirmButton: 'btn btn-primary shadow-md',
-        container : 'fileSizeError' 
+        container: 'fileSizeError'
       },
     });
-  }else{
+  } else {
     selected_file = '1';
     state.files.push(event.target.files[0]);
     file.value = event.target.files[0];
@@ -449,7 +467,7 @@ const dropZoneAddFiles = async(event) => {
     const fileMimeType = computed(() => file.value?.type);
     const fileSize = computed(() => file.value?.size);
     await toBase64(file.value).then(fileData => {
-      fileJson.push({file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData});
+      fileJson.push({ file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData });
     });
   }
 }
@@ -457,9 +475,9 @@ const dropZoneAddFiles = async(event) => {
 const dropZoneClearFile = (currentFile) => {
   uploading.value = 0;
   const index = state.files.map(i => i.name).indexOf(currentFile);
-  state.files.splice(index,1);
-  fileJson.splice(index,1);
-  if(state.files.length == 0){
+  state.files.splice(index, 1);
+  fileJson.splice(index, 1);
+  if (state.files.length == 0) {
     selected_file = '';
   }
 }
@@ -473,7 +491,7 @@ const toBase64 = file => new Promise((resolve, reject) => {
 
 const dropZoneSendFiles = async () => {
   uploading.value = 1;
-  for(const element of fileJson) {
+  for (const element of fileJson) {
     await storeCompanyDocument(element);
   }
   addFilesModal.value = false;
@@ -518,17 +536,18 @@ const hideModal = async () => {
   uploading.value = 0;
   state.files.length = 0;
   fileJson.length = 0;
+  checkedFiles.length = 0;
 };
 
 const openFile = async (path) => {
   Swal.fire({
-      icon: 'info',
-      title: '',
-      text: t("documents.swal.document_wait_viewing"),
-      //toast: true,
-      position: 'center',
-      showConfirmButton: false,
-    });
+    icon: 'info',
+    title: '',
+    text: t("documents.swal.document_wait_viewing"),
+    //toast: true,
+    position: 'center',
+    showConfirmButton: false,
+  });
   await downloadCompanyDocument(path);
   Swal.close();
   switch (companyDocumentData.value.type) {
@@ -556,13 +575,13 @@ const openFile = async (path) => {
 
 const downloadFile = async (path, file_name) => {
   Swal.fire({
-      icon: 'info',
-      title: '',
-      text: t("documents.swal.document_wait_download"),
-      //toast: true,
-      position: 'center',
-      showConfirmButton: false,
-    });
+    icon: 'info',
+    title: '',
+    text: t("documents.swal.document_wait_download"),
+    //toast: true,
+    position: 'center',
+    showConfirmButton: false,
+  });
   await downloadCompanyDocument(path);
   const linkSource = companyDocumentData.value.data;
   const downloadLink = document.createElement("a");
@@ -573,14 +592,22 @@ const downloadFile = async (path, file_name) => {
   downloadLink.click();
 }
 
+const selectAllFiles = () => {
+  if (!allFilesChecked) {
+    state.files.forEach(file => {
+      checkedFiles.value.push(file.name);
+    });
+    allFilesChecked = true;
+  } else {
+    checkedFiles.value = [];
+    allFilesChecked = false;
+  };
+}
+
 onMounted(async () => {
   tableData.value = await findData();
   initTabulator();
   reInitOnResizeWindow();
-});
-
-onBeforeMount(async () => {
-
 });
 
 </script>
