@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
+import { toRaw } from 'vue';
 
 
 const config = {
@@ -17,26 +18,12 @@ export const useAuthenticationStore = defineStore("authStore", {
         errors: null,
         loading: false
     }),
+    getters:{
+      getUser(){
+        return toRaw(this.user);
+      }
+    },
     actions: {
-        // login(email, password){
-        //     return new Promise((resolve, reject) => {
-        //         const { data } = axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}auth/login`, { email: email, password: password }, {})
-        //             .then((res) => {
-        //                 if (res.data.success) {
-        //                     this.token = res.data.access_token;
-        //                     localStorage.setItem('token', res.data.token);
-        //                 }
-                        
-        //                 console.log(res);
-
-        //                 resolve(res)
-        //             })
-        //             .catch((e) => {
-        //                 this.errors = e;
-        //                 reject(e);
-        //             })
-        //     })
-        // },
         async login(email, password) {
             const res = await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}office/auth/login`, {
               method: "POST",
@@ -79,39 +66,7 @@ export const useAuthenticationStore = defineStore("authStore", {
                         this.token = null;
                         reject(e);
                     })
-            }) 
-
-
-            // try {
-            //   const res = await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}office/auth/user`, {
-            //       method: "GET",
-            //       headers: {
-            //         "Content-Type": "application/json",
-            //         'Authorization': `Bearer ${this.token}`
-            //       }
-            //     });
-            //     const response = await res.json();
-
-
-            //     console.log(response);
-
-            //     if (response.success){
-            //       this.token = null;
-            //       this.user = response.data;
-            //     }else{
-            //       this.errors = response.errors;
-            //     }
-              
-            // } catch (error) {
-            //   if(localStorage.getItem('token')){
-            //       localStorage.removeItem('token');
-            //   }
-            //   console.log(e);
-            //   this.errors = e;
-            //   this.token = null;
-            // }
-
-
+            })
         },
         async logout(){
 

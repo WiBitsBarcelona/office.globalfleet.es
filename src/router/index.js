@@ -1,3 +1,4 @@
+import { toRaw } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthenticationStore } from '@/stores/auth/authentications';
 
@@ -7,7 +8,10 @@ const requireAuth = async(to, from, next) => {
   try {
       await useAuthentication.currentUser();
 
-      //console.log(useAuthentication.user);
+      //TODO pendiente de implementar:
+      //SI ---> useAuthentication.getUser.employee
+      
+      //No ---> console.log(useAuthentication.user);
 
       next();
       
@@ -16,6 +20,31 @@ const requireAuth = async(to, from, next) => {
       next({name: "login" });
   }
 }
+
+
+const checkManager = async(to, from, next) => {
+
+  const useAuthentication = useAuthenticationStore();
+
+  try {
+    
+    await useAuthentication.currentUser();
+    const user = useAuthentication.getUser;
+
+    if(user.roles[0].id === parseInt(import.meta.env.VITE_MANAGER_ROLE_ID)){
+      next();
+    }else{
+      next({name: "dashboard" });
+    }
+
+  } catch (e) {
+      console.log(e);
+      next({name: "login" });
+  }
+
+}
+
+
 
 
 const routes = [
@@ -85,6 +114,12 @@ const routes = [
         path: "chat",
         name: "chat",
         component: () => import('@/views/chat/Chat.vue'),
+      },
+      {
+        path: "users",
+        name: "users",
+        beforeEnter: checkManager,
+        component: () => import('@/views/users/UserList.vue'),
       },
     ],
   },
