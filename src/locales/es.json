@@ -215,13 +215,15 @@
     "title": "Selecciona tus Archivos.",
     "subtitle": "Solo archivos tipo JPG, PNG o PDF.",
     "subtitle2": "Máximo 15 Megabytes por archivo.",
-    "upload_general_document": "Los ficheros subidos en esta sección seran visibles para todos tus conductores.",
-    "upload_driver_document": "Los ficheros subidos en esta sección seran visibles para el conductor: ",
-    "upload_trip_document": "Los ficheros subidos en esta sección seran visibles en el viaje: ",
-    "upload_stage_document": "Los ficheros subidos en esta sección seran visibles en la etapa: ",
+    "upload_general_document": "Los archivos subidos en esta sección seran visibles para todos tus conductores.",
+    "upload_driver_document": "Los archivos subidos en esta sección seran visibles para el conductor: ",
+    "upload_trip_document": "Los archivos subidos en esta sección seran visibles en el viaje: ",
+    "upload_stage_document": "Los archivos subidos en esta sección seran visibles en la etapa: ",
     "btn_upload": "Enviar Archivos",
     "btn_close": "Cancelar",
-    "no_file": "ERROR: Debes seleccionar un Archivo antes de enviarlo."
+    "no_file": "ERROR: Debes seleccionar un Archivo antes de enviarlo.",
+    "check_confirmation": "Solicitar confirmación de lectura",
+    "check_confirmation_all": "Solicitar confirmación para todos los Archivos"
   },
   "Tabulator": {
     "General_columns": {
