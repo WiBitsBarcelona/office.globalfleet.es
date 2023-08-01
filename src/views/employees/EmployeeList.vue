@@ -20,74 +20,27 @@
 	<!-- BEGIN: Page Layout Table -->
 	<div class="intro-y box p-5 mt-5" id="div_table">
 		<div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
-			<form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
-				<div class="sm:flex items-center sm:mr-4">
-					<label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">
-						{{ $t("field") }}
-					</label>
-					<select
-						id="tabulator-html-filter-field"
-						v-model="filter.field"
-						class="form-select w-full sm:w-32 2xl:w-full mt-2 sm:mt-0 sm:w-auto"
-					>
-						<option value="role_id">{{ $t("role_id") }}</option>
-						<option value="name">{{ $t("name") }}</option>
-						<option value="surname">{{ $t("surname") }}</option>
-						<option value="fiscal_identification">{{ $t("fiscal_identification") }}</option>
-						<option value="email">{{ $t("email") }}</option>
-						<option value="password">{{ $t("password") }}</option>
-						<option value="phone_prefix">{{ $t("phone_prefix") }}</option>
-						<option value="phone">{{ $t("phone") }}</option>
-					</select>
-				</div>
-				<div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
-					<label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">
-						{{ $t("filter") }}
-					</label>
-					<select
-						id="tabulator-html-filter-type"
-						v-model="filter.type"
-						class="form-select w-full mt-2 sm:mt-0 sm:w-auto"
-					>
-						<option value="like" selected>like</option>
-						<option value="=">=</option>
-						<option value="<">&lt;</option>
-						<option value="<=">&lt;=</option>
-						<option value=">">></option>
-						<option value=">=">>=</option>
-						<option value="!=">!=</option>
-					</select>
-				</div>
-				<div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
-					<label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">
-						{{ $t("value") }}
-					</label>
-						<input
-						id="tabulator-html-filter-value"
-						v-model="filter.value"
-						type="text"
-						class="form-control sm:w-40 2xl:w-full mt-2 sm:mt-0"
-					/>
-				</div>
-				<div class="mt-2 xl:mt-0">
-					<button
-						id="tabulator-html-filter-go"
-						type="button"
-						class="btn btn-primary w-full sm:w-16"
-						@click="onFilter"
-					>
-						<SearchIcon class="w-4 h-4"></SearchIcon>
-					</button>
-					<button
-						id="tabulator-html-filter-reset"
-						type="button"
-						class="btn btn-secondary w-full sm:w-16 mt-2 sm:mt-0 sm:ml-1"
-						@click="onResetFilter"
-					>
-						<RotateCcwIcon class="w-4 h-4"></RotateCcwIcon>
-					</button>
+			<!-- <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
+				
+                <div class="relative sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
+                <input id="tabulator-html-filter-value" v-model="filter.value" type="text"
+                    class="w-full xl:w-[600px] form-control mt-2 sm:mt-0"
+                    :placeholder="$t('search')" @keyup="onFilter" />
+                <XCircleIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer"
+                    @click="onResetFilter" />
+                </div>
+
+			</form> -->
+
+
+            <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
+				<div class="relative sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
+					<input id="tabulator-html-filter-value" v-model="filter.value" type="text" class="w-full xl:w-[600px] form-control mt-2 sm:mt-0" :placeholder="$t('search')" @keyup="onFilter" />
+					<XCircleIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer" @click="onResetFilter" />
 				</div>
 			</form>
+
+
 			<div class="flex mt-5 sm:mt-0">
 				<button
 					class="btn btn-primary w-1/2 sm:w-auto mr-2"
@@ -150,7 +103,7 @@
 	const tabulator = ref();
 
 	const filter = reactive({
-		field: "role_id",
+		field: "name",
 		type: "like",
 		value: "",
 	});
@@ -161,7 +114,7 @@
 		employees.value.forEach((elem)=>{
 			dataArr.push(toRaw(elem));
 		});
-	return dataArr;
+	    return dataArr;
 	}
 
 	// Table
@@ -185,10 +138,10 @@
 				headerSort: false,
 			},
 			{
-				title: t("role_id"),
+				title: t("role"),
 				minWidth: 200,
 				responsive: 0,
-				field: "role_id",
+				field: "user.roles[0].name",
 				vertAlign: "middle",
 				headerHozAlign:"left",
 			},
@@ -220,31 +173,7 @@
 				title: t("email"),
 				minWidth: 200,
 				responsive: 0,
-				field: "email",
-				vertAlign: "middle",
-				headerHozAlign:"left",
-			},
-			{
-				title: t("password"),
-				minWidth: 200,
-				responsive: 0,
-				field: "password",
-				vertAlign: "middle",
-				headerHozAlign:"left",
-			},
-			{
-				title: t("phone_prefix"),
-				minWidth: 200,
-				responsive: 0,
-				field: "phone_prefix",
-				vertAlign: "middle",
-				headerHozAlign:"left",
-			},
-			{
-				title: t("phone"),
-				minWidth: 200,
-				responsive: 0,
-				field: "phone",
+				field: "user.email",
 				vertAlign: "middle",
 				headerHozAlign:"left",
 			},
@@ -306,12 +235,20 @@
 
 	// Filter function
 	const onFilter = () => {
-		tabulator.value.setFilter(filter.field, filter.type, filter.value);
+		//tabulator.value.setFilter(filter.field, filter.type, filter.value);
+        let arr = [
+            [
+                {field: 'name', type: 'like', value: filter.value},
+                {field: 'surname', type: 'like', value: filter.value},
+                {field: 'fiscal_identification', type: 'like', value: filter.value},
+            ]
+        ];
+        tabulator.value.setFilter(arr);
 	};
 
 	// On reset filter
 	const onResetFilter = () => {
-		filter.field = "role_id";
+		filter.field = "name";
 		filter.type = "like";
 		filter.value = "";
 		onFilter();
