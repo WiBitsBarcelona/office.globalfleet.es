@@ -20,27 +20,12 @@
 	<!-- BEGIN: Page Layout Table -->
 	<div class="intro-y box p-5 mt-5" id="div_table">
 		<div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
-			<!-- <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
-				
-                <div class="relative sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
-                <input id="tabulator-html-filter-value" v-model="filter.value" type="text"
-                    class="w-full xl:w-[600px] form-control mt-2 sm:mt-0"
-                    :placeholder="$t('search')" @keyup="onFilter" />
-                <XCircleIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer"
-                    @click="onResetFilter" />
-                </div>
-
-			</form> -->
-
-
             <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
 				<div class="relative sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
 					<input id="tabulator-html-filter-value" v-model="filter.value" type="text" class="w-full xl:w-[600px] form-control mt-2 sm:mt-0" :placeholder="$t('search')" @keyup="onFilter" />
 					<XCircleIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer" @click="onResetFilter" />
 				</div>
 			</form>
-
-
 			<div class="flex mt-5 sm:mt-0">
 				<button
 					class="btn btn-primary w-1/2 sm:w-auto mr-2"
@@ -109,12 +94,8 @@
 	});
 
 	const findData = async() => {
-		let dataArr = [];
 		await getEmployees();
-		employees.value.forEach((elem)=>{
-			dataArr.push(toRaw(elem));
-		});
-	    return dataArr;
+        return toRaw(employees.value);
 	}
 
 	// Table
@@ -136,14 +117,6 @@
 				hozAlign: "center",
 				resizable: false,
 				headerSort: false,
-			},
-			{
-				title: t("role"),
-				minWidth: 200,
-				responsive: 0,
-				field: "user.roles[0].name",
-				vertAlign: "middle",
-				headerHozAlign:"left",
 			},
 			{
 				title: t("name"),
@@ -176,6 +149,17 @@
 				field: "user.email",
 				vertAlign: "middle",
 				headerHozAlign:"left",
+			},
+            {
+				title: t("role"),
+				minWidth: 200,
+				responsive: 0,
+				field: "",
+				vertAlign: "middle",
+				headerHozAlign:"left",
+                formatter(cell) {
+                    return cell.getData().user.roles[0].name;
+                }
 			},
 			{
 				title: t("actions"),
@@ -236,14 +220,13 @@
 	// Filter function
 	const onFilter = () => {
 		//tabulator.value.setFilter(filter.field, filter.type, filter.value);
-        let arr = [
+        tabulator.value.setFilter([
             [
                 {field: 'name', type: 'like', value: filter.value},
                 {field: 'surname', type: 'like', value: filter.value},
                 {field: 'fiscal_identification', type: 'like', value: filter.value},
             ]
-        ];
-        tabulator.value.setFilter(arr);
+        ]);
 	};
 
 	// On reset filter
