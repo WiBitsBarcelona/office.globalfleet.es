@@ -121,11 +121,10 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount, reactive, onMounted, computed } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import xlsx from "xlsx";
 import { createIcons, icons } from "lucide";
 import Tabulator from "tabulator-tables";
-import dom from "@left4code/tw-starter/dist/js/dom";
 import { useI18n } from 'vue-i18n';
 import { helper as $h } from "@/utils/helper";
 import Swal from "sweetalert2";
@@ -133,15 +132,11 @@ import FleetFooter from "@/components/fleet-footer/Main.vue";
 import useDriverIncident from "@/composables/driver_incidents";
 import useDownloadDocument from "@/composables/download_documents";
 import useDriverIncidentImage from "@/composables/driver_incident_images";
-import { email } from '@vuelidate/validators';
 
 const { getDriverIncidents, driverIncidents, updateDriverIncident, getDriverIncident, driverIncident } = useDriverIncident();
 const { downloadDocument, documentData } = useDownloadDocument();
 const { updateDriverIncidentImage } = useDriverIncidentImage();
 const { t } = useI18n();
-const addFileModal = ref(false);
-const showNoFileError = ref(false);
-const tableData = reactive([]);
 
 const tableDriverRef = ref();
 const driver_tabulator = ref();
@@ -150,20 +145,12 @@ const driver_filter = reactive({
   type: "like",
   value: "",
 });
-const file = ref(null);
-const file_selected = ref('');
-let selected_file = ref('');
-const uploading = ref(0);
-let fileJson = [];
-const fileNameScreen = ref('');
-const fileSizeScreen = ref(0);
 let dataArr = [];
 
 let incidenceFiles = [];
 const incidenceState = reactive({ incidenceFiles });
 const viewDriverIncidenceModal = ref(false);
 const dropdown = ref(false);
-const newDriverIncidences = ref(0);
 const imageAssets = import.meta.globEager(
   `/src/assets/images/*.{jpg,jpeg,png,svg}`
 );
@@ -340,7 +327,10 @@ let driver_incidence_selected_sended_at = ref('');
 let driver_incidence_selected_received_at = ref('');
 let driver_incidence_selected_readed_at = ref('');
 
-const driverIncidenceEmit = defineEmits(['totalNewDriverIncidences']);
+const emit = defineEmits(['totalNewDriverIncidences']);
+const newDriverIncidences = reactive({
+  value: 0
+});
 
 // Redraw table onresize
 const reInitOnResizeWindow = () => {
@@ -481,6 +471,7 @@ const findDriversIncidencesData = async () => {
       let dateNow = $h.formatDate(dateNowTmp, "YYYY-MM-DD HH:mm:ss");
       let dateData = { receptioned_at: dateNow};
       updateDriverIncident(element.id, dateData);
+      element.receptioned_at = dateNow;
     }
     if(element.readed_at == null){
       totalIncidences ++;
@@ -500,12 +491,12 @@ const findDriversIncidencesData = async () => {
     });
   });
   newDriverIncidences.value = totalIncidences;
-  
+  console.log(newDriverIncidences.value);
+  emit('totalNewDriverIncidences',newDriverIncidences.value);
   initDriverTabulator();
 }
 
 const driverIncidenceFile = async (id, path, status, file_name, action) => {
-  dropdown.value = false;
   if(status == 0){
     Swal.fire({
     icon: 'info',
@@ -527,6 +518,7 @@ const driverIncidenceFile = async (id, path, status, file_name, action) => {
       let dateNow = $h.formatDate(dateNowTmp, "YYYY-MM-DD HH:mm:ss");
       let dateData = { readed_at: dateNow, has_seen: 1 };
       await updateDriverIncidentImage(id, dateData);
+      await refreshDriverIncidence(driver_incidence_selected_id.value);
       Swal.fire({
         icon: 'success',
         title: '',
@@ -546,6 +538,16 @@ const driverIncidenceFile = async (id, path, status, file_name, action) => {
   }else{
     openDriverIncidenceFile(path, file_name, action);
   }
+}
+
+const refreshDriverIncidence = async (id) => {
+  incidenceState.incidenceFiles.length = 0;
+  await getDriverIncident(id);
+  const dataArrTmp = driverIncident.value;
+  dataArrTmp.images.forEach(element => {
+    incidenceState.incidenceFiles.push(element);
+   });
+
 }
 
 const openDriverIncidenceFile = async (path, file_name, action) => {
@@ -614,19 +616,9 @@ const openDriverIncidenceFile = async (path, file_name, action) => {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
 onMounted(async () => {
   await findDriversIncidencesData();
-  driverIncidenceEmit('totalNewDriverIncidences',newDriverIncidences.value);
+  
   reInitOnResizeWindow();
 });
 

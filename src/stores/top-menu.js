@@ -27,7 +27,7 @@ export const useTopMenuStore = defineStore("topMenu", {
         icon: "MessageCircleIcon",
         pageName: "chat",
         title: "Chat",
-      },
+      }
     ],
   }),
 });
