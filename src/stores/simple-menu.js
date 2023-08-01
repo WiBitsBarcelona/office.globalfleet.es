@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { useI18n } from 'vue-i18n';
 
 
 export const useSimpleMenuStore = defineStore("simpleMenu", {
@@ -9,36 +8,43 @@ export const useSimpleMenuStore = defineStore("simpleMenu", {
         icon: "HomeIcon",
         pageName: "dashboard",
         title: "Inicio",
+        isManager: false,
       },
       {
         icon: "NavigationIcon",
         pageName: "trips",
         title: "Viajes",
+        isManager: false,
       },
       {
         icon: "CastIcon",
         pageName: "devices",
         title: "Dispositivos",
+        isManager: false,
       },
-/*       {
-        icon: "TruckIcon",
-        pageName: "vehicles",
-        title: "Vehículos",
-      }, */
       {
         icon: "FilesIcon",
         pageName: "documents",
         title: "Documentos",
+        isManager: false,
       },
       {
         icon: "AlertTriangleIcon",
         pageName: "incidents",
         title: "Incidencias",
+        isManager: false,
       },
       {
         icon: "MessageCircleIcon",
         pageName: "chat",
         title: "Chat",
+        isManager: false,
+      },
+      {
+        icon: "UsersIcon",
+        pageName: "users",
+        title: "Users",
+        isManager: true,
       },
     ],
   }),

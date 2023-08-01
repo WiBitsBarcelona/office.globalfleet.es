@@ -170,6 +170,8 @@ const router = useRouter();
 const formattedMenu = ref([]);
 const simpleMenuStore = useSimpleMenuStore();
 const simpleMenu = computed(() => nestedMenu(simpleMenuStore.menu, route));
+const useAuthentication = useAuthenticationStore();
+
 
 provide("forceActiveMenu", (pageName) => {
   route.forceActiveMenu = pageName;
@@ -178,20 +180,41 @@ provide("forceActiveMenu", (pageName) => {
 
 watch(
   computed(() => route.path),
-  () => {
+  async() => {
     delete route.forceActiveMenu;
-    formattedMenu.value = $h.toRaw(simpleMenu.value);
+    //formattedMenu.value = $h.toRaw(simpleMenu.value);
+    await formattedMenuList();
   }
 );
 
 onMounted(async () => {
   dom("body").removeClass("error-page").removeClass("login").addClass("main");
-  formattedMenu.value = $h.toRaw(simpleMenu.value);
+  //formattedMenu.value = $h.toRaw(simpleMenu.value);
+  await formattedMenuList();
   
-  if (!localStorage.getItem("token") || useAuthenticationStore().user.employee !== null) {    
+  if (!localStorage.getItem("token") || useAuthenticationStore().user.employee !== null) {       
     await checkUnreadMessages();
     setInterval(await checkUnreadMessages, 5000);
   }
 
 });
+
+
+
+const formattedMenuList = async() => {
+  //formattedMenu.value = $h.toRaw(simpleMenu.value);
+
+  const menuNew = $h.toRaw(simpleMenu.value);
+  
+  let m = [];
+  if(useAuthentication.getUser.roles[0].id === parseInt(import.meta.env.VITE_MANAGER_ROLE_ID)){
+    m = menuNew;
+  }else{
+    m = menuNew.filter((menu) => menu.isManager !== true);
+  }
+
+  formattedMenu.value = m;
+
+}
+
 </script>
