@@ -6,46 +6,29 @@
 		<!-- BEGIN: container -->
 		<div class="grid grid-cols-12 gap-6">
 
-			<div class="col-span-12 md:col-span-12 lg:col-span-12">
-
+			<div class="col-span-4 md:col-span-4 lg:col-span-4">
 				<div class="input-form">
-					<label for="user_id" class="form-label w-full">
-						{{ $t("user_id") }}
+					<label for="role_id" class="form-label w-full">
+						{{ $t("role_id") }}
 					</label>
 					<input
-						v-model.trim="validate.user_id.$model"
-						id="user_id"
+						v-model.trim="validate.role_id.$model"
+						id="role_id"
 						type="text"
-						name="user_id"
+						name="role_id"
 						class="form-control"
-						:class="{ 'border-danger': validate.user_id.$error }"
+						:class="{ 'border-danger': validate.role_id.$error }"
 					/>
-					<template v-if="validate.user_id.$error">
-						<div v-for="(error, index) in validate.user_id.$errors" :key="index" class="text-danger mt-2">
+					<template v-if="validate.role_id.$error">
+						<div v-for="(error, index) in validate.role_id.$errors" :key="index" class="text-danger mt-2">
 							{{ error.$message }}
 						</div>
 					</template>
 				</div>
+			</div>
 
-				<div class="input-form">
-					<label for="company_id" class="form-label w-full">
-						{{ $t("company_id") }}
-					</label>
-					<input
-						v-model.trim="validate.company_id.$model"
-						id="company_id"
-						type="text"
-						name="company_id"
-						class="form-control"
-						:class="{ 'border-danger': validate.company_id.$error }"
-					/>
-					<template v-if="validate.company_id.$error">
-						<div v-for="(error, index) in validate.company_id.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
 
+			<div class="col-span-4 md:col-span-4 lg:col-span-4">
 				<div class="input-form">
 					<label for="name" class="form-label w-full">
 						{{ $t("name") }}
@@ -64,7 +47,10 @@
 						</div>
 					</template>
 				</div>
+			</div>
 
+
+			<div class="col-span-4 md:col-span-4 lg:col-span-4">
 				<div class="input-form">
 					<label for="surname" class="form-label w-full">
 						{{ $t("surname") }}
@@ -83,7 +69,10 @@
 						</div>
 					</template>
 				</div>
+			</div>
 
+
+			<div class="col-span-4 md:col-span-4 lg:col-span-4">
 				<div class="input-form">
 					<label for="fiscal_identification" class="form-label w-full">
 						{{ $t("fiscal_identification") }}
@@ -102,7 +91,54 @@
 						</div>
 					</template>
 				</div>
+			</div>
 
+
+			<div class="col-span-4 md:col-span-4 lg:col-span-4">
+				<div class="input-form">
+					<label for="email" class="form-label w-full">
+						{{ $t("email") }}
+					</label>
+					<input
+						v-model.trim="validate.email.$model"
+						id="email"
+						type="text"
+						name="email"
+						class="form-control"
+						:class="{ 'border-danger': validate.email.$error }"
+					/>
+					<template v-if="validate.email.$error">
+						<div v-for="(error, index) in validate.email.$errors" :key="index" class="text-danger mt-2">
+							{{ error.$message }}
+						</div>
+					</template>
+				</div>
+			</div>
+
+
+			<div class="col-span-4 md:col-span-4 lg:col-span-4">
+				<div class="input-form">
+					<label for="password" class="form-label w-full">
+						{{ $t("password") }}
+					</label>
+					<input
+						v-model.trim="validate.password.$model"
+						id="password"
+						type="text"
+						name="password"
+						class="form-control"
+						:class="{ 'border-danger': validate.password.$error }"
+					/>
+					<template v-if="validate.password.$error">
+						<div v-for="(error, index) in validate.password.$errors" :key="index" class="text-danger mt-2">
+							{{ error.$message }}
+						</div>
+					</template>
+				</div>
+			</div>
+
+
+			<div class="col-span-4 md:col-span-4 lg:col-span-4">
 				<div class="input-form">
 					<label for="phone_prefix" class="form-label w-full">
 						{{ $t("phone_prefix") }}
@@ -121,7 +157,10 @@
 						</div>
 					</template>
 				</div>
+			</div>
 
+
+			<div class="col-span-4 md:col-span-4 lg:col-span-4">
 				<div class="input-form">
 					<label for="phone" class="form-label w-full">
 						{{ $t("phone") }}
@@ -140,27 +179,8 @@
 						</div>
 					</template>
 				</div>
-
-				<div class="input-form">
-					<label for="cometchat_uid" class="form-label w-full">
-						{{ $t("cometchat_uid") }}
-					</label>
-					<input
-						v-model.trim="validate.cometchat_uid.$model"
-						id="cometchat_uid"
-						type="text"
-						name="cometchat_uid"
-						class="form-control"
-						:class="{ 'border-danger': validate.cometchat_uid.$error }"
-					/>
-					<template v-if="validate.cometchat_uid.$error">
-						<div v-for="(error, index) in validate.cometchat_uid.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
-
 			</div>
+
 
 			<!-- BEGIN: Buttons -->
 			<div class="col-span-12 md:col-span-12 lg:col-span-12">
@@ -197,13 +217,8 @@
 	const emit = defineEmits(['cancelEdit', 'updateemployeeForm']);
 
 	const rules = {
-		user_id: {
+		role_id: {
 			required: helpers.withMessage(t("form.required"), required),
-			minLength: minLength(2),
-		},
-		company_id: {
-			required: helpers.withMessage(t("form.required"), required),
-			minLength: minLength(2),
 		},
 		name: {
 			required: helpers.withMessage(t("form.required"), required),
@@ -217,6 +232,14 @@
 			required: helpers.withMessage(t("form.required"), required),
 			minLength: minLength(2),
 		},
+		email: {
+			required: helpers.withMessage(t("form.required"), required),
+			minLength: minLength(2),
+		},
+		password: {
+			required: helpers.withMessage(t("form.required"), required),
+			minLength: minLength(2),
+		},
 		phone_prefix: {
 			required: helpers.withMessage(t("form.required"), required),
 			minLength: minLength(2),
@@ -225,21 +248,17 @@
 			required: helpers.withMessage(t("form.required"), required),
 			minLength: minLength(2),
 		},
-		cometchat_uid: {
-			required: helpers.withMessage(t("form.required"), required),
-			minLength: minLength(2),
-		},
 	};
 
 	const formData = reactive({
-		user_id: "",
-		company_id: "",
+		role_id: "",
 		name: "",
 		surname: "",
 		fiscal_identification: "",
+		email: "",
+		password: "",
 		phone_prefix: "",
 		phone: "",
-		cometchat_uid: "",
 	});
 
 	const validate = useVuelidate(rules, toRefs(formData));

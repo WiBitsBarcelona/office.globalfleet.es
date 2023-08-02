@@ -83,6 +83,7 @@
 	const employeeId = ref(0);
 	// Tabulator
 	const tableData = reactive([]); //data for table to display
+
 	let div_table;
 	const tableRef = ref();
 	const tabulator = ref();
@@ -101,108 +102,118 @@
 	// Table
 	const initTabulator = () => {
 		tabulator.value = new Tabulator(tableRef.value, {
-		pagination: "local",
-		paginationSize: 10,
-		paginationSizeSelector: [10, 20, 30, 40],
-		layout: "fitColumns",
-		responsiveLayout: "collapse",
-		placeholder: t("message.no_matching_records_found"),
-		reactiveData:true,
-		data: tableData.value,
-		columns: [
-			{
-				formatter: "responsiveCollapse",
-				width: 40,
-				minWidth: 30,
-				hozAlign: "center",
-				resizable: false,
-				headerSort: false,
-			},
-			{
-				title: t("name"),
-				minWidth: 200,
-				responsive: 0,
-				field: "name",
-				vertAlign: "middle",
-				headerHozAlign:"left",
-			},
-			{
-				title: t("surname"),
-				minWidth: 200,
-				responsive: 0,
-				field: "surname",
-				vertAlign: "middle",
-				headerHozAlign:"left",
-			},
-			{
-				title: t("fiscal_identification"),
-				minWidth: 200,
-				responsive: 0,
-				field: "fiscal_identification",
-				vertAlign: "middle",
-				headerHozAlign:"left",
-			},
-			{
-				title: t("email"),
-				minWidth: 200,
-				responsive: 0,
-				field: "user.email",
-				vertAlign: "middle",
-				headerHozAlign:"left",
-			},
-            {
-				title: t("role"),
-				minWidth: 200,
-				responsive: 0,
-				field: "",
-				vertAlign: "middle",
-				headerHozAlign:"left",
-                formatter(cell) {
-                    return cell.getData().user.roles[0].name;
-                }
-			},
-			{
-				title: t("actions"),
-				minWidth: 200,
-				field: "actions",
-				responsive: 1,
-				headerHozAlign: "center",
-				hozAlign: "center",
-				vertAlign: "middle",
-				download: false,
-				formatter(cell) {
-					const a = dom(`<div class="flex lg:justify-center items-center">
-						<button class="flex items-center mr-3" id="btn_edit">
-							<i data-lucide="check-square" class="w-4 h-4 mr-1"></i> ${t("edit")}
-						</button>
-						<button class="flex items-center text-danger" id="btn_delete">
-							<i data-lucide="trash-2" class="w-4 h-4 mr-1"></i> ${t("delete")}
-						</button>
-					</div>`);
+            pagination: "local",
+            paginationSize: 10,
+            paginationSizeSelector: [10, 20, 30, 40],
+            layout: "fitColumns",
+            responsiveLayout: "collapse",
+            placeholder: t("message.no_matching_records_found"),
+            reactiveData: true,
+            data: tableData.value,
+            columns: [
+                {
+                    formatter: "responsiveCollapse",
+                    width: 40,
+                    minWidth: 30,
+                    hozAlign: "center",
+                    resizable: false,
+                    headerSort: false,
+                },
+                {
+                    title: t("name"),
+                    minWidth: 200,
+                    responsive: 0,
+                    field: "name",
+                    vertAlign: "middle",
+                    headerHozAlign:"left",
+                },
+                {
+                    title: t("surname"),
+                    minWidth: 200,
+                    responsive: 0,
+                    field: "surname",
+                    vertAlign: "middle",
+                    headerHozAlign:"left",
+                },
+                {
+                    title: t("fiscal_identification"),
+                    minWidth: 200,
+                    responsive: 0,
+                    field: "fiscal_identification",
+                    vertAlign: "middle",
+                    headerHozAlign:"left",
+                },
+                {
+                    title: t("email"),
+                    minWidth: 200,
+                    responsive: 0,
+                    field: "user.email",
+                    vertAlign: "middle",
+                    headerHozAlign:"left",
+                },
+                {
+                    title: t("role"),
+                    minWidth: 200,
+                    responsive: 0,
+                    field: "",
+                    vertAlign: "middle",
+                    headerHozAlign:"left",
+                    formatter(cell) {
+                        return cell.getData().user.roles[0].name;
+                    }
+                },
+                {
+                    title: "",
+                    minWidth: 200,
+                    field: "actions",
+                    responsive: 0,
+                    headerHozAlign: "center",
+                    hozAlign: "center",
+                    vertAlign: "middle",
+                    headerSort: false,
+                    download: false,
+                    formatter: function(cell, formatterParams){
+                        return `<i data-lucide="check-square" class="w-6 h-6 mr-1"></i>editar`;
+                    },
+					cellClick: (e, cell) => {
+                        editEmployee(cell.getData().id);
+						e.preventDefault(); 
+                    },
+                    // formatter(cell) {
+                    //     const a = dom(`<div class="flex lg:justify-center items-center">
+                    //         <button class="flex items-center mr-3" id="btn_edit" id="btn_edit">
+                    //             <i data-lucide="check-square" class="w-6 h-6 mr-1"></i>
+                    //         </button>
+                    //         <button class="flex items-center text-danger" id="btn_delete">
+                    //             <i data-lucide="trash-2" class="w-6 h-6 mr-1"></i>
+                    //         </button>
+                    //     </div>`);
 
-					dom(a).on("click", function (event) {
+                    //     dom(a).on("click", function (event) {
 
-						if(event.target.id === 'btn_edit'){
-							editEmployee(cell.getData().id);
-						}
+                    //         console.log("xx", event.target.style);
 
-						if(event.target.id === 'btn_delete'){
-							deleteEmployee(cell.getData().id, cell.getData().name); // TODO check name
-						}
+                    //         if(event.target.id === 'btn_edit'){
+                    //             editEmployee(cell.getData().id);
+                    //         }
 
-						});
-						return a[0];
-					},
-				},
-			],
-			renderComplete() {
-				createIcons({
-					icons,
-					"stroke-width": 1.5,
-					nameAttr: "data-lucide",
-				});
-			},
-		});
+                    //         if(event.target.id === 'btn_delete'){
+                    //             deleteEmployee(cell.getData().id, cell.getData().name); // TODO check name
+                    //         }
+
+                    //     });
+                    //     return a[0];
+                    // },
+                },
+		    ],
+            renderComplete() {
+                createIcons({
+                    icons,
+                    "stroke-width": 1.5,
+                    nameAttr: "data-lucide",
+                });
+            },
+	    })
 	};
 
 	// Redraw table onresize
@@ -287,10 +298,45 @@
 	}
 
 	const updateEmployeeForm = async (id, data) => {
+		
+
 		await updateEmployee(id, data);
-		//await getEmployees();
+
 		tableData.value = await findData();
-		tabulator.value.updateData(tableData.value);
+
+		tabulator.value.setData(tableData.value);
+		
+
+
+		//location.reload();
+
+
+
+		// tabulator.value.renderComplete = function() {
+		// 	createIcons({
+		// 		icons,
+		// 		"stroke-width": 1.5,
+		// 		nameAttr: "data-lucide",
+		// 	});
+
+		// }
+
+		
+        //initTabulator();
+
+		//console.log({...tabulator.value});
+		
+
+        // await getEmployees();
+		// tableData.value = await findData();
+        // initTabulator();
+		// reInitOnResizeWindow();
+		//tabulator.value.updateData(tableData.value);
+		
+		
+		
+
+
 		isEdit.value = false;
 		div_table.style.display = 'block';
 	}
@@ -321,6 +367,9 @@
 		initTabulator();
 		reInitOnResizeWindow();
 		div_table = document.querySelector('#div_table');
+
+		console.log({...tabulator.value});
+		
 	});
 
 </script>
