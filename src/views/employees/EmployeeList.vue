@@ -64,13 +64,13 @@
 
 </template>
 <script setup>
-
 	import { ref, reactive, onMounted, toRaw } from "vue";
 	import { useI18n } from "vue-i18n";
 	import { createIcons, icons } from "lucide";
 	import Swal from "sweetalert2";
 	import xlsx from "xlsx";
 	import Tabulator from "tabulator-tables";
+	import dom from "@left4code/tw-starter/dist/js/dom";
 
 	import useEmployees from "@/composables/employees";
 	import Create from "@/components/employees/EmployeeCreate.vue";
@@ -98,6 +98,7 @@
 		await getEmployees();
         return toRaw(employees.value);
 	}
+
 
 	// Table
 	const initTabulator = () => {
@@ -164,7 +165,7 @@
                 },
                 {
                     title: "",
-                    minWidth: 200,
+                    width: 120,
                     field: "actions",
                     responsive: 0,
                     headerHozAlign: "center",
@@ -173,40 +174,40 @@
                     headerSort: false,
                     download: false,
                     formatter: function(cell, formatterParams){
-                        return `<i data-lucide="check-square" class="w-6 h-6 mr-1"></i>editar`;
+                        return `<i data-lucide="check-square" class="w-6 h-6 mr-1 text-primary"></i>`;
                     },
 					cellClick: (e, cell) => {
                         editEmployee(cell.getData().id);
 						e.preventDefault(); 
                     },
-                    // formatter(cell) {
-                    //     const a = dom(`<div class="flex lg:justify-center items-center">
-                    //         <button class="flex items-center mr-3" id="btn_edit" id="btn_edit">
-                    //             <i data-lucide="check-square" class="w-6 h-6 mr-1"></i>
-                    //         </button>
-                    //         <button class="flex items-center text-danger" id="btn_delete">
-                    //             <i data-lucide="trash-2" class="w-6 h-6 mr-1"></i>
-                    //         </button>
-                    //     </div>`);
-
-                    //     dom(a).on("click", function (event) {
-
-                    //         console.log("xx", event.target.style);
-
-                    //         if(event.target.id === 'btn_edit'){
-                    //             editEmployee(cell.getData().id);
-                    //         }
-
-                    //         if(event.target.id === 'btn_delete'){
-                    //             deleteEmployee(cell.getData().id, cell.getData().name); // TODO check name
-                    //         }
-
-                    //     });
-                    //     return a[0];
-                    // },
+                },
+				{
+                    title: "",
+                    width: 120,
+                    field: "actions",
+                    responsive: 0,
+                    headerHozAlign: "center",
+                    hozAlign: "center",
+                    vertAlign: "middle",
+                    headerSort: false,
+                    download: false,
+                    formatter: function(cell, formatterParams){
+                        return `<i data-lucide="trash-2" class="w-6 h-6 mr-1 text-danger"></i>`;
+                    },
+					cellClick: (e, cell) => {
+                        editEmployee(cell.getData().id);
+						e.preventDefault(); 
+                    },
                 },
 		    ],
             renderComplete() {
+                createIcons({
+                    icons,
+                    "stroke-width": 1.5,
+                    nameAttr: "data-lucide",
+                });
+            },
+			renderStarted() {
                 createIcons({
                     icons,
                     "stroke-width": 1.5,
@@ -277,12 +278,12 @@
 	}
 
 	const saveEmployeeForm = async (form) => {
-		await storeEmployee({ ...form });
-		//await getEmployees();
-		tableData.value = await findData();
-		tabulator.value.replaceData(tableData.value);
 		isCreate.value = false;
 		div_table.style.display = 'block';
+
+		await storeEmployee({ ...form });
+		tableData.value = await findData();
+		tabulator.value.setData(tableData.value);
 	}
 
 	//Edit
@@ -298,47 +299,15 @@
 	}
 
 	const updateEmployeeForm = async (id, data) => {
-		
+
+		isEdit.value = false;
+		div_table.style.display = 'block';
 
 		await updateEmployee(id, data);
 
 		tableData.value = await findData();
-
 		tabulator.value.setData(tableData.value);
-		
 
-
-		//location.reload();
-
-
-
-		// tabulator.value.renderComplete = function() {
-		// 	createIcons({
-		// 		icons,
-		// 		"stroke-width": 1.5,
-		// 		nameAttr: "data-lucide",
-		// 	});
-
-		// }
-
-		
-        //initTabulator();
-
-		//console.log({...tabulator.value});
-		
-
-        // await getEmployees();
-		// tableData.value = await findData();
-        // initTabulator();
-		// reInitOnResizeWindow();
-		//tabulator.value.updateData(tableData.value);
-		
-		
-		
-
-
-		isEdit.value = false;
-		div_table.style.display = 'block';
 	}
 
 	// Delete
@@ -367,9 +336,6 @@
 		initTabulator();
 		reInitOnResizeWindow();
 		div_table = document.querySelector('#div_table');
-
-		console.log({...tabulator.value});
-		
 	});
 
 </script>
