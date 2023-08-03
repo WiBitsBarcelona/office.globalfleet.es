@@ -222,6 +222,7 @@
 	import { useVuelidate } from '@vuelidate/core';
 	import { helpers } from '@vuelidate/validators';
 	import { useI18n } from 'vue-i18n';
+	import enumRoles from '@/enums/enum_roles.js';
 
 	const { employee, getEmployee } = useEmployees();
 	const { roles, getRoles } = useRoles();
@@ -305,7 +306,7 @@
 
 		//Select Roles
 		const newRoles = roles.value.filter((role) => {
-			return role.id == 3 || role.id == 4;
+			return role.id == enumRoles.TRAFFIC_CHIEF_ID || role.id == enumRoles.TRAFFIC_MANAGER_ID;
 		});
 		selectRoles.value = newRoles;
 

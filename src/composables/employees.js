@@ -83,7 +83,7 @@ export default function useEmployee() {
 
 	const destroyEmployee = async (id) => {
 		try {
-			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}employees/destroy/${id}`, config);
+			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}employees/delete/${id}`, config);
 		} catch (e) {
 			console.log(e)
 			// if (e.response.status === 422) {

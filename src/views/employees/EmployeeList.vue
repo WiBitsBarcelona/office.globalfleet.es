@@ -76,6 +76,8 @@
 	import Create from "@/components/employees/EmployeeCreate.vue";
 	import Edit from "@/components/employees/EmployeeEdit.vue";
 
+	
+
 	const { employees, getEmployees, storeEmployee, updateEmployee, destroyEmployee} = useEmployees();
 	const { t } = useI18n();
 	const isCreate = ref(false);
