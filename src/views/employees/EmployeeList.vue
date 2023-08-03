@@ -195,7 +195,7 @@
                         return `<i data-lucide="trash-2" class="w-6 h-6 mr-1 text-danger"></i>`;
                     },
 					cellClick: (e, cell) => {
-                        editEmployee(cell.getData().id);
+                        deleteEmployee(cell.getData().id);
 						e.preventDefault(); 
                     },
                 },
@@ -311,11 +311,11 @@
 	}
 
 	// Delete
-	const deleteEmployee = async (id, description) => {
+	const deleteEmployee = async (id, description='') => {
 		Swal.fire({
 			icon: 'warning',
 			title: t("message.are_you_sure"),
-			text: t("delete") +': '+ description,
+			text: t("delete") + (description !== '' ? ': ' + description : ''),
 			showCancelButton: true,
 			confirmButtonText: t("delete"),
 			confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
