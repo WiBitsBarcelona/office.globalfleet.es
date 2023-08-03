@@ -9,16 +9,22 @@
 			<div class="col-span-4 md:col-span-4 lg:col-span-4">
 				<div class="input-form">
 					<label for="role_id" class="form-label w-full">
-						{{ $t("role_id") }}
+						{{ $t("role") }}
 					</label>
-					<input
+
+					<select
 						v-model.trim="validate.role_id.$model"
 						id="role_id"
-						type="text"
 						name="role_id"
 						class="form-control"
 						:class="{ 'border-danger': validate.role_id.$error }"
-					/>
+					>
+
+					<option v-for="role in selectRoles" :value="role.id" :selected="role.id == formData.role_id">
+							{{ role.description }}
+					</option>
+
+					</select>
 					<template v-if="validate.role_id.$error">
 						<div v-for="(error, index) in validate.role_id.$errors" :key="index" class="text-danger mt-2">
 							{{ error.$message }}
@@ -121,14 +127,21 @@
 					<label for="password" class="form-label w-full">
 						{{ $t("password") }}
 					</label>
-					<input
-						v-model.trim="validate.password.$model"
-						id="password"
-						type="text"
-						name="password"
-						class="form-control"
-						:class="{ 'border-danger': validate.password.$error }"
-					/>
+
+					<div class="relative sm:flex items-center">
+
+						<input
+							v-model.trim="validate.password.$model"
+							id="password"
+							:type="passwordFieldType"
+							name="password"
+							class="form-control"
+							:class="{ 'border-danger': validate.password.$error }"
+						/>
+						<EyeIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer" @click="switchVisibility" />
+
+					</div>
+					
 					<template v-if="validate.password.$error">
 						<div v-for="(error, index) in validate.password.$errors" :key="index" class="text-danger mt-2">
 							{{ error.$message }}
@@ -138,7 +151,7 @@
 			</div>
 
 
-			<div class="col-span-4 md:col-span-4 lg:col-span-4">
+			<!-- <div class="col-span-4 md:col-span-4 lg:col-span-4">
 				<div class="input-form">
 					<label for="phone_prefix" class="form-label w-full">
 						{{ $t("phone_prefix") }}
@@ -179,7 +192,7 @@
 						</div>
 					</template>
 				</div>
-			</div>
+			</div> -->
 
 
 			<!-- BEGIN: Buttons -->
@@ -204,17 +217,31 @@
 </template>
 <script setup>
 
-	import { onMounted, reactive, toRefs } from 'vue';
+	import { onMounted, reactive, toRefs, ref } from 'vue';
 	import useEmployees from '@/composables/employees';
+	import useRoles from '@/composables/roles';
 	import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
 	import { useVuelidate } from '@vuelidate/core';
 	import { helpers } from '@vuelidate/validators';
 	import { useI18n } from 'vue-i18n';
+	import enumRoles from '@/enums/enum_roles.js';
 
 	const { employee, getEmployee } = useEmployees();
+	const { roles, getRoles } = useRoles();
 	const { t } = useI18n();
 	const props = defineProps(['employeeId']);
 	const emit = defineEmits(['cancelEdit', 'updateemployeeForm']);
+
+
+
+	const selectRoles = ref();
+
+
+	const passwordFieldType = ref("password");
+	const switchVisibility = () => {
+		passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password';
+	}
+
 
 	const rules = {
 		role_id: {
@@ -240,14 +267,14 @@
 			required: helpers.withMessage(t("form.required"), required),
 			minLength: minLength(2),
 		},
-		phone_prefix: {
-			required: helpers.withMessage(t("form.required"), required),
-			minLength: minLength(2),
-		},
-		phone: {
-			required: helpers.withMessage(t("form.required"), required),
-			minLength: minLength(2),
-		},
+		// phone_prefix: {
+		// 	required: helpers.withMessage(t("form.required"), required),
+		// 	minLength: minLength(2),
+		// },
+		// phone: {
+		// 	required: helpers.withMessage(t("form.required"), required),
+		// 	minLength: minLength(2),
+		// },
 	};
 
 	const formData = reactive({
@@ -257,8 +284,8 @@
 		fiscal_identification: "",
 		email: "",
 		password: "",
-		phone_prefix: "",
-		phone: "",
+		// phone_prefix: "",
+		// phone: "",
 	});
 
 	const validate = useVuelidate(rules, toRefs(formData));
@@ -274,6 +301,15 @@
 
 	onMounted(async () => {
 		// TODO here implements...
+
+		await getRoles();
+
+		//Select Roles
+		const newRoles = roles.value.filter((role) => {
+			return role.id == enumRoles.TRAFFIC_CHIEF_ID || role.id == enumRoles.TRAFFIC_MANAGER_ID;
+		});
+		selectRoles.value = newRoles;
+
 	});
 
 </script>
