@@ -107,6 +107,10 @@
     "required": "Campo requerido",
     "minLength": ""
   },
+  "role": "Tipo",
+  "email": "Correo electrónico",
+  "password": "Contraseña",
+  "roles": "Tipos",
   "plate": "Matrícula",
   "employee": "Empleado",
   "company": "Compañía",

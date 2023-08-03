@@ -160,7 +160,7 @@
                     vertAlign: "middle",
                     headerHozAlign:"left",
                     formatter(cell) {
-                        return cell.getData().user.roles[0].name;
+                        return cell.getData().user.roles[0].description;
                     }
                 },
                 {

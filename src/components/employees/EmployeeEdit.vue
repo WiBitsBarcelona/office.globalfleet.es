@@ -6,46 +6,35 @@
 		<!-- BEGIN: container -->
 		<div class="grid grid-cols-12 gap-6">
 
-			<div class="col-span-12 md:col-span-12 lg:col-span-12">
-
+			<div class="col-span-4 md:col-span-4 lg:col-span-4">
 				<div class="input-form">
-					<label for="user_id" class="form-label w-full">
-						{{ $t("user_id") }}
+					<label for="role_id" class="form-label w-full">
+						{{ $t("role") }}
 					</label>
-					<input
-						v-model.trim="validate.user_id.$model"
-						id="user_id"
-						type="text"
-						name="user_id"
+
+					<select
+						v-model.trim="validate.role_id.$model"
+						id="role_id"
+						name="role_id"
 						class="form-control"
-						:class="{ 'border-danger': validate.user_id.$error }"
-					/>
-					<template v-if="validate.user_id.$error">
-						<div v-for="(error, index) in validate.user_id.$errors" :key="index" class="text-danger mt-2">
+						:class="{ 'border-danger': validate.role_id.$error }"
+					>
+
+					<option v-for="role in selectRoles" :value="role.id" :selected="role.id == formData.role_id">
+							{{ role.description }}
+					</option>
+
+					</select>
+					<template v-if="validate.role_id.$error">
+						<div v-for="(error, index) in validate.role_id.$errors" :key="index" class="text-danger mt-2">
 							{{ error.$message }}
 						</div>
 					</template>
 				</div>
+			</div>
 
-				<div class="input-form">
-					<label for="company_id" class="form-label w-full">
-						{{ $t("company_id") }}
-					</label>
-					<input
-						v-model.trim="validate.company_id.$model"
-						id="company_id"
-						type="text"
-						name="company_id"
-						class="form-control"
-						:class="{ 'border-danger': validate.company_id.$error }"
-					/>
-					<template v-if="validate.company_id.$error">
-						<div v-for="(error, index) in validate.company_id.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
 
+			<div class="col-span-4 md:col-span-4 lg:col-span-4">
 				<div class="input-form">
 					<label for="name" class="form-label w-full">
 						{{ $t("name") }}
@@ -64,7 +53,10 @@
 						</div>
 					</template>
 				</div>
+			</div>
 
+
+			<div class="col-span-4 md:col-span-4 lg:col-span-4">
 				<div class="input-form">
 					<label for="surname" class="form-label w-full">
 						{{ $t("surname") }}
@@ -83,7 +75,10 @@
 						</div>
 					</template>
 				</div>
+			</div>
 
+
+			<div class="col-span-4 md:col-span-4 lg:col-span-4">
 				<div class="input-form">
 					<label for="fiscal_identification" class="form-label w-full">
 						{{ $t("fiscal_identification") }}
@@ -102,7 +97,59 @@
 						</div>
 					</template>
 				</div>
+			</div>
 
+
+			<div class="col-span-4 md:col-span-4 lg:col-span-4">
+				<div class="input-form">
+					<label for="email" class="form-label w-full">
+						{{ $t("email") }}
+					</label>
+					<input
+						v-model.trim="validate.email.$model"
+						id="email"
+						type="text"
+						name="email"
+						class="form-control"
+						:class="{ 'border-danger': validate.email.$error }"
+					/>
+					<template v-if="validate.email.$error">
+						<div v-for="(error, index) in validate.email.$errors" :key="index" class="text-danger mt-2">
+							{{ error.$message }}
+						</div>
+					</template>
+				</div>
+			</div>
+
+
+			<div class="col-span-4 md:col-span-4 lg:col-span-4">
+				<div class="input-form">
+					<label for="password" class="form-label w-full">
+						{{ $t("password") }}
+					</label>
+
+					<div class="relative sm:flex items-center">
+						<input
+							v-model.trim="validate.password.$model"
+							id="password"
+							:type="passwordFieldType"
+							name="password"
+							class="form-control"
+							:class="{ 'border-danger': validate.password.$error }"
+						/>
+						<EyeIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer" @click="switchVisibility" />
+					</div>
+
+					<template v-if="validate.password.$error">
+						<div v-for="(error, index) in validate.password.$errors" :key="index" class="text-danger mt-2">
+							{{ error.$message }}
+						</div>
+					</template>
+				</div>
+			</div>
+
+
+			<!-- <div class="col-span-4 md:col-span-4 lg:col-span-4">
 				<div class="input-form">
 					<label for="phone_prefix" class="form-label w-full">
 						{{ $t("phone_prefix") }}
@@ -121,7 +168,10 @@
 						</div>
 					</template>
 				</div>
+			</div>
 
+
+			<div class="col-span-4 md:col-span-4 lg:col-span-4">
 				<div class="input-form">
 					<label for="phone" class="form-label w-full">
 						{{ $t("phone") }}
@@ -140,27 +190,8 @@
 						</div>
 					</template>
 				</div>
+			</div> -->
 
-				<div class="input-form">
-					<label for="cometchat_uid" class="form-label w-full">
-						{{ $t("cometchat_uid") }}
-					</label>
-					<input
-						v-model.trim="validate.cometchat_uid.$model"
-						id="cometchat_uid"
-						type="text"
-						name="cometchat_uid"
-						class="form-control"
-						:class="{ 'border-danger': validate.cometchat_uid.$error }"
-					/>
-					<template v-if="validate.cometchat_uid.$error">
-						<div v-for="(error, index) in validate.cometchat_uid.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
-
-			</div>
 
 			<!-- BEGIN: Buttons -->
 			<div class="col-span-12 md:col-span-12 lg:col-span-12">
@@ -184,23 +215,34 @@
 </template>
 <script setup>
 
-	import { onMounted, reactive, toRefs } from 'vue';
+	import { onMounted, reactive, toRefs, ref } from 'vue';
 	import useEmployees from '@/composables/employees';
+	import useRoles from '@/composables/roles';
 	import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
 	import { useVuelidate } from '@vuelidate/core';
 	import { helpers } from '@vuelidate/validators';
 	import { useI18n } from 'vue-i18n';
 
 	const { employee, getEmployee } = useEmployees();
+	const { roles, getRoles } = useRoles();
 	const { t } = useI18n();
 	const props = defineProps(['employeeId']);
 	const emit = defineEmits(['cancelEdit', 'updateEmployeeForm']);
 
+
+
+	const selectRoles = ref();
+
+
+	const passwordFieldType = ref("password");
+	const switchVisibility = () => {
+		passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password';
+	}
+
+
+
 	const rules = {
-		user_id: {
-			required: helpers.withMessage(t("form.required"), required),
-		},
-		company_id: {
+		role_id: {
 			required: helpers.withMessage(t("form.required"), required),
 		},
 		name: {
@@ -215,29 +257,32 @@
 			required: helpers.withMessage(t("form.required"), required),
 			minLength: minLength(2),
 		},
-		phone_prefix: {
+		email: {
 			required: helpers.withMessage(t("form.required"), required),
 			minLength: minLength(2),
 		},
-		phone: {
-			required: helpers.withMessage(t("form.required"), required),
-			minLength: minLength(2),
+		password: {
+			minLength: minLength(4),
 		},
-		cometchat_uid: {
-			required: helpers.withMessage(t("form.required"), required),
-			minLength: minLength(2),
-		},
+		// phone_prefix: {
+		// 	required: helpers.withMessage(t("form.required"), required),
+		// 	minLength: minLength(2),
+		// },
+		// phone: {
+		// 	required: helpers.withMessage(t("form.required"), required),
+		// 	minLength: minLength(2),
+		// },
 	};
 
 	const formData = reactive({
-		user_id: "",
-		company_id: "",
+		role_id: "",
 		name: "",
 		surname: "",
 		fiscal_identification: "",
-		phone_prefix: "",
-		phone: "",
-		cometchat_uid: "",
+		email: "",
+		password: "",
+		// phone_prefix: "",
+		// phone: "",
 	});
 
 	const validate = useVuelidate(rules, toRefs(formData));
@@ -251,16 +296,28 @@
 		}
 	};
 
+
+
+
 	onMounted(async () => {
 		await getEmployee(props.employeeId);
-		formData.user_id = employee.value.user_id;
-		formData.company_id = employee.value.company_id;
+		await getRoles();
+
+		//Select Roles
+		const newRoles = roles.value.filter((role) => {
+			return role.id == 3 || role.id == 4;
+		});
+		selectRoles.value = newRoles;
+
+		//Load Data
+		formData.role_id = employee.value.user.roles[0].id;
 		formData.name = employee.value.name;
 		formData.surname = employee.value.surname;
 		formData.fiscal_identification = employee.value.fiscal_identification;
-		formData.phone_prefix = employee.value.phone_prefix;
-		formData.phone = employee.value.phone;
-		formData.cometchat_uid = employee.value.cometchat_uid;
+		formData.email = employee.value.user.email;
+		formData.password = '';
+		// formData.phone_prefix = employee.value.phone_prefix;
+		// formData.phone = employee.value.phone;
 	});
 
 </script>
