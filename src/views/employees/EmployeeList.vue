@@ -76,9 +76,9 @@
 	import Create from "@/components/employees/EmployeeCreate.vue";
 	import Edit from "@/components/employees/EmployeeEdit.vue";
 
-	
 
-	const { employees, getEmployees, storeEmployee, updateEmployee, destroyEmployee} = useEmployees();
+
+	const { employees, getEmployees, storeEmployee, updateEmployee, destroyEmployee, errors} = useEmployees();
 	const { t } = useI18n();
 	const isCreate = ref(false);
 	const isEdit = ref(false);
@@ -314,6 +314,7 @@
 
 	// Delete
 	const deleteEmployee = async (id, description='') => {
+		
 		Swal.fire({
 			icon: 'warning',
 			title: t("message.are_you_sure"),
@@ -323,9 +324,29 @@
 			confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
 		}).then(async(result) => {
 			if (result.isConfirmed) {
+
 				await destroyEmployee(id);
-				await getEmployees();
-				Swal.fire(t("message.record_deleted"), '', 'success');
+
+				console.log("passss",{...errors.value});
+
+				if(errors.value.length > 0){
+
+					let e = '';
+					errors.value.forEach(error => {
+						console.log(error);
+						e += error;
+					});
+
+
+					Swal.fire(t("message.error"), e, 'error');
+				 	//console.log("passss",{...errors.value});
+				}else{
+					tableData.value = await findData();
+					initTabulator();
+					reInitOnResizeWindow();
+					Swal.fire(t("message.record_deleted"), '', 'success');
+				}
+
 			}
 
 		});

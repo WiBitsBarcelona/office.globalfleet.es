@@ -1,15 +1,12 @@
 import { ref } from 'vue';
 import axios from 'axios';
-//import { useRouter } from 'vue-router';
-
-
+import { useI18n } from 'vue-i18n';
 export default function useEmployee() {
 
-	const employee = ref([])
-	const employees = ref([])
-	const errors = ref('')
-	//const router = useRouter()
-
+	const employee = ref([]);
+	const employees = ref([]);
+	const errors = ref([]);
+	const { t } = useI18n();
 	let config = {
 		headers: {
 			"Content-Type": "application/json",
@@ -18,79 +15,98 @@ export default function useEmployee() {
 	}
 
 	const getEmployees = async () => {
-		errors.value = ''
+		errors.value = [];
 		try {
 			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}employees/list`, config);
 			employees.value = response.data.data;
 		} catch (e) {
-			console.log(e);
-			// if (e.response.status_code === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
+			// Errors 500
+			if (e.response.status >= 500 &&  e.response.status <= 599) {
+				errors.value.push(t("errors.error_internal"));
+			}
+			// Errors 400
+			if (e.response.status_code === 422) {
+			     for (const key in e.response.data.errors) {
+			         errors.value = key
+			     }
+			}
 		}
 	}
 
 
 	const getEmployee = async (id) => {
-		errors.value = ''
+		errors.value = [];
 		try {
 			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}employees/show/${id}`, config);
 			employee.value = response.data.data;
 		} catch (e) {
-			console.log(e);
-			// if (e.response.status_code === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
+			// Errors 500
+			if (e.response.status >= 500 &&  e.response.status <= 599) {
+				errors.value.push(t("errors.error_internal"));
+			}
+			// Errors 400
+			if (e.response.status_code === 422) {
+			     for (const key in e.response.data.errors) {
+			         errors.value = key
+			     }
+			}
 		}
 	}
 
 
 	const storeEmployee = async (data) => {
-		errors.value = ''
+		errors.value = [];
 		try {
 			await axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}employees/store`, data, config);
-			//await router.push({ name: 'employee.index' });
 		} catch (e) {
-			console.log(e);
-			// if (e.response.status_code === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
+			// Errors 500
+			if (e.response.status >= 500 &&  e.response.status <= 599) {
+				errors.value.push(t("errors.error_internal"));
+			}
+			// Errors 400
+			if (e.response.status_code === 422) {
+			     for (const key in e.response.data.errors) {
+			         errors.value = key
+			     }
+			}
 		}
 	}
 
 
 	const updateEmployee = async (id, data) => {
-		errors.value = ''
+		errors.value = [];
 		try {
 			await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}employees/update/${id}`, data, config);
-			//await router.push({ name: 'employee.index' });
 		} catch (e) {
-			console.log(e)
-			// if (e.response.status === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
+			// Errors 500
+			if (e.response.status >= 500 &&  e.response.status <= 599) {
+				errors.value.push(t("errors.error_internal"));
+			}
+			// Errors 400
+			if (e.response.status_code === 422) {
+			     for (const key in e.response.data.errors) {
+			         errors.value = key
+			     }
+			}
 		}
 	}
 
 
 	const destroyEmployee = async (id) => {
+		errors.value = [];
 		try {
 			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}employees/delete/${id}`, config);
 		} catch (e) {
-			console.log(e)
-			// if (e.response.status === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
+			// Errors 500
+			if (e.response.status >= 500 &&  e.response.status <= 599) {
+				errors.value.push(t("errors.error_internal"));
+			}
+			// Errors 400
+			if (e.response.status_code === 422) {
+			     for (const key in e.response.data.errors) {
+			         errors.value = key
+			     }
+			}
 		}
 	}
 

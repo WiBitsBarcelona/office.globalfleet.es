@@ -6,7 +6,7 @@
 		<!-- BEGIN: container -->
 		<div class="grid grid-cols-12 gap-6">
 
-			<div class="col-span-4 md:col-span-4 lg:col-span-4">
+			<div class="col-span-12 md:col-span-6 lg:col-span-3">
 				<div class="input-form">
 					<label for="role_id" class="form-label w-full">
 						{{ $t("role") }}
@@ -34,7 +34,7 @@
 			</div>
 
 
-			<div class="col-span-4 md:col-span-4 lg:col-span-4">
+			<div class="col-span-12 md:col-span-6 lg:col-span-4">
 				<div class="input-form">
 					<label for="name" class="form-label w-full">
 						{{ $t("name") }}
@@ -56,7 +56,7 @@
 			</div>
 
 
-			<div class="col-span-4 md:col-span-4 lg:col-span-4">
+			<div class="col-span-12 md:col-span-6 lg:col-span-5">
 				<div class="input-form">
 					<label for="surname" class="form-label w-full">
 						{{ $t("surname") }}
@@ -78,7 +78,7 @@
 			</div>
 
 
-			<div class="col-span-4 md:col-span-4 lg:col-span-4">
+			<div class="col-span-12 md:col-span-6 lg:col-span-3">
 				<div class="input-form">
 					<label for="fiscal_identification" class="form-label w-full">
 						{{ $t("fiscal_identification") }}
@@ -100,7 +100,7 @@
 			</div>
 
 
-			<div class="col-span-4 md:col-span-4 lg:col-span-4">
+			<div class="col-span-12 md:col-span-6 lg:col-span-6">
 				<div class="input-form">
 					<label for="email" class="form-label w-full">
 						{{ $t("email") }}
@@ -122,7 +122,7 @@
 			</div>
 
 
-			<div class="col-span-4 md:col-span-4 lg:col-span-4">
+			<div class="col-span-12 md:col-span-6 lg:col-span-3">
 				<div class="input-form">
 					<label for="password" class="form-label w-full">
 						{{ $t("password") }}
@@ -248,22 +248,19 @@
 		},
 		name: {
 			required: helpers.withMessage(t("form.required"), required),
-			minLength: minLength(2),
 		},
 		surname: {
 			required: helpers.withMessage(t("form.required"), required),
-			minLength: minLength(2),
 		},
 		fiscal_identification: {
 			required: helpers.withMessage(t("form.required"), required),
-			minLength: minLength(2),
 		},
 		email: {
 			required: helpers.withMessage(t("form.required"), required),
-			minLength: minLength(2),
+			
 		},
 		password: {
-			minLength: minLength(4),
+			minLength: helpers.withMessage(t("form.min_length"), minLength(2)),
 		},
 		// phone_prefix: {
 		// 	required: helpers.withMessage(t("form.required"), required),
