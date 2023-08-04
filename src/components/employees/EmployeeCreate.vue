@@ -20,7 +20,8 @@
 						:class="{ 'border-danger': validate.role_id.$error }"
 					>
 
-					<option v-for="role in selectRoles" :value="role.id" :selected="role.id == formData.role_id">
+					<option value="" selected>Seleccione</option>
+					<option v-for="role in selectRoles" :value="role.id">
 							{{ role.description }}
 					</option>
 
@@ -262,6 +263,7 @@
 		email: {
 			required: helpers.withMessage(t("form.required"), required),
 			minLength: minLength(2),
+			email
 		},
 		password: {
 			required: helpers.withMessage(t("form.required"), required),

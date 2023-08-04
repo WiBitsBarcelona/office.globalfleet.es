@@ -73,7 +73,6 @@
   "field": "Campo",
   "filter": "Filtro",
   "value": "Valor",
-
   "save": "Guardar",
   "update": "Actualizar",
   "edit": "Editar",
@@ -105,7 +104,8 @@
 
   "form": {
     "required": "Campo requerido",
-    "minLength": ""
+    "minLength": "",
+    "email": "Campo correo electrónico"
   },
   "role": "Tipo",
   "email": "Correo electrónico",
