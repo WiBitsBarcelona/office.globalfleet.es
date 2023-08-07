@@ -118,6 +118,12 @@ const routes = [
         beforeEnter: checkManager,
         component: () => import('@/views/employees/EmployeeList.vue'),
       },
+      {
+        path: "drivers",
+        name: "drivers",
+        beforeEnter: checkManager,
+        component: () => import('@/views/employees/DriverList.vue'),
+      },
     ],
   },
   { 
