@@ -65,12 +65,14 @@
 </template>
 <script setup>
 
-	import { ref, reactive, onMounted, toRaw } from "vue";
-	import { useI18n } from "vue-i18n";
-	import { createIcons, icons } from "lucide";
-	import Swal from "sweetalert2";
-	import xlsx from "xlsx";
-	import Tabulator from "tabulator-tables";
+	import { ref, reactive, onMounted, toRaw } from 'vue';
+	import { useI18n } from 'vue-i18n';
+	import { createIcons, icons } from 'lucide';
+	import xlsx from 'xlsx';
+	import Tabulator from 'tabulator-tables';
+	import Swal from 'sweetalert2';
+	import { Toast } from '@/utils/toast';
+	import dom from '@left4code/tw-starter/dist/js/dom';
 
 	import useDrivers from "@/composables/drivers";
 	import Create from "@/components/drivers/DriverCreate.vue";
@@ -81,7 +83,6 @@
 	const isCreate = ref(false);
 	const isEdit = ref(false);
 	const driverId = ref(0);
-    
 	// Tabulator
 	const tableData = reactive([]); //data for table to display
 	let div_table;
@@ -301,6 +302,7 @@
 		//await getDrivers();
 		tableData.value = await findData();
 		tabulator.value.replaceData(tableData.value);
+		await Toast(t("message.record_saved"), 'success');
 	}
 
 	//Edit
@@ -322,6 +324,7 @@
 		//await getDrivers();
 		tableData.value = await findData();
 		tabulator.value.updateData(tableData.value);
+		await Toast(t("message.record_updated"), 'success');
 	}
 
 	// Delete

@@ -71,6 +71,7 @@
 	import xlsx from "xlsx";
 	import Tabulator from "tabulator-tables";
 	import dom from "@left4code/tw-starter/dist/js/dom";
+	import { Toast } from '@/utils/toast';
 
 	import useEmployees from "@/composables/employees";
 	import Create from "@/components/employees/EmployeeCreate.vue";
@@ -286,6 +287,9 @@
 		await storeEmployee({ ...form });
 		tableData.value = await findData();
 		tabulator.value.setData(tableData.value);
+
+		await Toast(t("message.record_saved"), 'success');
+
 	}
 
 	//Edit
@@ -309,6 +313,8 @@
 
 		tableData.value = await findData();
 		tabulator.value.setData(tableData.value);
+
+		await Toast(t("message.record_updated"), 'success');
 
 	}
 
