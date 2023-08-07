@@ -81,6 +81,7 @@
 	const isCreate = ref(false);
 	const isEdit = ref(false);
 	const driverId = ref(0);
+    
 	// Tabulator
 	const tableData = reactive([]); //data for table to display
 	let div_table;
