@@ -145,34 +145,10 @@
 					headerHozAlign:"left",
 				},
 				{
-					title: t("password"),
-					minWidth: 200,
-					responsive: 0,
-					field: "password",
-					vertAlign: "middle",
-					headerHozAlign:"left",
-				},
-				{
 					title: t("email"),
 					minWidth: 200,
 					responsive: 0,
-					field: "email",
-					vertAlign: "middle",
-					headerHozAlign:"left",
-				},
-				{
-					title: t("phone_prefix"),
-					minWidth: 200,
-					responsive: 0,
-					field: "phone_prefix",
-					vertAlign: "middle",
-					headerHozAlign:"left",
-				},
-				{
-					title: t("phone"),
-					minWidth: 200,
-					responsive: 0,
-					field: "phone",
+					field: "user.email",
 					vertAlign: "middle",
 					headerHozAlign:"left",
 				},
@@ -253,8 +229,6 @@
 				{field: 'fiscal_identification', type: 'like', value: filter.value},
 				{field: 'password', type: 'like', value: filter.value},
 				{field: 'email', type: 'like', value: filter.value},
-				{field: 'phone_prefix', type: 'like', value: filter.value},
-				{field: 'phone', type: 'like', value: filter.value},
 			]
 		]);
 	};
@@ -298,10 +272,10 @@
 	const saveDriverForm = async (form) => {
 		isCreate.value = false;
 		div_table.style.display = 'block';
+
 		await storeDriver({ ...form });
-		//await getDrivers();
 		tableData.value = await findData();
-		tabulator.value.replaceData(tableData.value);
+		tabulator.value.setData(tableData.value);
 		await Toast(t("message.record_saved"), 'success');
 	}
 
@@ -323,7 +297,7 @@
 		await updateDriver(id, data);
 		//await getDrivers();
 		tableData.value = await findData();
-		tabulator.value.updateData(tableData.value);
+		tabulator.value.setData(tableData.value);
 		await Toast(t("message.record_updated"), 'success');
 	}
 
