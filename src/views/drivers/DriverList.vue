@@ -78,7 +78,11 @@
 	import Create from "@/components/drivers/DriverCreate.vue";
 	import Edit from "@/components/drivers/DriverEdit.vue";
 
+
+
 	const { drivers, getDrivers, storeDriver, updateDriver, destroyDriver} = useDrivers();
+
+
 	const { t } = useI18n();
 	const isCreate = ref(false);
 	const isEdit = ref(false);
@@ -149,6 +153,14 @@
 					minWidth: 200,
 					responsive: 0,
 					field: "user.email",
+					vertAlign: "middle",
+					headerHozAlign:"left",
+				},
+				{
+					title: t("token"),
+					minWidth: 200,
+					responsive: 0,
+					field: "user.app_token.token",
 					vertAlign: "middle",
 					headerHozAlign:"left",
 				},
