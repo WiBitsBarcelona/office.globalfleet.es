@@ -273,7 +273,10 @@
     "stage_incidences": "Incidencias en Etapas",
     "task_incidences": "Incidencias en Tareas",
     "filters": {
-      "search_driver_placeholder": "Buscar conductor..."
+      "search_driver_placeholder": "Buscar conductor...",
+      "search_trip_placeholder": "Buscar viaje...",
+      "search_stage_placeholder": "Buscar etapa o viaje...",
+      "search_task_placeholder": "Buscar tarea, etapa o viaje..."
     },
     "Tabulator": {
       "status_tooltip": "Incidencia NO leida",
@@ -284,7 +287,10 @@
       "comment": "Comentario",
       "sended_at": "Enviada el",
       "received_at": "Recibida el",
-      "readed_at": "Leida el"
+      "readed_at": "Leida el",
+      "trip": "Viaje",
+      "stage": "Etapa",
+      "task": "Tarea"
     },
     "Modal": {
       "title": "Detalles Incidencia",

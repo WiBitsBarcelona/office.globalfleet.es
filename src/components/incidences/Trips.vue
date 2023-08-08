@@ -3,15 +3,15 @@
     <div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
       <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
         <div class="relative sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
-          <input id="tabulator-html-filter-value" v-model="driver_filter.value" type="text"
+          <input id="tabulator-html-filter-value" v-model="trip_filter.value" type="text"
             class="w-full xl:w-[600px] form-control mt-2 sm:mt-0"
-            :placeholder="$t('incidences.filters.search_driver_placeholder')" @keyup="onDriverFilter" />
+            :placeholder="$t('incidences.filters.search_trip_placeholder')" @keyup="onTripFilter" />
           <XCircleIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer"
-            @click="onResetDriverFilter" />
+            @click="onResetTripFilter" />
         </div>
       </form>
       <div class="flex mt-5 sm:mt-0">
-        <button id="tabulator-print" class="btn btn-outline-secondary w-1/2 sm:w-auto mr-2" @click="onDriverPrint">
+        <button id="tabulator-print" class="btn btn-outline-secondary w-1/2 sm:w-auto mr-2" @click="onTripPrint">
           <PrinterIcon class="w-4 h-4 mr-2" /> {{ $t("documents.print") }}
         </button>
         <Dropdown class="w-1/2 sm:w-auto">
@@ -21,16 +21,16 @@
           </DropdownToggle>
           <DropdownMenu class="w-40">
             <DropdownContent>
-              <DropdownItem @click="onDriverExportCsv">
+              <DropdownItem @click="onTripExportCsv">
                 <FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("documents.export_CSV") }}
               </DropdownItem>
-              <DropdownItem @click="onDriverExportJson">
+              <DropdownItem @click="onTripExportJson">
                 <FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("documents.export_JSON") }}
               </DropdownItem>
-              <DropdownItem @click="onDriverExportXlsx">
+              <DropdownItem @click="onTripExportXlsx">
                 <FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("documents.export_XLSX") }}
               </DropdownItem>
-              <DropdownItem @click="onDriverExportHtml">
+              <DropdownItem @click="onTripExportHtml">
                 <FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("documents.export_HTML") }}
               </DropdownItem>
             </DropdownContent>
@@ -39,7 +39,7 @@
       </div>
     </div>
     <div class="overflow-x-auto scrollbar-hidden">
-      <div id="driver_tabulator" ref="tableDriverRef" class="mt-5 table-report table-report--tabulator"></div>
+      <div id="trip_tabulator" ref="tableTripRef" class="mt-5 table-report table-report--tabulator"></div>
     </div>
   </div>
   <!-- END: HTML Table Data -->
@@ -47,35 +47,35 @@
   <FleetFooter/>
 
 <!-- BEGIN: View Incidence Modal Content -->
-<Modal backdrop="static" :show="viewDriverIncidenceModal" @hidden="viewDriverIncidenceModal = false">
+<Modal backdrop="static" :show="viewTripIncidenceModal" @hidden="viewTripIncidenceModal = false">
     <ModalBody class="px-2 py-5 text-center">
       <h2 class="text-lg font-medium text-left ml-5">{{ $t("incidences.Modal.title") }}</h2>
-      <XIcon class="absolute top-0 right-0 mt-3 mr-3 w-8 h-8 text-slate-400 hover:cursor-pointer" @click="hideDriverModal" >
+      <XIcon class="absolute top-0 right-0 mt-3 mr-3 w-8 h-8 text-slate-400 hover:cursor-pointer" @click="hideTripModal" >
       </XIcon>
       <div class="grid grid-cols-12 gap-6 mx-3 mt-5 items-center justify-center">
         <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 text-center dark:bg-gray-800 dark:text-gray-400">
-          <p class="text-md text-l font-bold leading-5 text-gray-500">{{driver_incidence_selected_name}}</p>
+          <p class="text-md text-l font-bold leading-5 text-gray-500">{{trip_incidence_selected_name}}</p>
         </div>
         <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 text-left dark:bg-gray-800 dark:text-gray-400">
           <h5 class="text-xs font-light text-gray-400">{{ $t("incidences.Tabulator.type") }}</h5>
-          <p class="text-md font-normal leading-4 text-gray-500">{{driver_incidence_selected_type}}</p>
+          <p class="text-md font-normal leading-4 text-gray-500">{{trip_incidence_selected_type}}</p>
         </div>
         <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 text-left dark:bg-gray-800 dark:text-gray-400">
           <h5 class="text-xs font-light text-gray-400">{{ $t("incidences.Tabulator.comment") }}</h5>
-          <p class="text-md font-normal leading-4 text-gray-500">{{driver_incidence_selected_comment}}</p>
+          <p class="text-md font-normal leading-4 text-gray-500">{{trip_incidence_selected_comment}}</p>
         </div>
         <div class="col-span-6 rounded-md bg-gray-100 p-1 pb-1 text-left dark:bg-gray-800 dark:text-gray-400">
           <h5 class="text-xs font-light text-gray-400">{{ $t("incidences.Tabulator.sended_at") }}</h5>
-          <p class="text-md font-normal leading-4 text-gray-500">{{driver_incidence_selected_sended_at}}</p>
+          <p class="text-md font-normal leading-4 text-gray-500">{{trip_incidence_selected_sended_at}}</p>
         </div>
         <div class="col-span-6 rounded-md bg-gray-100 p-1 pb-1 text-left dark:bg-gray-800 dark:text-gray-400">
           <h5 class="text-xs font-light text-gray-400">{{ $t("incidences.Tabulator.received_at") }}</h5>
-          <p class="text-md font-normal leading-4 text-gray-500">{{driver_incidence_selected_received_at}}</p>
+          <p class="text-md font-normal leading-4 text-gray-500">{{trip_incidence_selected_received_at}}</p>
         </div>
         <div class="col-span-3"></div>
         <div class="col-span-6 rounded-md bg-gray-100 p-1 pb-1 text-left dark:bg-gray-800 dark:text-gray-400">
           <h5 class="text-xs font-light text-gray-400">{{ $t("incidences.Tabulator.readed_at") }}</h5>
-          <p class="text-md font-normal leading-4 text-gray-500">{{driver_incidence_selected_readed_at}}</p>
+          <p class="text-md font-normal leading-4 text-gray-500">{{trip_incidence_selected_readed_at}}</p>
         </div> 
         <div class="col-span-3"></div>
         <div class="col-span-12 mt-5 text-center">
@@ -94,10 +94,10 @@
                 </DropdownToggle>
                 <DropdownMenu>
                   <DropdownContent>
-                    <DropdownItem @click="driverIncidenceFile(incidenceFile.id,incidenceFile.path, incidenceFile.has_seen, incidenceFile.file_name, 0)">
+                    <DropdownItem @click="tripIncidenceFile(incidenceFile.id,incidenceFile.path, incidenceFile.has_seen, incidenceFile.file_name, 0)">
                       <EyeIcon class="w-4 h-4 mr-2" /> {{ $t("incidences.Modal.file_view") }}
                     </DropdownItem>
-                    <DropdownItem @click="driverIncidenceFile(incidenceFile.id,incidenceFile.path, incidenceFile.has_seen, incidenceFile.file_name, 1)">
+                    <DropdownItem @click="tripIncidenceFile(incidenceFile.id,incidenceFile.path, incidenceFile.has_seen, incidenceFile.file_name, 1)">
                       <DownloadIcon class="w-4 h-4 mr-2" /> {{ $t("incidences.Modal.file_download") }}
                     </DropdownItem>
                   </DropdownContent>
@@ -105,10 +105,10 @@
               </Dropdown>
         </div>  
         <div class="col-span-12 flex mt-5 justify-center">
-          <button type="button" @click="setReadedDriverIncidence(driver_incidence_selected_id)" class="btn btn-primary w-60 mr-5" :class="{ 'hidden': driver_incidence_readed != 0 }">
+          <button type="button" @click="setReadedTripIncidence(trip_incidence_selected_id)" class="btn btn-primary w-60 mr-5" :class="{ 'hidden': trip_incidence_readed != 0 }">
             {{ $t("incidences.Modal.btn_readed") }}
           </button>
-          <button type="button" @click="hideDriverModal" class="btn btn-secondary w-60 mr-5">
+          <button type="button" @click="hideTripModal" class="btn btn-secondary w-60 mr-5">
             {{ $t("incidences.Modal.btn_close") }}
           </button>
         </div>
@@ -129,19 +129,19 @@ import { useI18n } from 'vue-i18n';
 import { helper as $h } from "@/utils/helper";
 import Swal from "sweetalert2";
 import FleetFooter from "@/components/fleet-footer/Main.vue";
-import useDriverIncident from "@/composables/driver_incidents";
+import useTripIncident from "@/composables/trip_incidents";
 import useDownloadDocument from "@/composables/download_documents";
-import useDriverIncidentImage from "@/composables/driver_incident_images";
+import useTripIncidentImage from "@/composables/trip_incident_images";
 
-const { getDriverIncidents, driverIncidents, updateDriverIncident, getDriverIncident, driverIncident } = useDriverIncident();
+const { getTripIncidents, tripIncidents, updateTripIncident, getTripIncident, tripIncident } = useTripIncident();
 const { downloadDocument, documentData } = useDownloadDocument();
-const { updateDriverIncidentImage } = useDriverIncidentImage();
+const { updateTripIncidentImage } = useTripIncidentImage();
 const { t } = useI18n();
 
-const tableDriverRef = ref();
-const driver_tabulator = ref();
-const driver_filter = reactive({
-  field: "driver",
+const tableTripRef = ref();
+const trip_tabulator = ref();
+const trip_filter = reactive({
+  field: "trip",
   type: "like",
   value: "",
 });
@@ -149,7 +149,7 @@ let dataArr = [];
 
 let incidenceFiles = [];
 const incidenceState = reactive({ incidenceFiles });
-const viewDriverIncidenceModal = ref(false);
+const viewTripIncidenceModal = ref(false);
 const dropdown = ref(false);
 
 let newImages = ref(0);
@@ -170,8 +170,8 @@ const clipIcon = function (cell, formatterParams){
   };
 };
 
-const initDriverTabulator = () => {
-  driver_tabulator.value = new Tabulator(tableDriverRef.value, {
+const initTripTabulator = () => {
+  trip_tabulator.value = new Tabulator(tableTripRef.value, {
     reactiveData: true,
     locale: true,
     data: dataArr,
@@ -196,6 +196,7 @@ const initDriverTabulator = () => {
       {
         formatter: "responsiveCollapse",
         hozAlign: "left",
+        vertAlign: "middle",
         resizable: false,
         headerSort: false,
       },
@@ -216,18 +217,19 @@ const initDriverTabulator = () => {
         formatter: clipIcon,
         width: 50,
         responsive: 0,
-        hozAlign: "center",
+        hozAlign: "left",
         headerSort: false,
         tooltip: t("incidences.Tabulator.attachment_tooltip"),
         cellClick: function (e, cell) {
-          showDriverIncidenceModal(cell.getData().id);
+          showTripIncidenceModal(cell.getData().id);
         }
       },
       {
-        title: t("incidences.Tabulator.driver"),
-        minWidth: 200,
+        title: t("incidences.Tabulator.trip"),
+        minWidth: 500,
         responsive: 0,
-        field: "driver",
+        field: "trip",
+        hozAlign: "left",
         vertAlign: "middle",
         print: false,
         download: false,
@@ -241,7 +243,7 @@ const initDriverTabulator = () => {
         print: false,
         download: false
       },
-      {
+/*       {
         title: t("incidences.Tabulator.comment"),
         minWidth: 200,
         field: "comment",
@@ -252,7 +254,7 @@ const initDriverTabulator = () => {
         formatter: function (cell) {
           return $h.cutText(cell.getValue(), 25)
         },
-      },
+      }, */
       {
         title: t("incidences.Tabulator.sended_at"),
         minWidth: 200,
@@ -291,7 +293,7 @@ const initDriverTabulator = () => {
         headerSort: false,
         tooltip: t("incidences.Tabulator.view_tooltip"),
         cellClick: function (e, cell) {
-          showDriverIncidenceModal(cell.getData().id);
+          showTripIncidenceModal(cell.getData().id);
         }
       },
 
@@ -330,24 +332,24 @@ const initDriverTabulator = () => {
   });
 };
 
-const driver_incidence_readed = ref(0);
-const driver_incidence_selected_id = ref(0);
-let driver_incidence_selected_name = ref('');
-let driver_incidence_selected_type = ref('');
-let driver_incidence_selected_comment = ref('');
-let driver_incidence_selected_sended_at = ref('');
-let driver_incidence_selected_received_at = ref('');
-let driver_incidence_selected_readed_at = ref('');
+const trip_incidence_readed = ref(0);
+const trip_incidence_selected_id = ref(0);
+let trip_incidence_selected_name = ref('');
+let trip_incidence_selected_type = ref('');
+let trip_incidence_selected_comment = ref('');
+let trip_incidence_selected_sended_at = ref('');
+let trip_incidence_selected_received_at = ref('');
+let trip_incidence_selected_readed_at = ref('');
 
-const emit = defineEmits(['totalNewDriverIncidences']);
-const newDriverIncidences = reactive({
+const emit = defineEmits(['totalNewTripIncidences']);
+const newTripIncidences = reactive({
   value: 0
 });
 
 // Redraw table onresize
 const reInitOnResizeWindow = () => {
   window.addEventListener("resize", () => {
-    driver_tabulator.value.redraw();
+    trip_tabulator.value.redraw();
     createIcons({
       icons,
       "stroke-width": 1.5,
@@ -357,82 +359,82 @@ const reInitOnResizeWindow = () => {
 };
 
 // Filter function
-const onDriverFilter = () => {
-  driver_tabulator.value.setFilter(driver_filter.field, driver_filter.type, driver_filter.value);
+const onTripFilter = () => {
+  trip_tabulator.value.setFilter(trip_filter.field, trip_filter.type, trip_filter.value);
 };
 
 // On reset filter
-const onResetDriverFilter = () => {
-  driver_filter.field = "driver";
-  driver_filter.type = "like";
-  driver_filter.value = "";
-  onDriverFilter();
+const onResetTripFilter = () => {
+  trip_filter.field = "trip";
+  trip_filter.type = "like";
+  trip_filter.value = "";
+  onTripFilter();
 };
 
 // Export
-const onDriverExportCsv = () => {
-  driver_tabulator.value.download("csv", "incidencias.csv");
+const onTripExportCsv = () => {
+  trip_tabulator.value.download("csv", "incidencias.csv");
 };
 
-const onDriverExportJson = () => {
-  driver_tabulator.value.download("json", "incidencias.json");
+const onTripExportJson = () => {
+  trip_tabulator.value.download("json", "incidencias.json");
 };
 
-const onDriverExportXlsx = () => {
+const onTripExportXlsx = () => {
   const win = window;
   win.XLSX = xlsx;
-  driver_tabulator.value.download("xlsx", "incidencias.xlsx", {
+  trip_tabulator.value.download("xlsx", "incidencias.xlsx", {
     sheetName: "Incidencias",
   });
 };
 
-const onDriverExportHtml = () => {
+const onTripExportHtml = () => {
   tabulator.value.download("html", "inicidencias.html", {
     style: true,
   });
 };
 
 // Print
-const onDriverPrint = () => {
-  driver_tabulator.value.print();
+const onTripPrint = () => {
+  trip_tabulator.value.print();
 };
 
-const showDriverIncidenceModal = async (id) => {
+const showTripIncidenceModal = async (id) => {
   incidenceState.incidenceFiles.length = 0;
-  await getDriverIncident(id);
-  driver_incidence_selected_id.value = id;
-  driver_incidence_selected_name = driverIncident.value.driver.name + ' ' + driverIncident.value.driver.surname;
-  driver_incidence_selected_type = driverIncident.value.type.name;
-  driver_incidence_selected_comment = driverIncident.value.description;
-  driver_incidence_selected_sended_at = $h.formatDate(driverIncident.value.created_at, "DD-MM-YYYY HH:mm:ss");
-  if(driverIncident.value.receptioned_at){
-    driver_incidence_selected_received_at = $h.formatDate(driverIncident.value.receptioned_at, "DD-MM-YYYY HH:mm:ss");
+  await getTripIncident(id);
+  trip_incidence_selected_id.value = id;
+  trip_incidence_selected_name = tripIncident.value.trip.name;
+  trip_incidence_selected_type = tripIncident.value.type.name;
+  trip_incidence_selected_comment = tripIncident.value.description;
+  trip_incidence_selected_sended_at = $h.formatDate(tripIncident.value.created_at, "DD-MM-YYYY HH:mm:ss");
+  if(tripIncident.value.receptioned_at){
+    trip_incidence_selected_received_at = $h.formatDate(tripIncident.value.receptioned_at, "DD-MM-YYYY HH:mm:ss");
   }else{
-    driver_incidence_selected_received_at = '--';
+    trip_incidence_selected_received_at = '--';
   }
-  if(driverIncident.value.readed_at){
-    driver_incidence_selected_readed_at = $h.formatDate(driverIncident.value.readed_at, "DD-MM-YYYY HH:mm:ss");
-    driver_incidence_readed.value = 1;
+  if(tripIncident.value.readed_at){
+    trip_incidence_selected_readed_at = $h.formatDate(tripIncident.value.readed_at, "DD-MM-YYYY HH:mm:ss");
+    trip_incidence_readed.value = 1;
   }else{
-    driver_incidence_selected_readed_at = '--';
-    driver_incidence_readed.value = 0;
+    trip_incidence_selected_readed_at = '--';
+    trip_incidence_readed.value = 0;
   }
 
-  const dataArrTmp = driverIncident.value;
+  const dataArrTmp = tripIncident.value;
   dataArrTmp.images.forEach(element => {
     incidenceState.incidenceFiles.push(element);
    });
 
-  viewDriverIncidenceModal.value = true;
+  viewTripIncidenceModal.value = true;
 };
 
-const hideDriverModal = async () => {
-  viewDriverIncidenceModal.value = false;
-  driver_incidence_selected_id.value = 0;
-  driver_incidence_readed.value = 0;
+const hideTripModal = async () => {
+  viewTripIncidenceModal.value = false;
+  trip_incidence_selected_id.value = 0;
+  trip_incidence_readed.value = 0;
 };
 
-const setReadedDriverIncidence = async (id) => {
+const setReadedTripIncidence = async (id) => {
   Swal.fire({
     icon: 'info',
     iconColor: 'rgb(0,150,178)',
@@ -452,10 +454,10 @@ const setReadedDriverIncidence = async (id) => {
       let dateNowTmp = new Date();
       let dateNow = $h.formatDate(dateNowTmp, "YYYY-MM-DD HH:mm:ss");
       let dateData = { readed_at: dateNow, has_seen: 1 };
-      await updateDriverIncident(id, dateData);
-      findDriversIncidencesData();
-      driver_incidence_selected_id.value = 0;
-      viewDriverIncidenceModal.value = false;
+      await updateTripIncident(id, dateData);
+      findTripsIncidencesData();
+      trip_incidence_selected_id.value = 0;
+      viewTripIncidenceModal.value = false;
       Swal.fire({
         icon: 'success',
         title: '',
@@ -470,19 +472,19 @@ const setReadedDriverIncidence = async (id) => {
   });
 };
 
-const findDriversIncidencesData = async () => {
+const findTripsIncidencesData = async () => {
   dataArr.length = 0;
   let totalIncidences = 0;
-  await getDriverIncidents();
-  const dataArrTmp = JSON.parse(JSON.stringify(driverIncidents.value));
+  await getTripIncidents();
+  const dataArrTmp = JSON.parse(JSON.stringify(tripIncidents.value));
   dataArrTmp.forEach(element => {
-    const full_name = element.driver.name + ' ' + element.driver.surname;
+    const full_name = element.trip.name;
     let has_attachement = 0;
     if(element.receptioned_at == null){
       let dateNowTmp = new Date();
       let dateNow = $h.formatDate(dateNowTmp, "YYYY-MM-DD HH:mm:ss");
       let dateData = { receptioned_at: dateNow};
-      updateDriverIncident(element.id, dateData);
+      updateTripIncident(element.id, dateData);
       element.receptioned_at = dateNow;
     }
     if(element.readed_at == null){
@@ -500,7 +502,7 @@ const findDriversIncidencesData = async () => {
     }
     dataArr.push({
       id: element.id,
-      driver: full_name,
+      trip: full_name,
       incidence_type: element.type.name,
       comment: element.description,
       sended_at: element.created_at,
@@ -510,12 +512,12 @@ const findDriversIncidencesData = async () => {
       has_new_images: newImages
     });
   });
-  newDriverIncidences.value = totalIncidences;
-  emit('totalNewDriverIncidences',newDriverIncidences.value);
-  initDriverTabulator();
+  newTripIncidences.value = totalIncidences;
+  emit('totalNewTripIncidences',newTripIncidences.value);
+  initTripTabulator();
 }
 
-const driverIncidenceFile = async (id, path, status, file_name, action) => {
+const tripIncidenceFile = async (id, path, status, file_name, action) => {
   if(status == 0){
     Swal.fire({
     icon: 'info',
@@ -536,8 +538,8 @@ const driverIncidenceFile = async (id, path, status, file_name, action) => {
       let dateNowTmp = new Date();
       let dateNow = $h.formatDate(dateNowTmp, "YYYY-MM-DD HH:mm:ss");
       let dateData = { readed_at: dateNow, has_seen: 1 };
-      await updateDriverIncidentImage(id, dateData);
-      await refreshDriverIncidence(driver_incidence_selected_id.value);
+      await updateTripIncidentImage(id, dateData);
+      await refreshTripIncidence(trip_incidence_selected_id.value);
       Swal.fire({
         icon: 'success',
         title: '',
@@ -551,25 +553,25 @@ const driverIncidenceFile = async (id, path, status, file_name, action) => {
           container: 'markAsSeen'
         },
       });
-      openDriverIncidenceFile(path, file_name, action);
+      openTripIncidenceFile(path, file_name, action);
     }
   });
   }else{
-    openDriverIncidenceFile(path, file_name, action);
+    openTripIncidenceFile(path, file_name, action);
   }
 }
 
-const refreshDriverIncidence = async (id) => {
+const refreshTripIncidence = async (id) => {
   incidenceState.incidenceFiles.length = 0;
-  await getDriverIncident(id);
-  const dataArrTmp = driverIncident.value;
+  await getTripIncident(id);
+  const dataArrTmp = tripIncident.value;
   dataArrTmp.images.forEach(element => {
     incidenceState.incidenceFiles.push(element);
    });
 
 }
 
-const openDriverIncidenceFile = async (path, file_name, action) => {
+const openTripIncidenceFile = async (path, file_name, action) => {
   switch(action){
     case 0:
       Swal.fire({
@@ -636,7 +638,7 @@ const openDriverIncidenceFile = async (path, file_name, action) => {
 }
 
 onMounted(async () => {
-  await findDriversIncidencesData();
+  await findTripsIncidencesData();
   
   reInitOnResizeWindow();
 });

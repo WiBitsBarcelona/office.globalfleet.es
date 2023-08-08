@@ -16,7 +16,7 @@
                   class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-white text-primary"
                   >{{ newTripIncidences.emittedValue }}</span>
               </Tab>
-              <Tab class="w-full py-1.5 px-2 font-medium inline-flex justify-center items-center gap-2" tag="button">
+               <Tab class="w-full py-1.5 px-2 font-medium inline-flex justify-center items-center gap-2" tag="button">
                 {{ $t("incidences.stage_incidences") }}
                 <span
                   class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-white text-primary"
@@ -38,19 +38,19 @@
               </TabPanel>
               <TabPanel>
                 <div class="col-span-12">
-                    INCIDENCIAS VIAJES
+                  <TripsIncidences @totalNewTripIncidences = 'loadNewTripIncidences'/>
+                </div>
+              </TabPanel>
+               <TabPanel>
+                <div class="col-span-12">
+                  <StagesIncidences @totalNewStageIncidences = 'loadNewStageIncidences'/>
                 </div>
               </TabPanel>
               <TabPanel>
                 <div class="col-span-12">
-                  INCIDENCIAS ETAPAS
+                  <TasksIncidences @totalNewTaskIncidences = 'loadNewTaskIncidences'/>
                 </div>
-              </TabPanel>
-              <TabPanel>
-                <div class="col-span-12">
-                  INCIDENCIAS TAREAS
-                </div>
-              </TabPanel>
+              </TabPanel> 
             </TabPanels>
           </TabGroup>
       </div>
@@ -61,6 +61,10 @@
 <script setup>
 import { ref, onMounted, reactive } from 'vue';
 import DriversIncidences from "@/components/incidences/Drivers.vue";
+import TripsIncidences from "@/components/incidences/Trips.vue";
+import StagesIncidences from "@/components/incidences/Stages.vue";
+import TasksIncidences from "@/components/incidences/Tasks.vue";
+
 let newDriverIncidences = reactive({
   emittedValue: 0
 });
@@ -79,6 +83,18 @@ let newTaskIncidences = reactive({
 
 const loadNewDriverIncidences= (emittedValue) => {
   newDriverIncidences.emittedValue = emittedValue;
+}
+
+const loadNewTripIncidences= (emittedValue) => {
+  newTripIncidences.emittedValue = emittedValue;
+}
+
+const loadNewStageIncidences= (emittedValue) => {
+  newStageIncidences.emittedValue = emittedValue;
+}
+
+const loadNewTaskIncidences= (emittedValue) => {
+  newTaskIncidences.emittedValue = emittedValue;
 }
 
 </script>
