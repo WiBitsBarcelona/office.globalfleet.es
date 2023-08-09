@@ -1,5 +1,5 @@
 <template>
-  <div class="intro-y box p-5 mt-0 {}" :class="{'hidden' : !driver_selected == 0}">
+  <div class="intro-y box p-5 mt-0 {}" :class="{ 'hidden': !driver_selected == 0 }">
     <div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
       <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
         <div class="relative sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
@@ -16,7 +16,7 @@
     </div>
   </div>
   <!-- END: HTML Table Data -->
-  <div class="intro-y box p-5 mt-0 {}" :class="{'hidden' : driver_selected == 0}">
+  <div class="intro-y box p-5 mt-0 {}" :class="{ 'hidden': driver_selected == 0 }">
     <div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
       <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
         <div class="relative sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
@@ -28,7 +28,8 @@
         </div>
       </form>
       <div class="flex items-start mt-2 xl:w-[600px]">
-        <h2 class="text-xl font-medium text-primary animate__animated animate__fadeInUp truncate mr-5">{{ driver_name_selected }}</h2>
+        <h2 class="text-xl font-medium text-primary animate__animated animate__fadeInUp truncate mr-5">{{
+          driver_name_selected }}</h2>
       </div>
       <div class="flex mt-5 sm:mt-0">
         <div class="col-span-12 lg:col-span-2 2xl:col-span-2 ml-auto">
@@ -45,8 +46,9 @@
       </div>
     </div>
 
-  <div class="overflow-x-auto scrollbar-hidden">
-      <div id="tabulator_driver_documents" ref="tableRefDriverDocuments" class="mt-5 table-report table-report--tabulator"></div>
+    <div class="overflow-x-auto scrollbar-hidden">
+      <div id="tabulator_driver_documents" ref="tableRefDriverDocuments"
+        class="mt-5 table-report table-report--tabulator"></div>
     </div>
   </div>
 
@@ -54,7 +56,8 @@
   <Modal backdrop="static" :show="addDriverFilesModal" @hidden="addDriverFilesModal = false">
     <ModalBody class="px-2 py-5 text-center">
       <h2 class="text-lg font-medium text-left ml-5">{{ $t("Dropzone.modal_title") }}</h2>
-      <XIcon class="absolute top-0 right-0 mt-3 mr-3 w-8 h-8 text-slate-400 hover:cursor-pointer" @click="hideDriverModal" >
+      <XIcon class="absolute top-0 right-0 mt-3 mr-3 w-8 h-8 text-slate-400 hover:cursor-pointer"
+        @click="hideDriverModal">
       </XIcon>
       <div @click="dropZoneDriverClick" :class="{ 'opacity-25': driverUploading != 0 }"
         class="flex flex-col items-center justify-center upload_file_box mt-2 hover:cursor-pointer">
@@ -64,35 +67,55 @@
       </div>
 
       <div class="grid grid-cols-12 gap-6 mx-3 mt-5 items-center justify-center">
-        <div v-for="driverFile in driverState.driverFiles" :key="driverFile.index" class="col-span-12">
-          <div class="file_container">
-            <div class="grid grid-cols-12">
-              <div class="col-span-2">
-                <FileIcon class="w-10 h-10 text-primary opacity-25"></FileIcon>
-              </div>
-              <div class="col-span-9 text-left font-bold">
-                <p class="text-xs"> {{ $h.cutFileName(driverFile.name, 50) }}</p>
-                <p class="text-xs font-light"> {{ $h.formatBytes(driverFile.size) }}</p>
-                <!--                     <div class="progress">
-                      <div id="progress_file" class="progress-bar w-1/12" :class="{'hidden' : uploading == 0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div> -->
-              </div>
-              <div class="col-span-1 text-right">
-                <XIcon class="w-4 h-4 text-primary ml-3 hover:cursor-pointer" @click="dropZoneDriverClearFile(driverFile.name)"
-                  :class="{ 'hidden': driverUploading != 0 }"></XIcon>
-                  <LoadingIcon icon="oval" color="#0097b2" class="w-4 h-4" :class="{ 'hidden': driverUploading == 0 }" />
-              </div>
-            </div>
-
-          </div>
+        <div class="col-span-12 text-right" v-if="!driver_selected_file == ''">
+          <p class="text-slate-400 text-xs">{{ $t("Dropzone.check_confirmation") }}</p>
         </div>
-        <template v-if="!driver_selected_file == ''">
+        <template v-for="driverFile in driverState.driverFiles" :key="driverFile.index">
+          <div class="col-span-11">
+            <div class="file_container">
+              <div class="grid grid-cols-12">
+                <div class="col-span-2">
+                  <FileIcon class="w-10 h-10 text-primary opacity-25"></FileIcon>
+                </div>
+                <div class="col-span-9 text-left font-bold">
+                  <p class="text-xs"> {{ $h.cutFileName(driverFile.name, 50) }}</p>
+                  <p class="text-xs font-light"> {{ $h.formatBytes(driverFile.size) }}</p>
+                </div>
+                <div class="col-span-1 text-right">
+                  <XIcon class="w-4 h-4 text-primary ml-3 hover:cursor-pointer"
+                    @click="dropZoneDriverClearFile(driverFile.name)" :class="{ 'hidden': driverUploading != 0 }"></XIcon>
+                  <LoadingIcon icon="oval" color="#0097b2" class="w-4 h-4" :class="{ 'hidden': driverUploading == 0 }" />
+                </div>
+              </div>
+
+            </div>
+          </div>
           <div class="col-span-1" :class="{ 'opacity-25': driverUploading != 0 }">
-            <InfoIcon></InfoIcon>
+            <div class="form-check sm:mt-0">
+              <input class="form-check-input" type="checkbox" :value="driverFile.name" v-model="checkedFiles" />
+            </div>
           </div>
-          <div class="col-span-11 text-left" :class="{ 'opacity-25': driverUploading != 0 }">
-            {{ $t("Dropzone.upload_driver_document") }} <span class="font-bold text-primary">{{ driver_name_selected }}</span>
+        </template>
+
+        <template v-if="!driver_selected_file == ''">
+          <div class="col-span-11 text-right" :class="{ 'opacity-25': driverUploading != 0 }">
+            <p class="text-primary text-xs">{{ $t("Dropzone.check_confirmation_all") }}</p>
           </div>
+          <div class="col-span-1" :class="{ 'opacity-25': driverUploading != 0 }">
+            <div class="form-check sm:mt-0">
+              <input class="form-check-input" type="checkbox" value="" @click="selectAllFiles" />
+            </div>
+          </div>
+          <div class="col-span-12 flex p-5 bg-orange-100 self-stretch	rounded-md">
+            <div class="col-span-1 mr-2" :class="{ 'opacity-25': driverUploading != 0 }">
+              <InfoIcon></InfoIcon>
+            </div>
+            <div class="col-span-11 text-left" :class="{ 'opacity-25': driverUploading != 0 }">
+              {{ $t("Dropzone.upload_driver_document") }} <span class="font-bold text-primary">{{ driver_name_selected
+              }}</span>
+            </div>
+          </div>
+
           <div class="col-span-12 flex" :class="{ 'opacity-25': driverUploading != 0 }">
             <button type="button" @click="hideDriverModal" class="btn btn-secondary w-60 mr-5">
               {{ $t("Dropzone.btn_close") }}
@@ -159,6 +182,8 @@ let driverFiles = [];
 const driverState = reactive({ driverFiles });
 const driverUploading = ref(0);
 let driverFileJson = [];
+let checkedFiles = ref([]);
+let allFilesChecked = false;
 
 const findData = async () => {
   await getDrivers();
@@ -321,16 +346,16 @@ const initDriverDocumentsTabulator = () => {
           return "<span class='uppercase'>" + cell.getValue() + "</span>"
         },
       },
-/*       {
-        title: t("Tabulator.Driver_documents_columns.created_by"),
-        minWidth: 200,
-        width:300,
-        field: "employee.name",
-        hozAlign: "center",
-        vertAlign: "middle",
-        print: false,
-        download: false,
-      }, */
+      /*       {
+              title: t("Tabulator.Driver_documents_columns.created_by"),
+              minWidth: 200,
+              width:300,
+              field: "employee.name",
+              hozAlign: "center",
+              vertAlign: "middle",
+              print: false,
+              download: false,
+            }, */
       {
         title: t("Tabulator.Driver_documents_columns.created_at"),
         minWidth: 200,
@@ -354,10 +379,10 @@ const initDriverDocumentsTabulator = () => {
         print: false,
         download: false,
         formatter: function (cell) {
-          let data ='';
-          if(cell.getValue()){
+          let data = '';
+          if (cell.getValue()) {
             data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss');
-          }else{
+          } else {
             data = '--';
           }
           return data;
@@ -373,10 +398,10 @@ const initDriverDocumentsTabulator = () => {
         print: false,
         download: false,
         formatter: function (cell) {
-          let data ='';
-          if(cell.getValue()){
+          let data = '';
+          if (cell.getValue()) {
             data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss');
-          }else{
+          } else {
             data = '--';
           }
           return data;
@@ -392,10 +417,10 @@ const initDriverDocumentsTabulator = () => {
         print: false,
         download: false,
         formatter: function (cell) {
-          let data ='';
-          if(cell.getValue()){
+          let data = '';
+          if (cell.getValue()) {
             data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss');
-          }else{
+          } else {
             data = '--';
           }
           return data;
@@ -425,7 +450,7 @@ const initDriverDocumentsTabulator = () => {
       },
       {
         formatter:
-        deleteIcon, 
+          deleteIcon,
         width: 50,
         responsive: 0,
         hozAlign: "center",
@@ -448,13 +473,13 @@ const initDriverDocumentsTabulator = () => {
 
 const openDriverFile = async (path) => {
   Swal.fire({
-      icon: 'info',
-      title: '',
-      text: t("documents.swal.document_wait_viewing"),
-      //toast: true,
-      position: 'center',
-      showConfirmButton: false,
-    });
+    icon: 'info',
+    title: '',
+    text: t("documents.swal.document_wait_viewing"),
+    //toast: true,
+    position: 'center',
+    showConfirmButton: false,
+  });
   await downloadDriverDocument(path);
   Swal.close();
   switch (driverDocumentData.value.type) {
@@ -482,13 +507,13 @@ const openDriverFile = async (path) => {
 
 const downloadDriverFile = async (path, file_name) => {
   Swal.fire({
-      icon: 'info',
-      title: '',
-      text: t("documents.swal.document_wait_download"),
-      //toast: true,
-      position: 'center',
-      showConfirmButton: false,
-    });
+    icon: 'info',
+    title: '',
+    text: t("documents.swal.document_wait_download"),
+    //toast: true,
+    position: 'center',
+    showConfirmButton: false,
+  });
   await downloadDriverDocument(path);
 
   const linkSource = driverDocumentData.value.data;
@@ -586,11 +611,11 @@ const onDriverDocumentsResetFilter = () => {
 const returnDrivers = () => {
   driver_selected.value = 0;
   tabulator.value.redraw();
-    createIcons({
-      icons,
-      "stroke-width": 1.5,
-      nameAttr: "data-lucide",
-    });
+  createIcons({
+    icons,
+    "stroke-width": 1.5,
+    nameAttr: "data-lucide",
+  });
 }
 
 const hideDriverModal = async () => {
@@ -600,14 +625,15 @@ const hideDriverModal = async () => {
   driverUploading.value = 0;
   driverState.driverFiles.length = 0;
   driverFileJson.length = 0;
+  checkedFiles.value = [];
 };
 
 const dropZoneDriverClick = (event) => {
   document.getElementById('input_driver_files').click();
 };
 
-const dropZoneDriverAddFiles = async(event) => {
-  if(event.target.files[0].size > 15000000){
+const dropZoneDriverAddFiles = async (event) => {
+  if (event.target.files[0].size > 15000000) {
     Swal.fire({
       icon: 'error',
       title: '',
@@ -616,10 +642,10 @@ const dropZoneDriverAddFiles = async(event) => {
       buttonsStyling: false,
       customClass: {
         confirmButton: 'btn btn-primary shadow-md',
-        container : 'fileSizeError' 
+        container: 'fileSizeError'
       },
     });
-  }else{
+  } else {
     driver_selected_file = '1';
     driverState.driverFiles.push(event.target.files[0]);
     driverFile.value = event.target.files[0];
@@ -628,7 +654,7 @@ const dropZoneDriverAddFiles = async(event) => {
     const fileMimeType = computed(() => driverFile.value?.type);
     const fileSize = computed(() => driverFile.value?.size);
     await toBase64(driverFile.value).then(fileData => {
-      driverFileJson.push({driver_id: driver_selected.value, file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData});
+      driverFileJson.push({ driver_id: driver_selected.value, file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData, has_ask_confirm: 0 });
     });
   }
 }
@@ -636,9 +662,9 @@ const dropZoneDriverAddFiles = async(event) => {
 const dropZoneDriverClearFile = (currentFile) => {
   driverUploading.value = 0;
   const index = driverState.driverFiles.map(i => i.name).indexOf(currentFile);
-  driverState.driverFiles.splice(index,1);
-  driverFileJson.splice(index,1);
-  if(driverState.driverFiles.length == 0){
+  driverState.driverFiles.splice(index, 1);
+  driverFileJson.splice(index, 1);
+  if (driverState.driverFiles.length == 0) {
     driver_selected_file = '';
   }
 }
@@ -652,10 +678,11 @@ const toBase64 = file => new Promise((resolve, reject) => {
 
 const dropZoneDriverSendFiles = async () => {
   driverUploading.value = 1;
-  for(const element of driverFileJson) {
+  //BEFORE SEND FILES CHECKS AND UPDATE FOR HAS_ASK_CONFIRM
+  await updateJson();
+  for (const element of driverFileJson) {
     await storeDriverDocument(element);
   }
-  //addFilesDriverModal.value = false;
   addDriverFilesModal.value = false;
   driver_selected_file = '';
   driverState.driverFiles.length = 0;
@@ -689,6 +716,26 @@ const dropZoneDriverSendFiles = async () => {
     });
   }
 
+}
+
+const selectAllFiles = () => {
+  if (!allFilesChecked) {
+    checkedFiles.value = [];
+    driverState.driverFiles.forEach(file => {
+      checkedFiles.value.push(file.name);
+    });
+    allFilesChecked = true;
+  } else {
+    checkedFiles.value = [];
+    allFilesChecked = false;
+  };
+}
+
+const updateJson = async () => {
+  checkedFiles.value.forEach(function(element){
+    const index2 = driverFileJson.map(i => i.file_name).indexOf(element);
+    driverFileJson[index2].has_ask_confirm = 1;
+  });
 }
 
 onMounted(async () => {

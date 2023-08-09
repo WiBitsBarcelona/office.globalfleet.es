@@ -96,9 +96,12 @@
         <p class="mt-5 font-bold text-primary">{{ $t("Dropzone.title") }}</p>
         <p class="mt-2 text-slate-400">{{ $t("Dropzone.subtitle") }}</p>
       </div>
-
       <div class="grid grid-cols-12 gap-6 mx-3 mt-5 items-center justify-center">
-        <div v-for="tripFile in tripState.tripFiles" :key="tripFile.index" class="col-span-12">
+        <div class="col-span-12 text-right" v-if="!trip_selected_file == ''">
+          <p class="text-slate-400 text-xs">{{ $t("Dropzone.check_confirmation") }}</p>
+        </div>
+        <template v-for="tripFile in tripState.tripFiles" :key="tripFile.index">
+          <div class="col-span-11">
           <div class="file_container">
             <div class="grid grid-cols-12">
               <div class="col-span-2">
@@ -107,9 +110,6 @@
               <div class="col-span-9 text-left font-bold">
                 <p class="text-xs"> {{ $h.cutFileName(tripFile.name, 50) }}</p>
                 <p class="text-xs font-light"> {{ $h.formatBytes(tripFile.size) }}</p>
-<!--                                     <div class="progress">
-                      <div id="progress_file" class="progress-bar w-1/12" :class="{'hidden' : uploading == 0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div> -->
               </div>
               <div class="col-span-1 text-right">
                 <XIcon class="w-4 h-4 text-primary ml-3 hover:cursor-pointer" @click="dropZoneTripClearFile(tripFile.name)"
@@ -117,16 +117,32 @@
                   <LoadingIcon icon="oval" color="#0097b2" class="w-4 h-4" :class="{ 'hidden': tripUploading == 0 }" />
               </div>
             </div>
-
           </div>
         </div>
+        <div class="col-span-1" :class="{ 'opacity-25': tripUploading != 0 }">
+            <div class="form-check sm:mt-0">
+              <input class="form-check-input" type="checkbox" :value="tripFile.name" v-model="checkedFiles" />
+            </div>
+          </div>
+        </template>
         <template v-if="!trip_selected_file == ''">
+          <div class="col-span-11 text-right" :class="{ 'opacity-25': tripUploading != 0 }">
+            <p class="text-primary text-xs">{{ $t("Dropzone.check_confirmation_all") }}</p>
+          </div>
           <div class="col-span-1" :class="{ 'opacity-25': tripUploading != 0 }">
-            <InfoIcon></InfoIcon>
+            <div class="form-check sm:mt-0">
+              <input class="form-check-input" type="checkbox" value="" @click="selectAllTripFiles" />
+            </div>
           </div>
-          <div class="col-span-11 text-left" :class="{ 'opacity-25': tripUploading != 0 }">
-            {{ $t("Dropzone.upload_trip_document") }} <span class="font-bold text-primary">{{ trip_name_selected }}</span>
+          <div class="col-span-12 flex p-5 bg-orange-100 self-stretch	rounded-md">
+            <div class="col-span-1 mr-2" :class="{ 'opacity-25': tripUploading != 0 }">
+              <InfoIcon></InfoIcon>
+            </div>
+            <div class="col-span-11 text-left" :class="{ 'opacity-25': tripUploading != 0 }">
+              {{ $t("Dropzone.upload_trip_document") }} <span class="font-bold text-primary">{{ trip_name_selected }}</span>
+            </div>
           </div>
+
           <div class="col-span-12 flex" :class="{ 'opacity-25': tripUploading != 0 }">
             <button type="button" @click="hideTripModal" class="btn btn-secondary w-60 mr-5">
               {{ $t("Dropzone.btn_close") }}
@@ -156,9 +172,12 @@
         <p class="mt-5 font-bold text-primary">{{ $t("Dropzone.title") }}</p>
         <p class="mt-2 text-slate-400">{{ $t("Dropzone.subtitle") }}</p>
       </div>
-
       <div class="grid grid-cols-12 gap-6 mx-3 mt-5 items-center justify-center">
-        <div v-for="stageFile in stageState.stageFiles" :key="stageFile.index" class="col-span-12">
+        <div class="col-span-12 text-right" v-if="!stage_selected_file == ''">
+          <p class="text-slate-400 text-xs">{{ $t("Dropzone.check_confirmation") }}</p>
+        </div>
+        <template v-for="stageFile in stageState.stageFiles" :key="stageFile.index">
+          <div class="col-span-11">
           <div class="file_container">
             <div class="grid grid-cols-12">
               <div class="col-span-2">
@@ -167,9 +186,6 @@
               <div class="col-span-9 text-left font-bold">
                 <p class="text-xs"> {{ $h.cutFileName(stageFile.name, 50) }}</p>
                 <p class="text-xs font-light"> {{ $h.formatBytes(stageFile.size) }}</p>
-<!--                                     <div class="progress">
-                      <div id="progress_file" class="progress-bar w-1/12" :class="{'hidden' : uploading == 0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div> -->
               </div>
               <div class="col-span-1 text-right">
                 <XIcon class="w-4 h-4 text-primary ml-3 hover:cursor-pointer" @click="dropZoneStageClearFile(stageFile.name)"
@@ -177,15 +193,31 @@
                   <LoadingIcon icon="oval" color="#0097b2" class="w-4 h-4" :class="{ 'hidden': stageUploading == 0 }" />
               </div>
             </div>
-
           </div>
         </div>
+        <div class="col-span-1" :class="{ 'opacity-25': stageUploading != 0 }">
+            <div class="form-check sm:mt-0">
+              <input class="form-check-input" type="checkbox" :value="stageFile.name" v-model="checkedFiles" />
+            </div>
+          </div>
+        </template>
+
         <template v-if="!stage_selected_file == ''">
+          <div class="col-span-11 text-right" :class="{ 'opacity-25': stageUploading != 0 }">
+            <p class="text-primary text-xs">{{ $t("Dropzone.check_confirmation_all") }}</p>
+          </div>
           <div class="col-span-1" :class="{ 'opacity-25': stageUploading != 0 }">
+            <div class="form-check sm:mt-0">
+              <input class="form-check-input" type="checkbox" value="" @click="selectAllStageFiles" />
+            </div>
+          </div>
+          <div class="col-span-12 flex p-5 bg-orange-100 self-stretch	rounded-md">
+            <div class="col-span-1 mr-2" :class="{ 'opacity-25': stageUploading != 0 }">
             <InfoIcon></InfoIcon>
           </div>
           <div class="col-span-11 text-left" :class="{ 'opacity-25': stageUploading != 0 }">
             {{ $t("Dropzone.upload_stage_document") }} <span class="font-bold text-primary">{{ stage_name_selected }}</span>
+          </div>
           </div>
           <div class="col-span-12 flex" :class="{ 'opacity-25': stageUploading != 0 }">
             <button type="button" @click="hideStageModal" class="btn btn-secondary w-60 mr-5">
@@ -265,6 +297,8 @@ let stage_selected_file = ref('');
 const tripFile = ref(null);
 const stageFile = ref(null);
 let screen_to_view = ref('');
+let checkedFiles = ref([]);
+let allFilesChecked = false;
 
 // BEGIN GENERIC FUNCTIONS
 const returnTrips = () => {
@@ -847,6 +881,7 @@ const hideTripModal = async () => {
   tripUploading.value = 0;
   tripState.tripFiles.length = 0;
   tripFileJson.length = 0;
+  checkedFiles.value = [];
 };
 
 const dropZoneTripClick = (event) => {
@@ -875,7 +910,7 @@ const dropZoneTripAddFiles = async(event) => {
     const fileMimeType = computed(() => tripFile.value?.type);
     const fileSize = computed(() => tripFile.value?.size);
     await toBase64(tripFile.value).then(fileData => {
-      tripFileJson.push({trip_id: trip_selected.value, file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData});
+      tripFileJson.push({trip_id: trip_selected.value, file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData, has_ask_confirm: 0});
     });
   }
 }
@@ -892,6 +927,7 @@ const dropZoneTripClearFile = (currentFile) => {
 
 const dropZoneTripSendFiles = async (trip_id) => {
   tripUploading.value = 1;
+  await updateTripJson();
   for(const element of tripFileJson) {
     await storeTripDocument(element);
   }
@@ -927,6 +963,26 @@ const dropZoneTripSendFiles = async (trip_id) => {
     });
   }
 
+}
+
+const selectAllTripFiles = () => {
+  if (!allFilesChecked) {
+    checkedFiles.value = [];
+    tripState.tripFiles.forEach(file => {
+      checkedFiles.value.push(file.name);
+    });
+    allFilesChecked = true;
+  } else {
+    checkedFiles.value = [];
+    allFilesChecked = false;
+  };
+}
+
+const updateTripJson = async () => {
+  checkedFiles.value.forEach(function(element){
+    const index2 = tripFileJson.map(i => i.file_name).indexOf(element);
+    tripFileJson[index2].has_ask_confirm = 1;
+  });
 }
 // END OF TRIP DOCUMENTS TABULATOR & FUNCTIONS
 
@@ -1228,6 +1284,7 @@ const hideStageModal = async () => {
   stageUploading.value = 0;
   stageState.stageFiles.length = 0;
   stageFileJson.length = 0;
+  checkedFiles.value = [];
 };
 
 const dropZoneStageClick = (event) => {
@@ -1256,7 +1313,7 @@ const dropZoneStageAddFiles = async(event) => {
     const fileMimeType = computed(() => stageFile.value?.type);
     const fileSize = computed(() => stageFile.value?.size);
     await toBase64(stageFile.value).then(fileData => {
-      stageFileJson.push({stage_id: stage_selected.value, file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData});
+      stageFileJson.push({stage_id: stage_selected.value, file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData, has_ask_confirm: 0 });
     });
   }
 }
@@ -1273,6 +1330,7 @@ const dropZoneStageClearFile = (currentFile) => {
 
 const dropZoneStageSendFiles = async (stage_id) => {
   stageUploading.value = 1;
+  await updateStageJson();
   for(const element of stageFileJson) {
     await storeStageDocument(element);
   }
@@ -1307,7 +1365,26 @@ const dropZoneStageSendFiles = async (stage_id) => {
       },
     });
   }
+}
 
+const selectAllStageFiles = () => {
+  if (!allFilesChecked) {
+    checkedFiles.value = [];
+    stageState.stageFiles.forEach(file => {
+      checkedFiles.value.push(file.name);
+    });
+    allFilesChecked = true;
+  } else {
+    checkedFiles.value = [];
+    allFilesChecked = false;
+  };
+}
+
+const updateStageJson = async () => {
+  checkedFiles.value.forEach(function(element){
+    const index2 = stageFileJson.map(i => i.file_name).indexOf(element);
+    stageFileJson[index2].has_ask_confirm = 1;
+  });
 }
 // END OF STAGE DOCUMENTS TABULATOR & FUNCTIONS
 

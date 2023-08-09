@@ -1,4 +1,3 @@
-import { toRaw } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthenticationStore } from '@/stores/auth/authentications';
 
@@ -10,9 +9,7 @@ const requireAuth = async(to, from, next) => {
 
       //TODO pendiente de implementar:
       //SI ---> useAuthentication.getUser.employee
-      
       //No ---> console.log(useAuthentication.user);
-
       next();
       
   } catch (e) {
@@ -119,7 +116,13 @@ const routes = [
         path: "users",
         name: "users",
         beforeEnter: checkManager,
-        component: () => import('@/views/users/UserList.vue'),
+        component: () => import('@/views/employees/EmployeeList.vue'),
+      },
+      {
+        path: "drivers",
+        name: "drivers",
+        beforeEnter: checkManager,
+        component: () => import('@/views/drivers/DriverList.vue'),
       },
     ],
   },

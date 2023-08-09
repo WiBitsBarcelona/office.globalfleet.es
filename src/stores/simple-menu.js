@@ -43,7 +43,13 @@ export const useSimpleMenuStore = defineStore("simpleMenu", {
       {
         icon: "UsersIcon",
         pageName: "users",
-        title: "Users",
+        title: "Usuarios",
+        isManager: true,
+      },
+      {
+        icon: "TruckIcon",
+        pageName: "drivers",
+        title: "Conductores",
         isManager: true,
       },
     ],
