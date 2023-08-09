@@ -72,29 +72,7 @@
 			</div>
 
 
-			<div class="col-span-12 md:col-span-6 lg:col-span-4">
-				<div class="input-form">
-					<label for="password" class="form-label w-full">
-						{{ $t("password") }}
-					</label>
-					<input
-						v-model.trim="validate.password.$model"
-						id="password"
-						type="text"
-						name="password"
-						class="form-control"
-						:class="{ 'border-danger': validate.password.$error }"
-					/>
-					<template v-if="validate.password.$error">
-						<div v-for="(error, index) in validate.password.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
-			</div>
-
-
-			<div class="col-span-12 md:col-span-6 lg:col-span-4">
+			<div class="col-span-12 md:col-span-6 lg:col-span-8">
 				<div class="input-form">
 					<label for="email" class="form-label w-full">
 						{{ $t("email") }}
@@ -118,19 +96,26 @@
 
 			<div class="col-span-12 md:col-span-6 lg:col-span-4">
 				<div class="input-form">
-					<label for="phone_prefix" class="form-label w-full">
-						{{ $t("phone_prefix") }}
+					<label for="password" class="form-label w-full">
+						{{ $t("password") }}
 					</label>
-					<input
-						v-model.trim="validate.phone_prefix.$model"
-						id="phone_prefix"
-						type="text"
-						name="phone_prefix"
-						class="form-control"
-						:class="{ 'border-danger': validate.phone_prefix.$error }"
-					/>
-					<template v-if="validate.phone_prefix.$error">
-						<div v-for="(error, index) in validate.phone_prefix.$errors" :key="index" class="text-danger mt-2">
+
+					<div class="relative sm:flex items-center">
+						<input
+							v-model.trim="validate.password.$model"
+							id="password"
+							:type="passwordFieldType"
+							name="password"
+							class="form-control"
+							:class="{ 'border-danger': validate.password.$error }"
+						/>
+						<EyeIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer" @click="switchVisibility" />
+
+					</div>
+
+					
+					<template v-if="validate.password.$error">
+						<div v-for="(error, index) in validate.password.$errors" :key="index" class="text-danger mt-2">
 							{{ error.$message }}
 						</div>
 					</template>
@@ -138,28 +123,12 @@
 			</div>
 
 
-			<div class="col-span-12 md:col-span-6 lg:col-span-4">
-				<div class="input-form">
-					<label for="phone" class="form-label w-full">
-						{{ $t("phone") }}
-					</label>
-					<input
-						v-model.trim="validate.phone.$model"
-						id="phone"
-						type="text"
-						name="phone"
-						class="form-control"
-						:class="{ 'border-danger': validate.phone.$error }"
-					/>
-					<template v-if="validate.phone.$error">
-						<div v-for="(error, index) in validate.phone.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
-			</div>
 
 
+
+
+
+			
 			<!-- BEGIN: Buttons -->
 			<div class="col-span-12 md:col-span-12 lg:col-span-12">
 				<div class="flex justify-center">
@@ -182,7 +151,7 @@
 </template>
 <script setup>
 
-	import { onMounted, reactive, toRefs } from 'vue';
+	import { onMounted, reactive, toRefs, ref } from 'vue';
 	import useDrivers from '@/composables/drivers';
 	import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
 	import { useVuelidate } from '@vuelidate/core';
@@ -193,6 +162,14 @@
 	const { t } = useI18n();
 	const props = defineProps(['driverId']);
 	const emit = defineEmits(['cancelEdit', 'updateDriverForm']);
+
+	
+
+	const passwordFieldType = ref("password");
+
+	const switchVisibility = () => {
+		passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password';
+	}
 
 	const rules = {
 		name: {
@@ -209,12 +186,7 @@
 		},
 		email: {
 			required: helpers.withMessage(t("form.required"), required),
-		},
-		phone_prefix: {
-			required: helpers.withMessage(t("form.required"), required),
-		},
-		phone: {
-			required: helpers.withMessage(t("form.required"), required),
+			email: helpers.withMessage(t("form.email"), email),
 		},
 	};
 
@@ -223,9 +195,7 @@
 		surname: "",
 		fiscal_identification: "",
 		password: "",
-		email: "",
-		phone_prefix: "",
-		phone: "",
+		email: ""
 	});
 
 	const validate = useVuelidate(rules, toRefs(formData));
@@ -245,9 +215,7 @@
 		formData.surname = driver.value.surname;
 		formData.fiscal_identification = driver.value.fiscal_identification;
 		formData.password = driver.value.password;
-		formData.email = driver.value.email;
-		formData.phone_prefix = driver.value.phone_prefix;
-		formData.phone = driver.value.phone;
+		formData.email = driver.value.user.email;
 	});
 
 </script>

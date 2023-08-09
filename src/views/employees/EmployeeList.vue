@@ -168,7 +168,8 @@
                 },
                 {
                     title: "",
-                    width: 120,
+					minWidth: 80,
+                    width: 10,
                     field: "actions",
                     responsive: 0,
                     headerHozAlign: "center",
@@ -186,7 +187,8 @@
                 },
 				{
                     title: "",
-                    width: 120,
+                    minWidth: 80,
+                    width: 10,
                     field: "actions",
                     responsive: 0,
                     headerHozAlign: "center",

@@ -141,14 +141,6 @@
 					headerHozAlign:"left",
 				},
 				{
-					title: t("fiscal_identification"),
-					minWidth: 200,
-					responsive: 0,
-					field: "fiscal_identification",
-					vertAlign: "middle",
-					headerHozAlign:"left",
-				},
-				{
 					title: t("email"),
 					minWidth: 200,
 					responsive: 0,
@@ -158,7 +150,7 @@
 				},
 				{
 					title: t("token"),
-					minWidth: 200,
+					minWidth: 100,
 					responsive: 0,
 					field: "user.app_token.token",
 					vertAlign: "middle",
@@ -166,7 +158,8 @@
 				},
 				{
 					title: "",
-					minWidth: 120,
+					minWidth: 80,
+					width: 10,
 					field: "actions",
 					responsive: 0,
 					headerHozAlign: "center",
@@ -184,7 +177,8 @@
 				},
 				{
 					title: "",
-					minWidth: 120,
+					minWidth: 80,
+					width: 10,
 					field: "actions",
 					responsive: 0,
 					headerHozAlign: "center",

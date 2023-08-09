@@ -197,6 +197,10 @@ onMounted(async () => {
   //formattedMenu.value = $h.toRaw(simpleMenu.value);
   await formattedMenuList();
   
+  //TODO:
+  // pendiente por revisar: cuando no tiene cometchat activo igualmente falla 
+  // por que un setInterval cada vez que se recarga un menu. ¿El setInterval se reemplaza?
+  // No en recomendable haceer esto directamente "useAuthenticationStore().user.employee" crear un objeto antes. Tambien se puede reemplazar por: "useAuthentication.getUser"
   if (!localStorage.getItem("token") || useAuthenticationStore().user.employee !== null) {       
     await checkUnreadMessages();
     setInterval(await checkUnreadMessages, 5000);
@@ -208,17 +212,16 @@ onMounted(async () => {
 
 const formattedMenuList = async() => {
   //formattedMenu.value = $h.toRaw(simpleMenu.value);
-
-  const menuNew = $h.toRaw(simpleMenu.value);
+  const menuFormat = $h.toRaw(simpleMenu.value);
   
-  let m = [];
+  let menuNew = [];
   if(useAuthentication.getUser.roles[0].id === parseInt(enumRoles.MANAGER_ID)){
-    m = menuNew;
+    menuNew = menuFormat;
   }else{
-    m = menuNew.filter((menu) => menu.isManager !== true);
+    menuNew = menuFormat.filter((m) => m.isManager !== true);
   }
 
-  formattedMenu.value = m;
+  formattedMenu.value = menuNew;
 
 }
 
