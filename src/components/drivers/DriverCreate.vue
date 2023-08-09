@@ -6,28 +6,30 @@
 		<!-- BEGIN: container -->
 		<div class="grid grid-cols-12 gap-6">
 
-			<div class="col-span-12 md:col-span-12 lg:col-span-3">
+
+
+			<div class="col-span-12 md:col-span-12 lg:col-span-4">
 				<div class="input-form">
-					<label for="role_id" class="form-label w-full">
-						{{ $t("role") }}
+					<label for="employee_id" class="form-label w-full">
+						{{ $t("employee") }}
 					</label>
 
 					<select
-						v-model.trim="validate.role_id.$model"
-						id="role_id"
-						name="role_id"
+						v-model.trim="validate.employee_id.$model"
+						id="employee_id"
+						name="employee_id"
 						class="form-control"
-						:class="{ 'border-danger': validate.role_id.$error }"
+						:class="{ 'border-danger': validate.employee_id.$error }"
 					>
 
 					<option value="" selected>Seleccione</option>
-					<option v-for="role in selectRoles" :value="role.id">
-							{{ role.description }}
+					<option v-for="employee in selectEmployees" :value="employee.id">
+							{{ employee.name }}
 					</option>
 
 					</select>
-					<template v-if="validate.role_id.$error">
-						<div v-for="(error, index) in validate.role_id.$errors" :key="index" class="text-danger mt-2">
+					<template v-if="validate.employee_id.$error">
+						<div v-for="(error, index) in validate.employee_id.$errors" :key="index" class="text-danger mt-2">
 							{{ error.$message }}
 						</div>
 					</template>
@@ -35,7 +37,8 @@
 			</div>
 
 
-			<div class="col-span-12 md:col-span-12 lg:col-span-4">
+
+			<div class="col-span-12 md:col-span-6 lg:col-span-4">
 				<div class="input-form">
 					<label for="name" class="form-label w-full">
 						{{ $t("name") }}
@@ -57,7 +60,7 @@
 			</div>
 
 
-			<div class="col-span-12 md:col-span-12 lg:col-span-5">
+			<div class="col-span-12 md:col-span-6 lg:col-span-4">
 				<div class="input-form">
 					<label for="surname" class="form-label w-full">
 						{{ $t("surname") }}
@@ -79,7 +82,7 @@
 			</div>
 
 
-			<div class="col-span-12 md:col-span-12 lg:col-span-3">
+			<div class="col-span-12 md:col-span-6 lg:col-span-4">
 				<div class="input-form">
 					<label for="fiscal_identification" class="form-label w-full">
 						{{ $t("fiscal_identification") }}
@@ -101,7 +104,36 @@
 			</div>
 
 
-			<div class="col-span-12 md:col-span-12 lg:col-span-5">
+			<div class="col-span-12 md:col-span-6 lg:col-span-4">
+				<div class="input-form">
+					<label for="password" class="form-label w-full">
+						{{ $t("password") }}
+					</label>
+
+					<div class="relative sm:flex items-center">
+						<input
+							v-model.trim="validate.password.$model"
+							id="password"
+							:type="passwordFieldType"
+							name="password"
+							class="form-control"
+							:class="{ 'border-danger': validate.password.$error }"
+						/>
+						<EyeIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer" @click="switchVisibility" />
+
+					</div>
+
+					
+					<template v-if="validate.password.$error">
+						<div v-for="(error, index) in validate.password.$errors" :key="index" class="text-danger mt-2">
+							{{ error.$message }}
+						</div>
+					</template>
+				</div>
+			</div>
+
+
+			<div class="col-span-12 md:col-span-6 lg:col-span-4">
 				<div class="input-form">
 					<label for="email" class="form-label w-full">
 						{{ $t("email") }}
@@ -123,77 +155,10 @@
 			</div>
 
 
-			<div class="col-span-12 md:col-span-12 lg:col-span-4">
-				<div class="input-form">
-					<label for="password" class="form-label w-full">
-						{{ $t("password") }}
-					</label>
-
-					<div class="relative sm:flex items-center">
-
-						<input
-							v-model.trim="validate.password.$model"
-							id="password"
-							:type="passwordFieldType"
-							name="password"
-							class="form-control"
-							:class="{ 'border-danger': validate.password.$error }"
-						/>
-						<EyeIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer" @click="switchVisibility" />
-
-					</div>
-					
-					<template v-if="validate.password.$error">
-						<div v-for="(error, index) in validate.password.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
-			</div>
 
 
-			<!-- <div class="col-span-4 md:col-span-4 lg:col-span-4">
-				<div class="input-form">
-					<label for="phone_prefix" class="form-label w-full">
-						{{ $t("phone_prefix") }}
-					</label>
-					<input
-						v-model.trim="validate.phone_prefix.$model"
-						id="phone_prefix"
-						type="text"
-						name="phone_prefix"
-						class="form-control"
-						:class="{ 'border-danger': validate.phone_prefix.$error }"
-					/>
-					<template v-if="validate.phone_prefix.$error">
-						<div v-for="(error, index) in validate.phone_prefix.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
-			</div>
+			
 
-
-			<div class="col-span-4 md:col-span-4 lg:col-span-4">
-				<div class="input-form">
-					<label for="phone" class="form-label w-full">
-						{{ $t("phone") }}
-					</label>
-					<input
-						v-model.trim="validate.phone.$model"
-						id="phone"
-						type="text"
-						name="phone"
-						class="form-control"
-						:class="{ 'border-danger': validate.phone.$error }"
-					/>
-					<template v-if="validate.phone.$error">
-						<div v-for="(error, index) in validate.phone.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
-			</div> -->
 
 
 			<!-- BEGIN: Buttons -->
@@ -219,23 +184,27 @@
 <script setup>
 
 	import { onMounted, reactive, toRefs, ref } from 'vue';
-	import useEmployees from '@/composables/employees';
-	import useRoles from '@/composables/roles';
+	import useDrivers from '@/composables/drivers';
+	import useEmployees from "@/composables/employees";
 	import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
 	import { useVuelidate } from '@vuelidate/core';
 	import { helpers } from '@vuelidate/validators';
 	import { useI18n } from 'vue-i18n';
-	import enumRoles from '@/enums/enum_roles.js';
 
-	const { employee, getEmployee } = useEmployees();
-	const { roles, getRoles } = useRoles();
+
+
+
+	const { driver, getDriver } = useDrivers();
+	const { employees, getEmployees} = useEmployees();
+
+
 	const { t } = useI18n();
-	const props = defineProps(['employeeId']);
-	const emit = defineEmits(['cancelEdit', 'updateemployeeForm']);
+	const props = defineProps(['driverId']);
+	const emit = defineEmits(['cancelEdit', 'updatedriverForm']);
 
 
 
-	const selectRoles = ref();
+	const selectEmployees = ref();
 
 
 	const passwordFieldType = ref("password");
@@ -244,11 +213,12 @@
 	}
 
 
+
 	const rules = {
-		role_id: {
+		name: {
 			required: helpers.withMessage(t("form.required"), required),
 		},
-		name: {
+		employee_id: {
 			required: helpers.withMessage(t("form.required"), required),
 		},
 		surname: {
@@ -264,25 +234,16 @@
 		password: {
 			required: helpers.withMessage(t("form.required"), required),
 		},
-		// phone_prefix: {
-		// 	required: helpers.withMessage(t("form.required"), required),
-		// 	minLength: minLength(2),
-		// },
-		// phone: {
-		// 	required: helpers.withMessage(t("form.required"), required),
-		// 	minLength: minLength(2),
-		// },
 	};
 
+
 	const formData = reactive({
-		role_id: "",
+		employee_id: "",
 		name: "",
 		surname: "",
 		fiscal_identification: "",
-		email: "",
 		password: "",
-		// phone_prefix: "",
-		// phone: "",
+		email: "",
 	});
 
 	const validate = useVuelidate(rules, toRefs(formData));
@@ -292,20 +253,19 @@
 		if (validate.value.$invalid) {
 			//TODO
 		} else {
-			emit('saveEmployeeForm', formData);
+			emit('saveDriverForm', formData);
 		}
 	};
 
 	onMounted(async () => {
 		// TODO here implements...
 
-		await getRoles();
+		//List Employees
+		await getEmployees();
 
-		//Select Roles
-		const newRoles = roles.value.filter((role) => {
-			return role.id == enumRoles.TRAFFIC_CHIEF_ID || role.id == enumRoles.TRAFFIC_MANAGER_ID;
-		});
-		selectRoles.value = newRoles;
+		console.log(employees.value);
+
+		selectEmployees.value = employees.value;
 
 	});
 

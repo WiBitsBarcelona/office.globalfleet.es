@@ -19,6 +19,10 @@ Run development:
 
 ```sh 
 
+yarn run dev
+
+or
+
 yarn run dev --port 3010
 
 ```
