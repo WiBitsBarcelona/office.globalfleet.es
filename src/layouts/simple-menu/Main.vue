@@ -163,6 +163,9 @@ import dom from "@left4code/tw-starter/dist/js/dom";
 import { useAuthenticationStore } from "@/stores/auth/authentications";
 // Chat hooks
 import useChat from "@/composables/chat";
+import enumRoles from '@/enums/enum_roles.js';
+
+
 const { unreadMessageCount, checkUnreadMessages, getCometChatCredentials } = useChat();
 
 const route = useRoute();
@@ -171,6 +174,8 @@ const formattedMenu = ref([]);
 const simpleMenuStore = useSimpleMenuStore();
 const simpleMenu = computed(() => nestedMenu(simpleMenuStore.menu, route));
 const useAuthentication = useAuthenticationStore();
+
+
 
 
 provide("forceActiveMenu", (pageName) => {
@@ -205,18 +210,13 @@ const formattedMenuList = async() => {
   //formattedMenu.value = $h.toRaw(simpleMenu.value);
 
   const menuNew = $h.toRaw(simpleMenu.value);
-
-  
   
   let m = [];
-  if(useAuthentication.getUser.roles[0].id === parseInt(import.meta.env.VITE_MANAGER_ROLE_ID)){
+  if(useAuthentication.getUser.roles[0].id === parseInt(enumRoles.MANAGER_ID)){
     m = menuNew;
   }else{
     m = menuNew.filter((menu) => menu.isManager !== true);
   }
-
-
-  console.log(m);
 
   formattedMenu.value = m;
 
