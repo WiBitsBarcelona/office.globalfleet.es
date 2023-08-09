@@ -210,7 +210,7 @@
 
 <script setup>
 import { CometChat } from "@cometchat-pro/chat";
-import { ref } from "vue";
+import { ref,onMounted } from "vue";
 import $ from 'jquery';
 
 // Hooks
@@ -247,6 +247,14 @@ const deliveredAt = ref("");
 const readAt = ref("");
 const CHATID = ref('')
 
+const sConversationId = ref(null)
+const sChatType = ref(null)
+const sChatId = ref(null)
+
+onMounted(async () => {
+  initialize();
+})
+
 // Funcion que va a correr al iniciar la pagina
 const initialize = async () => {
   // funcion para listar los datos de cometchat
@@ -267,8 +275,8 @@ const initialize = async () => {
     .build();
 
   // Inicialitzem la App
-  CometChat.init(appID, appSettings).then(
-    () => {
+  CometChat.init(appID, appSettings).then(() => {
+
       console.log("Initialization completed successfully");
 
       // Iniciem la sessió al xat
@@ -321,22 +329,29 @@ const initialize = async () => {
       // }
 
       // Afegirem un listener dels missatges
-      const chatListenerID =
-        "chat_incoming_messages_unique_id_globaltank_apliemporda";
+      const chatListenerID = "chat_incoming_messages_unique_id_globaltank_apliemporda";
 
-      CometChat.addMessageListener(
-        chatListenerID,
-        new CometChat.MessageListener({
+      CometChat.addMessageListener( chatListenerID, new CometChat.MessageListener({
+
           onTextMessageReceived: (textMessage) => {
             console.log("Text message received successfully", textMessage);
             printTextMessage(textMessage);
+
+            //buildChat(sConversationId.value,sChatType.value,sChatId.value);
+            //console.log(userInfo.uid,data3.value)
+
+            //markUserConversationAsRead(userInfo.uid, sChatId.value);
+            //LoadChatsList();
           },
+
           onMediaMessageReceived: (mediaMessage) => {
             console.log("Media message received successfully", mediaMessage);
           },
+
           onCustomMessageReceived: (customMessage) => {
             console.log("Custom message received successfully", customMessage);
           },
+
         })
       );
     },
@@ -346,30 +361,54 @@ const initialize = async () => {
   );
 
   // Funció per loguejar un usuari
-  const logUserIn = async (authKey, UID) => {
-    const response = await CometChat.login(UID, authKey).then(
-      async () => {
-        return true;
-      },
-      (error) => {
-        console.log("Login failed with exception:", { error });
-        return false;
-      }
-    );
+  // const logUserIn = async (authKey, UID) => {
+  //   const response = await CometChat.login(UID, authKey).then(
+  //     async () => {
+  //       return true;
+  //     },
+  //     (error) => {
+  //       console.log("Login failed with exception:", { error });
+  //       return false;
+  //     }
+  //   );
 
-    return response;
-  };
+  //   return response;
+  // };
 };
 
-initialize();
+const tuArray = ref([])
+const miArray = ref([])
 
+setInterval(async ()=>{
+  const conversations = await loadChatMessages(sConversationId.value);
+  miArray.value = conversations
+
+  if (equalsCheck(miArray.value, tuArray.value)){
+    console.log("Son Iguales");
+  }else{
+    console.log("No son Iguales");
+    buildChat(sConversationId.value,sChatType.value,sChatId.value);
+  }
+},2000);
+
+
+const equalsCheck = (a, b) => {
+    return JSON.stringify(a) === JSON.stringify(b);
+}
 // Funció per montar la pantalla del xat
 const buildChat = async (ConversationId, ChatType, ChatId) => {
+
+  await mark_user_conversation_as_delivered(userInfo.uid, ChatId);
+
+  //console.log(ChatId);
+  sConversationId.value = ConversationId;
+  sChatType.value = ChatType;
+  sChatId.value = ChatId;
+
   let lastMessageDate = "";
 
-  const messagesBalloon = document
-    .getElementById(ChatId)
-    ?.querySelector(".inner-messages-balloon");
+  const messagesBalloon = document.getElementById(ChatId) ?.querySelector(".inner-messages-balloon");
+
   if (messagesBalloon) {
     messagesBalloon.remove();
   }
@@ -383,27 +422,23 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
   elementSeleccionat.classList.remove("bg-white");
   elementSeleccionat.classList.add("bg-gray-200");
 
-  const response =
-    ChatType === "user"
-      ? await getUserData(ChatId)
-      : await getGroupData(ChatId);
+  const response = ChatType === "user" ? await getUserData(ChatId) : await getGroupData(ChatId);
   selectedChat.value = response.data;
   inChat.value = true;
 
-  const conversations = await loadChatMessages(ConversationId);
-
+  tuArray.value = await loadChatMessages(ConversationId);
   const chat = document.getElementById("chat");
-
 
   chat.innerHTML = "";
 
-  conversations.data.forEach((conversation) => {
+  tuArray.value.data.forEach((conversation) => {
     if (conversation.sender !== userInfo.uid) {
       if (conversation.receiverType === "user")
         markUserConversationAsRead(userInfo.uid, conversation.sender);
       else markGroupConversationAsRead(userInfo.uid, conversation.receiver);
     }
 
+    // mark_user_conversation_as_delivered(userInfo.uid, ChatId);
     const currentMessageDate = getMessageDate(conversation.sentAt);
 
     if (lastMessageDate !== currentMessageDate) {
@@ -423,20 +458,20 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
           <p style="font-size: 12px; margin: 0px;">${convertStringToDate(conversation.sentAt)}</p>
           
           ${userInfo.uid === conversation.sender ?
-        (conversation.sentAt > 0 && conversation.deliveredAt == null && conversation.readAt == null ?
-          `<img src="../src/assets/images/checkmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
-          :
-          (conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt == null ?
-            `<img src="../src/assets/images/allcheckmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
-            :
-            (conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt > 0 ?
-              `<img src="../src/assets/images/checkallmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
-              : '')))
-        : ''}
+            (conversation.sentAt > 0 && conversation.deliveredAt == null && conversation.readAt == null ?
+              `<img src="../src/assets/images/checkmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
+              :
+              (conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt == null ?
+                `<img src="../src/assets/images/allcheckmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
+                :
+                (conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt > 0 ?
+                  `<img src="../src/assets/images/checkallmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
+                  : '')))
+            : ''}
             
-          </div>
         </div>
-      </button>`;
+      </div>
+    </button>`;
   });
 
   const messageBody = document.getElementById("chat");
@@ -532,9 +567,7 @@ const sendMessage = async () => {
   const value = message.value.trim();
   if (value !== "") {
     sendTextMessage(userInfo.uid, message.value, chatId, receiverType);
-    
-    await mark_user_conversation_as_delivered(userInfo.uid, chatId);
-    await LoadChatsList()
+    //LoadChatsList();
   }
 
   // Netejem el text
@@ -806,10 +839,8 @@ const printTextMessage = async (textMessage) => {
   if (sender !== userInfo.uid) {
     if (textMessage.receiverType === "group") {
       markGroupConversationAsRead(userInfo.uid, receiver);
-      console.log('aqui', CHATID)
     } else {
       markUserConversationAsRead(userInfo.uid, sender);
-      console.log('aqui', CHATID)
     }
   }
 
