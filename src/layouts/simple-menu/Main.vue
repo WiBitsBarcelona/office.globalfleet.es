@@ -205,6 +205,8 @@ const formattedMenuList = async() => {
   //formattedMenu.value = $h.toRaw(simpleMenu.value);
 
   const menuNew = $h.toRaw(simpleMenu.value);
+
+  
   
   let m = [];
   if(useAuthentication.getUser.roles[0].id === parseInt(import.meta.env.VITE_MANAGER_ROLE_ID)){
@@ -212,6 +214,9 @@ const formattedMenuList = async() => {
   }else{
     m = menuNew.filter((menu) => menu.isManager !== true);
   }
+
+
+  console.log(m);
 
   formattedMenu.value = m;
 
