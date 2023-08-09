@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthenticationStore } from '@/stores/auth/authentications';
+import enumRoles from '@/enums/enum_roles.js';
 
 const requireAuth = async(to, from, next) => {
   document.title = `${to.name} - ${import.meta.env.VITE_APP_TITLE}`;
@@ -28,7 +29,7 @@ const checkManager = async(to, from, next) => {
     await useAuthentication.currentUser();
     const user = useAuthentication.getUser;
 
-    if(user.roles[0].id === parseInt(import.meta.env.VITE_MANAGER_ROLE_ID)){
+    if(user.roles[0].id === parseInt(enumRoles.MANAGER_ID)){
       next();
     }else{
       next({name: "dashboard" });
