@@ -197,6 +197,26 @@
               <p style="font-size: 18px; margin-left: 5px;" v-if="readAt != 'undefined'">{{ convertirAFecha(readAt) }}</p>
             </div>
 
+            <div style="margin-top: 5px; margin-bottom: 5px;">
+              <div v-if="confirmetAt == 'null'">
+              <!-- <div v-if="isChecked == false"> -->
+                <div style="margin-top: 10px;">
+                  <label style="font-size: 18px; margin-left: 5px;">
+                    <input type="checkbox" :id="`${idMessage}`" value="first_checkbox" v-model="isChecked"
+                      @change="handleCheckboxChange" style="margin-right: 5px;"/>
+                    Confirmar Lectura
+                  </label>
+                </div>
+              </div>
+              <div v-else>
+                <p style="font-size: 16px;">Confirmado</p>
+                <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
+                  <img src="../../assets/images/checkmarkCircleSky.svg" alt="Checkmark"
+                    style="width: 25px; height: 25px; margin-left: 5px;" />
+                  <p style="font-size: 18px; margin-left: 5px;" v-if="confirmetAt != 'undefined'">{{ convertirAFecha(confirmetAt) }}</p> 
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -210,7 +230,7 @@
 
 <script setup>
 import { CometChat } from "@cometchat-pro/chat";
-import { ref,onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import $ from 'jquery';
 
 // Hooks
@@ -232,7 +252,8 @@ const {
   sendTextMessage,
   getUserGroups,
   getGroupMembers,
-  mark_user_conversation_as_delivered
+  mark_user_conversation_as_delivered,
+  update_datameta_message
 } = useChat();
 
 let selectedChat = ref("");
@@ -245,11 +266,14 @@ const modalMessage = ref(false)
 const sentAt = ref("");
 const deliveredAt = ref("");
 const readAt = ref("");
-const CHATID = ref('')
+const confirmetAt = ref('')
+const idMessage = ref('')
 
 const sConversationId = ref(null)
 const sChatType = ref(null)
 const sChatId = ref(null)
+const checkresponse = ref(false);
+const isChecked = ref(false);
 
 onMounted(async () => {
   initialize();
@@ -277,84 +301,78 @@ const initialize = async () => {
   // Inicialitzem la App
   CometChat.init(appID, appSettings).then(() => {
 
-      console.log("Initialization completed successfully");
+    console.log("Initialization completed successfully");
 
-      // Iniciem la sessió al xat
-      const UID = useAuthenticationStore().user.employee.cometchat_uid;
-      const name = useAuthenticationStore().user.employee.name;
+    // Iniciem la sessió al xat
+    const UID = useAuthenticationStore().user.employee.cometchat_uid;
+    const name = useAuthenticationStore().user.employee.name;
 
-      const user = new CometChat.User(UID);
-      user.setName(name);
+    const user = new CometChat.User(UID);
+    user.setName(name);
 
-      userInfo = user;
+    userInfo = user;
 
-      CometChat.login(UID, authKey).then(
-        (user) => {
-          console.log("Loggued successful:", { user });
-          LoadChatsList();
-        },
-        (error) => {
-          console.log("Login failed with exception:", { error });
-        }
-      );
+    CometChat.login(UID, authKey).then(
+      (user) => {
+        console.log("Loggued successful:", { user });
+        LoadChatsList();
+      },
+      (error) => {
+        console.log("Login failed with exception:", { error });
+      }
+    );
 
-      // CometChat.getLoggedinUser().then((e) => {
-      //   if (e) {
-      //     isLoggued = true;
-      //     LoadChatsList();
-      //   }
-      // });
+    // CometChat.getLoggedinUser().then((e) => {
+    //   if (e) {
+    //     isLoggued = true;
+    //     LoadChatsList();
+    //   }
+    // });
 
-      // if (!isLoggued) {
-      //   // Creem l'usuari
-      //   CometChat.createUser(user, authKey).then(
-      //     async () => {
-      //       // Un cop creat, ens loguejarem
-      //       const Logued = await logUserIn(authKey, UID);
-      //       // Si la sessió s'ha iniciat correctament
-      //       if (Logued) {
-      //         LoadChatsList();
-      //       }
-      //     },
-      //     async (error) => {
-      //       if (error.code === "ERR_UID_ALREADY_EXISTS") {
-      //         // En cas d'existir, farem login
-      //         const Logued = await logUserIn(authKey, UID);
-      //         if (Logued) {
-      //           LoadChatsList();
-      //         }
-      //       }
-      //     }
-      //   );
-      // }
+    // if (!isLoggued) {
+    //   // Creem l'usuari
+    //   CometChat.createUser(user, authKey).then(
+    //     async () => {
+    //       // Un cop creat, ens loguejarem
+    //       const Logued = await logUserIn(authKey, UID);
+    //       // Si la sessió s'ha iniciat correctament
+    //       if (Logued) {
+    //         LoadChatsList();
+    //       }
+    //     },
+    //     async (error) => {
+    //       if (error.code === "ERR_UID_ALREADY_EXISTS") {
+    //         // En cas d'existir, farem login
+    //         const Logued = await logUserIn(authKey, UID);
+    //         if (Logued) {
+    //           LoadChatsList();
+    //         }
+    //       }
+    //     }
+    //   );
+    // }
 
-      // Afegirem un listener dels missatges
-      const chatListenerID = "chat_incoming_messages_unique_id_globaltank_apliemporda";
+    // Afegirem un listener dels missatges
+    const chatListenerID = "chat_incoming_messages_unique_id_globaltank_apliemporda";
 
-      CometChat.addMessageListener( chatListenerID, new CometChat.MessageListener({
+    CometChat.addMessageListener(chatListenerID, new CometChat.MessageListener({
 
-          onTextMessageReceived: (textMessage) => {
-            console.log("Text message received successfully", textMessage);
-            printTextMessage(textMessage);
+      onTextMessageReceived: (textMessage) => {
+        console.log("Text message received successfully", textMessage);
+        printTextMessage(textMessage);
+      },
 
-            //buildChat(sConversationId.value,sChatType.value,sChatId.value);
-            //console.log(userInfo.uid,data3.value)
+      onMediaMessageReceived: (mediaMessage) => {
+        console.log("Media message received successfully", mediaMessage);
+      },
 
-            //markUserConversationAsRead(userInfo.uid, sChatId.value);
-            //LoadChatsList();
-          },
+      onCustomMessageReceived: (customMessage) => {
+        console.log("Custom message received successfully", customMessage);
+      },
 
-          onMediaMessageReceived: (mediaMessage) => {
-            console.log("Media message received successfully", mediaMessage);
-          },
-
-          onCustomMessageReceived: (customMessage) => {
-            console.log("Custom message received successfully", customMessage);
-          },
-
-        })
-      );
-    },
+    })
+    );
+  },
     (error) => {
       console.log("Initialization failed with error:", error);
     }
@@ -379,21 +397,21 @@ const initialize = async () => {
 const tuArray = ref([])
 const miArray = ref([])
 
-setInterval(async ()=>{
+setInterval(async () => {
   const conversations = await loadChatMessages(sConversationId.value);
   miArray.value = conversations
 
-  if (equalsCheck(miArray.value, tuArray.value)){
+  if (equalsCheck(miArray.value, tuArray.value)) {
     console.log("Son Iguales");
-  }else{
+  } else {
     console.log("No son Iguales");
-    buildChat(sConversationId.value,sChatType.value,sChatId.value);
+    buildChat(sConversationId.value, sChatType.value, sChatId.value);
   }
-},2000);
+}, 2000);
 
 
 const equalsCheck = (a, b) => {
-    return JSON.stringify(a) === JSON.stringify(b);
+  return JSON.stringify(a) === JSON.stringify(b);
 }
 // Funció per montar la pantalla del xat
 const buildChat = async (ConversationId, ChatType, ChatId) => {
@@ -407,7 +425,7 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
 
   let lastMessageDate = "";
 
-  const messagesBalloon = document.getElementById(ChatId) ?.querySelector(".inner-messages-balloon");
+  const messagesBalloon = document.getElementById(ChatId)?.querySelector(".inner-messages-balloon");
 
   if (messagesBalloon) {
     messagesBalloon.remove();
@@ -450,24 +468,33 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
     const messageClass = userInfo.uid === conversation.sender ? "missatgePropi" : "missatgeEntrant";
 
     chat.innerHTML += `
-    <button class="${messageClass} ${userInfo.uid === conversation.sender ? 'mensaje': ''}" style="display: flex; width: 100%; justify-content: flex-${userInfo.uid === conversation.sender ? "end" : "start"};"
-      date="${conversation.sentAt}-${conversation.deliveredAt}-${conversation.readAt}">
+    <button class="${messageClass} ${userInfo.uid === conversation.sender ? 'mensaje' : ''}" style="display: flex; width: 100%; justify-content: flex-${userInfo.uid === conversation.sender ? "end" : "start"};"
+      date="${conversation.sentAt}-${conversation.deliveredAt}-${conversation.readAt}-${conversation.id}-${conversation.data.metadata ? conversation.data.metadata['confirmetAt'] : null }">
+      
+      <div style="justify-content: center; align-items:center; height: 100%; display: flex;">
+      ${userInfo.uid === conversation.sender ? 
+        conversation.data.metadata ? 
+        conversation.data.metadata['confirmetAt'] == 'undefined'? '<img src="../src/assets/images/alertCircle.svg" alt="Checkmark" style="width: 25px; height: 25px; margin-right: 10px;" />'
+        : '<img src="../src/assets/images/checkmarkCircleGray.svg" alt="Checkmark" style="width: 25px; height: 25px; margin-right: 10px;" />'
+        : '' 
+        : ''}
+      </div>
       <div class="flex gap-3 ${userInfo.uid === conversation.sender ? "py-2 px-3 bg-[#0096b2] text-white rounded-lg w-fit" : "rounded-lg w-fit py-2 px-3 bg-gray-200"} max-w-md">
         <p style="margin: 0px; display: flex; word-break: break-word;">${conversation.data.text}</p>
         <div style="display: flex; justify-content: flex-end; align-items: center">
           <p style="font-size: 12px; margin: 0px;">${convertStringToDate(conversation.sentAt)}</p>
           
           ${userInfo.uid === conversation.sender ?
-            (conversation.sentAt > 0 && conversation.deliveredAt == null && conversation.readAt == null ?
-              `<img src="../src/assets/images/checkmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
-              :
-              (conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt == null ?
-                `<img src="../src/assets/images/allcheckmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
-                :
-                (conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt > 0 ?
-                  `<img src="../src/assets/images/checkallmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
-                  : '')))
-            : ''}
+        (conversation.sentAt > 0 && conversation.deliveredAt == null && conversation.readAt == null ?
+          `<img src="../src/assets/images/checkmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
+          :
+          (conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt == null ?
+            `<img src="../src/assets/images/allcheckmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
+            :
+            (conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt > 0 ?
+              `<img src="../src/assets/images/checkallmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
+              : '')))
+        : ''}
             
         </div>
       </div>
@@ -483,18 +510,25 @@ $(document).on('click', '.mensaje', async function () {
   showModal(true)
 
   let valores = $(this).attr('date');
-  let [value1, value2, value3] = valores.split('-');
+  let [value1, value2, value3, value4, value5] = valores.split('-');
   console.log(valores)
 
   sentAt.value = value1
   deliveredAt.value = value2
   readAt.value = value3
+  idMessage.value = value4
+  confirmetAt.value = value5
+  
 })
 
 
 const showModal = (value) => {
   modalMessage.value = value;
   console.log(value)
+
+  if(checkresponse.value == true){
+    isChecked.value = false
+  }
 }
 
 // Funció per a alternar la vista de xat a llista de xat
@@ -562,7 +596,7 @@ const sendMessage = async () => {
   const chatId = header.getAttribute("chatId");
   const receiverType = header.getAttribute("type");
 
-  CHATID.value = chatId
+  //CHATID.value = chatId
   // Controlamos que el mensaje no esté vacio
   const value = message.value.trim();
   if (value !== "") {
@@ -811,7 +845,7 @@ const printTextMessage = async (textMessage) => {
     return;
   }
   // En caso de estar en un chat pero no es del que recibimos el mensaje
-  if ( header.getAttribute("chatId") !== receiver && header.getAttribute("chatId") !== sender ) {
+  if (header.getAttribute("chatId") !== receiver && header.getAttribute("chatId") !== sender) {
     // Actualizamos lista de xats
     await getConversationsList(userInfo.uid);
     console.log(CHATID.value)
@@ -822,7 +856,7 @@ const printTextMessage = async (textMessage) => {
       .classList.add("selected");
     // Volvemos a seleccionar el chat con el color gris
     return;
-  } 
+  }
 
   const senderClass =
     textMessage.sender.uid === userInfo.uid
@@ -921,6 +955,24 @@ const convertirAFecha = (timestamp) => {
     minute: "numeric",
   };
   return fecha.toLocaleString("es-ES", opciones);
+}
+
+const handleCheckboxChange = async () => {
+  if (isChecked.value) {
+    console.log('El checkbox está activado.');
+    const response = await update_datameta_message(idMessage.value)
+    
+    if (response.error) {
+      console.log('error')
+      console.log(response)
+    }
+    else{
+      checkresponse.value = true;
+      console.log("aqiui",response)
+    }
+  } else {
+    console.log('El checkbox está desactivado.');
+  }
 }
 </script>
 

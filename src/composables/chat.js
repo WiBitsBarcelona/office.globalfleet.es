@@ -369,6 +369,38 @@ export default function useChat() {
     return values;
   };
 
+  // Funcion para ConfirmarLectura (UpdateMensaje)
+  const update_datameta_message = async (idmessage) => {
+    try {
+        const response = await fetch(
+            `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/messages/${idmessage}`,
+            {
+                method: "PUT",
+                headers: {
+                    accept: "application/json",
+                    'content-type': 'application/json',
+                    apikey: cometData.value.company.cometchat.rest_api_key,
+                },
+                body: JSON.stringify({
+                    data: {
+                        metadata: {
+                            reader: '0', // Pruebas -> valor 0 es no confirmado y 1 es Confirmado
+                            confirmetAt: 'undefined'
+                        }
+                    } 
+                }),
+            }
+        );
+
+        const data = await response.json();
+        return data;
+
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+}
+
   return {
     // Variables
     cometData,
@@ -389,6 +421,7 @@ export default function useChat() {
     getUserGroups,
     getGroupMembers,
     checkUnreadMessages,
-    mark_user_conversation_as_delivered
+    mark_user_conversation_as_delivered,
+    update_datameta_message
   };
 }
