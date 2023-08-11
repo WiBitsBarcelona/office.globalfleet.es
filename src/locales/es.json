@@ -165,7 +165,7 @@
   "filter_by_driver": "Filtrar por Conductor",
   "driving": "Circulando",
   "stopped": "Parado",
-  "no_display_data": "Sin mostrar datos", 
+  "no_display_data": "No hay datos que mostrar", 
   "documents": {
     "title": "Gestor de Documentos",
     "current_folder_lbl": "Mostrando el contenido de la carpeta:",
