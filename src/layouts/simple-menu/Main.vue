@@ -163,6 +163,9 @@ import dom from "@left4code/tw-starter/dist/js/dom";
 import { useAuthenticationStore } from "@/stores/auth/authentications";
 // Chat hooks
 import useChat from "@/composables/chat";
+import enumRoles from '@/enums/enum_roles.js';
+
+
 const { unreadMessageCount, checkUnreadMessages, getCometChatCredentials } = useChat();
 
 const route = useRoute();
@@ -171,6 +174,8 @@ const formattedMenu = ref([]);
 const simpleMenuStore = useSimpleMenuStore();
 const simpleMenu = computed(() => nestedMenu(simpleMenuStore.menu, route));
 const useAuthentication = useAuthenticationStore();
+
+
 
 
 provide("forceActiveMenu", (pageName) => {
@@ -192,6 +197,10 @@ onMounted(async () => {
   //formattedMenu.value = $h.toRaw(simpleMenu.value);
   await formattedMenuList();
   
+  //TODO:
+  // pendiente por revisar: cuando no tiene cometchat activo igualmente falla 
+  // por que un setInterval cada vez que se recarga un menu. ¿El setInterval se reemplaza?
+  // No en recomendable haceer esto directamente "useAuthenticationStore().user.employee" crear un objeto antes. Tambien se puede reemplazar por: "useAuthentication.getUser"
   if (!localStorage.getItem("token") || useAuthenticationStore().user.employee !== null) {       
     await checkUnreadMessages();
     setInterval(await checkUnreadMessages, 5000);
@@ -203,17 +212,16 @@ onMounted(async () => {
 
 const formattedMenuList = async() => {
   //formattedMenu.value = $h.toRaw(simpleMenu.value);
-
-  const menuNew = $h.toRaw(simpleMenu.value);
+  const menuFormat = $h.toRaw(simpleMenu.value);
   
-  let m = [];
-  if(useAuthentication.getUser.roles[0].id === parseInt(import.meta.env.VITE_MANAGER_ROLE_ID)){
-    m = menuNew;
+  let menuNew = [];
+  if(useAuthentication.getUser.roles[0].id === parseInt(enumRoles.MANAGER_ID)){
+    menuNew = menuFormat;
   }else{
-    m = menuNew.filter((menu) => menu.isManager !== true);
+    menuNew = menuFormat.filter((m) => m.isManager !== true);
   }
 
-  formattedMenu.value = m;
+  formattedMenu.value = menuNew;
 
 }
 
