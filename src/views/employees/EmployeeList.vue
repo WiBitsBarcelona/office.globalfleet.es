@@ -327,8 +327,6 @@
 
 				await destroyEmployee(id);
 
-				console.log("passss",{...errors.value});
-
 				if(errors.value.length > 0){
 
 					let e = '';
@@ -339,7 +337,7 @@
 
 
 					Swal.fire(t("message.error"), e, 'error');
-				 	//console.log("passss",{...errors.value});
+					
 				}else{
 					tableData.value = await findData();
 					initTabulator();
