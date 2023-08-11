@@ -8,7 +8,7 @@
 
 
 
-			<div class="col-span-12 md:col-span-12 lg:col-span-4">
+			<div class="col-span-12 md:col-span-6 lg:col-span-4">
 				<div class="input-form">
 					<label for="employee_id" class="form-label w-full">
 						{{ $t("employee") }}
@@ -82,7 +82,7 @@
 			</div>
 
 
-			<div class="col-span-12 md:col-span-6 lg:col-span-4">
+			<div class="col-span-12 md:col-span-6 lg:col-span-3">
 				<div class="input-form">
 					<label for="fiscal_identification" class="form-label w-full">
 						{{ $t("fiscal_identification") }}
@@ -97,6 +97,31 @@
 					/>
 					<template v-if="validate.fiscal_identification.$error">
 						<div v-for="(error, index) in validate.fiscal_identification.$errors" :key="index" class="text-danger mt-2">
+							{{ error.$message }}
+						</div>
+					</template>
+				</div>
+			</div>
+
+
+			
+
+
+			<div class="col-span-12 md:col-span-6 lg:col-span-5">
+				<div class="input-form">
+					<label for="email" class="form-label w-full">
+						{{ $t("email") }}
+					</label>
+					<input
+						v-model.trim="validate.email.$model"
+						id="email"
+						type="text"
+						name="email"
+						class="form-control"
+						:class="{ 'border-danger': validate.email.$error }"
+					/>
+					<template v-if="validate.email.$error">
+						<div v-for="(error, index) in validate.email.$errors" :key="index" class="text-danger mt-2">
 							{{ error.$message }}
 						</div>
 					</template>
@@ -131,29 +156,6 @@
 					</template>
 				</div>
 			</div>
-
-
-			<div class="col-span-12 md:col-span-6 lg:col-span-4">
-				<div class="input-form">
-					<label for="email" class="form-label w-full">
-						{{ $t("email") }}
-					</label>
-					<input
-						v-model.trim="validate.email.$model"
-						id="email"
-						type="text"
-						name="email"
-						class="form-control"
-						:class="{ 'border-danger': validate.email.$error }"
-					/>
-					<template v-if="validate.email.$error">
-						<div v-for="(error, index) in validate.email.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
-			</div>
-
 
 
 
@@ -258,15 +260,9 @@
 	};
 
 	onMounted(async () => {
-		// TODO here implements...
-
 		//List Employees
 		await getEmployees();
-
-		console.log(employees.value);
-
 		selectEmployees.value = employees.value;
-
 	});
 
 </script>
