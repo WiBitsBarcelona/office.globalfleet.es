@@ -125,7 +125,7 @@
                 },
                 {
                     title: t("name"),
-                    minWidth: 200,
+                    minWidth: 150,
                     responsive: 0,
                     field: "name",
                     vertAlign: "middle",
@@ -136,14 +136,6 @@
                     minWidth: 200,
                     responsive: 0,
                     field: "surname",
-                    vertAlign: "middle",
-                    headerHozAlign:"left",
-                },
-                {
-                    title: t("fiscal_identification"),
-                    minWidth: 200,
-                    responsive: 0,
-                    field: "fiscal_identification",
                     vertAlign: "middle",
                     headerHozAlign:"left",
                 },
