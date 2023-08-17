@@ -119,7 +119,7 @@
   "company": "Compañía",
   "name": "Nombre", 
   "surname": "Apellidos",
-  "fiscal_identification": "Identificación",
+  "fiscal_identification": "DNI / NIE",
   "reference_number": "Número",
   "started_at": "Fecha inicio",
   "finished_at": "Fecha fin",
