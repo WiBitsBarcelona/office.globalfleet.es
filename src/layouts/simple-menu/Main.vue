@@ -141,9 +141,16 @@
       <!-- END: Side Menu -->
       <!-- BEGIN: Content -->
       <div class="content">
+        
         <router-view />
+
+        <!-- BEGIN: Footer Text -->
+        <FleetFooter/>
+        <!-- END: Footer Text -->
+
       </div>
       <!-- END: Content -->
+
     </div>
   </div>
 </template>
@@ -164,6 +171,7 @@ import { useAuthenticationStore } from "@/stores/auth/authentications";
 // Chat hooks
 import useChat from "@/composables/chat";
 import enumRoles from '@/enums/enum_roles.js';
+import FleetFooter from "@/components/fleet-footer/Main.vue";
 
 
 const { unreadMessageCount, checkUnreadMessages, getCometChatCredentials } = useChat();
