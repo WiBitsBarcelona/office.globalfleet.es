@@ -84,6 +84,7 @@
   "export": "Exportar",
   "actions": "Acciones",
   "reset": "Limpiar",
+  "dark_mode": "Modo Oscuro",
   "errors": {
     "internal_error": "Error interno. Por favor contacte con el administrador"
   },
@@ -116,11 +117,15 @@
   "roles": "Tipos",
   "plate": "Matrícula",
   "employee": "Empleado",
-  "company": "Compañía",
+  "company": "Empresa",
   "name": "Nombre", 
   "surname": "Apellidos",
   "fiscal_identification": "Identificación",
   "reference_number": "Número",
+  "sended_at": "Enviado",
+  "receptioned_at": "Recibido",
+  "confirmed_at": "Confirmado",
+  "readed_at": "Leido",
   "started_at": "Fecha inicio",
   "finished_at": "Fecha fin",
   "execution_at": "Fecha ETA",
@@ -156,6 +161,10 @@
   "status": "Estatus",
   "order_by": "Ordenar por:",
   "find_by": "Buscar por viaje, vehículo, conductor...",
+  "action": "Acción",
+  "activity": "Actividad",
+  "customer": "Cliente",
+  "task": "Tarea",
   "infowindow": {
     "trip": "Viaje:",
     "status": "Estado:",
@@ -317,5 +326,8 @@
       "file_yes": "Si, marcarlo",
       "set_readed_file": "Documento marcado como leido."
     }
+  },
+  "trip_details": {
+    "title": "Incidencias del viaje"
   }
 }

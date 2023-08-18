@@ -106,6 +106,7 @@ const fakers = {
     ];
     return _.shuffle(products);
   },
+  
   fakeCategories() {
     const categories = [
       { name: "PC & Laptop", tags: "Apple, Asus, Lenovo, Dell, Acer" },

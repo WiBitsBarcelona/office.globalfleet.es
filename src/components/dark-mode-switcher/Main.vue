@@ -4,7 +4,7 @@
     class="dark-mode-switcher cursor-pointer shadow-md fixed bottom-0 right-0 box border rounded-full w-40 h-12 flex items-center justify-center z-50 mb-10 mr-10"
     @click="switchMode"
   >
-    <div class="mr-4 text-slate-600 dark:text-slate-200">Modo Oscuro</div>
+    <div class="mr-4 text-slate-600 dark:text-slate-200">{{ $t("dark_mode") }}</div>
     <div
       :class="{ 'dark-mode-switcher__toggle--active': darkMode }"
       class="dark-mode-switcher__toggle border"
@@ -17,9 +17,11 @@
 import { computed } from "vue";
 import { useDarkModeStore } from "@/stores/dark-mode";
 import dom from "@left4code/tw-starter/dist/js/dom";
+import { useI18n } from 'vue-i18n';
 
 const darkModeStore = useDarkModeStore();
 const darkMode = computed(() => darkModeStore.darkMode);
+const { t } = useI18n();
 
 const setDarkModeClass = () => {
   darkMode.value
