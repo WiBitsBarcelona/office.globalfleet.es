@@ -28,7 +28,6 @@
           </TabGroup>
       </div>
     </div>
-    <FleetFooter/>
   </div>
 </template>
 
@@ -36,5 +35,4 @@
   import GeneralDocuments from "@/components/documents/General.vue";
   import DriversDocuments from "@/components/documents/Drivers.vue";
   import TripsDocuments from "@/components/documents/Trips.vue";
-  import FleetFooter from "@/components/fleet-footer/Main.vue"; 
 </script>

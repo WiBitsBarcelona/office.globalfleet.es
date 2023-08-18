@@ -293,7 +293,6 @@ const deleteIcon = function (cell, formatterParams) {
 const initDriverDocumentsTabulator = () => {
   tabulator.value = new Tabulator(tableRefDriverDocuments.value, {
     reactiveData: true,
-    locale: true,
     data: driverDocuments.value,
     printAsHtml: true,
     printStyled: true,
@@ -303,6 +302,14 @@ const initDriverDocumentsTabulator = () => {
     layout: "fitColumns",
     responsiveLayout: "collapse",
     placeholder: t("message.no_matching_records_found"),
+    locale:true,
+    langs:{
+			"es-es":{
+				"pagination":{
+          "page_size":"", 
+				}
+			}
+		},
     initialSort: [
       { column: "id", dir: "desc" }
     ],

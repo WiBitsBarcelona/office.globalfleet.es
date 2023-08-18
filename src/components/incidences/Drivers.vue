@@ -43,8 +43,7 @@
     </div>
   </div>
   <!-- END: HTML Table Data -->
-  <!-- FOOTER -->
-  <FleetFooter/>
+  
 
 <!-- BEGIN: View Incidence Modal Content -->
 <Modal backdrop="static" :show="viewDriverIncidenceModal" @hidden="viewDriverIncidenceModal = false">
@@ -128,7 +127,6 @@ import Tabulator from "tabulator-tables";
 import { useI18n } from 'vue-i18n';
 import { helper as $h } from "@/utils/helper";
 import Swal from "sweetalert2";
-import FleetFooter from "@/components/fleet-footer/Main.vue";
 import useDriverIncident from "@/composables/driver_incidents";
 import useDownloadDocument from "@/composables/download_documents";
 import useDriverIncidentImage from "@/composables/driver_incident_images";
@@ -173,7 +171,6 @@ const clipIcon = function (cell, formatterParams){
 const initDriverTabulator = () => {
   driver_tabulator.value = new Tabulator(tableDriverRef.value, {
     reactiveData: true,
-    locale: true,
     data: dataArr,
     printAsHtml: true,
     printStyled: true,
@@ -183,6 +180,14 @@ const initDriverTabulator = () => {
     layout: "fitColumns",
     responsiveLayout: "collapse",
     placeholder: t("message.no_matching_records_found"),
+    locale:true,
+    langs:{
+			"es-es":{
+				"pagination":{
+          "page_size":"", 
+				}
+			}
+		},
     rowFormatter:function(row){
         if(row.getData().readed_at == null){
             row.getElement().style.color = "rgba(0,150,178, 1)";

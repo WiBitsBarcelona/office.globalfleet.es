@@ -114,6 +114,14 @@
             placeholder: t("message.no_matching_records_found"),
             reactiveData: true,
             data: tableData.value,
+			locale:true,
+    		langs:{
+				"es-es":{
+					"pagination":{
+            			"page_size":"", 
+					}
+				}
+			},
             columns: [
                 {
                     formatter: "responsiveCollapse",

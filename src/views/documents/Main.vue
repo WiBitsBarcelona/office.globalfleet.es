@@ -280,6 +280,14 @@ const initTabulator = () => {
     initialSort: [
       {column:"id", dir: "desc"}
     ],
+    locale:true,
+    langs:{
+			"es-es":{
+				"pagination":{
+          "page_size":"", 
+				}
+			}
+		},
     columns: [
       {
         formatter: "responsiveCollapse",
