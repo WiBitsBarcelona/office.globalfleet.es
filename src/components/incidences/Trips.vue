@@ -43,8 +43,6 @@
     </div>
   </div>
   <!-- END: HTML Table Data -->
-  <!-- FOOTER -->
-  <FleetFooter/>
 
 <!-- BEGIN: View Incidence Modal Content -->
 <Modal backdrop="static" :show="viewTripIncidenceModal" @hidden="viewTripIncidenceModal = false">
@@ -128,7 +126,6 @@ import Tabulator from "tabulator-tables";
 import { useI18n } from 'vue-i18n';
 import { helper as $h } from "@/utils/helper";
 import Swal from "sweetalert2";
-import FleetFooter from "@/components/fleet-footer/Main.vue";
 import useTripIncident from "@/composables/trip_incidents";
 import useDownloadDocument from "@/composables/download_documents";
 import useTripIncidentImage from "@/composables/trip_incident_images";
@@ -173,7 +170,6 @@ const clipIcon = function (cell, formatterParams){
 const initTripTabulator = () => {
   trip_tabulator.value = new Tabulator(tableTripRef.value, {
     reactiveData: true,
-    locale: true,
     data: dataArr,
     printAsHtml: true,
     printStyled: true,
@@ -192,6 +188,14 @@ const initTripTabulator = () => {
     initialSort: [
       { column: "id", dir: "desc" }
     ],
+    locale:true,
+    langs:{
+			"es-es":{
+				"pagination":{
+          "page_size":"", 
+				}
+			}
+		},
     columns: [
       {
         formatter: "responsiveCollapse",
