@@ -117,9 +117,7 @@
   <!-- Cuadre de xat -->
   <div v-if="inChat" class="flex flex-col w-full h-[85vh] justify-between items-center box overflow-hidden">
     <div id="current-chat-container" class="flex items-center h-20 w-full gap-3 px-4">
-      <img v-if="selectedChat.icon || selectedChat.avatar"
-        :src="selectedChat.icon ? selectedChat.icon : selectedChat.avatar" class="rounded-full w-14 h-14" />
-      <img v-else
+      <img
         :src="`https://ui-avatars.com/api/?name=${chatsTitle(selectedChat.name)}&${selectedChat.uid ? 'color=FFFFFF&background=4EDDFF&font-size=0.38' : 'color=FFFFFF&background=BCBCBC&font-size=0.38'}`"
         class="rounded-full w-14 h-14" />
       <h2 id="chat-header" class="w-full font-bold text-2xl" :type="selectedChat.uid ? 'user' : 'group'"
@@ -172,7 +170,7 @@
         </button>
 
         <div style="padding: 10px;">
-          <h2 style="font-size: 20px;">Info del Mensaje</h2>
+          <h2 style="font-size: 20px; font-style: normal; font-weight: 500; line-height: normal;">Info del Mensaje</h2>
           <div style="display: block; margin-top: 8px;">
 
             <p style="font-size: 16px;">Enviado</p>
@@ -197,13 +195,13 @@
               <p style="font-size: 18px; margin-left: 5px;" v-if="readAt != 'undefined'">{{ convertirAFecha(readAt) }}</p>
             </div>
 
+            <!-- Confirmacion de Lectura -->
             <div style="margin-top: 5px; margin-bottom: 5px;">
               <div v-if="confirmetAt == 'null'">
-              <!-- <div v-if="isChecked == false"> -->
                 <div style="margin-top: 10px;">
                   <label style="font-size: 18px; margin-left: 5px;">
                     <input type="checkbox" :id="`${idMessage}`" value="first_checkbox" v-model="isChecked"
-                      @change="handleCheckboxChange" style="margin-right: 5px;"/>
+                      @change="handleCheckboxChange" style="margin-right: 5px;" />
                     Confirmar Lectura
                   </label>
                 </div>
@@ -213,10 +211,13 @@
                 <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
                   <img src="../../assets/images/checkmarkCircleSky.svg" alt="Checkmark"
                     style="width: 25px; height: 25px; margin-left: 5px;" />
-                  <p style="font-size: 18px; margin-left: 5px;" v-if="confirmetAt != 'undefined'">{{ convertirAFecha(confirmetAt) }}</p> 
+                  <p style="font-size: 18px; margin-left: 5px;" v-if="confirmetAt != 'undefined'">
+                    {{ convertirAFecha(confirmetAt) }}
+                  </p>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
 
@@ -275,8 +276,12 @@ const sChatId = ref(null)
 const checkresponse = ref(false);
 const isChecked = ref(false);
 
+const nameChat = ref("")
+const uidChat = ref("")
+
 onMounted(async () => {
   initialize();
+
 })
 
 // Funcion que va a correr al iniciar la pagina
@@ -401,10 +406,7 @@ setInterval(async () => {
   const conversations = await loadChatMessages(sConversationId.value);
   miArray.value = conversations
 
-  if (equalsCheck(miArray.value, tuArray.value)) {
-    console.log("Son Iguales");
-  } else {
-    console.log("No son Iguales");
+  if (!equalsCheck(miArray.value, tuArray.value)) {
     buildChat(sConversationId.value, sChatType.value, sChatId.value);
   }
 }, 2000);
@@ -413,120 +415,131 @@ setInterval(async () => {
 const equalsCheck = (a, b) => {
   return JSON.stringify(a) === JSON.stringify(b);
 }
+
 // Funció per montar la pantalla del xat
 const buildChat = async (ConversationId, ChatType, ChatId) => {
 
-  await mark_user_conversation_as_delivered(userInfo.uid, ChatId);
+  if (conversationList != null && ChatType != null && ChatId != null) {
 
-  //console.log(ChatId);
-  sConversationId.value = ConversationId;
-  sChatType.value = ChatType;
-  sChatId.value = ChatId;
+    await mark_user_conversation_as_delivered(userInfo.uid, ChatId);
 
-  let lastMessageDate = "";
+    //console.log(ChatId);
+    sConversationId.value = ConversationId;
+    sChatType.value = ChatType;
+    sChatId.value = ChatId;
 
-  const messagesBalloon = document.getElementById(ChatId)?.querySelector(".inner-messages-balloon");
+    let lastMessageDate = "";
 
-  if (messagesBalloon) {
-    messagesBalloon.remove();
-  }
+    const messagesBalloon = document.getElementById(ChatId)?.querySelector(".inner-messages-balloon");
 
-  document.querySelectorAll(".conversations-list-item").forEach((element) => {
-    element.classList.replace("bg-gray-200", "bg-white");
-    element.classList.remove("selected");
-  });
-
-  const elementSeleccionat = document.getElementById(ChatId);
-  elementSeleccionat.classList.remove("bg-white");
-  elementSeleccionat.classList.add("bg-gray-200");
-
-  const response = ChatType === "user" ? await getUserData(ChatId) : await getGroupData(ChatId);
-  selectedChat.value = response.data;
-  inChat.value = true;
-
-  tuArray.value = await loadChatMessages(ConversationId);
-  const chat = document.getElementById("chat");
-
-  chat.innerHTML = "";
-
-  tuArray.value.data.forEach((conversation) => {
-    if (conversation.sender !== userInfo.uid) {
-      if (conversation.receiverType === "user")
-        markUserConversationAsRead(userInfo.uid, conversation.sender);
-      else markGroupConversationAsRead(userInfo.uid, conversation.receiver);
+    if (messagesBalloon) {
+      messagesBalloon.remove();
     }
 
-    // mark_user_conversation_as_delivered(userInfo.uid, ChatId);
-    const currentMessageDate = getMessageDate(conversation.sentAt);
+    document.querySelectorAll(".conversations-list-item").forEach((element) => {
+      element.classList.replace("bg-gray-200", "bg-white");
+      element.classList.remove("selected");
+    });
 
-    if (lastMessageDate !== currentMessageDate) {
-      chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
-    }
 
-    lastMessageDate = currentMessageDate;
+    const elementSeleccionat = document.getElementById(ChatId);
+    elementSeleccionat.classList.remove("bg-white");
+    elementSeleccionat.classList.add("bg-gray-200");
 
-    const messageClass = userInfo.uid === conversation.sender ? "missatgePropi" : "missatgeEntrant";
+    const response = ChatType === "user" ? await getUserData(ChatId) : await getGroupData(ChatId);
+    selectedChat.value = response.data;
 
-    chat.innerHTML += `
-    <button class="${messageClass} ${userInfo.uid === conversation.sender ? 'mensaje' : ''}" style="display: flex; width: 100%; justify-content: flex-${userInfo.uid === conversation.sender ? "end" : "start"};"
-      date="${conversation.sentAt}-${conversation.deliveredAt}-${conversation.readAt}-${conversation.id}-${conversation.data.metadata ? conversation.data.metadata['confirmetAt'] : null }">
-      
-      <div style="justify-content: center; align-items:center; height: 100%; display: flex;">
-      ${userInfo.uid === conversation.sender ? 
-        conversation.data.metadata ? 
-        conversation.data.metadata['confirmetAt'] == 'undefined'? '<img src="../src/assets/images/alertCircle.svg" alt="Checkmark" style="width: 25px; height: 25px; margin-right: 10px;" />'
-        : '<img src="../src/assets/images/checkmarkCircleGray.svg" alt="Checkmark" style="width: 25px; height: 25px; margin-right: 10px;" />'
-        : '' 
-        : ''}
-      </div>
-      <div class="flex gap-3 ${userInfo.uid === conversation.sender ? "py-2 px-3 bg-[#0096b2] text-white rounded-lg w-fit" : "rounded-lg w-fit py-2 px-3 bg-gray-200"} max-w-md">
-        <p style="margin: 0px; display: flex; word-break: break-word;">${conversation.data.text}</p>
-        <div style="display: flex; justify-content: flex-end; align-items: center">
-          <p style="font-size: 12px; margin: 0px;">${convertStringToDate(conversation.sentAt)}</p>
-          
+    nameChat.value = response.data.name
+    uidChat.value = response.data.uid
+
+    inChat.value = true;
+
+    tuArray.value = await loadChatMessages(ConversationId);
+    const chat = document.getElementById("chat");
+
+    chat.innerHTML = "";
+
+    tuArray.value.data.forEach((conversation) => {
+      if (conversation.sender !== userInfo.uid) {
+        if (conversation.receiverType === "user")
+          markUserConversationAsRead(userInfo.uid, conversation.sender);
+        else markGroupConversationAsRead(userInfo.uid, conversation.receiver);
+      }
+
+      // mark_user_conversation_as_delivered(userInfo.uid, ChatId);
+      const currentMessageDate = getMessageDate(conversation.sentAt);
+
+      if (lastMessageDate !== currentMessageDate) {
+        chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
+      }
+
+      lastMessageDate = currentMessageDate;
+
+      const messageClass = userInfo.uid === conversation.sender ? "missatgePropi" : "missatgeEntrant";
+
+      chat.innerHTML += `
+        <button class="${messageClass} ${userInfo.uid === conversation.sender ? 'mensaje' : ''}" style="display: flex; width: 100%; justify-content: flex-${userInfo.uid === conversation.sender ? "end" : "start"};"
+          date="${conversation.sentAt}-${conversation.deliveredAt}-${conversation.readAt}-${conversation.id}-${conversation.data.metadata ? conversation.data.metadata['confirmetAt'] : null}">
+          <div style="justify-content: center; align-items:center; height: 100%; display: flex;">
           ${userInfo.uid === conversation.sender ?
-        (conversation.sentAt > 0 && conversation.deliveredAt == null && conversation.readAt == null ?
-          `<img src="../src/assets/images/checkmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
-          :
-          (conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt == null ?
-            `<img src="../src/assets/images/allcheckmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
+          conversation.data.metadata ?
+            conversation.data.metadata['confirmetAt'] == 'undefined' ? '<img src="../src/assets/images/alertCircle.svg" alt="Checkmark" style="width: 25px; height: 25px; margin-right: 10px;" />'
+              : '<img src="../src/assets/images/checkmarkCircleGray.svg" alt="Checkmark" style="width: 25px; height: 25px; margin-right: 10px;" />'
+            : ''
+          : ''}
+          </div>
+          <div class="flex gap-3 ${userInfo.uid === conversation.sender ? "py-2 px-3 bg-[#0096b2] text-white rounded-lg w-fit" : "rounded-lg w-fit py-2 px-3 bg-gray-200"} max-w-md">
+            <p style="margin: 0px; display: flex; word-break: break-word;">${conversation.data.text}</p>
+            <div style="display: flex; justify-content: flex-end; align-items: center">
+              <p style="font-size: 12px; margin: 0px;">${convertStringToDate(conversation.sentAt)}</p>
+              
+              ${userInfo.uid === conversation.sender ?
+          (conversation.sentAt > 0 && conversation.deliveredAt == null && conversation.readAt == null ?
+            `<img src="../src/assets/images/checkmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
             :
-            (conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt > 0 ?
-              `<img src="../src/assets/images/checkallmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
-              : '')))
-        : ''}
-            
-        </div>
-      </div>
-    </button>`;
-  });
+            (conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt == null ?
+              `<img src="../src/assets/images/allcheckmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
+              :
+              (conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt > 0 ?
+                `<img src="../src/assets/images/checkallmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
+                : '')))
+          : ''}
+                
+            </div>
+          </div>
+        </button>`;
+    });
 
-  const messageBody = document.getElementById("chat");
-  messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
-
+    const messageBody = document.getElementById("chat");
+    messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
+  }
 };
 
+
+// Funcion que rescata los datos que se mostraran en el modal
 $(document).on('click', '.mensaje', async function () {
   showModal(true)
 
   let valores = $(this).attr('date');
   let [value1, value2, value3, value4, value5] = valores.split('-');
-  console.log(valores)
+  //console.log(valores)
 
   sentAt.value = value1
   deliveredAt.value = value2
   readAt.value = value3
   idMessage.value = value4
   confirmetAt.value = value5
-  
+
 })
 
 
+// Funcion para mostrar el modal
 const showModal = (value) => {
   modalMessage.value = value;
-  console.log(value)
+  //console.log(value)
 
-  if(checkresponse.value == true){
+  // si la respuesta es positiva el valor de checkbox se vuelve false
+  if (checkresponse.value == true) {
     isChecked.value = false
   }
 }
@@ -601,7 +614,6 @@ const sendMessage = async () => {
   const value = message.value.trim();
   if (value !== "") {
     sendTextMessage(userInfo.uid, message.value, chatId, receiverType);
-    //LoadChatsList();
   }
 
   // Netejem el text
@@ -813,6 +825,7 @@ const LoadChatsList = async () => {
 
   // Carregarem la llista de xats
   await getConversationsList(userInfo.uid);
+
 };
 
 const printTextMessage = async (textMessage) => {
@@ -957,18 +970,21 @@ const convertirAFecha = (timestamp) => {
   return fecha.toLocaleString("es-ES", opciones);
 }
 
+// funcion para saber si esta o no activado el checkbox
 const handleCheckboxChange = async () => {
   if (isChecked.value) {
     console.log('El checkbox está activado.');
+    // si se activa se ejecuta la funcion 
     const response = await update_datameta_message(idMessage.value)
-    
+
     if (response.error) {
       console.log('error')
       console.log(response)
     }
-    else{
+    else {
+      // si la respuesta es positiva se cambia de estado a checkresponse
       checkresponse.value = true;
-      console.log("aqiui",response)
+      console.log("aqiui", response)
     }
   } else {
     console.log('El checkbox está desactivado.');
