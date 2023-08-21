@@ -257,7 +257,7 @@
 		},
 		email: {
 			required: helpers.withMessage(t("form.required"), required),
-			
+			email: helpers.withMessage(t("form.email"), email),
 		},
 		password: {
 			minLength: helpers.withMessage(t("form.min_length"), minLength(2)),

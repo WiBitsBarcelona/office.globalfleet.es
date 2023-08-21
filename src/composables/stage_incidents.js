@@ -1,6 +1,5 @@
 import { ref } from 'vue';
 import axios from 'axios';
-//import { useRouter } from 'vue-router';
 
 
 export default function useStageIncident() {
@@ -8,7 +7,6 @@ export default function useStageIncident() {
 	const stageIncident = ref([]);
 	const stageIncidents = ref([]);
 	const errors = ref('');
-	//const router = useRouter();
 
 	let config = {
 		headers: {
@@ -24,11 +22,15 @@ export default function useStageIncident() {
 			stageIncidents.value = response.data.data;
 		} catch (e) {
 			console.log(e);
-			// if (e.response.status_code === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
+		}
+	}
+
+	const getStageIncidentsById = async (id) => {
+		try {
+			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}stage-incidents/${id}/list`, config);
+			stageIncidents.value = response.data.data;
+		} catch (e) {
+			console.log(e);
 		}
 	}
 
@@ -40,11 +42,6 @@ export default function useStageIncident() {
 			stageIncident.value = response.data.data;
 		} catch (e) {
 			console.log(e);
-			// if (e.response.status_code === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
 		}
 	}
 
@@ -53,14 +50,8 @@ export default function useStageIncident() {
 		errors.value = '';
 		try {
 			await axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}stage-incidents/store`, data, config);
-			//await router.push({ name: 'stageIncident.index' });
 		} catch (e) {
 			console.log(e);
-			// if (e.response.status_code === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
 		}
 	}
 
@@ -69,14 +60,8 @@ export default function useStageIncident() {
 		errors.value = '';
 		try {
 			await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}stage-incidents/update/${id}`, data, config);
-			//await router.push({ name: 'stageIncident.index' });
 		} catch (e) {
 			console.log(e);
-			// if (e.response.status === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
 		}
 	}
 
@@ -87,14 +72,8 @@ export default function useStageIncident() {
 			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}stage-incidents/delete/${id}`, config);
 		} catch (e) {
 			console.log(e);
-			// if (e.response.status === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
 		}
 	}
-
 
 	return {
 		errors,
@@ -102,6 +81,7 @@ export default function useStageIncident() {
 		stageIncidents,
 		getStageIncident,
 		getStageIncidents,
+		getStageIncidentsById,
 		storeStageIncident,
 		updateStageIncident,
 		destroyStageIncident,

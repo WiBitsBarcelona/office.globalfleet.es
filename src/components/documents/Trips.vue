@@ -371,7 +371,6 @@ plusIcon.setAttribute('stroke-width', '1.5');
 const initTripsTabulator = async () => {
   trips_tabulator.value = new Tabulator(tableTripsRef.value, {
     reactiveData: true,
-    locale: true,
     data: tableTripsData.value,
     dataTree:true,
     dataTreeCollapseElement: minusIcon,
@@ -388,6 +387,14 @@ const initTripsTabulator = async () => {
     initialSort: [
       { column: "execution_at", dir: "desc" }
     ],
+    locale:true,
+    langs:{
+			"es-es":{
+				"pagination":{
+          "page_size":"", 
+				}
+			}
+		},
     columns: [
       {
         formatter: "responsiveCollapse",
@@ -614,6 +621,14 @@ const initTripDocumentsTabulator = async () => {
     layout: "fitColumns",
     responsiveLayout: "collapse",
     placeholder: t("message.no_matching_records_found"),
+    locale:true,
+    langs:{
+			"es-es":{
+				"pagination":{
+          "page_size":"", 
+				}
+			}
+		},
     rowFormatter:function(row){
       if(row.getData().readed_at == null){
         row.getElement().style.color = "rgba(0,150,178, 1)";

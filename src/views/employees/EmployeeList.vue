@@ -114,6 +114,14 @@
             placeholder: t("message.no_matching_records_found"),
             reactiveData: true,
             data: tableData.value,
+			locale:true,
+    		langs:{
+				"es-es":{
+					"pagination":{
+            			"page_size":"", 
+					}
+				}
+			},
             columns: [
                 {
                     formatter: "responsiveCollapse",
@@ -125,7 +133,7 @@
                 },
                 {
                     title: t("name"),
-                    minWidth: 200,
+                    minWidth: 150,
                     responsive: 0,
                     field: "name",
                     vertAlign: "middle",
@@ -136,14 +144,6 @@
                     minWidth: 200,
                     responsive: 0,
                     field: "surname",
-                    vertAlign: "middle",
-                    headerHozAlign:"left",
-                },
-                {
-                    title: t("fiscal_identification"),
-                    minWidth: 200,
-                    responsive: 0,
-                    field: "fiscal_identification",
                     vertAlign: "middle",
                     headerHozAlign:"left",
                 },
@@ -168,7 +168,8 @@
                 },
                 {
                     title: "",
-                    width: 120,
+					minWidth: 80,
+                    width: 10,
                     field: "actions",
                     responsive: 0,
                     headerHozAlign: "center",
@@ -186,7 +187,8 @@
                 },
 				{
                     title: "",
-                    width: 120,
+                    minWidth: 80,
+                    width: 10,
                     field: "actions",
                     responsive: 0,
                     headerHozAlign: "center",
@@ -333,8 +335,6 @@
 
 				await destroyEmployee(id);
 
-				console.log("passss",{...errors.value});
-
 				if(errors.value.length > 0){
 
 					let e = '';
@@ -345,7 +345,7 @@
 
 
 					Swal.fire(t("message.error"), e, 'error');
-				 	//console.log("passss",{...errors.value});
+					
 				}else{
 					tableData.value = await findData();
 					initTabulator();

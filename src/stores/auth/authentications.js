@@ -82,7 +82,7 @@ export const useAuthenticationStore = defineStore("authStore", {
 
                   if (response.success){
                     this.token = null;
-                    //this.user = null;
+                    this.user = null;
                   }else{
                     this.errors = response.errors;
                   }
@@ -91,6 +91,7 @@ export const useAuthenticationStore = defineStore("authStore", {
                 console.log(e);
                 this.errors = e;
                 this.token = null;
+                this.user = null;
             }
 
         },

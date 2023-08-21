@@ -194,7 +194,6 @@ const deleteIcon = function (cell, formatterParams) {
 const initTabulator = () => {
   tabulator.value = new Tabulator(tableRef.value, {
     reactiveData: true,
-    locale: true,
     data: tableData.value,
     printAsHtml: true,
     printStyled: true,
@@ -207,6 +206,14 @@ const initTabulator = () => {
     initialSort: [
       { column: "id", dir: "desc" }
     ],
+    locale:true,
+    langs:{
+			"es-es":{
+				"pagination":{
+          "page_size":"", 
+				}
+			}
+		},
     columns: [
       {
         formatter: "responsiveCollapse",
