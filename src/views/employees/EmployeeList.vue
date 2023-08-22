@@ -17,6 +17,10 @@
 		/>
 	</div>
 
+
+    <Preloader v-if="loading" />
+    
+
 	<!-- BEGIN: Page Layout Table -->
 	<div class="intro-y box p-5 mt-5" id="div_table">
 		<div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
@@ -72,11 +76,13 @@
 	import Tabulator from "tabulator-tables";
 	import dom from "@left4code/tw-starter/dist/js/dom";
 	import { Toast } from '@/utils/toast';
+	import Preloader from '@/components/preloader/Preloader.vue';
 
 	import useEmployees from "@/composables/employees";
 	import Create from "@/components/employees/EmployeeCreate.vue";
 	import Edit from "@/components/employees/EmployeeEdit.vue";
 
+	const loading = ref(false);
 
 
 	const { employees, getEmployees, storeEmployee, updateEmployee, destroyEmployee, errors} = useEmployees();
@@ -285,11 +291,13 @@
 	const saveEmployeeForm = async (form) => {
 		isCreate.value = false;
 		div_table.style.display = 'block';
+		loading.value = true;
 
 		await storeEmployee({ ...form });
 		tableData.value = await findData();
 		tabulator.value.setData(tableData.value);
 
+		loading.value = false;
 		await Toast(t("message.record_saved"), 'success');
 
 	}
@@ -310,12 +318,14 @@
 
 		isEdit.value = false;
 		div_table.style.display = 'block';
+		loading.value = true;
 
 		await updateEmployee(id, data);
 
 		tableData.value = await findData();
 		tabulator.value.setData(tableData.value);
 
+		loading.value = false;
 		await Toast(t("message.record_updated"), 'success');
 
 	}
