@@ -162,7 +162,6 @@
       </div>
       <!-- END: Pagination -->
     </div>
-    <FleetFooter />
   </div>
 </template>
 
@@ -170,7 +169,6 @@
 import { onMounted, ref, computed } from 'vue';
 import useTrips from "@/composables/trips";
 import TripCard from '@/components/trips/TripCard.vue';
-import FleetFooter from "@/components/fleet-footer/Main.vue";
 import { helper as $h } from "@/utils/helper";
 import { useI18n } from 'vue-i18n';
 import { useRouter} from 'vue-router';

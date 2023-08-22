@@ -79,6 +79,11 @@ const routes = [
         component: () => import('@/views/profiles/Profile.vue'),
       },
       {
+        path: "help",
+        name: "help",
+        component: () => import('@/views/help/Help.vue'),
+      },
+      {
         path: "trips",
         name: "trips",
         component: () => import('@/views/trips/TripGrid.vue'),
@@ -96,7 +101,7 @@ const routes = [
       {
         path: "documents",
         name: "documents",
-        component: () => import('@/views/documents/MainNew.vue'),
+        component: () => import('@/views/documents/Documents.vue'),
       },
       {
         path: "driver_documents/:id",
