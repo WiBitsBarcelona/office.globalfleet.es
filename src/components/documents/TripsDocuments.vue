@@ -1421,5 +1421,4 @@ onMounted(async () => {
   reInitTripsOnResizeWindow();
 });
 
-
 </script>

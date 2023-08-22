@@ -510,7 +510,6 @@ const findTasksIncidencesData = async () => {
   let totalIncidences = 0;
   await getTaskIncidents();
   const dataArrTmp = JSON.parse(JSON.stringify(taskIncidents.value));
-  console.log(dataArrTmp);
   dataArrTmp.forEach(element => {
     const full_name = element.task.name;
     const stage_name = element.task.stage.name;
