@@ -301,6 +301,8 @@ const speed_status = ref('');
 const speed_name = ref('');
 const gps_positioning = ref('');
 
+
+//if(props.trip.status === )
 const current_stage = ref('');
 const current_stage_execution_at = ref('');
 const current_stage_now = ref('');
