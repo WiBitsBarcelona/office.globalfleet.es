@@ -411,7 +411,7 @@
                         <PaperclipIcon class="w-4 h-4 mr-1" />
                       </td>
                       <td>
-                        <a href="" class="font-medium whitespace-nowrap">{{ incidence_image.name }}</a>
+                        <span class="font-medium whitespace-nowrap">{{ incidence_image.name }}</span>
                       </td>
                       <td class="table-report__action w-30">
                         <div class="flex justify-right items-end">
@@ -505,7 +505,7 @@ const trip_executed_at = ref('');
 const trip_started_at = ref('');
 const trip_finished_at = ref('');
 let countStage = 0;
-let trip_elements_array = [];
+const trip_elements_array = ref([]);
 let trip_incidences_class = 'text-gray-300';
 let icon_pending_class = 'flex items-center justify-center w-10 h-10 rounded-full bg-white border border-gray-300 shadow md:order-1';
 let icon_active_class = 'flex items-center justify-center w-10 h-10 rounded-full bg-white border-4 border-info shadow md:order-1';
@@ -527,7 +527,7 @@ let task_status = '';
 let task_type = '';
 let task_started_at = '';
 let task_finished_at = '';
-let task_array = [];
+const task_array = ref([]);
 let stage_incidences_class = 'hidden';
 let task_incidences_class = 'hidden';
 let total_trip_incidences = 0;
@@ -557,8 +557,8 @@ let incidences_images_array = [];
 
 const TripDetails = async (id) => {
   countStage = 0;
-  trip_elements_array = [];
-  task_array = [];
+  trip_elements_array.value = [];
+  task_array.value = [];
   incidences_array.value = [];
   incidences_images_array = [];
   total_trip_incidences_array = [];
@@ -703,7 +703,7 @@ const TripDetails = async (id) => {
         // TODO
       }
 
-      trip_elements_array.push({ id: element.id, element_type: element_type, class: current_element_icon_class, has_icon: has_check_icon, status_class: current_element_status_class, name: element_name, element_status: element_status, value: element_value, started_at: started_at, finished_at: finished_at, box_size: box_size, activity: element_activity, client: element_client, executed_at: executed_at, stage_incidences_class: stage_incidences_class });
+      trip_elements_array.value.push({ id: element.id, element_type: element_type, class: current_element_icon_class, has_icon: has_check_icon, status_class: current_element_status_class, name: element_name, element_status: element_status, value: element_value, started_at: started_at, finished_at: finished_at, box_size: box_size, activity: element_activity, client: element_client, executed_at: executed_at, stage_incidences_class: stage_incidences_class });
     } else {
       //THIS STAGE IS AN TRIP STAGE
       //Asign stage specific values
@@ -767,7 +767,7 @@ const TripDetails = async (id) => {
         stage_badge_incidences_class = 'hidden';
       };
 
-      trip_elements_array.push({ id: element.id, element_type: element_type, class: current_element_icon_class, has_icon: has_check_icon, status_class: current_element_status_class, name: element_name, element_status: element_status, value: element_value, started_at: started_at, finished_at: finished_at, box_size: box_size, activity: element_activity, client: element_client, executed_at: executed_at, stage_incidences_class: stage_incidences_class, total_stage_incidences: total_stage_incidences, total_new_stage_incidences: total_new_stage_incidences, stage_badge_incidences_class: stage_badge_incidences_class });
+      trip_elements_array.value.push({ id: element.id, element_type: element_type, class: current_element_icon_class, has_icon: has_check_icon, status_class: current_element_status_class, name: element_name, element_status: element_status, value: element_value, started_at: started_at, finished_at: finished_at, box_size: box_size, activity: element_activity, client: element_client, executed_at: executed_at, stage_incidences_class: stage_incidences_class, total_stage_incidences: total_stage_incidences, total_new_stage_incidences: total_new_stage_incidences, stage_badge_incidences_class: stage_badge_incidences_class });
 
       //Search all tasks in this stage
       element.tasks.forEach(task => {
@@ -844,7 +844,7 @@ const TripDetails = async (id) => {
           task_badge_incidences_class = 'hidden';
         };
 
-        task_array.push({ id: task.id, stage_id: stage_id, task_name: task_name, task_status: task_status, status_class: current_element_status_class, task_type: task_type, task_started_at: task_started_at, task_finished_at: task_finished_at, task_icon_class: current_element_icon_class, task_status_class: current_element_status_class, has_check_icon: has_check_icon, task_incidences_class: task_incidences_class, total_task_incidences: total_task_incidences, total_new_task_incidences: total_new_task_incidences, task_badge_incidences_class: task_badge_incidences_class });
+        task_array.value.push({ id: task.id, stage_id: stage_id, task_name: task_name, task_status: task_status, status_class: current_element_status_class, task_type: task_type, task_started_at: task_started_at, task_finished_at: task_finished_at, task_icon_class: current_element_icon_class, task_status_class: current_element_status_class, has_check_icon: has_check_icon, task_incidences_class: task_incidences_class, total_task_incidences: total_task_incidences, total_new_task_incidences: total_new_task_incidences, task_badge_incidences_class: task_badge_incidences_class });
       });
 
     }
