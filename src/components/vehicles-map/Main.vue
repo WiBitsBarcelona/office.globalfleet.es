@@ -24,7 +24,7 @@ const props = defineProps({
   }
 });
 
-console.log(props.locations);
+//console.log(props.locations);
 
 const imageAssets = import.meta.globEager(
   `/src/assets/images/*.{jpg,jpeg,png,svg}`
@@ -682,8 +682,10 @@ const init = async (initializeMap) => {
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(centerControlDiv);
 
   //SET DEFAULT CENTER AND ZOOM TO CURRENT BOUNDS.
-  map.setCenter(latlngbounds.getCenter());
-  map.fitBounds(latlngbounds);
+  if(location.length > 1){
+    map.setCenter(latlngbounds.getCenter());
+    map.fitBounds(latlngbounds);
+  }
 
   const stop = watch(darkMode, () => {
     init(initializeMap);
@@ -727,6 +729,6 @@ function createCenterControl(map) {
 
 const marcadores = async () => {
   const markers = JSON.parse(JSON.stringify(props.locations));
-  console.log(markers);
+  //console.log(markers);
 }
 </script>

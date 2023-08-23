@@ -797,11 +797,10 @@ const init = async (initializeMap) => {
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(centerControlDiv);
 
   //SET DEFAULT CENTER AND ZOOM TO CURRENT BOUNDS.
-  if(markers.length > 0){
+  if(markers.length > 1){
     map.setCenter(latlngbounds.getCenter());
     map.fitBounds(latlngbounds);
   }
-
 
   mapa = map;
 
