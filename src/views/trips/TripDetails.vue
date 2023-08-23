@@ -454,7 +454,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, reactive } from "vue";
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import dom from "@left4code/tw-starter/dist/js/dom";
 import DarkModeSwitcher from "@/components/dark-mode-switcher/Main.vue";
 import { useRoute } from 'vue-router';
@@ -484,6 +484,15 @@ const { downloadDocument, documentData } = useDownloadDocument();
 
 const incidencesModal = ref(false);
 const incidenceDetails = ref(false);
+
+
+/**
+ * Inteval
+ */
+const interval = ref('');
+
+
+
 /**
  * CODE SECTION FOR TRIP DETAILS
  */
@@ -555,19 +564,36 @@ let currentIncReceptioned = '';
 let currentIncReaded = '';
 let incidences_images_array = [];
 
+
+
+
+
 const TripDetails = async (id) => {
+  
   countStage = 0;
-  trip_elements_array.value = [];
-  task_array.value = [];
-  incidences_array.value = [];
+  
+  // Array reactive
+  trip_elements_array.value.length = 0;
+  task_array.value.length = 0;
+  incidences_array.value.length = 0;
+
+
   incidences_images_array = [];
   total_trip_incidences_array = [];
   total_trip_incidences = 0;
   element_value = '--';
   total_new_trip_incidences = 0;
+
+
   await getTrip(id);
+
+
   trip_reference_number.value = trip.value.reference_number;
   trip_status.value = trip.value.status.name;
+
+
+
+
   switch (trip.value.status.id) {
     case 1:
     case 2:
@@ -1091,18 +1117,31 @@ const openIncidenceFile = async (path, file_name, action) => {
 }
 
 //Function to refresh data every time asigned on ENV file.
-const autoRefresh = setInterval(() => {
+// const autoRefresh = setInterval(() => {
+//   TripDetails(route.params.id);
+//   console.log("passa")
+// }, auto_refresh);
+
+
+
+interval.value = setInterval(() => {
   TripDetails(route.params.id);
-}, auto_refresh);
+  console.log("passa" + interval.value);
+}, 15000);
+
+
+
 
 onMounted(() => {
   dom("body").removeClass("main").removeClass("login").addClass("error-page");
   TripDetails(route.params.id);
-  autoRefresh;
+  //autoRefresh;
+
 });
 
-onUnmounted(() => {
-  clearInterval(autoRefresh);
+
+onBeforeUnmount(() => {
+  clearInterval(interval.value);
 });
 
 </script>
