@@ -17,6 +17,8 @@
 		/>
 	</div>
 
+	<Preloader v-if="loading" />
+
 	<!-- BEGIN: Page Layout Table -->
 	<div class="intro-y box p-5 mt-5" id="div_table">
 		<div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
@@ -73,12 +75,14 @@
 	import Swal from 'sweetalert2';
 	import { Toast } from '@/utils/toast';
 	import dom from '@left4code/tw-starter/dist/js/dom';
+	import Preloader from '@/components/preloader/Preloader.vue';
 
 	import useDrivers from "@/composables/drivers";
 	import Create from "@/components/drivers/DriverCreate.vue";
 	import Edit from "@/components/drivers/DriverEdit.vue";
 
 
+	const loading = ref(false);
 
 	const { drivers, getDrivers, storeDriver, updateDriver, destroyDriver} = useDrivers();
 
@@ -115,6 +119,14 @@
 			placeholder: t("message.no_matching_records_found"),
 			reactiveData:true,
 			data: tableData.value,
+			locale:true,
+			langs:{
+				"es-es":{
+					"pagination":{
+						"page_size":"", 
+					}
+				}
+			},
 			columns: [
 				{
 					formatter: "responsiveCollapse",
@@ -278,10 +290,13 @@
 	const saveDriverForm = async (form) => {
 		isCreate.value = false;
 		div_table.style.display = 'block';
+		loading.value = true;
 
 		await storeDriver({ ...form });
 		tableData.value = await findData();
 		tabulator.value.setData(tableData.value);
+
+		loading.value = false;
 		await Toast(t("message.record_saved"), 'success');
 	}
 
@@ -300,10 +315,13 @@
 	const updateDriverForm = async (id, data) => {
 		isEdit.value = false;
 		div_table.style.display = 'block';
+		loading.value = true;
+
 		await updateDriver(id, data);
-		//await getDrivers();
 		tableData.value = await findData();
 		tabulator.value.setData(tableData.value);
+
+		loading.value = false;
 		await Toast(t("message.record_updated"), 'success');
 	}
 

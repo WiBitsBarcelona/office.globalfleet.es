@@ -121,13 +121,6 @@
 					</template>
 				</div>
 			</div>
-
-
-
-
-
-
-
 			
 			<!-- BEGIN: Buttons -->
 			<div class="col-span-12 md:col-span-12 lg:col-span-12">

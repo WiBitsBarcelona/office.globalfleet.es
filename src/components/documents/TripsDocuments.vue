@@ -160,6 +160,8 @@
   </Modal>
   <!-- END: Modal Content -->
 
+  
+
     <!-- BEGIN: Add Stage Documents Modal Content -->
     <Modal backdrop="static" :show="addStageFilesModal" @hidden="addStageFilesModal = false">
     <ModalBody class="px-2 py-5 text-center">
@@ -371,7 +373,6 @@ plusIcon.setAttribute('stroke-width', '1.5');
 const initTripsTabulator = async () => {
   trips_tabulator.value = new Tabulator(tableTripsRef.value, {
     reactiveData: true,
-    locale: true,
     data: tableTripsData.value,
     dataTree:true,
     dataTreeCollapseElement: minusIcon,
@@ -388,6 +389,14 @@ const initTripsTabulator = async () => {
     initialSort: [
       { column: "execution_at", dir: "desc" }
     ],
+    locale:true,
+    langs:{
+			"es-es":{
+				"pagination":{
+          "page_size":"", 
+				}
+			}
+		},
     columns: [
       {
         formatter: "responsiveCollapse",
@@ -414,22 +423,23 @@ const initTripsTabulator = async () => {
         print: false,
         download: false,
         formatter: function (cell, formatterParams, onRendered) {
+
           const a = dom(`
             <a id="select_trip" href="javascript:;" class='w-full flex flex-inline ml-2 hover:ml-4 hover:font-medium'>` + cell.getValue() + `</a>`);
-          dom(a).on("click", function (event) {
-            if (event.target.id == 'select_trip') {
-              event.preventDefault();
-              if(cell.getData().type == 'trip'){
-                screen_to_view.value = 'trip';
-                trip_name_selected.value = cell.getValue();
-                findTripDocuments(cell.getData().id);
-              }else if(cell.getData().type == 'stage'){
-                screen_to_view.value = 'stage';
-                stage_name_selected.value = cell.getValue();
-                findStageDocuments(cell.getData().id);
+            dom(a).on("click", function (event) {
+              if (event.target.id == 'select_trip') {
+                event.preventDefault();
+                if(cell.getData().type == 'trip'){
+                  screen_to_view.value = 'trip';
+                  trip_name_selected.value = cell.getValue();
+                  findTripDocuments(cell.getData().id);
+                }else if(cell.getData().type == 'stage'){
+                  screen_to_view.value = 'stage';
+                  stage_name_selected.value = cell.getValue();
+                  findStageDocuments(cell.getData().id);
+                }
               }
-            }
-          });
+            });
           return a[0];
         },
       },
@@ -556,6 +566,7 @@ const findStageDocuments = async (id) => {
   stage_selected.value = id;
   dataStageDocumentsArr.length = 0;
   await getStageDocuments(id);
+
   const dataArrTmp = JSON.parse(JSON.stringify(stageDocuments.value));
   dataArrTmp.forEach(element => {
     dataStageDocumentsArr.push({
@@ -614,6 +625,14 @@ const initTripDocumentsTabulator = async () => {
     layout: "fitColumns",
     responsiveLayout: "collapse",
     placeholder: t("message.no_matching_records_found"),
+    locale:true,
+    langs:{
+			"es-es":{
+				"pagination":{
+          "page_size":"", 
+				}
+			}
+		},
     rowFormatter:function(row){
       if(row.getData().readed_at == null){
         row.getElement().style.color = "rgba(0,150,178, 1)";
@@ -1015,7 +1034,6 @@ const deleteStageDocumentIcon = function (cell, formatterParams) {
 const initStageDocumentsTabulator = async () => {
   tabulator_stage_documents.value = new Tabulator(tableStageDocumentsRef.value, {
     reactiveData: true,
-    locale: true,
     data: dataStageDocumentsArr,
     printAsHtml: true,
     printStyled: true,
@@ -1025,6 +1043,14 @@ const initStageDocumentsTabulator = async () => {
     layout: "fitColumns",
     responsiveLayout: "collapse",
     placeholder: t("message.no_matching_records_found"),
+    locale:true,
+    langs:{
+			"es-es":{
+				"pagination":{
+          "page_size":"", 
+				}
+			}
+		},
     rowFormatter:function(row){
       if(row.getData().readed_at == null){
         row.getElement().style.color = "rgba(0,150,178, 1)";
@@ -1072,6 +1098,7 @@ const initStageDocumentsTabulator = async () => {
           return "<span class='uppercase'>" + cell.getValue() + "</span>"
         },
       },
+      
       {
         title: t("Tabulator.Trip_documents_columns.created_at"),
         minWidth: 200,
@@ -1393,6 +1420,5 @@ onMounted(async () => {
   await initTripsTabulator();
   reInitTripsOnResizeWindow();
 });
-
 
 </script>

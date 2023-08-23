@@ -212,7 +212,6 @@ const imageAssets = import.meta.globEager(
 const initTabulator = () => {
   tabulator.value = new Tabulator(tableRef.value, {
     reactiveData: true,
-    locale: true,
     data: tableData.value,
     printAsHtml: true,
     printStyled: true,
@@ -222,6 +221,14 @@ const initTabulator = () => {
     layout: "fitColumns",
     responsiveLayout: "collapse",
     placeholder: t("message.no_matching_records_found"),
+    locale:true,
+    langs:{
+			"es-es":{
+				"pagination":{
+          "page_size":"", 
+				}
+			}
+		},
     initialSort: [
       { column: "id", dir: "desc" }
     ],
@@ -263,7 +270,6 @@ const initTabulator = () => {
               findDriverDocuments(cell.getData().id);
             }
           });
-          //return "<div class='flex flex-inline hover:ml-3'><i data-lucide='folder' class='w-5 h-5 mr-2 text-warning'></i> <span class='hover:font-medium'>" + cell.getValue() + "</span></div>"
           return a[0];
         },
       },
@@ -293,7 +299,6 @@ const deleteIcon = function (cell, formatterParams) {
 const initDriverDocumentsTabulator = () => {
   tabulator.value = new Tabulator(tableRefDriverDocuments.value, {
     reactiveData: true,
-    locale: true,
     data: driverDocuments.value,
     printAsHtml: true,
     printStyled: true,
@@ -303,6 +308,14 @@ const initDriverDocumentsTabulator = () => {
     layout: "fitColumns",
     responsiveLayout: "collapse",
     placeholder: t("message.no_matching_records_found"),
+    locale:true,
+    langs:{
+			"es-es":{
+				"pagination":{
+          "page_size":"", 
+				}
+			}
+		},
     initialSort: [
       { column: "id", dir: "desc" }
     ],
@@ -315,7 +328,6 @@ const initDriverDocumentsTabulator = () => {
         resizable: false,
         headerSort: false,
       },
-
       // For HTML table
       {
         title: t("Tabulator.General_columns.id"),
@@ -346,16 +358,6 @@ const initDriverDocumentsTabulator = () => {
           return "<span class='uppercase'>" + cell.getValue() + "</span>"
         },
       },
-      /*       {
-              title: t("Tabulator.Driver_documents_columns.created_by"),
-              minWidth: 200,
-              width:300,
-              field: "employee.name",
-              hozAlign: "center",
-              vertAlign: "middle",
-              print: false,
-              download: false,
-            }, */
       {
         title: t("Tabulator.Driver_documents_columns.created_at"),
         minWidth: 200,

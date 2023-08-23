@@ -120,7 +120,7 @@
   "company": "Empresa",
   "name": "Nombre", 
   "surname": "Apellidos",
-  "fiscal_identification": "Identificación",
+  "fiscal_identification": "DNI / NIE",
   "reference_number": "Número",
   "sended_at": "Enviado",
   "receptioned_at": "Recibido",

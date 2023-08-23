@@ -200,8 +200,10 @@
               <EditIcon class="w-4 h-4 mr-2" /> Add Account</DropdownItem
             > -->
             <DropdownItem class="dropdown-item hover:bg-white/5">
-              <HelpCircleIcon class="w-4 h-4 mr-2" /> {{ $t("help") }}</DropdownItem
-            >
+              <HelpCircleIcon class="w-4 h-4 mr-2" />
+              <router-link to="/help">{{ $t("help") }}</router-link>
+            </DropdownItem>
+
             <DropdownDivider class="border-white/[0.08]" />
             <DropdownItem class="dropdown-item hover:bg-white/5" @click="logout">
               <ToggleRightIcon class="w-4 h-4 mr-2" /> {{ $t("logout") }}</DropdownItem

@@ -43,8 +43,7 @@
     </div>
   </div>
   <!-- END: HTML Table Data -->
-  <!-- FOOTER -->
-  <FleetFooter/>
+
 
 <!-- BEGIN: View Incidence Modal Content -->
 <Modal backdrop="static" :show="viewTaskIncidenceModal" @hidden="viewTaskIncidenceModal = false">
@@ -136,7 +135,6 @@ import Tabulator from "tabulator-tables";
 import { useI18n } from 'vue-i18n';
 import { helper as $h } from "@/utils/helper";
 import Swal from "sweetalert2";
-import FleetFooter from "@/components/fleet-footer/Main.vue";
 import useTaskIncident from "@/composables/task_incidents";
 import useDownloadDocument from "@/composables/download_documents";
 import useTaskIncidentImage from "@/composables/task_incident_images";
@@ -181,7 +179,6 @@ const clipIcon = function (cell, formatterParams){
 const initTaskTabulator = () => {
   task_tabulator.value = new Tabulator(tableTaskRef.value, {
     reactiveData: true,
-    locale: true,
     data: dataArr,
     printAsHtml: true,
     printStyled: true,
@@ -191,6 +188,14 @@ const initTaskTabulator = () => {
     layout: "fitColumns",
     responsiveLayout: "collapse",
     placeholder: t("message.no_matching_records_found"),
+    locale:true,
+    langs:{
+			"es-es":{
+				"pagination":{
+          "page_size":"", 
+				}
+			}
+		},
     rowFormatter:function(row){
         if(row.getData().readed_at == null){
             row.getElement().style.color = "rgba(0,150,178, 1)";
@@ -505,7 +510,6 @@ const findTasksIncidencesData = async () => {
   let totalIncidences = 0;
   await getTaskIncidents();
   const dataArrTmp = JSON.parse(JSON.stringify(taskIncidents.value));
-  console.log(dataArrTmp);
   dataArrTmp.forEach(element => {
     const full_name = element.task.name;
     const stage_name = element.task.stage.name;
