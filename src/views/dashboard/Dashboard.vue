@@ -76,10 +76,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-//TODO no borrar solo pruebas
 import DevicesMap from "@/components/dashboard-map/Main.vue";
-
-
 import useDashboard from '@/composables/dashboard.js';
 
 const { dashboard, getDashboard } = useDashboard();
