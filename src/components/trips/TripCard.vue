@@ -277,9 +277,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watchEffect } from 'vue';
 import { helper as $h } from "@/utils/helper";
 import { useI18n } from 'vue-i18n';
+import enumTrip from '@/enums/enum_trip.js';
 
 const { t } = useI18n();
 
@@ -301,12 +302,12 @@ const speed_status = ref('');
 const speed_name = ref('');
 const gps_positioning = ref('');
 
+const current_stage = ref('--');
+const current_stage_execution_at = ref('--');
+const current_stage_now = ref('--');
+const current_stage_status = ref('--');
 
-//if(props.trip.status === )
-const current_stage = ref('');
-const current_stage_execution_at = ref('');
-const current_stage_now = ref('');
-const current_stage_status = ref('');
+
 
 const telematic_name = ref('Movil');
 
@@ -315,100 +316,114 @@ const execution_at = ref('');
 
 
 
-trip.value = props.trip;
+
+
+//trip.value = props.trip;
 
 //console.log({ ...trip});
 
 
-/**
- * Trip Status
- */
-if (trip.value.trip_status_id === 1 || trip.value.trip_status_id === 2) {
-  bg_trip.value = 'bg-gray-100';
 
-}
+watchEffect(() => {
+  trip.value = props.trip;
 
-if (trip.value.trip_status_id === 3 || trip.value.trip_status_id === 4) {
-  bg_trip.value = 'bg-orange-100';
-}
+  /**
+   * Trip Status
+   */
+  if (trip.value.trip_status_id === 1 || trip.value.trip_status_id === 2) {
+    bg_trip.value = 'bg-gray-100';
 
-if (trip.value.trip_status_id === 5) {
-  bg_trip.value = 'bg-blue-100';
-}
+  }
 
-if (trip.value.trip_status_id === 6) {
-  bg_trip.value = 'bg-green-100';
-}
+  if (trip.value.trip_status_id === 3 || trip.value.trip_status_id === 4) {
+    bg_trip.value = 'bg-orange-100';
+  }
 
+  if (trip.value.trip_status_id === 5) {
+    bg_trip.value = 'bg-blue-100';
+  }
 
-driver_name.value = trip.value.driver.name + ' ' + trip.value.driver.surname;
-
-
-/**
- * Tows
- */
-if (trip.value.tows.length > 0) {
-  tow_plate.value = trip.value.tows[0].tow.plate;
-}
+  if (trip.value.trip_status_id === 6) {
+    bg_trip.value = 'bg-green-100';
+  }
 
 
+  driver_name.value = trip.value.driver.name + ' ' + trip.value.driver.surname;
 
-/**
- * Stages
- */
-let countStage = 0;
-if (trip.value.stages.length > 0) {
 
-  let find = trip.value.stages.find(element => element.activity !== null);
-  origin.value = find.name;
+  /**
+   * Tows
+   */
+  if (trip.value.tows.length > 0) {
+    tow_plate.value = trip.value.tows[0].tow.plate;
+  }
 
-  //destination.value = trip.value.stages[trip.value.stages.length - 1].name;
-  trip.value.stages.forEach(element => {
-    if (element.activity !== null) {
-      destination.value = element.name;
-      countStage++;
+
+
+  /**
+   * Stages
+   */
+  let countStage = 0;
+  if (trip.value.stages.length > 0) {
+
+    let find = trip.value.stages.find(element => element.activity !== null);
+    origin.value = find.name;
+
+    //destination.value = trip.value.stages[trip.value.stages.length - 1].name;
+    trip.value.stages.forEach(element => {
+      if (element.activity !== null) {
+        destination.value = element.name;
+        countStage++;
+      }
+    });
+
+    let stageFind = trip.value.stages.find(stage => {
+      return stage.activity != null && (stage.stage_status_id >= 1 && stage.stage_status_id < 6);
+    });
+
+    if (stageFind) {
+      
+      if(trip.value.trip_status_id === enumTrip.TRIP_PROGRESS_ID){
+        current_stage.value = stageFind.name;
+        current_stage_execution_at.value = $h.formatDate(stageFind.execution_at, 'DD/MM/YYYY HH:mm:ss');
+        current_stage_status.value = stageFind.status.name;
+        current_stage_now.value = $h.nowTimestamp();
+      }else{
+        current_stage.value = '--';
+        current_stage_execution_at.value = '--';
+        current_stage_status.value = '--';
+        current_stage_now.value = '--';
+      }
+
     }
-  });
 
-  let stageFind = trip.value.stages.find(stage => {
-    return stage.activity != null && (stage.stage_status_id >= 1 && stage.stage_status_id < 6);
-  });
+  }
 
-  if (stageFind) {
-    current_stage.value = stageFind.name;
-    current_stage_execution_at.value = $h.formatDate(stageFind.execution_at, 'DD/MM/YYYY HH:mm:ss');
-    current_stage_status.value = stageFind.status.name;
+  stage_count.value = countStage;
+
+
+
+
+  /**
+   * Position
+   */
+  if (trip.value.driver.position) {
+    let sp = $h.toKmsHour(trip.value.driver.position.speed);
+    speed.value = sp;
+    if (sp >= 5) {
+      speed_status.value = 'C';
+      speed_name.value = t('driving');
+    } else {
+      speed_status.value = 'P';
+      speed_name.value = t('stopped');
+    }
+    gps_positioning.value = trip.value.driver.position.gps_positioning;
   }
 
 
-  current_stage_now.value = $h.nowTimestamp();
+  execution_at.value = $h.formatDate(trip.value.execution_at, 'DD/MM/YYYY HH:mm:ss');
 
-}
-
-stage_count.value = countStage;
-
-
-
-
-/**
- * Position
- */
-if (trip.value.driver.position) {
-  let sp = $h.toKmsHour(trip.value.driver.position.speed);
-  speed.value = sp;
-  if (sp >= 5) {
-    speed_status.value = 'C';
-    speed_name.value = t('driving');
-  } else {
-    speed_status.value = 'P';
-    speed_name.value = t('stopped');
-  }
-  gps_positioning.value = trip.value.driver.position.gps_positioning;
-}
-
-
-execution_at.value = $h.formatDate(trip.value.execution_at, 'DD/MM/YYYY HH:mm:ss');
-
+});
 
 </script>
 
