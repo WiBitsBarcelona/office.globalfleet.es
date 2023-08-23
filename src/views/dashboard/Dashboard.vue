@@ -63,22 +63,24 @@
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- BEGIN: Devices Map -->
-        <DevicesMap />
-      <!-- END: Devices Map -->
-      
+      </div>  
     </div>
+
+    <!-- BEGIN: Devices Map -->
+    <DevicesMap />
+    <!-- END: Devices Map -->
+
   </div>
   <!-- END: Page Layout -->
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
+//TODO no borrar solo pruebas
 import DevicesMap from "@/components/dashboard-map/Main.vue";
+
+
 import useDashboard from '@/composables/dashboard.js';
-import { version as vueVersion } from 'vue/package.json';
 
 const { dashboard, getDashboard } = useDashboard();
 
@@ -86,7 +88,6 @@ const trip_completed_nb = ref('');
 const trip_created_nb = ref('');
 const trip_pending_nb = ref('');
 const trip_progress_nb = ref('');
-const select = ref("");
 
 onMounted(async () => {
   await getDashboard();

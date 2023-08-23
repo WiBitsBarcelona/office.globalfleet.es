@@ -62,6 +62,8 @@ const imageAssets = import.meta.globEager(
 );
 const darkModeStore = useDarkModeStore();
 const darkMode = computed(() => darkModeStore.darkMode);
+
+
 //DEFINE CONSTANT TO SAVE BOUNDS
 let latlngbounds;
 let infoWindow;
@@ -75,15 +77,16 @@ let cluster;
 const init = async (initializeMap) => {
 
   await getDrivers();
-  const devices = drivers.value;
+  //const devices = drivers.value;
 
-  devices.forEach((d) => {
-      if (d.position) {
-        totalDevices.value ++;
-        markersArr.push(d);
-      }
-    });
+  drivers.value.forEach((d) => {
+    if (d.position) {
+      totalDevices.value ++;
+      markersArr.push(d);
+    }
+  });
 
+  
   const markers = JSON.parse(JSON.stringify(markersArr));
 
   const darkTheme = [
@@ -630,6 +633,9 @@ const init = async (initializeMap) => {
       ],
     },
   ];
+
+
+
   const { google, map } = await initializeMap({
     apiKey: "AIzaSyCMlwJPBGrPWXJE2oaZ7arA7VxkJI2EdxY",
     config(google) {
@@ -650,6 +656,8 @@ const init = async (initializeMap) => {
     },
   });
 
+
+
   latlngbounds = new window.google.maps.LatLngBounds();
 
   infoWindow = new google.maps.InfoWindow({
@@ -657,6 +665,7 @@ const init = async (initializeMap) => {
     maxWidth: 450,
     pixelOffset: new google.maps.Size(0, -60),
   });
+
 
   cluster = new MarkerClusterer(
     map,
@@ -781,6 +790,7 @@ const init = async (initializeMap) => {
   );
 
   //INSERT CUSTOM BUTTOM TO RESET MAP IN MAP.
+  
   const centerControlDiv = document.createElement("div");
   const centerControl = createCenterControl(map);
   centerControlDiv.appendChild(centerControl);

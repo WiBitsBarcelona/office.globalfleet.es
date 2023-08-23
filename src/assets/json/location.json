@@ -1,5 +1,15 @@
 [
     {
+      "name": "1111ABC",
+      "latitude": "42.230646",
+      "longitude": "2.9800405" 
+    },
+    {
+      "name": "9999CCC",
+      "latitude": "42.230646",
+      "longitude": "2.9800405"
+    },
+    {
       "name": "1234LMT",
       "latitude": "47.297721229624706",
       "longitude": "0.3419445676702256" 
