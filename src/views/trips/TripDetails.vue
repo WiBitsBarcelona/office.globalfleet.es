@@ -995,6 +995,9 @@ const TripDetails = async (id) => {
             break;
         }
 
+
+        console.log(task);
+
         if (task.started_at) {
           task_started_at = $h.formatDate(task.started_at, 'DD/MM/YYYY HH:mm');
         } else {
