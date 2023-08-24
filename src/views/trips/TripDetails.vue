@@ -722,6 +722,12 @@ const TripDetails = async (id) => {
     }
     let element_name = element.name;
     let element_status = element.status.name;
+    if (element.execution_at){
+      executed_at = $h.formatDate(element.execution_at, 'DD/MM/YYYY HH:mm');
+    }else{
+      executed_at = '--';
+    }
+
     if (element.started_at) {
       started_at = $h.formatDate(element.started_at, 'DD/MM/YYYY HH:mm');
     } else {
@@ -782,6 +788,7 @@ const TripDetails = async (id) => {
           currentElement[0].status_class = current_element_status_class;
           currentElement[0].element_status = element_status;
           currentElement[0].value = element_value;
+          currentElement[0].executed_at = executed_at;
           currentElement[0].started_at = started_at;
           currentElement[0].finished_at = finished_at;
           currentElement[0].stage_incidences_class = stage_incidences_class;
@@ -797,11 +804,7 @@ const TripDetails = async (id) => {
       box_size = 'w-3/4';
       element_activity = element.activity.type.name;
       element_client = element.client_name;
-      if (element.executed_at_at) {
-        executed_at = $h.formatDate(element.executed_at, 'DD/MM/YYYY HH:mm');
-      } else {
-        executed_at = '--';
-      }
+
 
       //Find Incidences of this Stage.
       if (element.incidents !== null) {
@@ -932,7 +935,7 @@ const TripDetails = async (id) => {
           });
         }else{
           currentElement[0].class = current_element_icon_class;
-          currentElement[0].has_check_icon = has_check_icon;
+          currentElement[0].has_icon = has_check_icon;
           currentElement[0].status_class = current_element_status_class;
           currentElement[0].element_status = element_status;
           currentElement[0].value = element_value;
