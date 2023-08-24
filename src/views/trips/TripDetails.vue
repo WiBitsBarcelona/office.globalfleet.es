@@ -452,7 +452,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onUnmounted, reactive } from "vue";
 import dom from "@left4code/tw-starter/dist/js/dom";
 import DarkModeSwitcher from "@/components/dark-mode-switcher/Main.vue";
 import { useRoute } from 'vue-router';
@@ -482,15 +482,6 @@ const { downloadDocument, documentData } = useDownloadDocument();
 
 const incidencesModal = ref(false);
 const incidenceDetails = ref(false);
-
-
-/**
- * Inteval
- */
-const interval = ref('');
-
-
-
 /**
  * CODE SECTION FOR TRIP DETAILS
  */
@@ -562,31 +553,32 @@ let currentIncSended = '';
 let currentIncReceptioned = '';
 let currentIncReaded = '';
 let incidences_images_array = [];
+const total_trip_documents_array = ref([]);
+let total_trip_documents = 0;
+let total_new_trip_documents = 0;
+let trip_documents_class = 'text-gray-300';
+let stage_documents_class = 'hidden';
+let total_stage_documents = 0;
+let total_new_stage_documents = 0;
+let task_documents_class = 'hidden';
+let total_task_documents = 0;
+let total_new_task_documents = 0;
+const documents_array = ref([]);
 
 const TripDetails = async (id) => {
-  
   countStage = 0;
-  
-  // Array reactive
-  trip_elements_array.value.length = 0;
-  task_array.value.length = 0;
-  incidences_array.value.length = 0;
-
-
+  trip_elements_array.value = [];
+  task_array.value = [];
+  incidences_array.value = [];
   incidences_images_array = [];
   total_trip_incidences_array = [];
   total_trip_incidences = 0;
   element_value = '--';
   total_new_trip_incidences = 0;
-
-
   await getTrip(id);
+  console.log(trip.value);
   trip_reference_number.value = trip.value.reference_number;
   trip_status.value = trip.value.status.name;
-
-
-
-
   switch (trip.value.status.id) {
     case 1:
     case 2:
@@ -1209,18 +1201,18 @@ const openIncidenceFile = async (path, file_name, action) => {
 }
 
 //Function to refresh data every time asigned on ENV file.
-const autoRefresh = setInterval(() => {
+/* const autoRefresh = setInterval(() => {
   TripDetails(route.params.id);
-}, auto_refresh);
+}, auto_refresh); */
 
 onMounted(() => {
   dom("body").removeClass("main").removeClass("login").addClass("error-page");
   TripDetails(route.params.id);
-  autoRefresh;
+  //autoRefresh;
 });
 
 onUnmounted(() => {
-  clearInterval(autoRefresh);
+  //clearInterval(autoRefresh);
 });
 
 </script>
