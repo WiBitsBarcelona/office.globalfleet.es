@@ -1332,7 +1332,7 @@ const openIncidenceFile = async (path, file_name, action) => {
 //Function to refresh data every time asigned on ENV file.
 const autoRefresh = setInterval(() => {
   TripDetails(route.params.id);
-  console.log("Actullizado");
+  console.log("Actualizado");
 }, auto_refresh);
 
 onMounted(() => {
