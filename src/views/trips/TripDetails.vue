@@ -1072,7 +1072,7 @@ const TripDetails = async (id) => {
               task_badge_incidences_class: task_badge_incidences_class 
             });
           }else{
-            currentTask[0].task_status = current_element_status_class;
+            currentTask[0].task_status = task_status;
             currentTask[0].status_class = current_element_status_class;
             currentTask[0].task_started_at = task_started_at;
             currentTask[0].finished_at = finished_at;
