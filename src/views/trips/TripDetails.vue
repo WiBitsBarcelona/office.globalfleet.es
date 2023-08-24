@@ -1284,7 +1284,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  //clearInterval(autoRefresh);
+  clearInterval(autoRefresh);
 });
 
 </script>
