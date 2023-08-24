@@ -166,7 +166,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, onBeforeUnmount } from 'vue';
 import useTrips from "@/composables/trips";
 import TripCard from '@/components/trips/TripCard.vue';
 import { helper as $h } from "@/utils/helper";
@@ -228,6 +228,8 @@ const radioDriver = 'radio-driver';
 const radio_order_by = ref('radio-trip-date');
 
 
+const interval = ref('');
+
 
 
 
@@ -254,8 +256,9 @@ const onChangeSelect = () => {
 }
 
 
-const searchedTrips = computed(() => {
 
+
+const searchedTrips = computed(() => {
 
   let q = trips.value.filter((trip) => {
     return (
@@ -265,9 +268,6 @@ const searchedTrips = computed(() => {
       trip.driver.name.toLowerCase().indexOf(filter.value.toLowerCase()) != -1
     );
   });
-
-
-
 
   if (radio_order_by.value == radioTripDate) {
     q = q.sort((a, b) => {
@@ -327,7 +327,6 @@ const searchedTrips = computed(() => {
     });
   }
 
-
   return q.slice(pageStart.value, pageEnd.value);
 });
 
@@ -356,9 +355,29 @@ const onClickCompleted = () => {
   classBtnFilter.value = classBtnCompleted;
 }
 
-onMounted(async () => {
+
+
+  interval.value = setInterval(async () => {
+    await find();
+    console.log("pasa", interval.value);
+  }, 20000);
+
+
+
+
+
+const find = async() => {
+
   await getTrips();
+
   totalPage.value = trips.value.length / postXpage.value;
+
+
+  trip_created.value = 0;
+  trip_pending.value = 0;
+  trip_progress.value = 0;
+  trip_completed.value = 0;
+
 
   trips.value.forEach(element => {
 
@@ -381,6 +400,18 @@ onMounted(async () => {
   });
 
   trip_all.value = trips.value.length;
+}
+
+
+onBeforeUnmount(() => {
+  clearInterval(interval.value);
+});
+
+
+onMounted(async () => {
+  
+  await find();
+
 });
 
 </script>

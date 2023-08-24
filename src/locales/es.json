@@ -328,6 +328,9 @@
     }
   },
   "trip_details": {
-    "title": "Incidencias del viaje"
+    "title": "Incidencias del viaje",
+    "options": "Opciones",
+    "view": "Ver",
+    "download": "Descargar"
   }
 }
