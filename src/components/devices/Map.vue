@@ -93,8 +93,8 @@ let cluster;
 const init = async (initializeMap) => {
 
   await getDrivers();
-  const devices = drivers.value;
-  devices.forEach((d) => {
+  //const devices = drivers.value;
+  drivers.value.forEach((d) => {
     if (d.position) {
       totalDevices.value++;
       markersArr.push(d);
@@ -805,7 +805,7 @@ const init = async (initializeMap) => {
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(centerControlDiv);
 
   //SET DEFAULT CENTER AND ZOOM TO CURRENT BOUNDS.
-  if (markers.length > 0) {
+  if (markers.length > 1) {
     map.setCenter(latlngbounds.getCenter());
     map.fitBounds(latlngbounds);
   }
