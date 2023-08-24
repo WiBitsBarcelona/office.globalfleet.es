@@ -183,7 +183,7 @@
                         }" :content="`${element.total_new_stage_documents}/${element.total_stage_documents}`">
                           <FileTextIcon :class="element.stage_documents_class" />
                         </Tippy>
-                        <span :class="element.status_class">{{ element.element_status }}</span>
+                        <span :class="element.status_class">{{ element.element_status }} {{ element.activity }}</span>
                       </div>
                       <div class="px-2">
                         <h5 class="text-xs font-light text-gray-400">{{ $t("activity") }}:</h5>
@@ -1064,8 +1064,6 @@ const TripDetails = async (id) => {
           task_badge_incidences_class = 'hidden';
         };
 
-
-
         if (task_array.value.length > 0) {
           currentTask = task_array.value.filter(obj => obj.id === task.id);
           if (currentTask.length == 0) {
@@ -1091,7 +1089,7 @@ const TripDetails = async (id) => {
             currentTask[0].task_status = task_status;
             currentTask[0].status_class = current_element_status_class;
             currentTask[0].task_started_at = task_started_at;
-            currentTask[0].finished_at = finished_at;
+            currentTask[0].task_finished_at = task_finished_at;
             currentTask[0].task_icon_class = current_element_icon_class;
             currentTask[0].task_status_class = current_element_status_class;
             currentTask[0].has_check_icon = has_check_icon;
