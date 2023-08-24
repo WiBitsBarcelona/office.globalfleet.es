@@ -575,7 +575,6 @@ const TripDetails = async (id) => {
   element_value = '--';
   total_new_trip_incidences = 0;
   await getTrip(id);
-  console.log(trip.value);
   trip_reference_number.value = trip.value.reference_number;
   trip_status.value = trip.value.status.name;
   switch (trip.value.status.id) {
