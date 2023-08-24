@@ -5,21 +5,25 @@
       <div class="grid grid-cols-3 gap-2">
         <div class="col-span-3">
           <div class="box p-5 m-5 intro-x overflow-y-auto shadow">
-            <div v-for="trip_incidences in total_trip_incidences_array" :key="trip_incidences.index" class="absolute top-5 right-5 left-auto mt-6 mr-5 hover:cursor-pointer">
-                  <Tippy v-if="trip_incidences.total == total_trip_incidences_array.length" tag="icon" variant="primary"
-                    :options="{
-                      theme: 'translucent',
-                    }" :content="`${trip_incidences.new}/${trip_incidences.total}`">
-                    <AlertTriangleIcon @click="incidencesModal = true" class="w-8 h-8 ml-auto hover:cursor-pointer"
-                      :class="trip_incidences_class" />
-                  </Tippy>
-                                    <!--<Tippy tag="icon" variant="primary" :options="{
-                    theme: 'translucent',
-                  }" :content="`${total_new_trip_incidences}/${total_trip_incidences}`">
-                    <FileTextIcon @click="incidencesModal = true" class="ml-auto md:w-18 hover:cursor-pointer"
-                      :class="trip_incidences_class" />
-                  </Tippy> -->
-                </div>
+            <div v-for="trip_documents in total_trip_documents_array" :key="trip_documents.index"
+              class="flex absolute top-5 right-10 left-auto mt-6 mr-5 hover:cursor-pointer">
+              <Tippy tag="icon" class="mr-5" variant="primary" :options="{
+                theme: 'translucent',
+              }" :content="`${total_new_trip_documents}/${total_trip_documents}`">
+                <FileTextIcon class="w-8 h-8 ml-auto hover:cursor-pointer"
+                  :class="trip_documents_class" />
+              </Tippy>
+            </div>
+            <div v-for="trip_incidences in total_trip_incidences_array" :key="trip_incidences.index"
+              class="flex absolute top-5 right-5 left-auto mt-6 mr-5 hover:cursor-pointer">
+              <Tippy v-if="trip_incidences.total == total_trip_incidences_array.length" tag="icon" variant="primary"
+                :options="{
+                  theme: 'translucent',
+                }" :content="`${trip_incidences.new}/${trip_incidences.total}`">
+                <AlertTriangleIcon @click="incidencesModal = true" class="w-8 h-8 ml-auto hover:cursor-pointer"
+                  :class="trip_incidences_class" />
+              </Tippy>
+            </div>
             <div class="w-full text-center">
               <h2 class="p-5 m-0 bg-primary rounded text-white font-bold text-2xl">{{ trip_name }}</h2>
             </div>
@@ -130,11 +134,6 @@
                       }" :content="`${element.total_new_stage_incidences}/${element.total_stage_incidences}`">
                         <AlertTriangleIcon @click="incidencesModal = true" :class="element.stage_incidences_class" />
                       </Tippy>
-                      <!--                       <Tippy tag="icon" variant="primary" :options="{
-                        theme: 'translucent',
-                      }" :content="`${element.total_new_stage_incidences}/${element.total_stage_incidences}`">
-                        <FileTextIcon @click="incidencesModal = true" :class="element.stage_incidences_class" />
-                      </Tippy> -->
                     </div>
                   </div>
                   <!-- Action Card -->
@@ -179,7 +178,12 @@
                         <p class="text-md font-normal leading-6 text-gray-500"><span
                             class="text-xs font-light text-gray-400">{{ $t("stage") }}:</span> {{ element.name }}</p>
                       </div>
-                      <div class="text-end">
+                      <div class="flex justify-end">
+                        <Tippy tag="icon" class="mr-5 mt-1" variant="primary" :options="{
+                          theme: 'translucent',
+                        }" :content="`${element.total_new_stage_documents}/${element.total_stage_documents}`">
+                          <FileTextIcon :class="element.stage_documents_class" />
+                        </Tippy>
                         <span :class="element.status_class">{{ element.element_status }}</span>
                       </div>
                       <div class="px-2">
@@ -233,15 +237,9 @@
                                   <AlertTriangleIcon @click="incidencesModal = true"
                                     :class="task.task_incidences_class" />
                                 </Tippy>
-                                <!--                                 <Tippy tag="icon" variant="primary" :options="{
-                                  theme: 'translucent',
-                                }" :content="`${task.total_new_task_incidences}/${task.total_task_incidences}`">
-                                  <FileTextIcon @click="incidencesModal = true" :class="task.task_incidences_class" />
-                                </Tippy> -->
                               </div>
                             </div>
-                            <div
-                              class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow ml-14 md:ml-44">
+                            <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow ml-14 md:ml-44">
                               <div class="grid grid-cols-3 gap-2 mb-5pb-2">
                                 <div class="col-span-2">
                                   <p class="text-md font-normal leading-6 text-gray-500"><span
@@ -514,6 +512,7 @@ let current_element_icon_class = '';
 let has_check_icon = 0;
 let box_size = '';
 let status_pending_class = 'inline-flex items-center py-1.5 px-1.5 rounded-lg text-xs font-medium bg-gray-100 border border-gray-300';
+let status_not_confirmed_class = 'inline-flex items-center py-1.5 px-1.5 rounded-lg text-xs font-medium bg-orange-100 border border-orange-300';
 let status_active_class = 'inline-flex items-center py-1.5 px-1.5 rounded-lg text-xs font-medium bg-blue-100 border border-primary';
 let status_success_class = 'inline-flex items-center py-1.5 px-1.5 rounded-lg text-xs font-medium bg-green-100 border border-green-500';
 let current_element_status_class = '';
@@ -554,6 +553,17 @@ let currentIncSended = '';
 let currentIncReceptioned = '';
 let currentIncReaded = '';
 let incidences_images_array = [];
+const total_trip_documents_array = ref([]);
+let total_trip_documents = 0;
+let total_new_trip_documents = 0;
+let trip_documents_class = 'text-gray-300';
+let stage_documents_class = 'hidden';
+let total_stage_documents = 0;
+let total_new_stage_documents = 0;
+let task_documents_class = 'hidden';
+let total_task_documents = 0;
+let total_new_task_documents = 0;
+const documents_array = ref([]);
 
 const TripDetails = async (id) => {
   countStage = 0;
@@ -566,16 +576,17 @@ const TripDetails = async (id) => {
   element_value = '--';
   total_new_trip_incidences = 0;
   await getTrip(id);
+  console.log(trip.value);
   trip_reference_number.value = trip.value.reference_number;
   trip_status.value = trip.value.status.name;
   switch (trip.value.status.id) {
     case 1:
     case 2:
-    case 3:
-      trip_status_class = status_pending_class;
-      break;
     case 4:
       trip_status_class = status_pending_class;
+      break;
+    case 3:
+      trip_status_class = status_not_confirmed_class;
       break;
     case 5:
       trip_status_class = status_active_class;
@@ -613,7 +624,7 @@ const TripDetails = async (id) => {
       } else {
         let dateNowTmp = new Date();
         let dateNow = $h.formatDate(dateNowTmp, "YYYY-MM-DD HH:mm:ss");
-        let dateData = { receptioned_at: dateNow};
+        let dateData = { receptioned_at: dateNow };
         updateTripIncident(incident.id, dateData);
       }
       if (incident.readed_at) {
@@ -632,6 +643,41 @@ const TripDetails = async (id) => {
   } else {
     trip_incidences_class = 'hidden';
     trip_badge_incidences_class = 'hidden';
+  };
+
+  if (trip.value.documents !== null) {
+    //TRIP WITH DOCUMENTS
+    trip_documents_class = 'text-gray-300';
+    trip.value.documents.forEach(document => {
+      total_trip_documents++;
+      if (document.has_seen == 0) {
+        trip_documents_class = 'text-white';
+        total_new_trip_documents++;
+      }
+      /* if (document.sended_at) {
+        incidence_sended_at = $h.formatDate(incident.sended_at, 'DD/MM/YYYY HH:mm');
+      } else {
+        incidence_sended_at = '--';
+      }
+      if (incident.receptioned_at) {
+        incidence_receptioned_at = $h.formatDate(incident.receptioned_at, 'DD/MM/YYYY HH:mm');
+      } else {
+        let dateNowTmp = new Date();
+        let dateNow = $h.formatDate(dateNowTmp, "YYYY-MM-DD HH:mm:ss");
+        let dateData = { receptioned_at: dateNow};
+        updateTripIncident(incident.id, dateData);
+      }
+      if (incident.readed_at) {
+        incidence_readed_at = $h.formatDate(incident.readed_at, 'DD/MM/YYYY HH:mm');
+      } else {
+        incidence_readed_at = '--';
+      } */
+
+      total_trip_documents_array.value.push({ new: total_new_trip_documents, total: total_trip_documents });
+      //incidences_array.value.push({ id: incident.id, level: 'trip', level_name: trip_name.value, type: incident.type.name, description: incident.description, has_seen: incident.has_seen, sended_at: incidence_sended_at, receptioned_at: incidence_receptioned_at, readed_at: incidence_readed_at });
+    });
+  } else {
+    trip_documents_class = 'hidden';
   };
 
   trip.value.stages.forEach(element => {
@@ -746,7 +792,7 @@ const TripDetails = async (id) => {
           } else {
             let dateNowTmp = new Date();
             let dateNow = $h.formatDate(dateNowTmp, "YYYY-MM-DD HH:mm:ss");
-            let dateData = { receptioned_at: dateNow};
+            let dateData = { receptioned_at: dateNow };
             updateStageIncident(incident.id, dateData);
           }
           if (incident.readed_at) {
@@ -767,7 +813,72 @@ const TripDetails = async (id) => {
         stage_badge_incidences_class = 'hidden';
       };
 
-      trip_elements_array.value.push({ id: element.id, element_type: element_type, class: current_element_icon_class, has_icon: has_check_icon, status_class: current_element_status_class, name: element_name, element_status: element_status, value: element_value, started_at: started_at, finished_at: finished_at, box_size: box_size, activity: element_activity, client: element_client, executed_at: executed_at, stage_incidences_class: stage_incidences_class, total_stage_incidences: total_stage_incidences, total_new_stage_incidences: total_new_stage_incidences, stage_badge_incidences_class: stage_badge_incidences_class });
+      //Find Documents of this Stage.
+      if (element.documents !== null) {
+        //STAGE WITH DOCUMENTS
+        stage_documents_class = 'text-gray-300 hover:cursor-pointer';
+        total_new_stage_documents = 0;
+        total_stage_documents = 0;
+        element.documents.forEach(document => {
+          if (document.stage_id == element.id) {
+            total_stage_documents++;
+            if (document.has_seen == 0) {
+              stage_documents_class = 'text-primary hover:cursor-pointer';
+              total_new_stage_documents++;
+            } else {
+              stage_documents_class = 'text-gray-300 hover:cursor-pointer';
+            };
+          }
+          /* if (incident.sended_at) {
+            incidence_sended_at = $h.formatDate(incident.sended_at, 'DD/MM/YYYY HH:mm');
+          } else {
+            incidence_sended_at = '--';
+          }
+          if (incident.receptioned_at) {
+            incidence_receptioned_at = $h.formatDate(incident.receptioned_at, 'DD/MM/YYYY HH:mm');
+          } else {
+            let dateNowTmp = new Date();
+            let dateNow = $h.formatDate(dateNowTmp, "YYYY-MM-DD HH:mm:ss");
+            let dateData = { receptioned_at: dateNow};
+            updateStageIncident(incident.id, dateData);
+          }
+          if (incident.readed_at) {
+            incidence_readed_at = $h.formatDate(incident.readed_at, 'DD/MM/YYYY HH:mm');
+          } else {
+            incidence_readed_at = '--';
+          } */
+
+
+          //documents_array.value.push({ id: incident.id, level: 'stage', level_name: element.name, type: incident.type.name, has_seen: incident.has_seen, sended_at: incidence_sended_at, receptioned_at: incidence_receptioned_at, readed_at: incidence_readed_at });
+
+        });
+      } else {
+        stage_documents_class = 'hidden';
+      };
+
+      trip_elements_array.value.push({
+        id: element.id,
+        element_type: element_type,
+        class: current_element_icon_class,
+        has_icon: has_check_icon,
+        status_class: current_element_status_class,
+        name: element_name,
+        element_status: element_status,
+        value: element_value,
+        started_at: started_at,
+        finished_at: finished_at,
+        box_size: box_size, activity:
+          element_activity,
+        client: element_client,
+        executed_at: executed_at,
+        stage_incidences_class: stage_incidences_class,
+        total_stage_incidences: total_stage_incidences,
+        total_new_stage_incidences: total_new_stage_incidences,
+        stage_badge_incidences_class: stage_badge_incidences_class,
+        stage_documents_class: stage_documents_class,
+        total_stage_documents: total_stage_documents,
+        total_new_stage_documents: total_new_stage_documents
+      });
 
       //Search all tasks in this stage
       element.tasks.forEach(task => {
@@ -824,7 +935,7 @@ const TripDetails = async (id) => {
             } else {
               let dateNowTmp = new Date();
               let dateNow = $h.formatDate(dateNowTmp, "YYYY-MM-DD HH:mm:ss");
-              let dateData = { receptioned_at: dateNow};
+              let dateData = { receptioned_at: dateNow };
               updateTaskIncident(incident.id, dateData);
             }
             if (incident.readed_at) {
@@ -930,7 +1041,7 @@ const hideIncidenceDetailModal = async () => {
         let dateNowTmp = new Date();
         let dateNow = $h.formatDate(dateNowTmp, "YYYY-MM-DD HH:mm:ss");
         let dateData = { readed_at: dateNow, has_seen: 1 };
-        switch(currentIncLevel){
+        switch (currentIncLevel) {
           case 'trip':
             await updateTripIncident(currentIncId, dateData);
             break;
@@ -942,7 +1053,6 @@ const hideIncidenceDetailModal = async () => {
             break;
         }
         let foundInc = incidences_array.value.filter(obj => obj.id === currentIncId);
-        console.log(foundInc);
         foundInc[0].readed_at = dateNow;
         foundInc[0].has_seen = 1;
         currentIncId = '';
@@ -1091,18 +1201,18 @@ const openIncidenceFile = async (path, file_name, action) => {
 }
 
 //Function to refresh data every time asigned on ENV file.
-const autoRefresh = setInterval(() => {
+/* const autoRefresh = setInterval(() => {
   TripDetails(route.params.id);
-}, auto_refresh);
+}, auto_refresh); */
 
 onMounted(() => {
   dom("body").removeClass("main").removeClass("login").addClass("error-page");
   TripDetails(route.params.id);
-  autoRefresh;
+  //autoRefresh;
 });
 
 onUnmounted(() => {
-  clearInterval(autoRefresh);
+  //clearInterval(autoRefresh);
 });
 
 </script>
