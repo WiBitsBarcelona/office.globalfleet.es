@@ -778,7 +778,7 @@ const TripDetails = async (id) => {
             stage_incidences_class: stage_incidences_class });
         }else{
           currentElement[0].class = current_element_icon_class;
-          currentElement[0].has_check_icon = has_check_icon;
+          currentElement[0].has_icon = has_check_icon;
           currentElement[0].status_class = current_element_status_class;
           currentElement[0].element_status = element_status;
           currentElement[0].value = element_value;
@@ -992,6 +992,17 @@ const TripDetails = async (id) => {
             break;
         }
 
+        if (task.started_at) {
+          task_started_at = $h.formatDate(task.started_at, 'DD/MM/YYYY HH:mm');
+        } else {
+          task_started_at = '--';
+        }
+        if (task.finished_at) {
+          task_finished_at = $h.formatDate(task.finished_at, 'DD/MM/YYYY HH:mm');
+        } else {
+          task_finished_at = '--';
+        }
+
         //Find Incidences of this Task.
         if (task.incidents !== null) {
           //TASK WITH INCIDENCES
@@ -1049,6 +1060,8 @@ const TripDetails = async (id) => {
           task_incidences_class = 'hidden';
           task_badge_incidences_class = 'hidden';
         };
+
+
 
         if (task_array.value.length > 0) {
           currentTask = task_array.value.filter(obj => obj.id === task.id);
