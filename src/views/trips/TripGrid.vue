@@ -372,6 +372,13 @@ const find = async() => {
 
   totalPage.value = trips.value.length / postXpage.value;
 
+
+  trip_created.value = 0;
+  trip_pending.value = 0;
+  trip_progress.value = 0;
+  trip_completed.value = 0;
+
+
   trips.value.forEach(element => {
 
     if (element.trip_status_id == 1 || element.trip_status_id == 2) {
