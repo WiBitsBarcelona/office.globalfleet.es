@@ -330,20 +330,24 @@ watchEffect(() => {
   /**
    * Trip Status
    */
-  if (trip.value.trip_status_id === 1 || trip.value.trip_status_id === 2) {
+  if (trip.value.trip_status_id === enumTrip.TRIP_CREATED_ID || trip.value.trip_status_id === enumTrip.TRIP_ASSIGNED_ID) {
     bg_trip.value = 'bg-gray-100';
 
   }
 
-  if (trip.value.trip_status_id === 3 || trip.value.trip_status_id === 4) {
+  if (trip.value.trip_status_id === enumTrip.TRIP_PENDING_CONFIRMATION_ID ) {
     bg_trip.value = 'bg-orange-100';
   }
 
-  if (trip.value.trip_status_id === 5) {
+  if (trip.value.trip_status_id === enumTrip.TRIP_PENDING_TO_DO_ID) {
+    bg_trip.value = 'bg-gray-100';
+  }
+
+  if (trip.value.trip_status_id === enumTrip.TRIP_PROGRESS_ID) {
     bg_trip.value = 'bg-blue-100';
   }
 
-  if (trip.value.trip_status_id === 6) {
+  if (trip.value.trip_status_id === enumTrip.TRIP_COMPLETED_ID) {
     bg_trip.value = 'bg-green-100';
   }
 
@@ -378,7 +382,7 @@ watchEffect(() => {
     });
 
     let stageFind = trip.value.stages.find(stage => {
-      return stage.activity != null && (stage.stage_status_id >= 1 && stage.stage_status_id < 6);
+      return stage.activity != null && (stage.stage_status_id >= enumTrip.TRIP_CREATED_ID && stage.stage_status_id < enumTrip.TRIP_COMPLETED_ID);
     });
 
     if (stageFind) {
