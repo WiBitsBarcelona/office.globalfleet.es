@@ -996,8 +996,6 @@ const TripDetails = async (id) => {
         }
 
 
-        console.log(task);
-
         if (task.started_at) {
           task_started_at = $h.formatDate(task.started_at, 'DD/MM/YYYY HH:mm');
         } else {
@@ -1094,7 +1092,7 @@ const TripDetails = async (id) => {
             currentTask[0].task_status = task_status;
             currentTask[0].status_class = current_element_status_class;
             currentTask[0].task_started_at = task_started_at;
-            currentTask[0].finished_at = finished_at;
+            currentTask[0].finished_at = task_finished_at;
             currentTask[0].task_icon_class = current_element_icon_class;
             currentTask[0].task_status_class = current_element_status_class;
             currentTask[0].has_check_icon = has_check_icon;
