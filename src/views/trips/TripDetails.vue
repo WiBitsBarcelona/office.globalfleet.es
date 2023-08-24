@@ -10,8 +10,7 @@
               <Tippy tag="icon" class="mr-5" variant="primary" :options="{
                 theme: 'translucent',
               }" :content="`${total_new_trip_documents}/${total_trip_documents}`">
-                <FileTextIcon class="w-8 h-8 ml-auto hover:cursor-pointer"
-                  :class="trip_documents_class" />
+                <FileTextIcon class="w-8 h-8 ml-auto hover:cursor-pointer" :class="trip_documents_class" />
               </Tippy>
             </div>
             <div v-for="trip_incidences in total_trip_incidences_array" :key="trip_incidences.index"
@@ -564,19 +563,18 @@ let task_documents_class = 'hidden';
 let total_task_documents = 0;
 let total_new_task_documents = 0;
 const documents_array = ref([]);
+let currentIncidence = [];
+let currentElement = [];
+let currentTask = [];
 
 const TripDetails = async (id) => {
   countStage = 0;
-  trip_elements_array.value = [];
-  task_array.value = [];
-  incidences_array.value = [];
   incidences_images_array = [];
   total_trip_incidences_array = [];
   total_trip_incidences = 0;
   element_value = '--';
   total_new_trip_incidences = 0;
   await getTrip(id);
-  console.log(trip.value);
   trip_reference_number.value = trip.value.reference_number;
   trip_status.value = trip.value.status.name;
   switch (trip.value.status.id) {
@@ -638,7 +636,16 @@ const TripDetails = async (id) => {
       })
 
       total_trip_incidences_array.push({ new: total_new_trip_incidences, total: total_trip_incidences });
-      incidences_array.value.push({ id: incident.id, level: 'trip', level_name: trip_name.value, type: incident.type.name, description: incident.description, has_seen: incident.has_seen, sended_at: incidence_sended_at, receptioned_at: incidence_receptioned_at, readed_at: incidence_readed_at });
+
+      if (incidences_array.value.length > 0) {
+        currentIncidence = incidences_array.value.filter(obj => obj.id === incident.id);
+        if (currentIncidence.length == 0) {
+          //INCIDENCE DON'T EXIST ON ARRAY. ADDED
+          incidences_array.value.push({ id: incident.id, level: 'trip', level_name: trip_name.value, type: incident.type.name, description: incident.description, has_seen: incident.has_seen, sended_at: incidence_sended_at, receptioned_at: incidence_receptioned_at, readed_at: incidence_readed_at });
+        }
+      } else {
+        incidences_array.value.push({ id: incident.id, level: 'trip', level_name: trip_name.value, type: incident.type.name, description: incident.description, has_seen: incident.has_seen, sended_at: incidence_sended_at, receptioned_at: incidence_receptioned_at, readed_at: incidence_readed_at });
+      }
     });
   } else {
     trip_incidences_class = 'hidden';
@@ -749,7 +756,16 @@ const TripDetails = async (id) => {
         // TODO
       }
 
-      trip_elements_array.value.push({ id: element.id, element_type: element_type, class: current_element_icon_class, has_icon: has_check_icon, status_class: current_element_status_class, name: element_name, element_status: element_status, value: element_value, started_at: started_at, finished_at: finished_at, box_size: box_size, activity: element_activity, client: element_client, executed_at: executed_at, stage_incidences_class: stage_incidences_class });
+      if (trip_elements_array.value.length > 0) {
+        currentElement = trip_elements_array.value.filter(obj => obj.id === element.id);
+        if (currentElement.length == 0) {
+          //ELEMENT DON'T EXIST ON ARRAY. ADDED
+          trip_elements_array.value.push({ id: element.id, element_type: element_type, class: current_element_icon_class, has_icon: has_check_icon, status_class: current_element_status_class, name: element_name, element_status: element_status, value: element_value, started_at: started_at, finished_at: finished_at, box_size: box_size, activity: element_activity, client: element_client, executed_at: executed_at, stage_incidences_class: stage_incidences_class });
+        }
+      } else {
+        trip_elements_array.value.push({ id: element.id, element_type: element_type, class: current_element_icon_class, has_icon: has_check_icon, status_class: current_element_status_class, name: element_name, element_status: element_status, value: element_value, started_at: started_at, finished_at: finished_at, box_size: box_size, activity: element_activity, client: element_client, executed_at: executed_at, stage_incidences_class: stage_incidences_class });
+      }
+
     } else {
       //THIS STAGE IS AN TRIP STAGE
       //Asign stage specific values
@@ -805,8 +821,15 @@ const TripDetails = async (id) => {
             incidences_images_array.push({ id: image.id, parent_id: image.stage_incident_id, name: image.file_name, has_seen: image.has_seen, path: image.path });
           });
 
-          incidences_array.value.push({ id: incident.id, level: 'stage', level_name: element.name, type: incident.type.name, has_seen: incident.has_seen, sended_at: incidence_sended_at, receptioned_at: incidence_receptioned_at, readed_at: incidence_readed_at });
-
+          if (incidences_array.value.length > 0) {
+            currentIncidence = incidences_array.value.filter(obj => obj.id === incident.id);
+            if (currentIncidence.length == 0) {
+              //ELEMENT DON'T EXIST ON ARRAY ADDED
+              incidences_array.value.push({ id: incident.id, level: 'stage', level_name: element.name, type: incident.type.name, has_seen: incident.has_seen, sended_at: incidence_sended_at, receptioned_at: incidence_receptioned_at, readed_at: incidence_readed_at });
+            }
+          } else {
+            incidences_array.value.push({ id: incident.id, level: 'stage', level_name: element.name, type: incident.type.name, has_seen: incident.has_seen, sended_at: incidence_sended_at, receptioned_at: incidence_receptioned_at, readed_at: incidence_readed_at });
+          }
         });
       } else {
         stage_incidences_class = 'hidden';
@@ -856,29 +879,59 @@ const TripDetails = async (id) => {
         stage_documents_class = 'hidden';
       };
 
-      trip_elements_array.value.push({
-        id: element.id,
-        element_type: element_type,
-        class: current_element_icon_class,
-        has_icon: has_check_icon,
-        status_class: current_element_status_class,
-        name: element_name,
-        element_status: element_status,
-        value: element_value,
-        started_at: started_at,
-        finished_at: finished_at,
-        box_size: box_size, activity:
-          element_activity,
-        client: element_client,
-        executed_at: executed_at,
-        stage_incidences_class: stage_incidences_class,
-        total_stage_incidences: total_stage_incidences,
-        total_new_stage_incidences: total_new_stage_incidences,
-        stage_badge_incidences_class: stage_badge_incidences_class,
-        stage_documents_class: stage_documents_class,
-        total_stage_documents: total_stage_documents,
-        total_new_stage_documents: total_new_stage_documents
-      });
+      if (trip_elements_array.value.length > 0) {
+        currentElement = trip_elements_array.value.filter(obj => obj.id === element.id);
+        if (currentElement.length == 0) {
+          //ELEMENT DON'T EXIST ON ARRAY. ADDED
+          trip_elements_array.value.push({
+            id: element.id,
+            element_type: element_type,
+            class: current_element_icon_class,
+            has_icon: has_check_icon,
+            status_class: current_element_status_class,
+            name: element_name,
+            element_status: element_status,
+            value: element_value,
+            started_at: started_at,
+            finished_at: finished_at,
+            box_size: box_size, activity:
+              element_activity,
+            client: element_client,
+            executed_at: executed_at,
+            stage_incidences_class: stage_incidences_class,
+            total_stage_incidences: total_stage_incidences,
+            total_new_stage_incidences: total_new_stage_incidences,
+            stage_badge_incidences_class: stage_badge_incidences_class,
+            stage_documents_class: stage_documents_class,
+            total_stage_documents: total_stage_documents,
+            total_new_stage_documents: total_new_stage_documents
+          });
+        }
+      } else {
+        trip_elements_array.value.push({
+          id: element.id,
+          element_type: element_type,
+          class: current_element_icon_class,
+          has_icon: has_check_icon,
+          status_class: current_element_status_class,
+          name: element_name,
+          element_status: element_status,
+          value: element_value,
+          started_at: started_at,
+          finished_at: finished_at,
+          box_size: box_size, activity:
+            element_activity,
+          client: element_client,
+          executed_at: executed_at,
+          stage_incidences_class: stage_incidences_class,
+          total_stage_incidences: total_stage_incidences,
+          total_new_stage_incidences: total_new_stage_incidences,
+          stage_badge_incidences_class: stage_badge_incidences_class,
+          stage_documents_class: stage_documents_class,
+          total_stage_documents: total_stage_documents,
+          total_new_stage_documents: total_new_stage_documents
+        });
+      }
 
       //Search all tasks in this stage
       element.tasks.forEach(task => {
@@ -948,14 +1001,33 @@ const TripDetails = async (id) => {
               incidences_images_array.push({ id: image.id, parent_id: image.task_incident_id, name: image.file_name, has_seen: image.has_seen, path: image.path });
             });
 
-            incidences_array.value.push({ id: incident.id, level: 'task', level_name: task.name, type: incident.type.name, has_seen: incident.has_seen, sended_at: incidence_sended_at, receptioned_at: incidence_receptioned_at, readed_at: incidence_readed_at });
+            if (incidences_array.value.length > 0) {
+              currentIncidence = incidences_array.value.filter(obj => obj.id === incident.id);
+              if (currentIncidence.length == 0) {
+                //INCIDENCE DON'T EXIST ADDED
+                incidences_array.value.push({ id: incident.id, level: 'task', level_name: task.name, type: incident.type.name, has_seen: incident.has_seen, sended_at: incidence_sended_at, receptioned_at: incidence_receptioned_at, readed_at: incidence_readed_at });
+              }
+            } else {
+              incidences_array.value.push({ id: incident.id, level: 'task', level_name: task.name, type: incident.type.name, has_seen: incident.has_seen, sended_at: incidence_sended_at, receptioned_at: incidence_receptioned_at, readed_at: incidence_readed_at });
+            }
+
           });
         } else {
           task_incidences_class = 'hidden';
           task_badge_incidences_class = 'hidden';
         };
 
-        task_array.value.push({ id: task.id, stage_id: stage_id, task_name: task_name, task_status: task_status, status_class: current_element_status_class, task_type: task_type, task_started_at: task_started_at, task_finished_at: task_finished_at, task_icon_class: current_element_icon_class, task_status_class: current_element_status_class, has_check_icon: has_check_icon, task_incidences_class: task_incidences_class, total_task_incidences: total_task_incidences, total_new_task_incidences: total_new_task_incidences, task_badge_incidences_class: task_badge_incidences_class });
+        if (task_array.value.length > 0) {
+          currentTask = task_array.value.filter(obj => obj.id === task.id);
+          if (currentTask.length == 0) {
+            //TASK DON'T EXIST ON ARRAY. ADDED
+            task_array.value.push({ id: task.id, stage_id: stage_id, task_name: task_name, task_status: task_status, status_class: current_element_status_class, task_type: task_type, task_started_at: task_started_at, task_finished_at: task_finished_at, task_icon_class: current_element_icon_class, task_status_class: current_element_status_class, has_check_icon: has_check_icon, task_incidences_class: task_incidences_class, total_task_incidences: total_task_incidences, total_new_task_incidences: total_new_task_incidences, task_badge_incidences_class: task_badge_incidences_class });
+          }
+        } else {
+          task_array.value.push({ id: task.id, stage_id: stage_id, task_name: task_name, task_status: task_status, status_class: current_element_status_class, task_type: task_type, task_started_at: task_started_at, task_finished_at: task_finished_at, task_icon_class: current_element_icon_class, task_status_class: current_element_status_class, has_check_icon: has_check_icon, task_incidences_class: task_incidences_class, total_task_incidences: total_task_incidences, total_new_task_incidences: total_new_task_incidences, task_badge_incidences_class: task_badge_incidences_class });
+
+        }
+
       });
 
     }
@@ -996,7 +1068,6 @@ const TripDetails = async (id) => {
   } else {
     trip_finished_at.value = '--';
   }
-
 }
 
 const closeTrip = {
@@ -1201,9 +1272,9 @@ const openIncidenceFile = async (path, file_name, action) => {
 }
 
 //Function to refresh data every time asigned on ENV file.
-/* const autoRefresh = setInterval(() => {
+const autoRefresh = setInterval(() => {
   TripDetails(route.params.id);
-}, auto_refresh); */
+}, auto_refresh);
 
 onMounted(() => {
   dom("body").removeClass("main").removeClass("login").addClass("error-page");
@@ -1212,7 +1283,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  //clearInterval(autoRefresh);
+  clearInterval(autoRefresh);
 });
 
 </script>
