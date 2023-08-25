@@ -239,13 +239,13 @@
                               </div>
                             </div>
                             <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow ml-14 md:ml-44">
-                              <div class="grid grid-cols-3 gap-2 mb-5pb-2">
+                              <div class="grid grid-cols-4 gap-2 mb-5pb-2">
                                 <div class="col-span-2">
                                   <p class="text-md font-normal leading-6 text-gray-500"><span
                                       class="text-xs font-light text-gray-400">{{ $t("task") }}:</span> {{ task.task_name
                                       }}</p>
                                 </div>
-                                <div class="text-end">
+                                <div class="col-span-2 text-end">
                                   <span :class="task.status_class">{{ task.task_status }}</span>
                                 </div>
                                 <div class="px-2">
@@ -265,6 +265,34 @@
                                   <p class="text-md font-normal leading-6 text-gray-500">
                                     {{ task.task_finished_at }}
                                   </p>
+                                </div>
+                                <div class="px-2 -my-2">
+                                  <table v-if="task.task_image" class="table table-report justify-center">
+                                    <tbody>
+                                      <td>
+                                        <a class="flex justify-center" href="javascript:;"
+                                          @click="openTaskFile(task.task_image, task.task_image_name, 0)">
+                                          <Tippy tag="icon" variant="primary" :options="{
+                                            theme: 'translucent',
+                                            zIndex: 99999,
+                                          }" :content="$t('trip_details.view')">
+                                            <EyeIcon class="w-4 h-4 mr-1" />
+                                          </Tippy>
+                                        </a>
+                                      </td>
+                                      <td class="table-report__action">
+                                        <a class="flex justify-center" href="javascript:;"
+                                          @click="openTaskFile(task.task_image, task.task_image_name, 1)">
+                                          <Tippy tag="icon" variant="primary" :options="{
+                                            theme: 'translucent',
+                                            zIndex: 99999,
+                                          }" :content="$t('trip_details.download')">
+                                            <DownloadIcon class="w-4 h-4 mr-1" />
+                                          </Tippy>
+                                        </a>
+                                      </td>
+                                    </tbody>
+                                  </table>
                                 </div>
                               </div>
                             </div>
@@ -525,6 +553,8 @@ let task_status = '';
 let task_type = '';
 let task_started_at = '';
 let task_finished_at = '';
+let task_image = '';
+let task_image_name = '';
 const task_array = ref([]);
 let stage_incidences_class = 'hidden';
 let task_incidences_class = 'hidden';
@@ -575,6 +605,7 @@ const TripDetails = async (id) => {
   element_value = '--';
   total_new_trip_incidences = 0;
   await getTrip(id);
+  console.log(trip.value);
   trip_reference_number.value = trip.value.reference_number;
   trip_status.value = trip.value.status.name;
   switch (trip.value.status.id) {
@@ -722,9 +753,9 @@ const TripDetails = async (id) => {
     }
     let element_name = element.name;
     let element_status = element.status.name;
-    if (element.execution_at){
+    if (element.execution_at) {
       executed_at = $h.formatDate(element.execution_at, 'DD/MM/YYYY HH:mm');
-    }else{
+    } else {
       executed_at = '--';
     }
 
@@ -766,23 +797,24 @@ const TripDetails = async (id) => {
         currentElement = trip_elements_array.value.filter(obj => obj.id === element.id);
         if (currentElement.length == 0) {
           //ELEMENT DON'T EXIST ON ARRAY. ADDED
-          trip_elements_array.value.push({ 
-            id: element.id, 
-            element_type: element_type, 
-            class: current_element_icon_class, 
-            has_icon: has_check_icon, 
-            status_class: current_element_status_class, 
-            name: element_name, 
-            element_status: element_status, 
-            value: element_value, 
-            started_at: started_at, 
-            finished_at: finished_at, 
-            box_size: box_size, 
-            activity: element_activity, 
-            client: element_client, 
-            executed_at: executed_at, 
-            stage_incidences_class: stage_incidences_class });
-        }else{
+          trip_elements_array.value.push({
+            id: element.id,
+            element_type: element_type,
+            class: current_element_icon_class,
+            has_icon: has_check_icon,
+            status_class: current_element_status_class,
+            name: element_name,
+            element_status: element_status,
+            value: element_value,
+            started_at: started_at,
+            finished_at: finished_at,
+            box_size: box_size,
+            activity: element_activity,
+            client: element_client,
+            executed_at: executed_at,
+            stage_incidences_class: stage_incidences_class
+          });
+        } else {
           currentElement[0].class = current_element_icon_class;
           currentElement[0].has_icon = has_check_icon;
           currentElement[0].status_class = current_element_status_class;
@@ -933,7 +965,7 @@ const TripDetails = async (id) => {
             total_stage_documents: total_stage_documents,
             total_new_stage_documents: total_new_stage_documents
           });
-        }else{
+        } else {
           currentElement[0].class = current_element_icon_class;
           currentElement[0].has_icon = has_check_icon;
           currentElement[0].status_class = current_element_status_class;
@@ -1007,6 +1039,15 @@ const TripDetails = async (id) => {
           task_finished_at = '--';
         }
 
+        //Find file in action type cameras. TODO find action type forms & action type scanner.
+        if (task.actions[0].action_cameras[0].path_image) {
+          task_image = task.actions[0].action_cameras[0].path_image;
+          let task_image_arr = task_image.split('/');
+          task_image_name = task_image_arr[task_image_arr.length -1];
+        }else{
+          task_image = '';
+          task_image_name = '';
+        }
         //Find Incidences of this Task.
         if (task.incidents !== null) {
           //TASK WITH INCIDENCES
@@ -1069,24 +1110,26 @@ const TripDetails = async (id) => {
           currentTask = task_array.value.filter(obj => obj.id === task.id);
           if (currentTask.length == 0) {
             //TASK DON'T EXIST ON ARRAY. ADDED
-            task_array.value.push({ 
-              id: task.id, 
-              stage_id: stage_id, 
-              task_name: task_name, 
-              task_status: task_status, 
-              status_class: current_element_status_class, 
-              task_type: task_type, 
-              task_started_at: task_started_at, 
-              task_finished_at: task_finished_at, 
-              task_icon_class: current_element_icon_class, 
-              task_status_class: current_element_status_class, 
-              has_check_icon: has_check_icon, 
-              task_incidences_class: task_incidences_class, 
-              total_task_incidences: total_task_incidences, 
-              total_new_task_incidences: total_new_task_incidences, 
-              task_badge_incidences_class: task_badge_incidences_class 
+            task_array.value.push({
+              id: task.id,
+              stage_id: stage_id,
+              task_name: task_name,
+              task_status: task_status,
+              status_class: current_element_status_class,
+              task_type: task_type,
+              task_started_at: task_started_at,
+              task_finished_at: task_finished_at,
+              task_icon_class: current_element_icon_class,
+              task_status_class: current_element_status_class,
+              has_check_icon: has_check_icon,
+              task_incidences_class: task_incidences_class,
+              total_task_incidences: total_task_incidences,
+              total_new_task_incidences: total_new_task_incidences,
+              task_badge_incidences_class: task_badge_incidences_class,
+              task_image: task_image, 
+              task_image_name: task_image_name
             });
-          }else{
+          } else {
             currentTask[0].task_status = task_status;
             currentTask[0].status_class = current_element_status_class;
             currentTask[0].task_started_at = task_started_at;
@@ -1095,9 +1138,11 @@ const TripDetails = async (id) => {
             currentTask[0].task_status_class = current_element_status_class;
             currentTask[0].has_check_icon = has_check_icon;
             currentTask[0].task_incidences_class = task_incidences_class;
+            currentTask[0].task_image = task_image;
+            currentTask[0].task_image_name = task_image_name;
           }
         } else {
-          task_array.value.push({ id: task.id, stage_id: stage_id, task_name: task_name, task_status: task_status, status_class: current_element_status_class, task_type: task_type, task_started_at: task_started_at, task_finished_at: task_finished_at, task_icon_class: current_element_icon_class, task_status_class: current_element_status_class, has_check_icon: has_check_icon, task_incidences_class: task_incidences_class, total_task_incidences: total_task_incidences, total_new_task_incidences: total_new_task_incidences, task_badge_incidences_class: task_badge_incidences_class });
+          task_array.value.push({ id: task.id, stage_id: stage_id, task_name: task_name, task_status: task_status, status_class: current_element_status_class, task_type: task_type, task_started_at: task_started_at, task_finished_at: task_finished_at, task_icon_class: current_element_icon_class, task_status_class: current_element_status_class, has_check_icon: has_check_icon, task_incidences_class: task_incidences_class, total_task_incidences: total_task_incidences, total_new_task_incidences: total_new_task_incidences, task_badge_incidences_class: task_badge_incidences_class, task_image: task_image, task_image_name: task_image_name });
 
         }
 
@@ -1319,6 +1364,70 @@ const openIncidenceFile = async (path, file_name, action) => {
       case 'jpg':
       case 'jpeg':
         window.open(URL.createObjectURL(new Blob(["<img src='" + documentData.value.data + "' />"], { type: "text/html" })));
+        break;
+      default:
+        Swal.fire({
+          icon: 'error',
+          title: '',
+          text: t("documents.swal.document_error_viewing"),
+          confirmButtonText: t("documents.swal.all_right_btn"),
+          buttonsStyling: false,
+          customClass: {
+            confirmButton: 'btn btn-primary shadow-md',
+          },
+        });
+    }
+  } else {
+    //DOWNLOAD DOCUMENT
+    const linkSource = documentData.value.data;
+    const downloadLink = document.createElement("a");
+    const fileName = file_name;
+    downloadLink.href = linkSource;
+    downloadLink.download = fileName;
+    Swal.close();
+    downloadLink.click();
+  }
+}
+
+const openTaskFile = async (path, file_name, action) => {
+  switch (action) {
+    case 0:
+      Swal.fire({
+        icon: 'info',
+        title: '',
+        text: t("documents.swal.document_wait_viewing"),
+        position: 'center',
+        showConfirmButton: false,
+        customClass: {
+          container: 'markAsSeen'
+        },
+      });
+      break;
+    case 1:
+      Swal.fire({
+        icon: 'info',
+        title: '',
+        text: t("documents.swal.document_wait_download"),
+        position: 'center',
+        showConfirmButton: false,
+        customClass: {
+          container: 'markAsSeen'
+        },
+      });
+      break;
+  }
+  await downloadDocument(path);
+  if (action == 0) {
+    //OPEN DOCUMENT
+    Swal.close();
+    switch (documentData.value.type) {
+      case 'pdf':
+        window.open(documentData.value.data);
+        break;
+      case 'png':
+      case 'jpg':
+      case 'jpeg':
+        window.open(URL.createObjectURL(new Blob(["<img width='800' src='" + documentData.value.data + "' />"], { type: "text/html" })));
         break;
       default:
         Swal.fire({
