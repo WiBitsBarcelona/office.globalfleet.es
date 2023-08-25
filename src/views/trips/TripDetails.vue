@@ -124,7 +124,7 @@
                   <div class="flex items-center space-x-4 md:space-x-2 md:space-x-reverse">
                     <!-- Icon -->
                     <div :class="element.class">
-                      <checkIcon v-if="element.has_icon == 1" class="text-success" />
+                      <checkIcon v-if="element.has_icon == 1" class="text-success dark:text-white" />
                     </div>
                     <!-- Incidence -->
                     <div class="relative text-warning md:w-14" style="text-align: -moz-right;">
@@ -226,7 +226,7 @@
                             <div class="flex items-center space-x-4 md:space-x-2 md:space-x-reverse">
                               <!-- Icon -->
                               <div :class="task.task_icon_class">
-                                <checkIcon v-if="task.has_check_icon == 1" class="text-success" />
+                                <checkIcon v-if="task.has_check_icon == 1" class="text-success dark:text-white" />
                               </div>
                               <!-- Incidence -->
                               <div class="relative" style="text-align: -moz-right;">
@@ -331,7 +331,7 @@
         </thead>
         <tbody>
           <template v-for="incidence in incidences_array" :key="incidence.id">
-            <tr v-if="incidence.level == 'trip'" class="intro-y" :class="{ 'text-primary': incidence.has_seen == 0 }">
+            <tr v-if="incidence.level == 'trip'" class="intro-y" :class="{ 'text-primary dark:text-white': incidence.has_seen == 0 }">
               <td>
                 <PaperclipIcon class="w-4 h-4 mr-1" />
               </td>
@@ -351,7 +351,7 @@
                 </div>
               </td>
             </tr>
-            <tr v-if="incidence.level == 'stage'" class="intro-y" :class="{ 'text-primary': incidence.has_seen == 0 }">
+            <tr v-if="incidence.level == 'stage'" class="intro-y" :class="{ 'text-primary dark:text-white': incidence.has_seen == 0 }">
               <td>
                 <PaperclipIcon class="w-4 h-4 mr-1" />
               </td>
@@ -371,7 +371,7 @@
                 </div>
               </td>
             </tr>
-            <tr v-if="incidence.level == 'task'" class="intro-y" :class="{ 'text-primary': incidence.has_seen == 0 }">
+            <tr v-if="incidence.level == 'task'" class="intro-y" :class="{ 'text-primary dark:text-white': incidence.has_seen == 0 }">
               <td>
                 <PaperclipIcon class="w-4 h-4 mr-1" />
               </td>
@@ -532,16 +532,16 @@ const trip_finished_at = ref('');
 let countStage = 0;
 const trip_elements_array = ref([]);
 let trip_incidences_class = 'text-gray-300';
-let icon_pending_class = 'flex items-center justify-center w-10 h-10 rounded-full bg-white border border-gray-300 shadow md:order-1';
-let icon_active_class = 'flex items-center justify-center w-10 h-10 rounded-full bg-white border-4 border-info shadow md:order-1';
-let icon_success_class = 'flex items-center justify-center w-10 h-10 rounded-full bg-green-100 border border-success shadow md:order-1';
+let icon_pending_class = 'flex items-center justify-center w-10 h-10 rounded-full bg-white border border-gray-300 shadow md:order-1 dark:bg-darkmode-600 dark:border-gray-700';
+let icon_active_class = 'flex items-center justify-center w-10 h-10 rounded-full bg-white border-4 border-info shadow md:order-1 dark:bg-darkmode-600 dark:border-info';
+let icon_success_class = 'flex items-center justify-center w-10 h-10 rounded-full bg-green-100 border border-success shadow md:order-1 dark:bg-darkmode-600 dark:border-success';
 let current_element_icon_class = '';
 let has_check_icon = 0;
 let box_size = '';
-let status_pending_class = 'inline-flex items-center py-1.5 px-1.5 rounded-lg text-xs font-medium bg-gray-100 border border-gray-300';
-let status_not_confirmed_class = 'inline-flex items-center py-1.5 px-1.5 rounded-lg text-xs font-medium bg-orange-100 border border-orange-300';
-let status_active_class = 'inline-flex items-center py-1.5 px-1.5 rounded-lg text-xs font-medium bg-blue-100 border border-primary';
-let status_success_class = 'inline-flex items-center py-1.5 px-1.5 rounded-lg text-xs font-medium bg-green-100 border border-green-500';
+let status_pending_class = 'inline-flex items-center py-1.5 px-1.5 rounded-lg text-xs font-medium bg-gray-100 border border-gray-300 dark:border-gray-500 dark:text-white dark:bg-transparent';
+let status_not_confirmed_class = 'inline-flex items-center py-1.5 px-1.5 rounded-lg text-xs font-medium bg-orange-100 border border-orange-300 dark:border-orange-500 dark:text-white dark:bg-transparent';
+let status_active_class = 'inline-flex items-center py-1.5 px-1.5 rounded-lg text-xs font-medium bg-blue-100 border border-primary dark:border-primary dark:text-white dark:bg-transparent';
+let status_success_class = 'inline-flex items-center py-1.5 px-1.5 rounded-lg text-xs font-medium bg-green-100 border border-green-500 dark:border-green-500 dark:text-white dark:bg-transparent';
 let current_element_status_class = '';
 let element_value = '--';
 let element_activity = '';
@@ -634,7 +634,7 @@ const TripDetails = async (id) => {
   trip_origin.value = find.name;
   if (trip.value.incident !== null) {
     //TRIP WITH INCIDENCES
-    trip_incidences_class = 'text-gray-300';
+    trip_incidences_class = 'text-gray-500';
     trip_badge_incidences_class = 'bg-gray-300 border-gray-300';
     trip.value.incidents.forEach(incident => {
       total_trip_incidences++;
@@ -841,7 +841,7 @@ const TripDetails = async (id) => {
       //Find Incidences of this Stage.
       if (element.incidents !== null) {
         //STAGE WITH INCIDENCES
-        stage_incidences_class = 'text-gray-300 hover:cursor-pointer';
+        stage_incidences_class = 'text-gray-300 hover:cursor-pointer dark:text-gray-500';
         stage_badge_incidences_class = 'bg-gray-300 border-gray-300';
         total_new_stage_incidences = 0;
         total_stage_incidences = 0;
@@ -849,11 +849,11 @@ const TripDetails = async (id) => {
           if (incident.stage_id == element.id) {
             total_stage_incidences++;
             if (incident.has_seen == 0) {
-              stage_incidences_class = 'text-primary hover:cursor-pointer';
+              stage_incidences_class = 'text-primary hover:cursor-pointer dark:text-white';
               stage_badge_incidences_class = 'bg-blue-300 border-primary';
               total_new_stage_incidences++;
             } else {
-              stage_incidences_class = 'text-gray-300 hover:cursor-pointer';
+              stage_incidences_class = 'text-gray-300 hover:cursor-pointer dark:text-gray-500';
               stage_badge_incidences_class = 'bg-gray-300 border-gray-300';
             };
           }
@@ -1051,7 +1051,7 @@ const TripDetails = async (id) => {
         //Find Incidences of this Task.
         if (task.incidents !== null) {
           //TASK WITH INCIDENCES
-          task_incidences_class = 'text-gray-300 hover:cursor-pointer';
+          task_incidences_class = 'text-gray-300 hover:cursor-pointer dark:text-gray-500';
           task_badge_incidences_class = 'bg-gray-300 border-gray-300';
           total_new_task_incidences = 0;
           total_task_incidences = 0;
@@ -1059,11 +1059,11 @@ const TripDetails = async (id) => {
             if (incident.task_id == task.id) {
               total_task_incidences++;
               if (incident.has_seen == 0) {
-                task_incidences_class = 'text-primary hover:cursor-pointer';
+                task_incidences_class = 'text-primary hover:cursor-pointer dark:text-white';
                 task_badge_incidences_class = 'bg-blue-300 border-primary';
                 total_new_task_incidences++;
               } else {
-                task_incidences_class = 'text-gray-300 hover:cursor-pointer';
+                task_incidences_class = 'text-gray-300 hover:cursor-pointer dark:text-gray-500';
                 task_badge_incidences_class = 'bg-gray-300 border-gray-300';
               };
             }
