@@ -101,12 +101,22 @@ const routes = [
       {
         path: "documents",
         name: "documents",
-        component: () => import('@/views/documents/Documents.vue'),
+        component: () => import('@/views/documents/general/GeneralDocumentView.vue'),
+      },
+      {
+        path: "drivers-documents",
+        name: "drivers-documents",
+        component: () => import('@/views/documents/drivers/DriverDocumentView.vue'),
       },
       {
         path: "driver_documents/:id",
         name: "Driver Documents",
         component: () => import('@/views/documents/drivers/General.vue'),
+      },
+      {
+        path: "trip-documents",
+        name: "trip-documents",
+        component: () => import('@/views/documents/trips/TripDocumentView.vue'),
       },
       {
         path: "incidents",
