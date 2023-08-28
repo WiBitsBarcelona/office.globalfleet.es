@@ -512,7 +512,6 @@ const incidenceDetails = ref(false);
 /**
  * CODE SECTION FOR TRIP DETAILS
  */
-const headerFooterSlideOverPreview = ref(false);
 const trip_reference_number = ref('');
 const trip_status = ref('');
 let trip_status_class = '';
@@ -558,9 +557,9 @@ let task_image_name = '';
 const task_array = ref([]);
 let stage_incidences_class = 'hidden';
 let task_incidences_class = 'hidden';
-let total_trip_incidences = 0;
-let total_new_trip_incidences = 0;
-let total_trip_incidences_array = [];
+const total_trip_incidences = ref(0);
+const total_new_trip_incidences = ref(0);
+const total_trip_incidences_array = ref([]);
 let trip_badge_incidences_class = '';
 let total_stage_incidences = 0;
 let total_new_stage_incidences = 0;
@@ -600,12 +599,12 @@ let currentTask = [];
 const TripDetails = async (id) => {
   countStage = 0;
   incidences_images_array = [];
-  total_trip_incidences_array = [];
-  total_trip_incidences = 0;
+  //total_trip_incidences_array.value = [];
+  total_trip_incidences.value = 0;
   element_value = '--';
-  total_new_trip_incidences = 0;
+  total_new_trip_incidences.value = 0;
   await getTrip(id);
-  console.log(trip.value);
+  //console.log(trip.value);
   trip_reference_number.value = trip.value.reference_number;
   trip_status.value = trip.value.status.name;
   switch (trip.value.status.id) {
@@ -637,11 +636,11 @@ const TripDetails = async (id) => {
     trip_incidences_class = 'text-gray-500';
     trip_badge_incidences_class = 'bg-gray-300 border-gray-300';
     trip.value.incidents.forEach(incident => {
-      total_trip_incidences++;
+      total_trip_incidences.value++;
       if (incident.has_seen == 0) {
         trip_incidences_class = 'text-white';
         trip_badge_incidences_class = 'bg-blue-300 border-primary';
-        total_new_trip_incidences++;
+        total_new_trip_incidences.value++;
       }
       if (incident.sended_at) {
         incidence_sended_at = $h.formatDate(incident.sended_at, 'DD/MM/YYYY HH:mm');
@@ -666,13 +665,24 @@ const TripDetails = async (id) => {
         incidences_images_array.push({ id: image.id, parent_id: image.trip_incident_id, name: image.file_name, has_seen: image.has_seen, path: image.path });
       })
 
-      total_trip_incidences_array.push({ new: total_new_trip_incidences, total: total_trip_incidences });
+      if( total_trip_incidences_array.value.length > 0){
+        total_trip_incidences_array.value.forEach(incElement => {
+            incElement.new = total_new_trip_incidences.value;
+            incElement.total = total_trip_incidences.value;
+        });
+      }else{
+        total_trip_incidences_array.value.push({ new: total_new_trip_incidences.value, total: total_trip_incidences.value });
+      }
+      console.log(total_trip_incidences_array.value);
 
       if (incidences_array.value.length > 0) {
         currentIncidence = incidences_array.value.filter(obj => obj.id === incident.id);
         if (currentIncidence.length == 0) {
           //INCIDENCE DON'T EXIST ON ARRAY. ADDED
           incidences_array.value.push({ id: incident.id, level: 'trip', level_name: trip_name.value, type: incident.type.name, description: incident.description, has_seen: incident.has_seen, sended_at: incidence_sended_at, receptioned_at: incidence_receptioned_at, readed_at: incidence_readed_at });
+        }else{
+          currentIncidence[0].has_seen = incident.has_seen;
+          currentIncidence[0].readed_at = incidence_readed_at;
         }
       } else {
         incidences_array.value.push({ id: incident.id, level: 'trip', level_name: trip_name.value, type: incident.type.name, description: incident.description, has_seen: incident.has_seen, sended_at: incidence_sended_at, receptioned_at: incidence_receptioned_at, readed_at: incidence_readed_at });
@@ -885,6 +895,9 @@ const TripDetails = async (id) => {
             if (currentIncidence.length == 0) {
               //ELEMENT DON'T EXIST ON ARRAY ADDED
               incidences_array.value.push({ id: incident.id, level: 'stage', level_name: element.name, type: incident.type.name, has_seen: incident.has_seen, sended_at: incidence_sended_at, receptioned_at: incidence_receptioned_at, readed_at: incidence_readed_at });
+            }else{
+              currentIncidence[0].has_seen = incident.has_seen;
+              currentIncidence[0].readed_at = incident.readed_at;
             }
           } else {
             incidences_array.value.push({ id: incident.id, level: 'stage', level_name: element.name, type: incident.type.name, has_seen: incident.has_seen, sended_at: incidence_sended_at, receptioned_at: incidence_receptioned_at, readed_at: incidence_readed_at });
@@ -974,6 +987,8 @@ const TripDetails = async (id) => {
           currentElement[0].started_at = started_at;
           currentElement[0].finished_at = finished_at;
           currentElement[0].stage_incidences_class = stage_incidences_class;
+          currentElement[0].total_stage_incidences = total_stage_incidences;
+          currentElement[0].total_new_stage_incidences = total_new_stage_incidences;
         }
       } else {
         trip_elements_array.value.push({
@@ -1456,7 +1471,7 @@ const openTaskFile = async (path, file_name, action) => {
 //Function to refresh data every time asigned on ENV file.
 const autoRefresh = setInterval(() => {
   TripDetails(route.params.id);
-  console.log("Actualizado");
+  //console.log("Actualizado");
 }, auto_refresh);
 
 onMounted(() => {
