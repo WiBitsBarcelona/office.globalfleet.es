@@ -259,7 +259,7 @@
         </div>
         <div class="rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400">
           <h5 class="text-xs font-light text-gray-400">{{ $t('current_stage_now') }}</h5>
-          <p class="text-md font-normal leading-6 text-gray-500">{{ current_stage_now }}</p>
+          <p class="text-md font-normal leading-6 text-gray-500">{{ current_stage_started_at }}</p>
         </div>
         <div class="rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400">
           <h5 class="text-xs font-light text-gray-400">{{ $t('current_stage_status') }}</h5>
@@ -306,6 +306,7 @@ const current_stage = ref('--');
 const current_stage_execution_at = ref('--');
 const current_stage_now = ref('--');
 const current_stage_status = ref('--');
+const current_stage_started_at = ref('--');
 
 
 
@@ -389,14 +390,16 @@ watchEffect(() => {
       
       if(trip.value.trip_status_id === enumTrip.TRIP_PROGRESS_ID){
         current_stage.value = stageFind.name;
-        current_stage_execution_at.value = $h.formatDate(stageFind.execution_at, 'DD/MM/YYYY HH:mm:ss');
+        current_stage_execution_at.value = $h.formatDate(stageFind.execution_at, 'DD/MM/YYYY HH:mm');
         current_stage_status.value = stageFind.status.name;
         current_stage_now.value = $h.nowTimestamp();
+        current_stage_started_at.value = $h.formatDate(stageFind.started_at, 'DD/MM/YYYY HH:mm');
       }else{
         current_stage.value = '--';
         current_stage_execution_at.value = '--';
         current_stage_status.value = '--';
         current_stage_now.value = '--';
+        current_stage_started_at.value = '--';
       }
 
     }
@@ -425,7 +428,7 @@ watchEffect(() => {
   }
 
 
-  execution_at.value = $h.formatDate(trip.value.execution_at, 'DD/MM/YYYY HH:mm:ss');
+  execution_at.value = $h.formatDate(trip.value.execution_at, 'DD/MM/YYYY HH:mm');
 
 });
 
