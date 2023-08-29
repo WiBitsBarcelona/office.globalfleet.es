@@ -135,7 +135,11 @@
       <textarea v-on:keyup.enter="sendMessage" id="message"
         class="overflow-y-scroll scrollbar-hidden chat__box__input form-control dark:bg-darkmode-600 h-11 resize-none border-transparent px-5 py-3 shadow-none focus:border-transparent focus:ring-0"
         placeholder="Escribe el mensaje..."></textarea>
-      <div class="flex gap-4 items-center justify-center w-1/6 text-2xl text-center">
+      <div style="display: flex; justify-content: center; align-items: center; width:200px; margin-right: 10px;">
+        <p style="font-size: 16px; margin-right: 5px; ">Confirmar lectura</p>
+        <input type="checkbox" value="first_checkbox" v-model="isChecked" @change="handleCheckboxChange"/>
+      </div>
+      <div class="flex gap-4 items-center justify-center text-2xl text-center" style="margin-right: 18px;">
         <!-- SVG del clip -->
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round" class="lucide w-6 h-6">
@@ -198,13 +202,13 @@
             <!-- Confirmacion de Lectura -->
             <div style="margin-top: 5px; margin-bottom: 5px;">
               <div v-if="confirmetAt == 'null'">
-                <div style="margin-top: 10px;">
+                <!-- <div style="margin-top: 10px;">
                   <label style="font-size: 18px; margin-left: 5px;">
                     <input type="checkbox" :id="`${idMessage}`" value="first_checkbox" v-model="isChecked"
                       @change="handleCheckboxChange" style="margin-right: 5px;" />
                     Confirmar Lectura
                   </label>
-                </div>
+                </div> -->
               </div>
               <div v-else>
                 <p style="font-size: 16px;">Confirmado</p>
@@ -216,7 +220,7 @@
                   </p>
                 </div>
               </div>
-            </div>
+            </div> 
 
           </div>
         </div>
@@ -613,7 +617,8 @@ const sendMessage = async () => {
   // Controlamos que el mensaje no esté vacio
   const value = message.value.trim();
   if (value !== "") {
-    sendTextMessage(userInfo.uid, message.value, chatId, receiverType);
+    sendTextMessage(userInfo.uid, message.value, chatId, receiverType, isChecked.value);
+    isChecked.value = false
   }
 
   // Netejem el text
@@ -975,7 +980,7 @@ const handleCheckboxChange = async () => {
   if (isChecked.value) {
     console.log('El checkbox está activado.');
     // si se activa se ejecuta la funcion 
-    const response = await update_datameta_message(idMessage.value)
+    /*const response = await update_datameta_message(idMessage.value)
 
     if (response.error) {
       console.log('error')
@@ -985,7 +990,7 @@ const handleCheckboxChange = async () => {
       // si la respuesta es positiva se cambia de estado a checkresponse
       checkresponse.value = true;
       console.log("aqiui", response)
-    }
+    }*/
   } else {
     console.log('El checkbox está desactivado.');
   }

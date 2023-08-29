@@ -283,7 +283,7 @@ export default function useChat() {
   }
 
   // Funció per a enviar missatges
-  const sendTextMessage = async (user_uid, message, chat_id, receiverType) => {
+  const sendTextMessage = async (user_uid, message, chat_id, receiverType, isMetadata) => {
     const options = {
       method: "POST",
       headers: {
@@ -295,7 +295,17 @@ export default function useChat() {
       body: JSON.stringify({
         category: "message",
         type: "text",
-        data: { text: message },
+        data: {
+          text: message,
+          ...(isMetadata
+            ? {
+                metadata: {
+                  reader: '0', // Pruebas -> valor 0 es no confirmado y 1 es Confirmado
+                  confirmetAt: 'undefined'
+                }
+              }
+            : ''),
+        },
         receiver: chat_id,
         receiverType: receiverType,
       }),
@@ -372,34 +382,34 @@ export default function useChat() {
   // Funcion para ConfirmarLectura (UpdateMensaje)
   const update_datameta_message = async (idmessage) => {
     try {
-        const response = await fetch(
-            `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/messages/${idmessage}`,
-            {
-                method: "PUT",
-                headers: {
-                    accept: "application/json",
-                    'content-type': 'application/json',
-                    apikey: cometData.value.company.cometchat.rest_api_key,
-                },
-                body: JSON.stringify({
-                    data: {
-                        metadata: {
-                            reader: '0', // Pruebas -> valor 0 es no confirmado y 1 es Confirmado
-                            confirmetAt: 'undefined'
-                        }
-                    } 
-                }),
+      const response = await fetch(
+        `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/messages/${idmessage}`,
+        {
+          method: "PUT",
+          headers: {
+            accept: "application/json",
+            'content-type': 'application/json',
+            apikey: cometData.value.company.cometchat.rest_api_key,
+          },
+          body: JSON.stringify({
+            data: {
+              metadata: {
+                reader: '0', // Pruebas -> valor 0 es no confirmado y 1 es Confirmado
+                confirmetAt: 'undefined'
+              }
             }
-        );
+          }),
+        }
+      );
 
-        const data = await response.json();
-        return data;
+      const data = await response.json();
+      return data;
 
     } catch (err) {
-        console.error(err);
-        throw err;
+      console.error(err);
+      throw err;
     }
-}
+  }
 
   return {
     // Variables
