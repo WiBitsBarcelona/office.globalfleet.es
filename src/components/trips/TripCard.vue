@@ -288,6 +288,7 @@ const props = defineProps([
   'trip'
 ]);
 
+
 const trip = ref('');
 const bg_trip = ref('');
 const driver_name = ref('');
@@ -322,8 +323,6 @@ const execution_at = ref('');
 //trip.value = props.trip;
 
 //console.log({ ...trip});
-
-
 
 watchEffect(() => {
   trip.value = props.trip;
@@ -386,24 +385,42 @@ watchEffect(() => {
       return stage.activity != null && (stage.stage_status_id >= enumTrip.TRIP_CREATED_ID && stage.stage_status_id < enumTrip.TRIP_COMPLETED_ID);
     });
 
+    let lastStageCompletedFind = trip.value.stages.findLast(stage => {
+      return stage.activity != null && stage.stage_status_id === enumTrip.TRIP_COMPLETED_ID;
+     });
     if (stageFind) {
       
       if(trip.value.trip_status_id === enumTrip.TRIP_PROGRESS_ID){
         current_stage.value = stageFind.name;
         current_stage_execution_at.value = $h.formatDate(stageFind.execution_at, 'DD/MM/YYYY HH:mm');
-        current_stage_status.value = stageFind.status.name;
+        current_stage_status.value = stageFind.status.name + ' ' + stageFind.activity.type.name;
         current_stage_now.value = $h.nowTimestamp();
-        current_stage_started_at.value = $h.formatDate(stageFind.started_at, 'DD/MM/YYYY HH:mm');
+        if(stageFind.started_at){
+          current_stage_started_at.value = $h.formatDate(stageFind.started_at, 'DD/MM/YYYY HH:mm');
+        }else{
+          current_stage_started_at.value = '--';
+        }
       }else{
-        current_stage.value = '--';
-        current_stage_execution_at.value = '--';
-        current_stage_status.value = '--';
-        current_stage_now.value = '--';
-        current_stage_started_at.value = '--';
+          current_stage.value = '--';
+          current_stage_execution_at.value = '--';
+          current_stage_status.value = '--';
+          current_stage_now.value = '--';
+          current_stage_started_at.value = '--';
       }
 
+    }else{
+      if(lastStageCompletedFind){
+        current_stage.value = lastStageCompletedFind.name;
+        current_stage_execution_at.value = $h.formatDate(lastStageCompletedFind.execution_at, 'DD/MM/YYYY HH:mm');
+        current_stage_status.value = lastStageCompletedFind.status.name + ' ' + lastStageCompletedFind.activity.type.name;
+        current_stage_now.value = $h.nowTimestamp();
+        if(lastStageCompletedFind.started_at){
+          current_stage_started_at.value = $h.formatDate(lastStageCompletedFind.started_at, 'DD/MM/YYYY HH:mm');
+        }else{
+          current_stage_started_at.value = '--';
+        }
+      }
     }
-
   }
 
   stage_count.value = countStage;
@@ -429,9 +446,7 @@ watchEffect(() => {
 
 
   execution_at.value = $h.formatDate(trip.value.execution_at, 'DD/MM/YYYY HH:mm');
-
 });
-
 </script>
 
 

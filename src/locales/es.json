@@ -332,6 +332,7 @@
     "options": "Opciones",
     "view": "Ver",
     "download": "Descargar",
-    "image": "Imágen"
+    "image": "Imágen",
+    "status_active": "En Curso"
   }
 }

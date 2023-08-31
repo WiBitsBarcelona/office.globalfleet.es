@@ -637,7 +637,7 @@ const init = async (initializeMap) => {
 
 
   const { google, map } = await initializeMap({
-    apiKey: "AIzaSyCMlwJPBGrPWXJE2oaZ7arA7VxkJI2EdxY",
+    apiKey: "AIzaSyCw7L6S2IxJ2FDgm5F6on9pG-1898qtQVg",
     config(google) {
       return {
         zoom: 5,
@@ -703,7 +703,7 @@ const init = async (initializeMap) => {
                   </div>
                   <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
                     <h5 class="text-xs font-light text-gray-400">${t("infowindow.gps_position")}</h5>
-                    <p class="text-md font-normal leading-4 text-gray-500">${!markerElem.position ? t('dashboard.no_data') : markerElem.position.gps_positioning}</p>
+                    <a href="https://www.google.es/maps/place/${markerElem.position.latitude},${markerElem.position.longitude}" target="_blank" class="text-md font-normal leading-4 text-gray-500 hover:text-primary">${!markerElem.position.gps_positioning ? t('dashboard.no_data') : markerElem.position.gps_positioning}</a>
                   </div>
                   <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
                     <h5 class="text-xs font-light text-gray-400">${t("infowindow.accuracy")}</h5>
