@@ -32,18 +32,12 @@
     <!-- Llista de xats -->
     <div id="group-list" class="flex flex-col gap-[6px] h-[76vh] overflow-y-scroll scrollbar-hidden">
       <!-- Per cada xat farem un botó -->
-      <button v-if="!inNewChat" v-for="conversation in conversationList" :id="conversation.conversationWith.uid
-        ? conversation.conversationWith.uid
-        : conversation.conversationWith.guid
-        " :key="conversation.conversationWith" v-on:click="
-    buildChat(
-      conversation.conversationId,
-      conversation.conversationType,
-      conversation.conversationWith.uid
-        ? conversation.conversationWith.uid
-        : conversation.conversationWith.guid
-    )
-    " class="flex gap-3 p-3 pl-2 h-16 box cursor-pointer border-b bg-white items-center conversations-list-item">
+      <button v-if="!inNewChat" v-for="conversation in conversationList"
+        @click="enviarVariable(conversation.conversationId, conversation.conversationWith.uid,conversation.conversationType)" :id="conversation.conversationWith.uid
+          ? conversation.conversationWith.uid
+          : conversation.conversationWith.guid
+          " :key="conversation.conversationWith"
+        class="flex gap-3 p-3 pl-2 h-16 box cursor-pointer border-b bg-white items-center conversations-list-item">
         <!-- En cas de ser un xat amb un usuari -->
         <img v-if="conversation.conversationType === 'user'" class="w-14 h-14 rounded-full" :src="conversation.conversationWith.avatar
           ? conversation.conversationWith.avatar
@@ -84,154 +78,21 @@
                 conversation.lastMessage.data.text.substring(0, 30) + "..." : "" }} </p>
         </div>
       </button>
-
-      <!-- Per cada nou possible xat, farem un botó també -->
-      <button v-if="inNewChat" v-for="chatList in newChatsList" v-on:click="
-        buildNewChat(
-          chatList.uid ? chatList.uid : chatList.guid,
-          chatList.name,
-          chatList.uid ? 'user' : 'group'
-        )
-        " class="flex gap-3 p-3 pl-2 h-16 box cursor-pointer border-b bg-white items-center">
-        <!-- En cas de ser un xat amb un usuari -->
-        <img v-if="chatList.uid" class="w-14 h-14 rounded-full" :src="chatList.avatar
-          ? chatList.avatar
-          : `https://ui-avatars.com/api/?name=${chatsTitle(chatList.name)}&color=FFFFFF&background=4EDDFF&font-size=0.38`
-          " />
-        <!-- En cas de ser un grup -->
-        <img v-if="chatList.guid" class="w-14 h-14 rounded-full" :src="chatList.icon
-          ? chatList.icon
-          : `https://ui-avatars.com/api/?name=${chatsTitle(chatList.name)}&color=FFFFFF&background=BCBCBC&font-size=0.38`
-          " />
-        <div class="flex flex-col justify-between h-full w-full text-left gap-1">
-          <div class="flex w-full justify-between">
-            <h2 class="font-semibold">
-              {{ chatList.name }}
-            </h2>
-          </div>
-        </div>
-      </button>
     </div>
   </div>
 
   <!-- Cuadre de xat -->
-  <div v-if="inChat" class="flex flex-col w-full h-[85vh] justify-between items-center box overflow-hidden">
-    <div id="current-chat-container" class="flex items-center h-20 w-full gap-3 px-4">
-      <img
-        :src="`https://ui-avatars.com/api/?name=${chatsTitle(selectedChat.name)}&${selectedChat.uid ? 'color=FFFFFF&background=4EDDFF&font-size=0.38' : 'color=FFFFFF&background=BCBCBC&font-size=0.38'}`"
-        class="rounded-full w-14 h-14" />
-      <h2 id="chat-header" class="w-full font-bold text-2xl" :type="selectedChat.uid ? 'user' : 'group'"
-        :chatId="selectedChat.uid ? selectedChat.uid : selectedChat.guid">
-        {{ selectedChat.name }}
-      </h2>
-    </div>
-
-    <div id="chat" class="flex flex-col gap-2 h-5/6 w-full p-5 overflow-y-scroll scrollbar-hidden">
-    </div>
-
-    <!-- Textarea per escriure i botons per enviar el missatge -->
-    <form id="send-message-form" @submit.prevent="" action="#"
-      class="pt-4 sm:py-4 flex items-center border-t-[6px] border-slate-200/60 dark:border-darkmode-400 w-full">
-      <textarea v-on:keyup.enter="sendMessage" id="message"
-        class="overflow-y-scroll scrollbar-hidden chat__box__input form-control dark:bg-darkmode-600 h-11 resize-none border-transparent px-5 py-3 shadow-none focus:border-transparent focus:ring-0"
-        placeholder="Escribe el mensaje..."></textarea>
-      <div style="display: flex; justify-content: center; align-items: center; width:200px; margin-right: 10px;">
-        <p style="font-size: 16px; margin-right: 5px; ">Confirmar lectura</p>
-        <input type="checkbox" value="first_checkbox" v-model="isChecked" @change="handleCheckboxChange"/>
-      </div>
-      <div class="flex gap-4 items-center justify-center text-2xl text-center" style="margin-right: 18px;">
-        <!-- SVG del clip -->
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round" class="lucide w-6 h-6">
-          <path
-            d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48">
-          </path>
-        </svg>
-
-        <!-- Botó d'enviar el missatge -->
-        <button id="sendMsgBtn" type="submit" v-on:click="sendMessage"
-          class="w-8 h-8 sm:w-10 sm:h-10 bg-primary text-white rounded-full flex-none flex items-center justify-center">
-          <!-- SVG de l'avió de paper -->
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round" class="lucide w-6 h-6 mt-1 mr-1">
-            <line x1="22" y1="2" x2="11" y2="13"></line>
-            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-          </svg>
-        </button>
-      </div>
-    </form>
-
-    <!-- Modal Checkmark -->
-    <div v-if="modalMessage == true"
-      style="position: absolute; display: flex; justify-content: center; align-items: center; background-color: rgb(0 0 0 / 40%); width: 100%; height: 100%;">
-
-      <div style="position: relative; background: white; border-radius: 10px; padding: 16px;">
-
-        <!-- boton modal -->
-        <button v-on:click="showModal(false)"
-          style="position: absolute; top: -13px; right: -15px; background-color: rgb(0 150 178); border-radius: 100%; padding: 5px 10px;">
-          <h1 style="color: white; margin: 0;">X</h1>
-        </button>
-
-        <div style="padding: 10px;">
-          <h2 style="font-size: 20px; font-style: normal; font-weight: 500; line-height: normal;">Info del Mensaje</h2>
-          <div style="display: block; margin-top: 8px;">
-
-            <p style="font-size: 16px;">Enviado</p>
-            <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
-              <img src="../../assets/images/checkmark.svg" alt="Checkmark"
-                style="width: 25px; height: 25px; margin-left: 5px;" />
-              <p style="font-size: 18px; margin-left: 5px;" v-if="sentAt != 'undefined'">{{ convertirAFecha(sentAt) }}</p>
-            </div>
-
-            <p style="font-size: 16px;">Entregado</p>
-            <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
-              <img src="../../assets/images/allcheckmark.svg" alt="Checkmark"
-                style="width: 25px; height: 25px; margin-left: 5px;" />
-              <p style="font-size: 18px; margin-left: 5px;" v-if="deliveredAt != 'undefined'">{{
-                convertirAFecha(deliveredAt) }}</p>
-            </div>
-
-            <p style="font-size: 16px;">Leido</p>
-            <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
-              <img src="../../assets/images/checkallmark.svg" alt="Checkmark"
-                style="width: 25px; height: 25px; margin-left: 5px;" />
-              <p style="font-size: 18px; margin-left: 5px;" v-if="readAt != 'undefined'">{{ convertirAFecha(readAt) }}</p>
-            </div>
-
-            <!-- Confirmacion de Lectura -->
-            <div style="margin-top: 5px; margin-bottom: 5px;">
-              <div v-if="confirmetAt == 'null'">
-                <!-- <div style="margin-top: 10px;">
-                  <label style="font-size: 18px; margin-left: 5px;">
-                    <input type="checkbox" :id="`${idMessage}`" value="first_checkbox" v-model="isChecked"
-                      @change="handleCheckboxChange" style="margin-right: 5px;" />
-                    Confirmar Lectura
-                  </label>
-                </div> -->
-              </div>
-              <div v-else>
-                <p style="font-size: 16px;">Confirmado</p>
-                <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
-                  <img src="../../assets/images/checkmarkCircleSky.svg" alt="Checkmark"
-                    style="width: 25px; height: 25px; margin-left: 5px;" />
-                  <p style="font-size: 18px; margin-left: 5px;" v-if="confirmetAt != 'undefined'">
-                    {{ convertirAFecha(confirmetAt) }}
-                  </p>
-                </div>
-              </div>
-            </div> 
-
-          </div>
-        </div>
-
-      </div>
-    </div>
-    <!-- Fin Modal Checkmark -->
-
-  </div>
-  <div v-else class="flex flex-col w-full h-[85vh] justify-between items-center box overflow-hidden"></div>
+  <ChatsV2 :miVariable="prova" :miVariable2="prova2" :miVariable3="prova3" />
 </template>
+
+<script>
+import ChatsV2 from "../../components/chat/ChatsV2.vue";
+export default {
+  components: {
+    ChatsV2,
+  },
+}
+</script>
 
 <script setup>
 import { CometChat } from "@cometchat-pro/chat";
@@ -241,6 +102,7 @@ import $ from 'jquery';
 // Hooks
 import { useAuthenticationStore } from "@/stores/auth/authentications";
 import useChat from "@/composables/chat";
+
 
 const {
   cometData,
@@ -282,6 +144,10 @@ const isChecked = ref(false);
 
 const nameChat = ref("")
 const uidChat = ref("")
+
+const prova = ref(null)
+const prova2 = ref(null)
+const prova3 = ref(null)
 
 onMounted(async () => {
   initialize();
@@ -406,22 +272,20 @@ const initialize = async () => {
 const tuArray = ref([])
 const miArray = ref([])
 
-setInterval(async () => {
-  const conversations = await loadChatMessages(sConversationId.value);
-  miArray.value = conversations
+// FUNCION UE RECOGE LOS VALORES
+const  enviarVariable = async (value, value2, value3) => {
+  prova.value = value // idConversation
+  prova2.value = value2 //ChatId
+  prova3.value = value3 // receiverType
 
-  if (!equalsCheck(miArray.value, tuArray.value)) {
-    buildChat(sConversationId.value, sChatType.value, sChatId.value);
-  }
-}, 2000);
+  await markUserConversationAsRead(userInfo.uid, prova.value);
 
+  LoadChatsList();
 
-const equalsCheck = (a, b) => {
-  return JSON.stringify(a) === JSON.stringify(b);
 }
 
 // Funció per montar la pantalla del xat
-const buildChat = async (ConversationId, ChatType, ChatId) => {
+/*const buildChat = async (ConversationId, ChatType, ChatId) => {
 
   if (conversationList != null && ChatType != null && ChatId != null) {
 
@@ -458,12 +322,12 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
 
     inChat.value = true;
 
-    tuArray.value = await loadChatMessages(ConversationId);
+    const array1 = await loadChatMessages(ConversationId);
     const chat = document.getElementById("chat");
 
     chat.innerHTML = "";
 
-    tuArray.value.data.forEach((conversation) => {
+    array1.data.forEach((conversation) => {
       if (conversation.sender !== userInfo.uid) {
         if (conversation.receiverType === "user")
           markUserConversationAsRead(userInfo.uid, conversation.sender);
@@ -517,7 +381,7 @@ const buildChat = async (ConversationId, ChatType, ChatId) => {
     const messageBody = document.getElementById("chat");
     messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
   }
-};
+};*/
 
 
 // Funcion que rescata los datos que se mostraran en el modal
@@ -618,6 +482,7 @@ const sendMessage = async () => {
   const value = message.value.trim();
   if (value !== "") {
     sendTextMessage(userInfo.uid, message.value, chatId, receiverType, isChecked.value);
+    await mark_user_conversation_as_delivered(userInfo.uid, sChatId);
     isChecked.value = false
   }
 
@@ -1001,28 +866,5 @@ const handleCheckboxChange = async () => {
 .selected {
   --tw-bg-opacity: 1;
   background-color: rgb(229 231 235 / var(--tw-bg-opacity));
-}
-
-.contMensajeRecibido {
-  display: flex;
-  background: #FFFFFF;
-  flex-direction: row;
-  padding: 0px 8px 0px 8px;
-  border-radius: 2px 8px 8px 8px;
-  gap: 8px;
-  margin-bottom: 8px;
-  max-width: 253px;
-}
-
-.contMensajeEnviado {
-  display: flex;
-  background: #CDF5FF;
-  flex-direction: row;
-  padding: 0px 8px 0px 8px;
-  float: right;
-  border-radius: 8px 2px 8px 8px;
-  gap: 8px;
-  margin-bottom: 8px;
-  max-width: 253px;
 }
 </style>

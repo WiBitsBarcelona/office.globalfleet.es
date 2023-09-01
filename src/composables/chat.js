@@ -216,7 +216,11 @@ export default function useChat() {
     fetch(
       `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/users/${conversationWith}/conversation/read`,
       options
-    ).catch((err) => console.error(err));
+    ).then((response) => response.json())
+    .then((response) => {
+    })
+    .catch((err) => console.error(err));
+
   };
 
   // Funció per a marcar com a llegit un xat de grup
@@ -254,9 +258,6 @@ export default function useChat() {
       );
 
       const data = await response.json();
-
-      //console.log(data)
-
       return data;
 
     } catch (err) {

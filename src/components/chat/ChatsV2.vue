@@ -1,0 +1,507 @@
+<template>
+    <div>
+        <div v-if="mensajes != null">
+
+            <div class="flex flex-col h-[85vh] justify-between items-center box overflow-hidden">
+                <!-- Chat -->
+                <div class="scrollbar-hidden " id="chat"
+                    style="overflow: scroll; height: 100%; width: 1200px; background-color: white; padding: 8px;">
+                    <div v-for="(mensaje, index) in mensajes" :key="mensaje.id">
+
+                        <!-- Verificar si la fecha actual es diferente a la fecha anterior -->
+                        <div style="width: 100%; display: flex; justify-content: center; padding: 20px;"
+                            v-if="index === 0 || convertStringToDates(mensaje.sentAt) !== convertStringToDates(mensajes[index - 1].sentAt)">
+                            <div style="display: flex; align-items: center; justify-content: center; 
+                                background-color: #EFEFEF; border-radius: 5px; padding: 8px 12px;">
+                                {{ convertStringToDates(mensaje.sentAt) }}
+                            </div>
+                        </div>
+
+                        <!-- MENSAJES ENVIDOS -->
+                        <div style="display: flex;">
+                            <div style="flex: 1px;" v-if="mensaje.data.entities.sender.entity.uid === myUid"
+                                @click="showModal(true), infoTrip(mensaje.sentAt, mensaje.deliveredAt, mensaje.readAt, mensaje.data.metadata['confirmetAt'])">
+                                <div class="contMensajeEnviado">
+                                    <p class="txtMensajesEnviado">{{ mensaje.data.text }}</p>
+                                    <p class="txtHoraEnviado">{{ convertStringToDate(mensaje.sentAt) }}</p>
+
+                                    <div style="display: flex; align-items: flex-end; text-align: right;">
+
+                                        <p
+                                            v-if="mensaje.sentAt > 0 && mensaje.deliveredAt == null && mensaje.readAt == null">
+                                            <img src="../../assets/images/checkmark.svg" alt="Checkmark"
+                                                style="width: 15px; height: 15px; margin-left: 5px;" />
+                                        </p>
+
+                                        <p v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt == null">
+                                            <img src="../../assets/images/allcheckmark.svg" alt="Checkmark"
+                                                style="width: 15px; height: 15px; margin-left: 5px;" />
+                                        </p>
+
+                                        <p v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt > 0">
+                                            <img src="../../assets/images/checkallmark.svg" alt="Checkmark"
+                                                style="width: 15px; height: 15px; margin-left: 5px;" />
+                                        </p>
+
+                                    </div>
+                                </div>
+                                <div v-if="mensaje.data.metadata">
+                                    <div v-if="mensaje.data.metadata['reader'] == 0">  
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- MENSAJES RECIBIDOS -->
+                            <div v-else>
+                                <div class="contMensajeRecibido">
+                                    <p class="txtMensajesRecibido">{{ mensaje.data.text }}</p>
+                                    <p class="txtHoraRecibido">{{ convertStringToDate(mensaje.sentAt) }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BARRA DE ENVIO -->
+                <div class="pt-4 sm:py-4 flex items-center border-t-[6px] border-slate-200/60 dark:border-darkmode-400 w-full">
+
+                    <textarea v-on:keyup.enter="sendMessage" id="message"
+                        class="overflow-y-scroll scrollbar-hidden chat__box__input form-control dark:bg-darkmode-600 h-11 resize-none border-transparent px-5 py-3 shadow-none focus:border-transparent focus:ring-0"
+                        placeholder="Escribe el mensaje..."></textarea>
+
+                    <div
+                        style="display: flex; justify-content: center; align-items: center; width:200px; margin-right: 10px;">
+                        <p style="font-size: 16px; margin-right: 5px; ">Confirmar lectura</p>
+                        <input type="checkbox" value="first_checkbox" v-model="isChecked" @change="handleCheckboxChange" />
+                    </div>
+
+                    <button style="margin-right: 8px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide w-6 h-6">
+                            <path
+                                d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48">
+                            </path>
+                        </svg>
+                    </button>
+
+                    <button id="sendMsgBtn" @click="sendMessage"
+                        class="w-8 h-8 sm:w-10 sm:h-10 bg-primary text-white rounded-full flex-none flex items-center justify-center"
+                        style="margin-right: 8px;">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide w-6 h-6 mt-1 mr-1">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Modal Checkmark -->
+                <div v-if="modalMessage == true"
+                    style="position: absolute; display: flex; justify-content: center; align-items: center; background-color: rgb(0 0 0 / 40%); width: 100%; height: 100%;">
+
+                    <div style="position: relative; background: white; border-radius: 10px; padding: 16px;">
+
+                        <!-- boton modal -->
+                        <button v-on:click="showModal(false)"
+                            style="position: absolute; top: -13px; right: -15px; background-color: rgb(0 150 178); border-radius: 100%; padding: 5px 10px;">
+                            <h1 style="color: white; margin: 0;">X</h1>
+                        </button>
+
+                        <div style="padding: 10px;">
+                            <h2 style="font-size: 20px; font-style: normal; font-weight: 500; line-height: normal;">Info del
+                                Mensaje</h2>
+                            <div style="display: block; margin-top: 8px;">
+
+                                <p style="font-size: 16px;">Enviado</p>
+                                <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
+                                    <img src="../../assets/images/checkmark.svg" alt="Checkmark"
+                                        style="width: 25px; height: 25px; margin-left: 5px;" />
+                                    <p style="font-size: 18px; margin-left: 5px;" v-if="sentAt != 'undefined'">{{
+                                        convertirAFecha(sentAt) }}</p>
+                                </div>
+
+                                <p style="font-size: 16px;">Entregado</p>
+                                <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
+                                    <img src="../../assets/images/allcheckmark.svg" alt="Checkmark"
+                                        style="width: 25px; height: 25px; margin-left: 5px;" />
+                                    <p style="font-size: 18px; margin-left: 5px;" v-if="deliveredAt != 'undefined'">{{
+                                        convertirAFecha(deliveredAt) }}</p>
+                                </div>
+
+                                <p style="font-size: 16px;">Leido</p>
+                                <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
+                                    <img src="../../assets/images/checkallmark.svg" alt="Checkmark"
+                                        style="width: 25px; height: 25px; margin-left: 5px;" />
+                                    <p style="font-size: 18px; margin-left: 5px;" v-if="readAt != 'undefined'">{{
+                                        convertirAFecha(readAt) }}</p>
+                                </div>
+
+                                <!-- Confirmacion de Lectura -->
+                                <div style="margin-top: 5px; margin-bottom: 5px;">
+                                    <div v-if="confirmetAt == null">
+                                        <!-- <div style="margin-top: 10px;">
+                                    <label style="font-size: 18px; margin-left: 5px;">
+                                        <input type="checkbox" :id="`${idMessage}`" value="first_checkbox" v-model="isChecked"
+                                        @change="handleCheckboxChange" style="margin-right: 5px;" />
+                                        Confirmar Lectura
+                                    </label>
+                                    </div> -->
+                                    </div>
+                                    <div v-else>
+                                        <p style="font-size: 16px;">Confirmado</p>
+                                        <div
+                                            style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
+                                            <img src="../../assets/images/checkmarkCircleSky.svg" alt="Checkmark"
+                                                style="width: 25px; height: 25px; margin-left: 5px;" />
+                                            <p style="font-size: 18px; margin-left: 5px;" v-if="confirmetAt != 'undefined'">
+                                                {{ convertirAFecha(confirmetAt) }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- Fin Modal Checkmark -->
+            </div>
+
+        </div>
+
+    </div>
+</template>
+<script>
+import { defineComponent } from "vue";
+
+export default defineComponent({
+
+    methods: {
+        onFileChange(event) {
+            var fileData = event.target.files[0];
+            this.fileName = fileData.name;
+            console.log(console.log(event.target.files[0]))
+        },
+        convertirAFecha(timestamp) {
+            const fecha = new Date(timestamp * 1000);
+            const opciones = {
+                day: 'numeric', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+            };
+            return fecha.toLocaleString("es-ES", opciones);
+        },
+        convertStringToDates(strTime) {
+            const timestamp = Number(strTime) * 1000;
+            const currentDate = new Date();
+            const date = new Date(timestamp);
+
+            if (this.isToday(date)) {
+                return 'Hoy';
+            } else if (this.isYesterday(date, currentDate)) {
+                return 'Ayer';
+            } else {
+                var day = date.getDate();
+                var month = date.getMonth() + 1;
+                var year = date.getFullYear();
+                return day + "/" + month + "/" + year;
+            }
+        },
+        isToday(date) {
+            const today = new Date();
+            return (
+                date.getDate() === today.getDate() &&
+                date.getMonth() === today.getMonth() &&
+                date.getFullYear() === today.getFullYear()
+            );
+        },
+        isYesterday(date, currentDate) {
+            const yesterday = new Date(currentDate);
+            yesterday.setDate(currentDate.getDate() - 1);
+            return (
+                date.getDate() === yesterday.getDate() &&
+                date.getMonth() === yesterday.getMonth() &&
+                date.getFullYear() === yesterday.getFullYear()
+            );
+        }
+    },
+
+});
+</script>
+<script setup>
+import { ref, onMounted, defineProps, watch } from 'vue';
+import { CometChat } from "@cometchat-pro/chat";
+import useChat from "@/composables/chat";
+import { useAuthenticationStore } from "@/stores/auth/authentications";
+
+const {
+    cometData,
+    conversationList,
+    getCometChatCredentials,
+    getConversationsList,
+    getUserConversation,
+    getGroupConversation,
+    getUserData,
+    getGroupData,
+    loadChatMessages,
+    markUserConversationAsRead,
+    markGroupConversationAsRead,
+    sendTextMessage,
+    getUserGroups,
+    getGroupMembers,
+    mark_user_conversation_as_delivered,
+    update_datameta_message
+} = useChat();
+
+let userInfo;
+const isChecked = ref(false);
+const ChatId = ref(null)
+const myUid = ref(null)
+const receiverType = ref(null)
+const idConversation = ref(null)
+const modalMessage = ref(false)
+
+const sentAt = ref(null);
+const deliveredAt = ref(null);
+const readAt = ref(null);
+const confirmetAt = ref(null)
+// Array de mensajes
+const mensajes = ref([]);
+
+const props = defineProps({
+    miVariable: String, //idConversation
+    miVariable2: String, // ChatId
+    miVariable3: String // receiverType
+})
+
+watch(
+    [() => props.miVariable, () => props.miVariable2, () => props.miVariable3],
+    ([newVariable, newVariable2, newVariable3]) => {
+        idConversation.value = newVariable
+        ChatId.value = newVariable2;
+        receiverType.value = newVariable3;
+        loadMessages();
+
+        const chatCont = document.getElementById('chat');
+        chatCont.scrollTop = chatCont.scrollHeight;
+
+        commetInit()
+    }
+);
+
+setInterval(async () => {
+    await commetInit()
+}, 5000);
+
+const commetInit = async () => {
+    await loadMessages();
+}
+
+onMounted(async () => {
+    initialize();
+})
+
+// Funcion que va a correr al iniciar la pagina
+const initialize = async () => {
+    // funcion para listar los datos de cometchat
+    await getCometChatCredentials();
+
+    let appID = cometData.value.company.cometchat.app_id;
+    let region = "eu";
+    let authKey = cometData.value.company.cometchat.auth_key;
+
+    // Variable amb la configuració de la App
+    const appSettings = new CometChat.AppSettingsBuilder()
+        .subscribePresenceForAllUsers()
+        .setRegion(region)
+        .autoEstablishSocketConnection(true)
+        .build();
+
+    // Inicialitzem la App
+    CometChat.init(appID, appSettings).then(() => {
+
+        console.log("Initialization completed successfully");
+
+        // Iniciem la sessió al xat
+        const UID = useAuthenticationStore().user.employee.cometchat_uid;
+        const name = useAuthenticationStore().user.employee.name;
+
+        const user = new CometChat.User(UID);
+        user.setName(name);
+
+        userInfo = user;
+
+        myUid.value = user.uid
+
+        CometChat.login(UID, authKey).then(
+            (user) => {
+                console.log("Loggued successful:", { user });
+            },
+            (error) => {
+                console.log("Login failed with exception:", { error });
+            }
+        );
+
+        // Afegirem un listener dels missatges
+        const listenerID = "INCOMING_MESSAGES_LISTENER";
+
+        CometChat.addMessageListener(
+            listenerID,
+            new CometChat.MessageListener({
+                onTextMessageReceived: (textMessage) => {
+                    // Cuando llegue un nuevo mensaje
+                    console.log("Text message received successfully", textMessage);
+
+                    // Actualizamos los mensajes
+                    mensajes.value.push(textMessage);
+
+                    //Para leer los mensajes
+                    markUserConversationAsRead(myUid.value, ChatId.value)
+
+                },
+                onMediaMessageReceived: (mediaMessage) => {
+                    console.log("Media message received successfully", mediaMessage);
+                },
+                onCustomMessageReceived: (customMessage) => {
+                    console.log("Custom message received successfully", customMessage);
+                },
+            })
+        );
+
+    },
+        (error) => {
+            console.log("Initialization failed with error:", error);
+        }
+    );
+};
+
+const loadMessages = async () => {
+    const response = await loadChatMessages(idConversation.value);
+    mensajes.value = response.data
+
+    if (response) {
+        //Para leer los mensajes
+        markUserConversationAsRead(myUid.value, ChatId.value);
+        await mark_user_conversation_as_delivered(myUid.value, ChatId.value);
+    }
+}
+
+// Funcion para convertir los del mensaje a hora
+const convertStringToDate = (strTime) => {
+    const timestamp = Number(strTime) * 1000;
+    const date = new Date(timestamp);
+
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    // const ampm = hours >= 12 ? "pm" : "am";
+    // hours = hours % 12;
+    hours = hours ? hours : 12;
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    var timeStr = hours + ":" + minutes;
+
+    return timeStr.toString();
+};
+
+// funcion para saber si esta o no activado el checkbox
+const handleCheckboxChange = async () => {
+    if (isChecked.value) {
+        console.log('El checkbox está activado.');
+    } else {
+        console.log('El checkbox está desactivado.');
+    }
+}
+
+
+// Funció per a enviar missatges
+const sendMessage = async () => {
+    const message = document.getElementById("message");
+
+    // Controlamos que el mensaje no esté vacio
+    const value = message.value.trim();
+    if (value !== "") {
+        await sendTextMessage(myUid.value, message.value, ChatId.value, receiverType.value, isChecked.value);
+        isChecked.value = false
+
+        const chatCont = document.getElementById('chat');
+        chatCont.scrollTop = chatCont.scrollHeight;
+
+        await mark_user_conversation_as_delivered(myUid.value, ChatId.value);
+        await loadMessages()
+    }
+
+    // Netejem el text
+    message.value = "";
+};
+
+// Funcion para mostrar el modal
+const showModal = (value) => {
+    modalMessage.value = value;
+    //console.log(value)
+}
+
+// FUNCION PARA ABRIR EL MODAL INFO DETALLES
+const infoTrip = (value1, value2, value3, value4) => {
+    sentAt.value = value1
+    deliveredAt.value = value2
+    readAt.value = value3
+    confirmetAt.value = value4
+}
+</script >
+<style>
+.contMensajeRecibido {
+    display: flex;
+    background: #E5E7EB;
+    flex-direction: row;
+    padding: 8px;
+    border-radius: 2px 8px 8px 8px;
+    gap: 8px;
+    margin-bottom: 8px;
+    max-width: 253px;
+}
+
+.contMensajeEnviado {
+    display: flex;
+    background: #0096B2;
+    flex-direction: row;
+    padding: 8px;
+    float: right;
+    border-radius: 8px 2px 8px 8px;
+    gap: 8px;
+    margin-bottom: 8px;
+    max-width: 253px;
+}
+
+.txtMensajesEnviado {
+    display: flex;
+    color: white;
+    font-size: 14px;
+    flex: 10;
+    word-break: break-word;
+}
+
+.txtHoraEnviado {
+    margin-left: 5px;
+    color: white;
+    font-size: 12px;
+    display: flex;
+    align-items: flex-end;
+    text-align: right;
+}
+
+.txtMensajesRecibido {
+    display: flex;
+    color: #3C3C3C;
+    font-size: 14px;
+    flex: 10;
+    word-break: break-word;
+}
+
+.txtHoraRecibido {
+    margin-left: 5px;
+    color: #92949C;
+    font-size: 12px;
+    display: flex;
+    align-items: flex-end;
+    text-align: right;
+}
+</style>
