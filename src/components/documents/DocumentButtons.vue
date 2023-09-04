@@ -3,7 +3,10 @@
 
         <div>
 
-            <router-link :to="`/documents`" class="btn btn-primary shadow-md rounded-md w-full font-medium">
+            <router-link 
+                :to="`/documents`" 
+                class="btn btn-primary shadow-md rounded-md w-full font-medium"
+            >
                 {{ $t("documents.general_files") }}
             </router-link>
 

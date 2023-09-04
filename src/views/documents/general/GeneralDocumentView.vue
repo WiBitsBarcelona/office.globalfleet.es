@@ -1,7 +1,7 @@
 <template>
    
     <div>
-        <DocumentButtons />
+        <DocumentButtons :name="general" />
     </div>
 
     <div>
