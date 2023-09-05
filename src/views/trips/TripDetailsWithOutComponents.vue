@@ -595,7 +595,6 @@ const documents_array = ref([]);
 let currentIncidence = [];
 let currentElement = [];
 let currentTask = [];
-let element_status = '';
 
 const TripDetails = async (id) => {
   countStage = 0;
@@ -744,7 +743,6 @@ const TripDetails = async (id) => {
     //Set icon, icon color, status and status color of this element in timeline.
     switch (element.stage_status_id) {
       case 1:
-        element_status = element.status.name;
         current_element_icon_class = icon_pending_class;
         current_element_status_class = status_pending_class;
         has_check_icon = 0;
@@ -753,23 +751,18 @@ const TripDetails = async (id) => {
       case 3:
       case 4:
       case 5:
-        if(element.activity == null){
-          element_status = t('trip_details.status_active');
-        }else{
-          element_status = element.status.name;
-        }
         current_element_icon_class = icon_active_class;
         current_element_status_class = status_active_class;
         has_check_icon = 0;
         break;
       case 6:
-        element_status = element.status.name;
         current_element_icon_class = icon_success_class;
         current_element_status_class = status_success_class;
         has_check_icon = 1;
         break;
     }
     let element_name = element.name;
+    let element_status = element.status.name;
     if (element.execution_at) {
       executed_at = $h.formatDate(element.execution_at, 'DD/MM/YYYY HH:mm');
     } else {
