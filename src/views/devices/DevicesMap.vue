@@ -1,7 +1,7 @@
 <template>
     <div class="relative">
-        <div class="grid grid-cols-12 gap-6 mt-8">
-            <div class="col-span-12 intro-y">
+        <div class="grid grid-cols-12 gap-1 mt-8">
+            <div class="col-span-12 intro-y mb-5">
                 <h2 class="text-lg font-medium truncate mr-5">{{ $t("devices") }}</h2>
             </div>
             <!-- BEGIN: Devices Map -->

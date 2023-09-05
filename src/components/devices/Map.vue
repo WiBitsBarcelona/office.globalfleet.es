@@ -8,6 +8,23 @@
     </div>
     <div class="box p-1 intro-x h-[650px] overflow-y-auto">
       <div>
+
+<!--         <div class="inline-flex w-full mb-3" role="group">
+  <button type="button" class="px-4 py-2 text-sm content-center font-medium text-gray-500 bg-transparent hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-600 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+    <span class="text-xl">2</span>
+    <span class="flex text-xs">Todos</span>
+    
+  </button>
+  <button type="button" class="px-4 py-2 text-sm font-medium text-gray-500 bg-transparent hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+    <span class="text-xl">2</span>
+    <span class="flex text-xs">Parados</span>
+  </button>
+  <button type="button" class="px-4 py-2 text-sm font-medium text-gray-500 bg-transparent hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+    <span class="text-xl">0</span>
+    <span class="flex text-xs">Conduciendo</span>
+  </button>
+</div> -->
+
         <table id="drivers" class="table table-hover hover:cursor-pointer overflow-scroll w-full">
           <tbody v-for="driver in searchedDrivers" :key="driver" class="overflow-y-auto">
             <template v-if="driver.position">
@@ -752,8 +769,8 @@ const init = async (initializeMap) => {
         position: point,
         id: markerElem.id,
         //animation: google.maps.Animation.DROP,
-        labelContent: markerElem.name + ' ' + markerElem.surname,
-        labelAnchor: new google.maps.Point(0, -65),
+        labelContent: markerElem.name + ' ' + markerElem.surname + direction_icon,
+        labelAnchor: new google.maps.Point(0, -75),
         labelClass: "labels " + bg_trip,
         labelInBackground: true,
         icon: markerIcon,

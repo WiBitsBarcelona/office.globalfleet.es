@@ -26,12 +26,18 @@
             <div class="w-full text-center">
               <h2 class="p-5 m-0 bg-primary rounded text-white font-bold text-2xl">{{ trip_name }}</h2>
             </div>
-            <div class="grid grid-cols-4 gap-2 mb-5 border-b-[1px] p-5 border-slate-200">
+            <div class="grid grid-cols-6 gap-2 mb-5 border-b-[1px] p-5 border-slate-200">
               <div class="col-span-2 px-2">
                 <h5 class="text-xs font-light text-gray-400">{{ $t("trip") }}:</h5>
                 <p class="text-md font-normal leading-6 text-gray-500">
                   {{ trip_reference_number }}
                 </p>
+              </div>
+              <div class="col-span-2 px-2">
+                <h5 class="text-xs font-light text-gray-400">{{ $t("gps_positioning") }}:</h5>
+                <a :href="maps_link" target="_blank" class="text-md font-normal leading-6 text-gray-500 hover:text-primary">
+                  {{ gps_position }}
+                </a>
               </div>
               <div class="col-span-2 px-2">
                 <h5 class="text-xs font-light text-gray-400">{{ $t("trip_status") }}:</h5>
@@ -55,6 +61,9 @@
                   {{ trip_tow }}
                 </p>
               </div>
+              <div class="px-2">
+
+              </div>
               <div class="col-span-2 px-2">
                 <h5 class="text-xs font-light text-gray-400">{{ $t("origin") }}:</h5>
                 <p class="text-md font-normal leading-6 text-gray-500">
@@ -65,6 +74,27 @@
                 <h5 class="text-xs font-light text-gray-400">{{ $t("destination") }}:</h5>
                 <p class="text-md font-normal leading-6 text-gray-500">
                   {{ trip_destination }}
+                </p>
+              </div>
+              <div class="px-2">
+                <h5 class="text-xs font-light text-gray-400">{{ $t("stages") }}:</h5>
+                <p class="text-md font-normal leading-6 text-gray-500">
+                  {{ countStage }}
+                </p>
+              </div>
+              <div class="px-2">
+
+              </div>
+              <div class="px-2">
+                <h5 class="text-xs font-light text-gray-400">{{ $t("tms_created_at") }}:</h5>
+                <p class="text-md font-normal leading-6 text-gray-500">
+                  {{ trip_created_at }}
+                </p>
+              </div>
+              <div class="px-2">
+                <h5 class="text-xs font-light text-gray-400">{{ $t("tms_asigned_at") }}:</h5>
+                <p class="text-md font-normal leading-6 text-gray-500">
+                  {{ trip_created_at }}
                 </p>
               </div>
               <div class="px-2">
@@ -107,12 +137,6 @@
                 <h5 class="text-xs font-light text-gray-400">{{ $t("finished_at") }}:</h5>
                 <p class="text-md font-normal leading-6 text-gray-500">
                   {{ trip_finished_at }}
-                </p>
-              </div>
-              <div class="px-2">
-                <h5 class="text-xs font-light text-gray-400">{{ $t("stages") }}:</h5>
-                <p class="text-md font-normal leading-6 text-gray-500">
-                  {{ countStage }}
                 </p>
               </div>
             </div>
@@ -172,12 +196,12 @@
                   <div v-if="element.element_type == 'Stage'"
                     class="p-4 rounded border border-slate-200 text-slate-500 shadow ml-14 md:ml-44"
                     :class="element.box_size">
-                    <div class="grid grid-cols-3 gap-2 mb-5pb-2">
-                      <div class="col-span-2">
+                    <div class="grid grid-cols-5 gap-2 mb-5pb-2">
+                      <div class="col-span-3">
                         <p class="text-md font-normal leading-6 text-gray-500"><span
                             class="text-xs font-light text-gray-400">{{ $t("stage") }}:</span> {{ element.name }}</p>
                       </div>
-                      <div class="flex justify-end">
+                      <div class="flex justify-end col-span-2">
                         <Tippy tag="icon" class="mr-5 mt-1" variant="primary" :options="{
                           theme: 'translucent',
                         }" :content="`${element.total_new_stage_documents}/${element.total_stage_documents}`">
@@ -185,10 +209,28 @@
                         </Tippy>
                         <span :class="element.status_class">{{ element.element_status }} {{ element.activity }}</span>
                       </div>
-                      <div class="px-2">
+                      <div class="px-2 col-span-2">
                         <h5 class="text-xs font-light text-gray-400">{{ $t("activity") }}:</h5>
                         <p class="text-md font-normal leading-6 text-gray-500">
                           {{ element.activity }}
+                        </p>
+                      </div>
+                      <div class="col-span-3 px-2">
+                        <h5 class="text-xs font-light text-gray-400">{{ $t("customer") }}:</h5>
+                        <p class="text-md font-normal leading-6 text-gray-500">
+                          {{ element.client }}
+                        </p>
+                      </div>
+                      <div class="px-2">
+                        <h5 class="text-xs font-light text-gray-400">{{ $t("execution_at") }}:</h5>
+                        <p class="text-md font-normal leading-6 text-gray-500">
+                          {{ element.executed_at }}
+                        </p>
+                      </div>
+                      <div class="px-2">
+                        <h5 class="text-xs font-light text-gray-400">{{ $t("arrived_at") }}:</h5>
+                        <p class="text-md font-normal leading-6 text-gray-500">
+                          --
                         </p>
                       </div>
                       <div class="px-2">
@@ -204,15 +246,9 @@
                         </p>
                       </div>
                       <div class="px-2">
-                        <h5 class="text-xs font-light text-gray-400">{{ $t("execution_at") }}:</h5>
+                        <h5 class="text-xs font-light text-gray-400">{{ $t("departured_at") }}:</h5>
                         <p class="text-md font-normal leading-6 text-gray-500">
-                          {{ element.executed_at }}
-                        </p>
-                      </div>
-                      <div class="col-span-2 px-2">
-                        <h5 class="text-xs font-light text-gray-400">{{ $t("customer") }}:</h5>
-                        <p class="text-md font-normal leading-6 text-gray-500">
-                          {{ element.client }}
+                          --
                         </p>
                       </div>
                     </div>
@@ -521,6 +557,7 @@ const trip_plate = ref('');
 const trip_tow = ref('');
 const trip_origin = ref('');
 const trip_destination = ref('');
+const trip_created_at = ref('');
 const trip_sended_at = ref('');
 const trip_receptioned_at = ref('');
 const trip_confirmed_at = ref('');
@@ -528,6 +565,8 @@ const trip_readed_at = ref('');
 const trip_executed_at = ref('');
 const trip_started_at = ref('');
 const trip_finished_at = ref('');
+const gps_position = ref('');
+const maps_link = ref('');
 let countStage = 0;
 const trip_elements_array = ref([]);
 let trip_incidences_class = 'text-gray-300';
@@ -624,6 +663,8 @@ const TripDetails = async (id) => {
       trip_status_class = status_success_class;
       break;
   }
+  gps_position.value = trip.value.driver.position.gps_positioning;
+  maps_link.value = 'https://www.google.es/maps/place/' + trip.value.driver.position.latitude + ',' + trip.value.driver.position.longitude;
   trip_name.value = trip.value.name;
   trip_driver.value = trip.value.driver.name + ' ' + trip.value.driver.surname;
   trip_plate.value = trip.value.vehicle.plate;
@@ -674,7 +715,6 @@ const TripDetails = async (id) => {
       }else{
         total_trip_incidences_array.value.push({ new: total_new_trip_incidences.value, total: total_trip_incidences.value });
       }
-      console.log(total_trip_incidences_array.value);
 
       if (incidences_array.value.length > 0) {
         currentIncidence = incidences_array.value.filter(obj => obj.id === incident.id);
@@ -1172,6 +1212,8 @@ const TripDetails = async (id) => {
 
     }
   });
+
+  trip_created_at.value = $h.formatDate(trip.value.created_at, 'DD/MM/YYYY HH:mm');
 
   if (trip.value.sended_at) {
     trip_sended_at.value = $h.formatDate(trip.value.sended_at, 'DD/MM/YYYY HH:mm');

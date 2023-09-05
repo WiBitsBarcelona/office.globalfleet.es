@@ -129,6 +129,10 @@
   "started_at": "Fecha inicio",
   "finished_at": "Fecha fin",
   "execution_at": "Fecha ETA",
+  "tms_created_at": "Creado TMS",
+  "tms_asigned_at": "Asignado TMS",
+  "arrived_at": "Fecha llegada",
+  "departured_at": "Fecha salida",
   "observations": "Observaciones",
   "trip_priority": "Prioridad",
   "driver": "Conductor",
@@ -183,6 +187,7 @@
   "stopped": "Parado",
   "no_display_data": "No hay datos que mostrar", 
   "documents": {
+    "documents": "Documentos",
     "title": "Gestor de Documentos",
     "current_folder_lbl": "Mostrando el contenido de la carpeta:",
     "general_files": "Documentos Generales",
@@ -284,6 +289,7 @@
     }
   },
   "incidences": {
+    "title": "Incidencias",
     "driver_incidences": "Incidencias de Conductores",
     "trip_incidences": "Incidencias en Viajes",
     "stage_incidences": "Incidencias en Etapas",
