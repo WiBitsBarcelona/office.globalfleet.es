@@ -129,6 +129,10 @@
   "started_at": "Fecha inicio",
   "finished_at": "Fecha fin",
   "execution_at": "Fecha ETA",
+  "tms_created_at": "Creado TMS",
+  "tms_asigned_at": "Asignado TMS",
+  "arrived_at": "Fecha llegada",
+  "departured_at": "Fecha salida",
   "observations": "Observaciones",
   "trip_priority": "Prioridad",
   "driver": "Conductor",
@@ -165,6 +169,7 @@
   "activity": "Actividad",
   "customer": "Cliente",
   "task": "Tarea",
+  "history": "Histórico de posiciones",
   "infowindow": {
     "trip": "Viaje:",
     "status": "Estado:",
@@ -178,11 +183,13 @@
     "last_update": "Última actualización:"
   },
   "devices": "Dispositivos",
+  "devices_history": "Histórico de Dispositivos",
   "filter_by_driver": "Filtrar por Conductor",
   "driving": "Circulando",
   "stopped": "Parado",
   "no_display_data": "No hay datos que mostrar", 
   "documents": {
+    "documents": "Documentos",
     "title": "Gestor de Documentos",
     "current_folder_lbl": "Mostrando el contenido de la carpeta:",
     "general_files": "Documentos Generales",
@@ -284,6 +291,7 @@
     }
   },
   "incidences": {
+    "title": "Incidencias",
     "driver_incidences": "Incidencias de Conductores",
     "trip_incidences": "Incidencias en Viajes",
     "stage_incidences": "Incidencias en Etapas",
@@ -334,5 +342,6 @@
     "download": "Descargar",
     "image": "Imágen",
     "status_active": "En Curso"
-  }
+  },
+  "select_driver_error": "Debes seleccionar un conductor"
 }

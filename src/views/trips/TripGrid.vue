@@ -175,6 +175,7 @@ import { useRouter} from 'vue-router';
 
 const { trips, getTrips, getTrip, trip } = useTrips();
 const { t } = useI18n();
+let auto_refresh = import.meta.env.VITE_AUTOREFRESH_VALUE;
 
 const router = useRouter();
 
@@ -359,8 +360,7 @@ const onClickCompleted = () => {
 
   interval.value = setInterval(async () => {
     await find();
-    console.log("pasa", interval.value);
-  }, 20000);
+  }, auto_refresh);
 
 
 

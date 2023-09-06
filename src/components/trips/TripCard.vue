@@ -446,6 +446,8 @@ watchEffect(() => {
 
 
   execution_at.value = $h.formatDate(trip.value.execution_at, 'DD/MM/YYYY HH:mm');
+
+
 });
 </script>
 

@@ -188,28 +188,28 @@ const helpers = {
     let icon;
     switch(direction) {
       case "Norte":
-        icon = '<img src = "' + iconsAssets["/src/assets/images/icons/north.svg"].default +  '" alt="Norte"/>';
+        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/north.svg"].default +  '" alt="Norte"/>';
         break;
       case "Noreste":
-        icon = '<img src = "' + iconsAssets["/src/assets/images/icons/north_east.svg"].default +  '" alt="Noreste"/>';
+        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/north_east.svg"].default +  '" alt="Noreste"/>';
         break; 
       case "Este":
-        icon = '<img src = "' + iconsAssets["/src/assets/images/icons/east.svg"].default +  '" alt="Este"/>';
+        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/east.svg"].default +  '" alt="Este"/>';
         break;
       case "Sureste":
-        icon = '<img src = "' + iconsAssets["/src/assets/images/icons/south_east.svg"].default +  '" alt="Sureste"/>';
+        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/south_east.svg"].default +  '" alt="Sureste"/>';
         break;
       case "Sur":
-        icon = '<img src = "' + iconsAssets["/src/assets/images/icons/south.svg"].default +  '" alt="Sur"/>';
+        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/south.svg"].default +  '" alt="Sur"/>';
         break;
       case "Suroeste":
-        icon = '<img src = "' + iconsAssets["/src/assets/images/icons/south_west.svg"].default +  '" alt="Suroeste"/>';
+        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/south_west.svg"].default +  '" alt="Suroeste"/>';
         break;
       case "Oeste":
-        icon = '<img src = "' + iconsAssets["/src/assets/images/icons/west.svg"].default +  '" alt="Oeste"/>';
+        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/west.svg"].default +  '" alt="Oeste"/>';
         break;
       case "Noroeste":
-        icon = '<img src = "' + iconsAssets["/src/assets/images/icons/north_west.svg"].default +  '" alt="Noroeste"/>';
+        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/north_west.svg"].default +  '" alt="Noroeste"/>';
         break;
       default:
         icon = '';           

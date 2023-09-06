@@ -14,10 +14,10 @@ export default function useDriverPosition() {
 		}
 	}
 
-	const getDriverPositions = async () => {
+	const getDriverPositions = async (driver_id, data) => {
 		errors.value = [];
 		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}driver-positions/list`, config);
+			let response = await axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}driver-positions/${driver_id}/list`, data, config);
 			driverPositions.value = response.data.data;
 		} catch (e) {
 			// Errors 500

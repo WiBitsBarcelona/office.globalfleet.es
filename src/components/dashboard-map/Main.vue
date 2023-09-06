@@ -740,8 +740,8 @@ const init = async (initializeMap) => {
         position: point,
         id: markerElem.id,
         //animation: google.maps.Animation.DROP,
-        labelContent: markerElem.name + ' ' + markerElem.surname,
-        labelAnchor: new google.maps.Point(0, -65),
+        labelContent: markerElem.name + ' ' + markerElem.surname + direction_icon,
+        labelAnchor: new google.maps.Point(0, -75),
         labelClass: "labels " + bg_trip,
         labelInBackground: true,
 

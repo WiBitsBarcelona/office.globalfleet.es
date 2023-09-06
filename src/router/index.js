@@ -99,6 +99,11 @@ const routes = [
          component: () => import('@/views/devices/DevicesMap.vue'),
       },
       {
+        path: "devices-history",
+        name: "devices-history",
+        component: () => import('@/views/devices/DevicesHistory.vue'),
+     },
+      {
         path: "documents",
         name: "documents",
         component: () => import('@/views/documents/general/GeneralDocumentView.vue'),
