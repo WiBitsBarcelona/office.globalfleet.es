@@ -169,6 +169,7 @@
   "activity": "Actividad",
   "customer": "Cliente",
   "task": "Tarea",
+  "history": "Histórico de posiciones",
   "infowindow": {
     "trip": "Viaje:",
     "status": "Estado:",
@@ -182,6 +183,7 @@
     "last_update": "Última actualización:"
   },
   "devices": "Dispositivos",
+  "devices_history": "Histórico de Dispositivos",
   "filter_by_driver": "Filtrar por Conductor",
   "driving": "Circulando",
   "stopped": "Parado",
@@ -340,5 +342,6 @@
     "download": "Descargar",
     "image": "Imágen",
     "status_active": "En Curso"
-  }
+  },
+  "select_driver_error": "Debes seleccionar un conductor"
 }
