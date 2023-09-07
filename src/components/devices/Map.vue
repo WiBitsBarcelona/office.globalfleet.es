@@ -823,12 +823,6 @@ const init = async (initializeMap) => {
   centerControlDiv.appendChild(centerControl);
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(centerControlDiv);
 
-  //INSERT CUSTOM BUTTOM TO ROUTE TO DEVICES POSITIONS HISTORY.
-  const historicControlDiv = document.createElement("div");
-  const historicControl = createHistoricControl(map);
-  historicControlDiv.appendChild(historicControl);
-  map.controls[google.maps.ControlPosition.TOP_LEFT].push(historicControlDiv);
-
   //SET DEFAULT CENTER AND ZOOM TO CURRENT BOUNDS.
   if (markers.length > 1) {
     map.setCenter(latlngbounds.getCenter());
@@ -873,37 +867,6 @@ function createCenterControl(map) {
     }
     map.setCenter(latlngbounds.getCenter());
     map.fitBounds(latlngbounds);
-  });
-  return controlButton;
-}
-
-//FUNCTION FOR CREATE A BUTTON ELEMENT TO ROUTE TO DEVICES POSITIONS HISTORY.
-function createHistoricControl(map) {
-  const controlButton = document.createElement("button");
-  // Set CSS for the control.
-  controlButton.style.backgroundColor = "#fff";
-  controlButton.style.backgroundImage = "url('" + imageAssets["/src/assets/images/markers/history.png"].default + "')";
-  controlButton.style.backgroundSize = "cover"
-  controlButton.style.width = "40px";
-  controlButton.style.height = "40px";
-  controlButton.style.border = "2px solid #fff";
-  controlButton.style.borderRadius = "3px";
-  controlButton.style.boxShadow = "0 2px 6px rgba(0,0,0,.3)";
-  controlButton.style.color = "rgb(25,25,25)";
-  controlButton.style.cursor = "pointer";
-  controlButton.style.fontFamily = "Roboto,Arial,sans-serif";
-  controlButton.style.fontSize = "16px";
-  controlButton.style.lineHeight = "38px";
-  controlButton.style.margin = "10px 5px 22px";
-  controlButton.style.padding = "5px";
-  controlButton.style.textAlign = "center";
-  controlButton.textContent = "";
-  controlButton.title = t('history');
-  controlButton.type = "button";
-  controlButton.addEventListener("click", () => {
-    //BUTTON ON CLICK ROUTE TO DEVICES POSITIONS HISTORY.
-    router.push('devices-history');
-    
   });
   return controlButton;
 }
