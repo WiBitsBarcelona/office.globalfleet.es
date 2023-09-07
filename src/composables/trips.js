@@ -6,9 +6,7 @@ export default function useTrips(){
 
     const trip = ref([]);
     const trips = ref([]);
-
     const errors = ref('');
-    //const router = useRouter();
 
 
     let config = {
@@ -55,7 +53,7 @@ export default function useTrips(){
         errors.value = '';
         try {
             await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/update/${id}`, data, config)
-            await router.push({ name: 'note.index' })
+            //await router.push({ name: 'note.index' })
         } catch (e) {
             // Errors 500
 			if (e.response.status >= 500 &&  e.response.status <= 599) {

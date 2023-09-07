@@ -14,9 +14,6 @@
       <!-- BEGIN: container -->
       <div class="grid grid-cols-12 gap-6">
 
-      
-
-
         <div class="col-span-12 md:col-span-6 lg:col-span-4">
           <div class="input-form">
             <label for="vehicle_id" class="form-label w-full">
@@ -31,14 +28,12 @@
               :class="{ 'border-danger': validate.vehicle_id.$error }"
             >
 
-            <option value="" selected>Seleccione</option>
-            <option v-for="item in selectVehicles" :value="item.id">
-                {{ item.plate }}
-            </option>
+              <option value="" selected>Seleccione</option>
+              <option v-for="item in selectVehicles" :value="item.id">
+                  {{ item.plate }}
+              </option>
 
             </select>
-            
-            
             
             <template v-if="validate.vehicle_id.$error">
               <div v-for="(error, index) in validate.vehicle_id.$errors" :key="index" class="text-danger mt-2">
@@ -151,8 +146,14 @@
             <label for="execution_at" class="form-label w-full">
               {{ $t("execution_at") }}
             </label>
-            <input v-model.trim="validate.execution_at.$model" id="execution_at" type="text" name="execution_at"
-              class="form-control" :class="{ 'border-danger': validate.execution_at.$error }" />
+            <input 
+              v-model.trim="validate.execution_at.$model" 
+              id="execution_at" 
+              type="text" 
+              name="execution_at"
+              class="form-control" 
+              :class="{ 'border-danger': validate.execution_at.$error }" 
+            />
             <template v-if="validate.execution_at.$error">
               <div v-for="(error, index) in validate.execution_at.$errors" :key="index" class="text-danger mt-2">
                 {{ error.$message }}
@@ -168,20 +169,13 @@
               {{ $t("observations") }}
             </label>
             
-           
             <textarea 
-              v-model.trim="observations" 
+              v-model.trim="validate.observations.$model" 
               id="observations" 
               name="observations"
               class="form-control" >
             </textarea>
 
-
-            <!-- <template v-if="validate.observations.$error">
-              <div v-for="(error, index) in validate.observations.$errors" :key="index" class="text-danger mt-2">
-                {{ error.$message }}
-              </div>
-            </template> -->
           </div>
         </div>
 
@@ -225,7 +219,7 @@ import { useI18n } from 'vue-i18n';
 const { vehicles, getVehicles } = useVehicles();
 const { tripPriorities, getTripPriorities } = useTripPriority();
 const { drivers, getDrivers } = useDrivers();
-const { storeTrip } = useTrips();
+const { errors, storeTrip } = useTrips();
 
 
 
@@ -260,6 +254,8 @@ const rules = {
   execution_at: {
     required: helpers.withMessage(t("form.required"), required),
   },
+  observations: {
+  },
 };
 
 const formData = reactive({
@@ -282,7 +278,15 @@ const save = async() => {
     
     console.log("envia a guardar");
 
+    console.log(formData);
+
     await storeTrip(formData);
+
+    console.log(errors.value);
+
+    if(errors.value){
+      console.log({ ...errors.value });
+    }
 
   }
 };
