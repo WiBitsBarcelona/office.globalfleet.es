@@ -343,5 +343,12 @@
     "image": "Imágen",
     "status_active": "En Curso"
   },
-  "select_driver_error": "Debes seleccionar un conductor"
+  "select_driver_error": "Debes seleccionar un conductor",
+  "btn_accept": "Aceptar",
+  "btn_close": "Cerrar",
+  "btn_cancel": "Cancelar",
+  "day": "día",
+  "days": "dias",
+  "from": "Desde",
+  "to": "Hasta"
 }

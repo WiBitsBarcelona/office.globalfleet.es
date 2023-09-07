@@ -13,7 +13,6 @@
               driver.surname }}</option>
           </template>
         </TomSelect>
-
         <Litepicker v-model="daterange" :options="{
           autoApply: false,
           singleMode: false,
@@ -28,44 +27,40 @@
             years: true,
           },
           buttonText: {
-            apply: 'Aceptar',
-            cancel: 'Cancelar'
+            apply: t('btn_accept'),
+            cancel: t('btn_cancel')
           },
           tooltipText: {
-            one: 'día',
-            other: 'dias'
+            one: t('day'),
+            other: t('days')
           },
         }" class="form-control w-56 block mx-auto" />
         <div class="text-center">
           <Dropdown class="inline-block" placement="bottom-start" v-slot="{ dismiss }">
             <DropdownToggle class="btn btn-primary">
-
               <ClockIcon class="w-5 h-5" />
             </DropdownToggle>
             <DropdownMenu>
               <DropdownContent tag="div">
                 <div class="p-2">
                   <div>
-                    <div class="text-xs">Desde</div>
+                    <div class="text-xs">{{ $t("from") }}</div>
                     <TomSelect v-model="time_from" class="form-control">
-                      <!--                       <template v-for="time in times">
-                        <option :value="time">{{ time }}</option>
-                      </template> -->
                       <option v-for="(time, index) in times" :value="time">{{ time }}</option>
                     </TomSelect>
                   </div>
                   <div class="mt-3">
-                    <div class="text-xs">Hasta</div>
+                    <div class="text-xs">{{ $t("to") }}</div>
                     <TomSelect v-model="time_at" class="form-control">
                       <option v-for="(time, index) in times.slice().reverse()" :value="time">{{ time }}</option>
                     </TomSelect>
                   </div>
                   <div class="flex items-center mt-3">
                     <button @click="dismiss" class="btn btn-secondary w-32 ml-auto">
-                      Cerrar
+                      {{ $t('btn_close') }}
                     </button>
                     <button @click="dismiss" class="btn btn-primary w-32 ml-2">
-                      Aceptar
+                      {{ $t('btn_accept') }}
                     </button>
                   </div>
                 </div>
@@ -74,11 +69,8 @@
           </Dropdown>
         </div>
         <button @click="getData" class="btn btn-outline-primary w-32 mb-1">
-          <CheckIcon class="w-4 h-4 mr-2" /> Aceptar
+          <CheckIcon class="w-4 h-4 mr-2" /> {{ $t('btn_accept') }}
         </button>
-      </div>
-      <div>
-
       </div>
     </div>
   </div>
@@ -86,61 +78,38 @@
     <div class="box p-1 intro-x h-[700px]">
       <div class="grid grid-cols-12 gap-0">
         <div class="col-span-3 h-[690px] overflow-auto">
-          <div class="ml-5 mr-5">
-            <!-- <ol v-for="driverPosition in driverPositions" :key="driverPosition.id" class="relative border-l border-gray-200 dark:border-gray-700 mt-4"> -->
-            <ol v-for="driverPosition in driverPositions" :key="driverPosition.id" class="relative mt-4">
-              <li class="mb-5 pl-6 hover:cursor-pointer">
-                <span v-if="$h.toKmsHour(driverPosition.speed) >= 5"
-                  class="absolute flex items-center justify-center w-5 h-5 bg-green-500 rounded-full -left-3 dark:bg-green-900">
-                </span>
-                <span v-else
-                  class="absolute flex items-center justify-center w-5 h-5 bg-red-500 rounded-full -left-3 dark:bg-red-900">
-                </span>
-                <h5 @click="zoomData(driverPosition.latitude, driverPosition.longitude)" class="flex items-center mb-1 text-xs text-gray-900 dark:text-white hover:text-primary hover:font-medium">{{ driverPosition.gps_positioning
-                }}
-                </h5>
-                <time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{
-                  $h.formatDate(driverPosition.captured_at, 'DD/MM/YYYY HH:mm') }}
-                  <span
-                    class="inline-flex items-center py-1 px-1 rounded-lg text-xs font-medium bg-gray-100 border border-gray-300 dark:border-gray-500 dark:text-white dark:bg-transparent ml-2">{{
-                      $h.toKmsHour(driverPosition.speed) }}
-                    km/h.</span>
-                </time>
-              </li>
-            </ol>
-          </div>
+          <div class="p-4 mt-1">
+            <div class="container">
+              <div class="flex flex-col md:grid grid-cols-12 text-gray-50">
+                <div v-for="driverPosition in driverPositions" :key="driverPosition.id" class="flex md:contents">
+                  <div class="col-start-2 col-end-3 mr-10 md:-mx-10 relative">
+                    <div class="h-full w-5 flex items-center justify-center">
+                      <div class="h-full w-1 bg-gray-200 pointer-events-none"></div>
+                    </div>
+                    <div v-if="$h.toKmsHour(driverPosition.speed) >= 5"
+                      class="w-5 h-5 absolute top-1/2 -mt-3 rounded-full bg-green-500 shadow text-center"></div>
+                    <div v-else class="w-5 h-5 absolute top-1/2 -mt-3 rounded-full bg-red-500 shadow text-center"></div>
+                  </div>
+                  <div @click="zoomData(driverPosition.latitude, driverPosition.longitude, driverPosition.id)"
+                    class="block col-start-3 col-end-12 p-4 my-1 mr-auto w-full -mx-12 hover:bg-gray-200 hover:cursor-pointer">
+                    <h5 class="text-xs text-gray-900 dark:text-white mb-1">{{ driverPosition.gps_positioning
+                    }}</h5>
+                    <p class="text-xs leading-tight text-justify w-full text-gray-400 dark:text-gray-500">
+                      {{
+                        $h.formatDate(driverPosition.captured_at, 'DD/MM/YYYY HH:mm') }}
+                      <span
+                        class="inline-flex items-center py-1 px-1 rounded-lg text-xs font-medium bg-gray-100 border border-gray-300 dark:border-gray-500 dark:text-white dark:bg-transparent ml-2">{{
+                          $h.toKmsHour(driverPosition.speed) }}
+                        km/h.</span>
 
+                      <!-- {{ $h.getDirectionIcon($h.getDirection(driverPosition.heading)) }} -->
 
-
-
-
-
-          <!-- component -->
-          <!--           <div class="flex-1">
-            <div class="relative px-4 h-[690px] overflow-auto">
-              <div class="absolute h-full border border-dashed border-slate-300"></div>
-
-
-              <div v-for="driverPosition in driverPositions" :key="driverPosition.id"
-                class="flex items-center w-full my-6 -ml-1.5 hover:cursor-pointer">
-                <div v-if="driverPosition.speed >= 5" class="w-1/12 z-10">
-                  <div class="w-3.5 h-3.5 bg-green-500 rounded-full"></div>
-                </div>
-                <div v-else class="w-1/12 z-10">
-                  <div class="w-3.5 h-3.5 bg-red-500 rounded-full"></div>
-                </div>
-                <div class="w-11/12">
-                  <p class="text-sm">{{ driverPosition.gps_positioning }}</p>
-                  <p class="text-xs text-gray-500">{{ $h.formatDate(driverPosition.captured_at, 'DD/MM/YYYY HH:mm') }}
-                    <span
-                      class="inline-flex items-center py-1 px-1 rounded-lg text-xs font-medium bg-gray-100 border border-gray-300 dark:border-gray-500 dark:text-white dark:bg-transparent ml-2">{{
-                        $h.toKmsHour(driverPosition.speed) }}
-                      km/h.</span>
-                  </p>
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div> -->
+          </div>
         </div>
         <div class="col-span-9">
           <GoogleMapLoader :init="init" class="vehicles-maps bg-slate-200" />
@@ -291,6 +260,7 @@ let mapa;
 let markers = [];
 let coordinates = [];
 let latlngbounds;
+let infoWindow;
 
 let markerColor = '';
 let markerColorDriving = 'rgb(34 197 94)';
@@ -339,16 +309,21 @@ const getData = async () => {
 
     latlngbounds = new google.maps.LatLngBounds();
 
-
+    infoWindow = new google.maps.InfoWindow({
+      minWidth: 350,
+      maxWidth: 500,
+      pixelOffset: new google.maps.Size(0, -10),
+    });
 
     driverPositions.value.forEach(element => {
-      if($h.toKmsHour(element.speed) >= 5){
+      if ($h.toKmsHour(element.speed) >= 5) {
         markerColor = markerColorDriving;
-      }else{
+      } else {
         markerColor = markerColorStopped;
       }
       var marker = new google.maps.Marker({
         position: new google.maps.LatLng(element.latitude, element.longitude),
+        id: element.id,
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
           scale: 4,
@@ -357,42 +332,49 @@ const getData = async () => {
           fillColor: markerColor,
           fillOpacity: 0.5
         },
-        //map: mapa,
         title: element.gps_positioning
       });
       latlngbounds.extend(marker.position);
-
       markers.push(marker);
+      coordinates.push({ 'lat': parseFloat(element.latitude), 'lng': parseFloat(element.longitude) });
 
+      let speed = $h.toKmsHour(element.speed);
+      let direction = $h.getDirection(element.heading);
+      let direction_icon = $h.getDirectionIcon(direction);
+      let formattedDate = $h.formatDate(element.captured_at, "DD-MM-YYYY HH:mm")
+      const infowincontent = "<div class='grid grid-cols-12 gap-2 mt-2'><div class='col-span-3 font-medium'>Posición GPS:</div><div class='col-span-9'><a class='hover:text-primary' href='https://www.google.es/maps/place/"+ element.latitude + ","+ element.longitude + "' target='_blank'>" + element.gps_positioning + "</a></div><div class='col-span-3 font-medium'>Velocidad:</div><div class='col-span-9'>" + speed + " km/h</div><div class='col-span-3 font-medium'>Dirección:</div><div class='col-span-9'>" + direction + "<span>" + direction_icon + "</span></div><div class='col-span-3 font-medium'>Fecha Captura:</div><div class='col-span-9'>" + formattedDate + "</div></div>";
 
-
-      coordinates.push({'lat': parseFloat(element.latitude), 'lng': parseFloat(element.longitude)});
-
-
-
-      
+      google.maps.event.addListener(marker, "click", function () {
+        infoWindow.setContent(infowincontent);
+        google.maps.event.addListener(infoWindow, "domready", function () {
+        });
+        infoWindow.setPosition(marker.getPosition());
+        infoWindow.open(mapa, marker);
+      });
     });
 
     for (let i = 0; i < markers.length; i++) {
       markers[i].setMap(mapa);
     }
 
-
-
-
     mapa.setCenter(latlngbounds.getCenter());
     mapa.fitBounds(latlngbounds);
 
-      //INSERT CUSTOM BUTTOM TO RESET MAP IN MAP.
-  const centerControlDiv = document.createElement("div");
-  const centerControl = createCenterControl(mapa);
-  centerControlDiv.appendChild(centerControl);
-  mapa.controls[google.maps.ControlPosition.TOP_LEFT].push(centerControlDiv);
+    //INSERT CUSTOM BUTTOM TO RESET MAP IN MAP.
+    const centerControlDiv = document.createElement("div");
+    const centerControl = createCenterControl(mapa);
+    centerControlDiv.appendChild(centerControl);
+    mapa.controls[google.maps.ControlPosition.TOP_LEFT].push(centerControlDiv);
 
   }
 }
 
-const zoomData = async (lat, lng) => {
+const zoomData = async (lat, lng, id) => {
+  markers.forEach(el => {
+    if (id == el.id) {
+      google.maps.event.trigger(el, 'click');
+    }
+  });
   mapa.setZoom(18);
   mapa.setCenter(new google.maps.LatLng(lat, lng));
 }
@@ -995,9 +977,9 @@ function createCenterControl(map) {
   controlButton.type = "button";
   controlButton.addEventListener("click", () => {
     //BUTTON ON CLICK RESET MAP TO BOUNDS.
-/*     if (infoWindow) {
+    if (infoWindow) {
       infoWindow.close();
-    } */
+    }
     mapa.setCenter(latlngbounds.getCenter());
     mapa.fitBounds(latlngbounds);
   });
