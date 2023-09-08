@@ -8,6 +8,11 @@
   <!-- BEGIN: Page Layout -->
   <div class="intro-y box p-5 mt-5">
 
+    <h2 class="text-lg font-medium mb-5">
+      {{ $t("trip") }}
+    </h2>
+
+
     <!-- BEGIN: Form -->
     <form class="validate-form" @submit.prevent="save">
 
@@ -180,18 +185,24 @@
         </div>
 
 
+
+       
+
+
+
         <!-- BEGIN: Buttons -->
         <div class="col-span-12 md:col-span-12 lg:col-span-12">
           <div class="flex justify-center">
             <button type="submit" class="btn btn-primary mr-5">
               {{ $t("save") }}
             </button>
-            <button @click.prevent="emit('cancelCreate')" class="btn btn-danger">
+            <!-- <button @click.prevent="emit('cancelCreate')" class="btn btn-danger">
               {{ $t("cancel") }}
-            </button>
+            </button> -->
           </div>
         </div>
         <!-- END: Buttons -->
+
 
       </div>
       <!-- END: container -->
@@ -200,6 +211,17 @@
     <!-- END: Form -->
 
   </div>
+
+
+
+
+  <StageCreate 
+    :arrStages="arrStages" 
+    @addStageArr="addStageArr"
+  />
+  
+
+
 </template>
 <script setup>
 
@@ -208,6 +230,9 @@ import useTrips from '@/composables/trips.js';
 import useVehicles from '@/composables/vehicles.js';
 import useTripPriority from '@/composables/trip_priorities.js';
 import useDrivers from '@/composables/drivers.js';
+
+
+import StageCreate from '@/components/stages/StageCreate.vue';
 
 
 import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
@@ -231,6 +256,9 @@ const { t } = useI18n();
 const selectVehicles = ref([]);
 const selectTripPriorities = ref([]);
 const selectDrivers = ref([]);
+
+
+const arrStages = ref([]);
 
 
 
@@ -278,18 +306,28 @@ const save = async() => {
     
     console.log("envia a guardar");
 
-    console.log(formData);
+    //await storeTrip(formData);
 
-    await storeTrip(formData);
 
-    console.log(errors.value);
-
-    if(errors.value){
-      console.log({ ...errors.value });
-    }
+    console.log({...arrStages.value});
 
   }
 };
+
+
+
+
+
+const addStageArr = async(stage) => {
+  
+  arrStages.value.push(stage);
+
+  console.log(arrStages);
+
+};
+
+
+
 
 onMounted(async () => {
   
