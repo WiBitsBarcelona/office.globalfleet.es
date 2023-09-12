@@ -188,6 +188,7 @@
     <!-- END: Form -->
 
 
+
     <div>
       <div class="col-span-2 intro-y mb-5 text-end">
         <a href="#" class="btn btn-outline-primary w-1/2 sm:w-auto mr-2" @click="showStageForm">
@@ -212,7 +213,9 @@
 
 
     <!-- Stage Card -->
-    <div v-for="stage in arrStages" :key="stage.id" class="p-4 rounded border border-slate-200 text-slate-500 shadow mb-2">
+    <div v-for="stage in arrStages" :key="stage.id"
+      class="p-4 rounded border border-slate-200 text-slate-500 shadow mb-2">
+
       <div class="grid grid-cols-5 gap-2 mb-5 pb-2">
 
         <div class="col-span-12 text-right">
@@ -251,64 +254,94 @@
 
 
       <!-- Tasks -->
-        <div class="relative" v-for="task in stage.tasks" :key="task.id">
+      <div class="relative" v-for="task in stage.tasks" :key="task.id">
+        <div class="md:flex items-center md:space-x-4 mb-3">
+          <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
+            <div class="grid grid-cols-4 gap-2 mb-5">
 
-          <div class="md:flex items-center md:space-x-4 mb-3">
-            <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
-              <div class="grid grid-cols-4 gap-2 mb-5">
+              <div class="col-span-12 text-right">
+                <a href="#" @click.prevent="showActionTaskForm(stage, task)"
+                  class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
+                  <PlusCircleIcon class="w-4 h-4" /> {{ "Agregar Action Task" }}
+                </a>
+              </div>
+
+              <div class="col-span-2">
+                <h5 class="text-xs font-light text-gray-400">{{ $t("task") }}:</h5>
+                <p class="text-xs font-normal leading-6 text-gray-500">
+                  {{ task.name }}
+                </p>
+              </div>
+
+            </div>
 
 
-                <div class="col-span-12 text-right">
-                  <a href="#" @click.prevent="showActionTaskForm(task)" class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
-                    <PlusCircleIcon class="w-4 h-4" /> {{ "Agregar Action Task" }}
-                  </a>
+            <!-- Action Tasks -->
+            <div class="relative" v-for="action_task in task.action_tasks" :key="action_task.id">
+
+              <div class="md:flex items-center md:space-x-4 mb-3">
+                <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
+                  <div class="grid grid-cols-4 gap-2 mb-5">
+
+
+                    <!-- <div class="col-span-12 text-right">
+                <a href="#" @click.prevent="showActionTaskForm(stage, task)"
+                  class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
+                  <PlusCircleIcon class="w-4 h-4" /> {{ "Agregar Action Task" }}
+                </a>
+              </div> -->
+
+                    <div class="col-span-2">
+                      <h5 class="text-xs font-light text-gray-400">{{ $t("task") }}:</h5>
+                      <p class="text-xs font-normal leading-6 text-gray-500">
+                        {{ action_task.action_type_name }}
+                      </p>
+                    </div>
+
+                  </div>
                 </div>
-                
-                <div class="col-span-2">
-                  <h5 class="text-xs font-light text-gray-400">{{ $t("task") }}:</h5>
-                  <p class="text-xs font-normal leading-6 text-gray-500">
-                     {{ task.name }}
-                  </p>
-                </div>
-
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+            <!-- End of Action Tasks -->
 
+
+          </div>
+
+        </div>
+
+      </div>
       <!-- End of Tasks -->
 
 
+
+    </div>
     <!-- End of Stage Card -->
+
+
   </div>
+
 
 
 
 
 
   <div class="intro-y box p-5 mt-5" v-if="isCreateStage">
-    <StageCreate 
-      @cancelStageForm="cancelStageForm" 
-      @addStageForm="addStageForm" 
-    />
+    <StageCreate @cancelStageForm="cancelStageForm" @addStageForm="addStageForm" />
   </div>
 
 
 
   <div class="intro-y box p-5 mt-5" v-if="isCreateTask">
-    <TaskCreate 
-      :stageIndex="stageIndex" 
-      @cancelTaskForm="cancelTaskForm" 
-      @addTaskForm="addTaskForm"
-    />
+    <TaskCreate :stageIndex="stageIndex" @cancelTaskForm="cancelTaskForm" @addTaskForm="addTaskForm" />
   </div>
 
 
 
 
-
-
+  <div class="intro-y box p-5 mt-5" v-if="isCreateActionTask">
+    <ActionTaskCreate :stageIndex="stageIndex" :taskIndex="taskIndex" @cancelActionTaskForm="cancelActionTaskForm"
+      @addActionTaskForm="addActionTaskForm" />
+  </div>
 </template>
 
 
@@ -323,6 +356,7 @@ import useDrivers from '@/composables/drivers.js';
 
 import StageCreate from '@/components/stages/StageCreate.vue';
 import TaskCreate from '@/components/tasks/TaskCreate.vue';
+import ActionTaskCreate from '@/components/action_tasks/ActionTaskCreate.vue';
 
 
 import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
@@ -355,6 +389,7 @@ const arrStages = ref([]);
 const isCreateTrip = ref(true);
 const isCreateStage = ref(false);
 const isCreateTask = ref(false);
+const isCreateActionTask = ref(false);
 
 
 const stageIndex = ref();
@@ -489,9 +524,10 @@ const addTaskForm = (stage, data) => {
  * Action Task
  */
 
- const showActionTaskForm = (task) => {
+const showActionTaskForm = (stage, task) => {
   isCreateTrip.value = false;
-  isCreateTask.value = true;
+  isCreateActionTask.value = true;
+  stageIndex.value = { ...stage };
   taskIndex.value = { ...task };
 }
 
@@ -499,26 +535,30 @@ const addTaskForm = (stage, data) => {
 
 const cancelActionTaskForm = () => {
   isCreateTrip.value = true;
-  isCreateTask.value = false;
+  isCreateActionTask.value = false;
 }
 
 
 
-const addActionTaskForm = (stage, data) => {
+const addActionTaskForm = (stage, task, data) => {
 
-  // arrStages.value.forEach(el => {
-  //   if (el.reference_number === stage.reference_number) {
-  //     if (el.tasks === undefined) {
-  //       el.tasks = [];
-  //       el.tasks.push(data);
-  //     } else {
-  //       el.tasks.push(data);
-  //     }
-  //   }
-  // });
+  arrStages.value.forEach(st => {
+    if (st.reference_number === stage.reference_number) {
+      st.tasks.forEach(t => {
+        if (t.name === task.name) {
+          if (t.action_tasks === undefined) {
+            t.action_tasks = [];
+            t.action_tasks.push(data);
+          } else {
+            t.action_tasks.push(data);
+          }
+        }
+      });
+    }
+  });
 
-  // isCreateTrip.value = true;
-  // isCreateTask.value = false;
+  isCreateTrip.value = true;
+  isCreateActionTask.value = false;
 }
 
 

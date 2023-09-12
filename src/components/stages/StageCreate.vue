@@ -402,7 +402,7 @@ const rulesStage = {
 const formDataStage = reactive({
     activity_type_id: "",
     activity_type_name: "",
-    stage_type_id: "",
+    stage_type_id: "3",
     reference_number: "1000",
     name: "Viaje Nuevo Hannover",
     order_number: "1",
