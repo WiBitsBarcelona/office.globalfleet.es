@@ -5,8 +5,9 @@
   </h2>
 
 
+
   <!-- BEGIN: Page Layout -->
-  <div class="intro-y box p-5 mt-5">
+  <div class="intro-y box p-5 mt-5" v-if="isCreateTrip">
 
     <h2 class="text-lg font-medium mb-5">
       {{ $t("trip") }}
@@ -24,22 +25,17 @@
             <label for="vehicle_id" class="form-label w-full">
               {{ $t("vehicle") }}
             </label>
-            
-            <select
-              v-model.trim="validate.vehicle_id.$model"
-              id="vehicle_id"
-              name="vehicle_id"
-              class="form-control"
-              :class="{ 'border-danger': validate.vehicle_id.$error }"
-            >
+
+            <select v-model.trim="validate.vehicle_id.$model" id="vehicle_id" name="vehicle_id" class="form-control"
+              :class="{ 'border-danger': validate.vehicle_id.$error }">
 
               <option value="" selected>Seleccione</option>
               <option v-for="item in selectVehicles" :value="item.id">
-                  {{ item.plate }}
+                {{ item.plate }}
               </option>
 
             </select>
-            
+
             <template v-if="validate.vehicle_id.$error">
               <div v-for="(error, index) in validate.vehicle_id.$errors" :key="index" class="text-danger mt-2">
                 {{ error.$message }}
@@ -55,22 +51,17 @@
               {{ $t("trip_priority_id") }}
             </label>
 
-            <select
-              v-model.trim="validate.trip_priority_id.$model"
-              id="trip_priority_id"
-              name="trip_priority_id"
-              class="form-control"
-              :class="{ 'border-danger': validate.trip_priority_id.$error }"
-            >
+            <select v-model.trim="validate.trip_priority_id.$model" id="trip_priority_id" name="trip_priority_id"
+              class="form-control" :class="{ 'border-danger': validate.trip_priority_id.$error }">
 
-            <option value="" selected>Seleccione</option>
-            <option v-for="item in selectTripPriorities" :value="item.id">
+              <option value="" selected>Seleccione</option>
+              <option v-for="item in selectTripPriorities" :value="item.id">
                 {{ item.name }}
-            </option>
+              </option>
 
             </select>
-            
-            
+
+
             <template v-if="validate.trip_priority_id.$error">
               <div v-for="(error, index) in validate.trip_priority_id.$errors" :key="index" class="text-danger mt-2">
                 {{ error.$message }}
@@ -87,19 +78,14 @@
             <label for="driver_id" class="form-label w-full">
               {{ $t("driver_id") }}
             </label>
-            
-            <select
-              v-model.trim="validate.driver_id.$model"
-              id="driver_id"
-              name="driver_id"
-              class="form-control"
-              :class="{ 'border-danger': validate.driver_id.$error }"
-            >
 
-            <option value="" selected>Seleccione</option>
-            <option v-for="item in selectDrivers" :value="item.id">
-                {{ item.name }} {{ item.surname }} 
-            </option>
+            <select v-model.trim="validate.driver_id.$model" id="driver_id" name="driver_id" class="form-control"
+              :class="{ 'border-danger': validate.driver_id.$error }">
+
+              <option value="" selected>Seleccione</option>
+              <option v-for="item in selectDrivers" :value="item.id">
+                {{ item.name }} {{ item.surname }}
+              </option>
 
             </select>
 
@@ -151,14 +137,8 @@
             <label for="execution_at" class="form-label w-full">
               {{ $t("execution_at") }}
             </label>
-            <input 
-              v-model.trim="validate.execution_at.$model" 
-              id="execution_at" 
-              type="text" 
-              name="execution_at"
-              class="form-control" 
-              :class="{ 'border-danger': validate.execution_at.$error }" 
-            />
+            <input v-model.trim="validate.execution_at.$model" id="execution_at" type="text" name="execution_at"
+              class="form-control" :class="{ 'border-danger': validate.execution_at.$error }" />
             <template v-if="validate.execution_at.$error">
               <div v-for="(error, index) in validate.execution_at.$errors" :key="index" class="text-danger mt-2">
                 {{ error.$message }}
@@ -173,12 +153,9 @@
             <label for="observations" class="form-label w-full">
               {{ $t("observations") }}
             </label>
-            
-            <textarea 
-              v-model.trim="validate.observations.$model" 
-              id="observations" 
-              name="observations"
-              class="form-control" >
+
+            <textarea v-model.trim="validate.observations.$model" id="observations" name="observations"
+              class="form-control">
             </textarea>
 
           </div>
@@ -186,7 +163,7 @@
 
 
 
-       
+
 
 
 
@@ -196,7 +173,7 @@
             <button type="submit" class="btn btn-primary mr-5">
               {{ $t("save") }}
             </button>
-            <!-- <button @click.prevent="emit('cancelCreate')" class="btn btn-danger">
+            <!-- <button @click.prevent="" class="btn btn-danger">
               {{ $t("cancel") }}
             </button> -->
           </div>
@@ -210,19 +187,131 @@
     </form>
     <!-- END: Form -->
 
+
+    <div>
+      <div class="col-span-2 intro-y mb-5 text-end">
+        <a href="#" class="btn btn-outline-primary w-1/2 sm:w-auto mr-2" @click="showStageForm">
+          <PlusCircleIcon class="w-4 h-4" /> {{ "Agregar Etapa" }}
+        </a>
+      </div>
+    </div>
+
+
+
+    <!-- <div class="mb-10" v-if="arrStages.length > 0">
+      <ul>
+        <li v-for="item in arrStages" :key="item.id">
+          {{ item.reference_number }} - {{ item.name }}
+          <a href="#" @click.prevent="showTaskForm(item)">Task</a>
+        </li>
+      </ul>
+    </div> -->
+
+
+
+
+
+    <!-- Stage Card -->
+    <div v-for="stage in arrStages" :key="stage.id" class="p-4 rounded border border-slate-200 text-slate-500 shadow mb-2">
+      <div class="grid grid-cols-5 gap-2 mb-5 pb-2">
+
+        <div class="col-span-12 text-right">
+          <a href="#" @click.prevent="showTaskForm(stage)" class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
+            <PlusCircleIcon class="w-4 h-4" /> {{ "Agregar Task" }}
+          </a>
+        </div>
+
+        <div class="col-span-2">
+          <h5 class="text-xs font-light text-gray-400">{{ $t("stage") }}:</h5>
+          <p class="text-md font-normal leading-6 text-gray-500">
+            {{ stage.name }}
+          </p>
+        </div>
+
+        <div class="col-span-2">
+          <h5 class="text-xs font-light text-gray-400">{{ $t("activity") }}:</h5>
+          <p class="text-md font-normal leading-6 text-gray-500">
+            {{ stage.activity_type_name }}
+          </p>
+        </div>
+        <div class="col-span-3">
+          <h5 class="text-xs font-light text-gray-400">{{ $t("customer") }}:</h5>
+          <p class="text-md font-normal leading-6 text-gray-500">
+            {{ stage.client_name }}
+          </p>
+        </div>
+        <div class="col-span-3">
+          <h5 class="text-xs font-light text-gray-400">{{ $t("execution_at") }}:</h5>
+          <p class="text-md font-normal leading-6 text-gray-500">
+            {{ stage.execution_at }}
+          </p>
+        </div>
+
+      </div>
+
+
+      <!-- Tasks -->
+        <div class="relative" v-for="task in stage.tasks" :key="task.id">
+
+          <div class="md:flex items-center md:space-x-4 mb-3">
+            <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
+              <div class="grid grid-cols-4 gap-2 mb-5">
+
+
+                <div class="col-span-12 text-right">
+                  <a href="#" @click.prevent="showActionTaskForm(task)" class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
+                    <PlusCircleIcon class="w-4 h-4" /> {{ "Agregar Action Task" }}
+                  </a>
+                </div>
+                
+                <div class="col-span-2">
+                  <h5 class="text-xs font-light text-gray-400">{{ $t("task") }}:</h5>
+                  <p class="text-xs font-normal leading-6 text-gray-500">
+                     {{ task.name }}
+                  </p>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- End of Tasks -->
+
+
+    <!-- End of Stage Card -->
   </div>
 
 
 
 
-  <StageCreate 
-    :arrStages="arrStages" 
-    @addStageArr="addStageArr"
-  />
-  
+
+  <div class="intro-y box p-5 mt-5" v-if="isCreateStage">
+    <StageCreate 
+      @cancelStageForm="cancelStageForm" 
+      @addStageForm="addStageForm" 
+    />
+  </div>
+
+
+
+  <div class="intro-y box p-5 mt-5" v-if="isCreateTask">
+    <TaskCreate 
+      :stageIndex="stageIndex" 
+      @cancelTaskForm="cancelTaskForm" 
+      @addTaskForm="addTaskForm"
+    />
+  </div>
+
+
+
+
 
 
 </template>
+
+
 <script setup>
 
 import { onMounted, reactive, toRefs, ref } from 'vue';
@@ -233,6 +322,7 @@ import useDrivers from '@/composables/drivers.js';
 
 
 import StageCreate from '@/components/stages/StageCreate.vue';
+import TaskCreate from '@/components/tasks/TaskCreate.vue';
 
 
 import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
@@ -259,6 +349,17 @@ const selectDrivers = ref([]);
 
 
 const arrStages = ref([]);
+
+
+
+const isCreateTrip = ref(true);
+const isCreateStage = ref(false);
+const isCreateTask = ref(false);
+
+
+const stageIndex = ref();
+const taskIndex = ref();
+
 
 
 
@@ -298,39 +399,136 @@ const formData = reactive({
 
 const validate = useVuelidate(rules, toRefs(formData));
 
-const save = async() => {
-  validate.value.$touch();
+const save = async () => {
+
+  //validate.value.$touch();
+
   if (validate.value.$invalid) {
     //TODO
   } else {
-    
+
     console.log("envia a guardar");
 
     //await storeTrip(formData);
 
 
-    console.log({...arrStages.value});
+    console.log({ ...arrStages.value });
 
   }
 };
 
 
 
+/**
+ * Stage
+ */
+const showStageForm = () => {
+  isCreateTrip.value = false;
+  isCreateStage.value = true;
+  console.log({ ...arrStages.value });
+}
 
+const cancelStageForm = () => {
+  isCreateTrip.value = true;
+  isCreateStage.value = false;
+}
 
-const addStageArr = async(stage) => {
-  
+const addStageForm = async (stage) => {
+
   arrStages.value.push(stage);
 
-  console.log(arrStages);
+  isCreateTrip.value = true;
+  isCreateStage.value = false;
+}
 
-};
+
+
+
+/**
+ * Task
+ */
+
+const showTaskForm = (stage) => {
+  isCreateTrip.value = false;
+  isCreateTask.value = true;
+  stageIndex.value = { ...stage };
+}
+
+
+
+const cancelTaskForm = () => {
+  isCreateTrip.value = true;
+  isCreateTask.value = false;
+}
+
+
+
+const addTaskForm = (stage, data) => {
+  arrStages.value.forEach(el => {
+    if (el.reference_number === stage.reference_number) {
+      if (el.tasks === undefined) {
+        el.tasks = [];
+        el.tasks.push(data);
+      } else {
+        el.tasks.push(data);
+      }
+    }
+  });
+
+  isCreateTrip.value = true;
+  isCreateTask.value = false;
+}
+
+
+
+
+
+
+
+/**
+ * Action Task
+ */
+
+ const showActionTaskForm = (task) => {
+  isCreateTrip.value = false;
+  isCreateTask.value = true;
+  taskIndex.value = { ...task };
+}
+
+
+
+const cancelActionTaskForm = () => {
+  isCreateTrip.value = true;
+  isCreateTask.value = false;
+}
+
+
+
+const addActionTaskForm = (stage, data) => {
+
+  // arrStages.value.forEach(el => {
+  //   if (el.reference_number === stage.reference_number) {
+  //     if (el.tasks === undefined) {
+  //       el.tasks = [];
+  //       el.tasks.push(data);
+  //     } else {
+  //       el.tasks.push(data);
+  //     }
+  //   }
+  // });
+
+  // isCreateTrip.value = true;
+  // isCreateTask.value = false;
+}
+
+
+
 
 
 
 
 onMounted(async () => {
-  
+
   //Vehicles
   await getVehicles();
   //console.log({...vehicles.value});
@@ -340,14 +538,12 @@ onMounted(async () => {
   await getTripPriorities();
   //console.log({...tripPriorities.value});
   selectTripPriorities.value = tripPriorities.value;
- 
+
 
 
   await getDrivers();
   //console.log({...drivers.value});
   selectDrivers.value = drivers.value;
-
-
 
 });
 
