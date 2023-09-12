@@ -1,8 +1,24 @@
 <template>
     <div>
-        <div v-if="mensajes != null">
+        <div v-if="idConversation">
 
             <div class="flex flex-col h-[85vh] justify-between items-center box overflow-hidden">
+
+
+                <!-- Header -->
+                <div class="bg-white h-24 w-full p2 flex items-center">
+                    <div v-if="nameConversation" class="ml-4 flex items-center gap-4">
+                        <div v-if="receiverType === 'user'">
+                            <img class="w-14 h-14 rounded-full"
+                            :src="`https://ui-avatars.com/api/?name=${chatsTitle(nameConversation)}&color=FFFFFF&background=4EDDFF&font-size=0.38`" />
+                        </div>
+                        <div v-if="receiverType === 'group'">
+                            <img class="w-14 h-14 rounded-full"
+                            :src="`https://ui-avatars.com/api/?name=${chatsTitle(nameConversation)}&color=FFFFFF&background=BCBCBC&font-size=0.38`" />
+                        </div>
+                        <p class="text-xl">{{ nameConversation }}</p>
+                    </div>
+                </div>
                 <!-- Chat -->
                 <div class="scrollbar-hidden " id="chat"
                     style="overflow: scroll; height: 100%; width: 1200px; background-color: white; padding: 8px;">
@@ -17,38 +33,54 @@
                             </div>
                         </div>
 
-                        <!-- MENSAJES ENVIDOS -->
                         <div style="display: flex;">
+                            <!-- MENSAJES ENVIADOS -->
                             <div style="flex: 1px;" v-if="mensaje.data.entities.sender.entity.uid === myUid"
-                                @click="showModal(true), infoTrip(mensaje.sentAt, mensaje.deliveredAt, mensaje.readAt, mensaje.data.metadata['confirmetAt'])">
-                                <div class="contMensajeEnviado">
-                                    <p class="txtMensajesEnviado">{{ mensaje.data.text }}</p>
-                                    <p class="txtHoraEnviado">{{ convertStringToDate(mensaje.sentAt) }}</p>
+                                @click="showModal(true), infoTrip(mensaje.sentAt, mensaje.deliveredAt, mensaje.readAt, !mensaje.data.metadata ? null : mensaje.data.metadata['confirmetAt'])">
+                                <div style="display: flex; float: right;">
+                                    <div v-if="mensaje.data.metadata">
+                                        <div v-if="mensaje.data.metadata['reader'] == 0">
+                                            <div
+                                                style="display: flex; margin-top: 25%; margin-bottom: 50%; margin-right: 5px;">
+                                                <img src="../../assets/images/alertCircle.svg"
+                                                    style="width: 25px; height: 25px;" />
+                                            </div>
+                                        </div>
+                                        <div v-else>
+                                            <div
+                                                style="display: flex; margin-top: 25%; margin-bottom: 50%; margin-right: 5px;">
+                                                <img src="../../assets/images/checkCircle.svg"
+                                                    style="width: 25px; height: 25px;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="contMensajeEnviado">
+                                        <p class="txtMensajesEnviado">{{ mensaje.data.text }}</p>
+                                        <p class="txtHoraEnviado">{{ convertStringToDate(mensaje.sentAt) }}</p>
 
-                                    <div style="display: flex; align-items: flex-end; text-align: right;">
+                                        <div style="display: flex; align-items: flex-end; text-align: right;">
 
-                                        <p
-                                            v-if="mensaje.sentAt > 0 && mensaje.deliveredAt == null && mensaje.readAt == null">
-                                            <img src="../../assets/images/checkmark.svg" alt="Checkmark"
-                                                style="width: 15px; height: 15px; margin-left: 5px;" />
-                                        </p>
+                                            <p
+                                                v-if="mensaje.sentAt > 0 && mensaje.deliveredAt == null && mensaje.readAt == null">
+                                                <img src="../../assets/images/checkmark.svg" alt="Checkmark"
+                                                    style="width: 15px; height: 15px; margin-left: 5px;" />
+                                            </p>
 
-                                        <p v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt == null">
-                                            <img src="../../assets/images/allcheckmark.svg" alt="Checkmark"
-                                                style="width: 15px; height: 15px; margin-left: 5px;" />
-                                        </p>
+                                            <p
+                                                v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt == null">
+                                                <img src="../../assets/images/allcheckmark.svg" alt="Checkmark"
+                                                    style="width: 15px; height: 15px; margin-left: 5px;" />
+                                            </p>
 
-                                        <p v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt > 0">
-                                            <img src="../../assets/images/checkallmark.svg" alt="Checkmark"
-                                                style="width: 15px; height: 15px; margin-left: 5px;" />
-                                        </p>
+                                            <p v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt > 0">
+                                                <img src="../../assets/images/checkallmark.svg" alt="Checkmark"
+                                                    style="width: 15px; height: 15px; margin-left: 5px;" />
+                                            </p>
 
+                                        </div>
                                     </div>
                                 </div>
-                                <div v-if="mensaje.data.metadata">
-                                    <div v-if="mensaje.data.metadata['reader'] == 0">  
-                                    </div>
-                                </div>
+
                             </div>
                             <!-- MENSAJES RECIBIDOS -->
                             <div v-else>
@@ -62,7 +94,8 @@
                 </div>
 
                 <!-- BARRA DE ENVIO -->
-                <div class="pt-4 sm:py-4 flex items-center border-t-[6px] border-slate-200/60 dark:border-darkmode-400 w-full">
+                <div
+                    class="pt-4 sm:py-4 flex items-center border-t-[6px] border-slate-200/60 dark:border-darkmode-400 w-full">
 
                     <textarea v-on:keyup.enter="sendMessage" id="message"
                         class="overflow-y-scroll scrollbar-hidden chat__box__input form-control dark:bg-darkmode-600 h-11 resize-none border-transparent px-5 py-3 shadow-none focus:border-transparent focus:ring-0"
@@ -117,7 +150,7 @@
                                 <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
                                     <img src="../../assets/images/checkmark.svg" alt="Checkmark"
                                         style="width: 25px; height: 25px; margin-left: 5px;" />
-                                    <p style="font-size: 18px; margin-left: 5px;" v-if="sentAt != 'undefined'">{{
+                                    <p style="font-size: 18px; margin-left: 5px;" v-if="sentAt">{{
                                         convertirAFecha(sentAt) }}</p>
                                 </div>
 
@@ -125,7 +158,7 @@
                                 <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
                                     <img src="../../assets/images/allcheckmark.svg" alt="Checkmark"
                                         style="width: 25px; height: 25px; margin-left: 5px;" />
-                                    <p style="font-size: 18px; margin-left: 5px;" v-if="deliveredAt != 'undefined'">{{
+                                    <p style="font-size: 18px; margin-left: 5px;" v-if="deliveredAt">{{
                                         convertirAFecha(deliveredAt) }}</p>
                                 </div>
 
@@ -133,22 +166,13 @@
                                 <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
                                     <img src="../../assets/images/checkallmark.svg" alt="Checkmark"
                                         style="width: 25px; height: 25px; margin-left: 5px;" />
-                                    <p style="font-size: 18px; margin-left: 5px;" v-if="readAt != 'undefined'">{{
+                                    <p style="font-size: 18px; margin-left: 5px;" v-if="readAt">{{
                                         convertirAFecha(readAt) }}</p>
                                 </div>
 
                                 <!-- Confirmacion de Lectura -->
                                 <div style="margin-top: 5px; margin-bottom: 5px;">
-                                    <div v-if="confirmetAt == null">
-                                        <!-- <div style="margin-top: 10px;">
-                                    <label style="font-size: 18px; margin-left: 5px;">
-                                        <input type="checkbox" :id="`${idMessage}`" value="first_checkbox" v-model="isChecked"
-                                        @change="handleCheckboxChange" style="margin-right: 5px;" />
-                                        Confirmar Lectura
-                                    </label>
-                                    </div> -->
-                                    </div>
-                                    <div v-else>
+                                    <div v-if="confirmetAt">
                                         <p style="font-size: 16px;">Confirmado</p>
                                         <div
                                             style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
@@ -260,6 +284,7 @@ const myUid = ref(null)
 const receiverType = ref(null)
 const idConversation = ref(null)
 const modalMessage = ref(false)
+const nameConversation = ref(null)
 
 const sentAt = ref(null);
 const deliveredAt = ref(null);
@@ -269,23 +294,27 @@ const confirmetAt = ref(null)
 const mensajes = ref([]);
 
 const props = defineProps({
-    miVariable: String, //idConversation
-    miVariable2: String, // ChatId
-    miVariable3: String // receiverType
+    idConversation: String, //idConversation
+    ChatId: String, // ChatId
+    receiverType: String, // receiverType
+    nameConversation: String
 })
 
 watch(
-    [() => props.miVariable, () => props.miVariable2, () => props.miVariable3],
-    ([newVariable, newVariable2, newVariable3]) => {
-        idConversation.value = newVariable
-        ChatId.value = newVariable2;
-        receiverType.value = newVariable3;
-        loadMessages();
+    [() => props.idConversation, () => props.ChatId, () => props.receiverType, () => props.nameConversation],
+    ([newIdConversation, newChatId, newReceiverType, newNameConversation]) => {
+        idConversation.value = newIdConversation
+        ChatId.value = newChatId;
+        receiverType.value = newReceiverType;
+        nameConversation.value = newNameConversation;
 
-        const chatCont = document.getElementById('chat');
-        chatCont.scrollTop = chatCont.scrollHeight;
+        setTimeout(() => {
+            const chatCont = document.getElementById('chat');
+            chatCont.scrollTop = chatCont.scrollHeight;
+        }, 500)
 
         commetInit()
+
     }
 );
 
@@ -445,6 +474,30 @@ const infoTrip = (value1, value2, value3, value4) => {
     deliveredAt.value = value2
     readAt.value = value3
     confirmetAt.value = value4
+}
+
+const chatsTitle = (value) => {
+
+    const words = value.split(" ");
+
+    if (words.length >= 2) {
+        // Obtén las dos primeras palabras
+        const firstwords = words[0];
+        const secondwords = words[1];
+
+        // Obtiene la primera letra de cada palabra
+        const firstletter1 = firstwords.charAt(0).toUpperCase();
+        const firstletter2 = secondwords.charAt(0).toUpperCase();
+
+        // Combina las primeras letras en un resultado final
+        const finalletters = firstletter1 + firstletter2;
+
+        // Imprime el resultado final
+        return finalletters
+    }
+    else {
+        return value.charAt(0);
+    }
 }
 </script >
 <style>

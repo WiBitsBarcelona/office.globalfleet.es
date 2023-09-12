@@ -33,7 +33,7 @@
     <div id="group-list" class="flex flex-col gap-[6px] h-[76vh] overflow-y-scroll scrollbar-hidden">
       <!-- Per cada xat farem un botó -->
       <button v-if="!inNewChat" v-for="conversation in conversationList"
-        @click="enviarVariable(conversation.conversationId, conversation.conversationWith.uid,conversation.conversationType)" :id="conversation.conversationWith.uid
+        @click="enviarVariable(conversation.conversationId, conversation.conversationWith.uid,conversation.conversationType, conversation.conversationWith.name)" :id="conversation.conversationWith.uid
           ? conversation.conversationWith.uid
           : conversation.conversationWith.guid
           " :key="conversation.conversationWith"
@@ -82,7 +82,7 @@
   </div>
 
   <!-- Cuadre de xat -->
-  <ChatsV2 :miVariable="prova" :miVariable2="prova2" :miVariable3="prova3" />
+  <ChatsV2 :idConversation="propsConversationId" :ChatId="propsChatId" :receiverType="propsChatType" :nameConversation="propsNameConversation"/>
 </template>
 
 <script>
@@ -97,7 +97,6 @@ export default {
 <script setup>
 import { CometChat } from "@cometchat-pro/chat";
 import { ref, onMounted } from "vue";
-import $ from 'jquery';
 
 // Hooks
 import { useAuthenticationStore } from "@/stores/auth/authentications";
@@ -129,25 +128,13 @@ let inNewChat = ref(false);
 let userInfo;
 let newChatsList = ref("");
 
-const modalMessage = ref(false)
-const sentAt = ref("");
-const deliveredAt = ref("");
-const readAt = ref("");
-const confirmetAt = ref('')
-const idMessage = ref('')
-
-const sConversationId = ref(null)
-const sChatType = ref(null)
-const sChatId = ref(null)
-const checkresponse = ref(false);
-const isChecked = ref(false);
-
-const nameChat = ref("")
-const uidChat = ref("")
+const propsConversationId = ref(null)
+const propsChatType = ref(null)
+const propsChatId = ref(null)
+const propsNameConversation = ref(null)
 
 const prova = ref(null)
-const prova2 = ref(null)
-const prova3 = ref(null)
+
 
 onMounted(async () => {
   initialize();
@@ -269,15 +256,12 @@ const initialize = async () => {
   // };
 };
 
-const tuArray = ref([])
-const miArray = ref([])
-
 // FUNCION UE RECOGE LOS VALORES
-const  enviarVariable = async (value, value2, value3) => {
-  prova.value = value // idConversation
-  prova2.value = value2 //ChatId
-  prova3.value = value3 // receiverType
-
+const enviarVariable = async (value, value2, value3, value4) => {
+  propsConversationId.value = value // idConversation
+  propsChatId.value = value2 //ChatId
+  propsChatType.value = value3 // receiverType
+  propsNameConversation.value = value4
   await markUserConversationAsRead(userInfo.uid, prova.value);
 
   LoadChatsList();
@@ -384,34 +368,6 @@ const  enviarVariable = async (value, value2, value3) => {
 };*/
 
 
-// Funcion que rescata los datos que se mostraran en el modal
-$(document).on('click', '.mensaje', async function () {
-  showModal(true)
-
-  let valores = $(this).attr('date');
-  let [value1, value2, value3, value4, value5] = valores.split('-');
-  //console.log(valores)
-
-  sentAt.value = value1
-  deliveredAt.value = value2
-  readAt.value = value3
-  idMessage.value = value4
-  confirmetAt.value = value5
-
-})
-
-
-// Funcion para mostrar el modal
-const showModal = (value) => {
-  modalMessage.value = value;
-  //console.log(value)
-
-  // si la respuesta es positiva el valor de checkbox se vuelve false
-  if (checkresponse.value == true) {
-    isChecked.value = false
-  }
-}
-
 // Funció per a alternar la vista de xat a llista de xat
 const toggleInChat = () => {
   inChat.value = false;
@@ -481,9 +437,9 @@ const sendMessage = async () => {
   // Controlamos que el mensaje no esté vacio
   const value = message.value.trim();
   if (value !== "") {
-    sendTextMessage(userInfo.uid, message.value, chatId, receiverType, isChecked.value);
+    sendTextMessage(userInfo.uid, message.value, chatId, receiverType);
     await mark_user_conversation_as_delivered(userInfo.uid, sChatId);
-    isChecked.value = false
+
   }
 
   // Netejem el text
@@ -828,38 +784,6 @@ const chatsTitle = (value) => {
   }
 }
 
-const convertirAFecha = (timestamp) => {
-  const fecha = new Date(timestamp * 1000);
-  const opciones = {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-  };
-  return fecha.toLocaleString("es-ES", opciones);
-}
-
-// funcion para saber si esta o no activado el checkbox
-const handleCheckboxChange = async () => {
-  if (isChecked.value) {
-    console.log('El checkbox está activado.');
-    // si se activa se ejecuta la funcion 
-    /*const response = await update_datameta_message(idMessage.value)
-
-    if (response.error) {
-      console.log('error')
-      console.log(response)
-    }
-    else {
-      // si la respuesta es positiva se cambia de estado a checkresponse
-      checkresponse.value = true;
-      console.log("aqiui", response)
-    }*/
-  } else {
-    console.log('El checkbox está desactivado.');
-  }
-}
 </script>
 
 <style>
