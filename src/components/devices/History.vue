@@ -256,6 +256,8 @@ const times = [
   "23:59"
 ];
 
+let centerControl = '';
+
 let mapa;
 let markers = [];
 let coordinates = [];
@@ -300,72 +302,86 @@ const getData = async () => {
     let currentData = { from_at: dateFrom, to_at: dateTo };;
     await getDriverPositions(selected_driver.value, currentData);
 
-    if (markers) {
-      for (let i in markers) {
-        markers[i].setMap(null);
-      }
-      markers = [];
-    }
-
-    latlngbounds = new google.maps.LatLngBounds();
-
-    infoWindow = new google.maps.InfoWindow({
-      minWidth: 350,
-      maxWidth: 500,
-      pixelOffset: new google.maps.Size(0, -10),
-    });
-
-    driverPositions.value.forEach(element => {
-      if ($h.toKmsHour(element.speed) >= 5) {
-        markerColor = markerColorDriving;
-      } else {
-        markerColor = markerColorStopped;
-      }
-      var marker = new google.maps.Marker({
-        position: new google.maps.LatLng(element.latitude, element.longitude),
-        id: element.id,
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 4,
-          strokeColor: markerColor,
-          strokeWeight: 2,
-          fillColor: markerColor,
-          fillOpacity: 0.5
+    if (driverPositions.value.length == 0) {
+      Swal.fire({
+        icon: 'info',
+        title: '',
+        text: t("no_position_data"),
+        confirmButtonText: t("documents.swal.all_right_btn"),
+        buttonsStyling: false,
+        customClass: {
+          confirmButton: 'btn btn-primary shadow-md',
         },
-        title: element.gps_positioning
       });
-      latlngbounds.extend(marker.position);
-      markers.push(marker);
-      coordinates.push({ 'lat': parseFloat(element.latitude), 'lng': parseFloat(element.longitude) });
+    } else {
+      if (markers) {
+        for (let i in markers) {
+          markers[i].setMap(null);
+        }
+        markers = [];
+      }
 
-      let speed = $h.toKmsHour(element.speed);
-      let direction = $h.getDirection(element.heading);
-      let direction_icon = $h.getDirectionIcon(direction);
-      let formattedDate = $h.formatDate(element.captured_at, "DD-MM-YYYY HH:mm")
-      const infowincontent = "<div class='grid grid-cols-12 gap-2 mt-2'><div class='col-span-3 font-medium'>Posición GPS:</div><div class='col-span-9'><a class='hover:text-primary' href='https://www.google.es/maps/place/"+ element.latitude + ","+ element.longitude + "' target='_blank'>" + element.gps_positioning + "</a></div><div class='col-span-3 font-medium'>Velocidad:</div><div class='col-span-9'>" + speed + " km/h</div><div class='col-span-3 font-medium'>Dirección:</div><div class='col-span-9'>" + direction + "<span>" + direction_icon + "</span></div><div class='col-span-3 font-medium'>Fecha Captura:</div><div class='col-span-9'>" + formattedDate + "</div></div>";
+      latlngbounds = new google.maps.LatLngBounds();
 
-      google.maps.event.addListener(marker, "click", function () {
-        infoWindow.setContent(infowincontent);
-        google.maps.event.addListener(infoWindow, "domready", function () {
+      infoWindow = new google.maps.InfoWindow({
+        minWidth: 350,
+        maxWidth: 500,
+        pixelOffset: new google.maps.Size(0, -10),
+      });
+
+      driverPositions.value.forEach(element => {
+        if ($h.toKmsHour(element.speed) >= 5) {
+          markerColor = markerColorDriving;
+        } else {
+          markerColor = markerColorStopped;
+        }
+        var marker = new google.maps.Marker({
+          position: new google.maps.LatLng(element.latitude, element.longitude),
+          id: element.id,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 4,
+            strokeColor: markerColor,
+            strokeWeight: 2,
+            fillColor: markerColor,
+            fillOpacity: 0.5
+          },
+          title: element.gps_positioning
         });
-        infoWindow.setPosition(marker.getPosition());
-        infoWindow.open(mapa, marker);
+        latlngbounds.extend(marker.position);
+        markers.push(marker);
+        coordinates.push({ 'lat': parseFloat(element.latitude), 'lng': parseFloat(element.longitude) });
+
+        let speed = $h.toKmsHour(element.speed);
+        let direction = $h.getDirection(element.heading);
+        let direction_icon = $h.getDirectionIcon(direction);
+        let formattedDate = $h.formatDate(element.captured_at, "DD-MM-YYYY HH:mm")
+        const infowincontent = "<div class='grid grid-cols-12 gap-2 mt-2'><div class='col-span-3 font-medium'>Posición GPS:</div><div class='col-span-9'><a class='hover:text-primary' href='https://www.google.es/maps/place/" + element.latitude + "," + element.longitude + "' target='_blank'>" + element.gps_positioning + "</a></div><div class='col-span-3 font-medium'>Velocidad:</div><div class='col-span-9'>" + speed + " km/h</div><div class='col-span-3 font-medium'>Dirección:</div><div class='col-span-9'>" + direction + "<span>" + direction_icon + "</span></div><div class='col-span-3 font-medium'>Fecha Captura:</div><div class='col-span-9'>" + formattedDate + "</div></div>";
+
+        google.maps.event.addListener(marker, "click", function () {
+          infoWindow.setContent(infowincontent);
+          google.maps.event.addListener(infoWindow, "domready", function () {
+          });
+          infoWindow.setPosition(marker.getPosition());
+          infoWindow.open(mapa, marker);
+        });
       });
-    });
 
-    for (let i = 0; i < markers.length; i++) {
-      markers[i].setMap(mapa);
+      for (let i = 0; i < markers.length; i++) {
+        markers[i].setMap(mapa);
+      }
+
+      mapa.setCenter(latlngbounds.getCenter());
+      mapa.fitBounds(latlngbounds);
+
+      //INSERT CUSTOM BUTTOM TO RESET MAP IN MAP.
+      if (centerControl == '') {
+        const centerControlDiv = document.createElement("div");
+        centerControl = createCenterControl(mapa);
+        centerControlDiv.appendChild(centerControl);
+        mapa.controls[google.maps.ControlPosition.TOP_LEFT].push(centerControlDiv);
+      }
     }
-
-    mapa.setCenter(latlngbounds.getCenter());
-    mapa.fitBounds(latlngbounds);
-
-    //INSERT CUSTOM BUTTOM TO RESET MAP IN MAP.
-    const centerControlDiv = document.createElement("div");
-    const centerControl = createCenterControl(mapa);
-    centerControlDiv.appendChild(centerControl);
-    mapa.controls[google.maps.ControlPosition.TOP_LEFT].push(centerControlDiv);
-
   }
 }
 
@@ -1006,4 +1022,5 @@ onMounted(() => {
   padding: 6px;
   border-radius: 5px;
   box-shadow: 2px 2px 4px #000000;
-}</style>
+}
+</style>

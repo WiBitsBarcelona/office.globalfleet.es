@@ -151,7 +151,7 @@ const routes = [
     path: "/trip/:id",
     name: "Detalle Viaje",
     beforeEnter: requireAuth,
-    component: () => import('@/views/trips/TripDetails.vue'),
+    component: () => import('@/views/trips/TripDetailsWithOutComponents.vue'),
   },
   { 
     path: '/:path(.*)', 
