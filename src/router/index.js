@@ -89,6 +89,11 @@ const routes = [
         component: () => import('@/views/trips/TripGrid.vue'),
       },
       {
+        path: "trips/create",
+        name: "trips-create",
+        component: () => import('@/components/trips/TripCreate.vue'),
+      },
+      {
         path: "vehicles",
         name: "vehicles",
         component: () => import('@/views/vehicles/VehiclesMap.vue'),
@@ -151,7 +156,7 @@ const routes = [
     path: "/trip/:id",
     name: "Detalle Viaje",
     beforeEnter: requireAuth,
-    component: () => import('@/views/trips/TripDetails.vue'),
+    component: () => import('@/views/trips/TripDetailsWithOutComponents.vue'),
   },
   { 
     path: '/:path(.*)', 

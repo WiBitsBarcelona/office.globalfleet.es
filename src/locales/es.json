@@ -66,6 +66,7 @@
   "profile": "Perfil",
   "reset_password": "Resetear Password",
   "help": "Ayuda",
+  "create": "Nuevo",
   "logout": "Cerrar Sesión",
   "created_at": "Fecha creación",
   "update_at": "Fecha actualiación",
@@ -350,5 +351,6 @@
   "day": "día",
   "days": "dias",
   "from": "Desde",
-  "to": "Hasta"
+  "to": "Hasta",
+  "no_position_data": "No hay datos de posicionamiento para este conductor y estas fechas"
 }

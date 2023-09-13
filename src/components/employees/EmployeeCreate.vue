@@ -152,50 +152,6 @@
 			</div>
 
 
-			<!-- <div class="col-span-4 md:col-span-4 lg:col-span-4">
-				<div class="input-form">
-					<label for="phone_prefix" class="form-label w-full">
-						{{ $t("phone_prefix") }}
-					</label>
-					<input
-						v-model.trim="validate.phone_prefix.$model"
-						id="phone_prefix"
-						type="text"
-						name="phone_prefix"
-						class="form-control"
-						:class="{ 'border-danger': validate.phone_prefix.$error }"
-					/>
-					<template v-if="validate.phone_prefix.$error">
-						<div v-for="(error, index) in validate.phone_prefix.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
-			</div>
-
-
-			<div class="col-span-4 md:col-span-4 lg:col-span-4">
-				<div class="input-form">
-					<label for="phone" class="form-label w-full">
-						{{ $t("phone") }}
-					</label>
-					<input
-						v-model.trim="validate.phone.$model"
-						id="phone"
-						type="text"
-						name="phone"
-						class="form-control"
-						:class="{ 'border-danger': validate.phone.$error }"
-					/>
-					<template v-if="validate.phone.$error">
-						<div v-for="(error, index) in validate.phone.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
-			</div> -->
-
-
 			<!-- BEGIN: Buttons -->
 			<div class="col-span-12 md:col-span-12 lg:col-span-12">
 				<div class="flex justify-center">
@@ -231,7 +187,7 @@
 	const { roles, getRoles } = useRoles();
 	const { t } = useI18n();
 	const props = defineProps(['employeeId']);
-	const emit = defineEmits(['cancelEdit', 'updateemployeeForm']);
+	const emit = defineEmits(['cancelCreate', 'saveEmployeeForm']);
 
 
 
@@ -264,14 +220,6 @@
 		password: {
 			required: helpers.withMessage(t("form.required"), required),
 		},
-		// phone_prefix: {
-		// 	required: helpers.withMessage(t("form.required"), required),
-		// 	minLength: minLength(2),
-		// },
-		// phone: {
-		// 	required: helpers.withMessage(t("form.required"), required),
-		// 	minLength: minLength(2),
-		// },
 	};
 
 	const formData = reactive({
@@ -281,8 +229,6 @@
 		fiscal_identification: "",
 		email: "",
 		password: "",
-		// phone_prefix: "",
-		// phone: "",
 	});
 
 	const validate = useVuelidate(rules, toRefs(formData));
