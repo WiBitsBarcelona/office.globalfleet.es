@@ -32,31 +32,21 @@
     <!-- Llista de xats -->
     <div id="group-list" class="flex flex-col gap-[6px] h-[76vh] overflow-y-scroll scrollbar-hidden">
       <!-- Per cada xat farem un botó -->
-      <button v-if="!inNewChat" v-for="conversation in conversationList" :id="conversation.conversationWith.uid
+      <button v-if="!inNewChat" v-for="conversation in conversationList"
+        @click="enviarVariable(conversation.conversationId, conversation.conversationWith.uid,conversation.conversationType, conversation.conversationWith.name)" :id="conversation.conversationWith.uid
           ? conversation.conversationWith.uid
           : conversation.conversationWith.guid
-        " :key="conversation.conversationWith" v-on:click="
-    buildChat(
-      conversation.conversationId,
-      conversation.conversationType,
-      conversation.conversationWith.uid
-        ? conversation.conversationWith.uid
-        : conversation.conversationWith.guid
-    )
-    " class="flex gap-3 p-3 pl-2 h-16 box cursor-pointer border-b bg-white items-center conversations-list-item">
+          " :key="conversation.conversationWith"
+        class="flex gap-3 p-3 pl-2 h-16 box cursor-pointer border-b bg-white items-center conversations-list-item">
         <!-- En cas de ser un xat amb un usuari -->
         <img v-if="conversation.conversationType === 'user'" class="w-14 h-14 rounded-full" :src="conversation.conversationWith.avatar
-            ? conversation.conversationWith.avatar
-            : `https://ui-avatars.com/api/?name=${conversation.conversationWith.name.charAt(
-              0
-            )}&color=7F9CF5&background=EBF4FF`
+          ? conversation.conversationWith.avatar
+          : `https://ui-avatars.com/api/?name=${chatsTitle(conversation.conversationWith.name)}&color=FFFFFF&background=4EDDFF&font-size=0.38`
           " />
         <!-- En cas de ser un grup -->
         <img v-if="conversation.conversationType === 'group'" class="w-14 h-14 rounded-full" :src="conversation.conversationWith.icon
-            ? conversation.conversationWith.icon
-            : `https://ui-avatars.com/api/?name=${conversation.conversationWith.name.charAt(
-              0
-            )}&color=7F9CF5&background=EBF4FF`
+          ? conversation.conversationWith.icon
+          : `https://ui-avatars.com/api/?name=${chatsTitle(conversation.conversationWith.name)}&color=FFFFFF&background=BCBCBC&font-size=0.38`
           " />
         <div class="flex flex-col justify-between h-full w-full text-left gap-1">
           <div class="flex w-full justify-between">
@@ -66,7 +56,7 @@
             <div v-if="conversation.unreadMessageCount != 0 &&
               conversation.unreadMessageCount < 100
               "
-              class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-green-500 text-white rounded-full inner-messages-balloon">
+              class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-[#FF9F46] text-white rounded-full inner-messages-balloon">
               <p class="w-full text-center mt-[1px]">
                 {{ conversation.unreadMessageCount }}
               </p>
@@ -74,7 +64,7 @@
             <div v-else-if="conversation.unreadMessageCount != 0 &&
               conversation.unreadMessageCount > 100
               "
-              class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-green-500 text-white rounded-full inner-messages-balloon">
+              class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-[#FF9F46] text-white rounded-full inner-messages-balloon">
               <p class="w-full text-center mt-[1px]">+99</p>
             </div>
           </div>
@@ -88,94 +78,30 @@
                 conversation.lastMessage.data.text.substring(0, 30) + "..." : "" }} </p>
         </div>
       </button>
-
-      <!-- Per cada nou possible xat, farem un botó també -->
-      <button v-if="inNewChat" v-for="chatList in newChatsList" v-on:click="
-        buildNewChat(
-          chatList.uid ? chatList.uid : chatList.guid,
-          chatList.name,
-          chatList.uid ? 'user' : 'group'
-        )
-        " class="flex gap-3 p-3 pl-2 h-16 box cursor-pointer border-b bg-white items-center">
-        <!-- En cas de ser un xat amb un usuari -->
-        <img v-if="chatList.uid" class="w-14 h-14 rounded-full" :src="chatList.avatar
-            ? chatList.avatar
-            : `https://ui-avatars.com/api/?name=${chatList.name.charAt(
-              0
-            )}&color=7F9CF5&background=EBF4FF`
-          " />
-        <!-- En cas de ser un grup -->
-        <img v-if="chatList.guid" class="w-14 h-14 rounded-full" :src="chatList.icon
-            ? chatList.icon
-            : `https://ui-avatars.com/api/?name=${chatList.name.charAt(
-              0
-            )}&color=7F9CF5&background=EBF4FF`
-          " />
-        <div class="flex flex-col justify-between h-full w-full text-left gap-1">
-          <div class="flex w-full justify-between">
-            <h2 class="font-semibold">
-              {{ chatList.name }}
-            </h2>
-          </div>
-        </div>
-      </button>
     </div>
   </div>
 
   <!-- Cuadre de xat -->
-  <div v-if="inChat" class="flex flex-col w-full h-[85vh] justify-between items-center box overflow-hidden">
-    <div id="current-chat-container" class="flex items-center h-20 w-full gap-3 px-4">
-      <img v-if="selectedChat.icon || selectedChat.avatar"
-        :src="selectedChat.icon ? selectedChat.icon : selectedChat.avatar" class="rounded-full w-14 h-14" />
-      <img v-else :src="`https://ui-avatars.com/api/?name=${selectedChat.name.charAt(
-        0
-      )}&color=7F9CF5&background=EBF4FF`" class="rounded-full w-14 h-14" />
-      <h2 id="chat-header" class="w-full font-bold text-2xl" :type="selectedChat.uid ? 'user' : 'group'"
-        :chatId="selectedChat.uid ? selectedChat.uid : selectedChat.guid">
-        {{ selectedChat.name }}
-      </h2>
-    </div>
-
-    <div id="chat" class="flex flex-col gap-2 h-5/6 w-full p-5 overflow-y-scroll scrollbar-hidden"></div>
-
-    <!-- Textarea per escriure i botons per enviar el missatge -->
-    <form id="send-message-form" @submit.prevent="" action="#"
-      class="pt-4 sm:py-4 flex items-center border-t-[6px] border-slate-200/60 dark:border-darkmode-400 w-full">
-      <textarea v-on:keyup.enter="sendMessage" id="message"
-        class="overflow-y-scroll scrollbar-hidden chat__box__input form-control dark:bg-darkmode-600 h-11 resize-none border-transparent px-5 py-3 shadow-none focus:border-transparent focus:ring-0"
-        placeholder="Escribe el mensaje..."></textarea>
-      <div class="flex gap-4 items-center justify-center w-1/6 text-2xl text-center">
-        <!-- SVG del clip -->
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round" class="lucide w-6 h-6">
-          <path
-            d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48">
-          </path>
-        </svg>
-
-        <!-- Botó d'enviar el missatge -->
-        <button id="sendMsgBtn" type="submit" v-on:click="sendMessage"
-          class="w-8 h-8 sm:w-10 sm:h-10 bg-primary text-white rounded-full flex-none flex items-center justify-center">
-          <!-- SVG de l'avió de paper -->
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round" class="lucide w-6 h-6 mt-1 mr-1">
-            <line x1="22" y1="2" x2="11" y2="13"></line>
-            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-          </svg>
-        </button>
-      </div>
-    </form>
-  </div>
-  <div v-else class="flex flex-col w-full h-[85vh] justify-between items-center box overflow-hidden"></div>
+  <ChatsV2 :idConversation="propsConversationId" :ChatId="propsChatId" :receiverType="propsChatType" :nameConversation="propsNameConversation"/>
 </template>
+
+<script>
+import ChatsV2 from "../../components/chat/ChatsV2.vue";
+export default {
+  components: {
+    ChatsV2,
+  },
+}
+</script>
 
 <script setup>
 import { CometChat } from "@cometchat-pro/chat";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
 // Hooks
 import { useAuthenticationStore } from "@/stores/auth/authentications";
 import useChat from "@/composables/chat";
+
 
 const {
   cometData,
@@ -192,6 +118,8 @@ const {
   sendTextMessage,
   getUserGroups,
   getGroupMembers,
+  mark_user_conversation_as_delivered,
+  update_datameta_message
 } = useChat();
 
 let selectedChat = ref("");
@@ -199,6 +127,19 @@ let inChat = ref(false);
 let inNewChat = ref(false);
 let userInfo;
 let newChatsList = ref("");
+
+const propsConversationId = ref(null)
+const propsChatType = ref(null)
+const propsChatId = ref(null)
+const propsNameConversation = ref(null)
+
+const prova = ref(null)
+
+
+onMounted(async () => {
+  initialize();
+
+})
 
 // Funcion que va a correr al iniciar la pagina
 const initialize = async () => {
@@ -220,174 +161,212 @@ const initialize = async () => {
     .build();
 
   // Inicialitzem la App
-  CometChat.init(appID, appSettings).then(
-    () => {
-      console.log("Initialization completed successfully");
+  CometChat.init(appID, appSettings).then(() => {
 
-      // Iniciem la sessió al xat
-      const UID = useAuthenticationStore().user.employee.cometchat_uid;
-      const name = useAuthenticationStore().user.employee.name;
+    console.log("Initialization completed successfully");
 
-      const user = new CometChat.User(UID);
-      user.setName(name);
+    // Iniciem la sessió al xat
+    const UID = useAuthenticationStore().user.employee.cometchat_uid;
+    const name = useAuthenticationStore().user.employee.name;
 
-      userInfo = user;
+    const user = new CometChat.User(UID);
+    user.setName(name);
 
-      CometChat.login(UID, authKey).then(
-        (user) => {
-          console.log("Loggued successful:", { user });
-          LoadChatsList();
-        },
-        (error) => {
-          console.log("Login failed with exception:", { error });
-        }
-      );
+    userInfo = user;
 
-      // CometChat.getLoggedinUser().then((e) => {
-      //   if (e) {
-      //     isLoggued = true;
-      //     LoadChatsList();
-      //   }
-      // });
+    CometChat.login(UID, authKey).then(
+      (user) => {
+        console.log("Loggued successful:", { user });
+        LoadChatsList();
+      },
+      (error) => {
+        console.log("Login failed with exception:", { error });
+      }
+    );
 
-      // if (!isLoggued) {
-      //   // Creem l'usuari
-      //   CometChat.createUser(user, authKey).then(
-      //     async () => {
-      //       // Un cop creat, ens loguejarem
-      //       const Logued = await logUserIn(authKey, UID);
-      //       // Si la sessió s'ha iniciat correctament
-      //       if (Logued) {
-      //         LoadChatsList();
-      //       }
-      //     },
-      //     async (error) => {
-      //       if (error.code === "ERR_UID_ALREADY_EXISTS") {
-      //         // En cas d'existir, farem login
-      //         const Logued = await logUserIn(authKey, UID);
-      //         if (Logued) {
-      //           LoadChatsList();
-      //         }
-      //       }
-      //     }
-      //   );
-      // }
+    // CometChat.getLoggedinUser().then((e) => {
+    //   if (e) {
+    //     isLoggued = true;
+    //     LoadChatsList();
+    //   }
+    // });
 
-      // Afegirem un listener dels missatges
-      const chatListenerID =
-        "chat_incoming_messages_unique_id_globaltank_apliemporda";
+    // if (!isLoggued) {
+    //   // Creem l'usuari
+    //   CometChat.createUser(user, authKey).then(
+    //     async () => {
+    //       // Un cop creat, ens loguejarem
+    //       const Logued = await logUserIn(authKey, UID);
+    //       // Si la sessió s'ha iniciat correctament
+    //       if (Logued) {
+    //         LoadChatsList();
+    //       }
+    //     },
+    //     async (error) => {
+    //       if (error.code === "ERR_UID_ALREADY_EXISTS") {
+    //         // En cas d'existir, farem login
+    //         const Logued = await logUserIn(authKey, UID);
+    //         if (Logued) {
+    //           LoadChatsList();
+    //         }
+    //       }
+    //     }
+    //   );
+    // }
 
-      CometChat.addMessageListener(
-        chatListenerID,
-        new CometChat.MessageListener({
-          onTextMessageReceived: (textMessage) => {
-            console.log("Text message received successfully", textMessage);
-            printTextMessage(textMessage);
-          },
-          onMediaMessageReceived: (mediaMessage) => {
-            console.log("Media message received successfully", mediaMessage);
-          },
-          onCustomMessageReceived: (customMessage) => {
-            console.log("Custom message received successfully", customMessage);
-          },
-        })
-      );
-    },
+    // Afegirem un listener dels missatges
+    const chatListenerID = "chat_incoming_messages_unique_id_globaltank_apliemporda";
+
+    CometChat.addMessageListener(chatListenerID, new CometChat.MessageListener({
+
+      onTextMessageReceived: (textMessage) => {
+        console.log("Text message received successfully", textMessage);
+        printTextMessage(textMessage);
+      },
+
+      onMediaMessageReceived: (mediaMessage) => {
+        console.log("Media message received successfully", mediaMessage);
+      },
+
+      onCustomMessageReceived: (customMessage) => {
+        console.log("Custom message received successfully", customMessage);
+      },
+
+    })
+    );
+  },
     (error) => {
       console.log("Initialization failed with error:", error);
     }
   );
 
   // Funció per loguejar un usuari
-  const logUserIn = async (authKey, UID) => {
-    const response = await CometChat.login(UID, authKey).then(
-      async () => {
-        return true;
-      },
-      (error) => {
-        console.log("Login failed with exception:", { error });
-        return false;
-      }
-    );
+  // const logUserIn = async (authKey, UID) => {
+  //   const response = await CometChat.login(UID, authKey).then(
+  //     async () => {
+  //       return true;
+  //     },
+  //     (error) => {
+  //       console.log("Login failed with exception:", { error });
+  //       return false;
+  //     }
+  //   );
 
-    return response;
-  };
+  //   return response;
+  // };
 };
 
-initialize();
+// FUNCION UE RECOGE LOS VALORES
+const enviarVariable = async (value, value2, value3, value4) => {
+  propsConversationId.value = value // idConversation
+  propsChatId.value = value2 //ChatId
+  propsChatType.value = value3 // receiverType
+  propsNameConversation.value = value4
+  await markUserConversationAsRead(userInfo.uid, prova.value);
+
+  LoadChatsList();
+
+}
 
 // Funció per montar la pantalla del xat
-const buildChat = async (ConversationId, ChatType, ChatId) => {
-  let lastMessageDate = "";
+/*const buildChat = async (ConversationId, ChatType, ChatId) => {
 
-  const messagesBalloon = document
-    .getElementById(ChatId)
-    ?.querySelector(".inner-messages-balloon");
-  if (messagesBalloon) {
-    messagesBalloon.remove();
-  }
+  if (conversationList != null && ChatType != null && ChatId != null) {
 
-  document.querySelectorAll(".conversations-list-item").forEach((element) => {
-    element.classList.replace("bg-gray-200", "bg-white");
-    element.classList.remove("selected");
-  });
+    await mark_user_conversation_as_delivered(userInfo.uid, ChatId);
 
-  const elementSeleccionat = document.getElementById(ChatId);
-  elementSeleccionat.classList.remove("bg-white");
-  elementSeleccionat.classList.add("bg-gray-200");
+    //console.log(ChatId);
+    sConversationId.value = ConversationId;
+    sChatType.value = ChatType;
+    sChatId.value = ChatId;
 
-  const response =
-    ChatType === "user"
-      ? await getUserData(ChatId)
-      : await getGroupData(ChatId);
-  selectedChat.value = response.data;
-  inChat.value = true;
+    let lastMessageDate = "";
 
-  const conversations = await loadChatMessages(ConversationId);
-  const chat = document.getElementById("chat");
-  chat.innerHTML = "";
+    const messagesBalloon = document.getElementById(ChatId)?.querySelector(".inner-messages-balloon");
 
-  conversations.data.forEach((conversation) => {
-    if (conversation.sender !== userInfo.uid) {
-      if (conversation.receiverType === "user")
-        markUserConversationAsRead(userInfo.uid, conversation.sender);
-      else markGroupConversationAsRead(userInfo.uid, conversation.receiver);
+    if (messagesBalloon) {
+      messagesBalloon.remove();
     }
 
-    const currentMessageDate = getMessageDate(conversation.sentAt);
+    document.querySelectorAll(".conversations-list-item").forEach((element) => {
+      element.classList.replace("bg-gray-200", "bg-white");
+      element.classList.remove("selected");
+    });
 
-    if (lastMessageDate !== currentMessageDate) {
-      chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
-    }
 
-    lastMessageDate = currentMessageDate;
+    const elementSeleccionat = document.getElementById(ChatId);
+    elementSeleccionat.classList.remove("bg-white");
+    elementSeleccionat.classList.add("bg-gray-200");
 
-    const messageClass = userInfo.uid === conversation.sender ? "missatgePropi" : "missatgeEntrant";
+    const response = ChatType === "user" ? await getUserData(ChatId) : await getGroupData(ChatId);
+    selectedChat.value = response.data;
 
-    chat.innerHTML += `
-    <div class="${messageClass}" style="display: flex; width: 100%; justify-content: flex-${userInfo.uid === conversation.sender ? "end" : "start" };">
-      <div class="flex gap-3 ${userInfo.uid === conversation.sender ? "py-2 px-3 bg-[#0096b2] text-white rounded-lg w-fit" : "rounded-lg w-fit py-2 px-3 bg-gray-200" } max-w-md">
-        <p style="margin: 0px; display: flex; word-break: break-word;">${conversation.data.text }</p>
-        <div style="display: flex; justify-content: flex-end; align-items: center">
-          <p style="font-size: 12px; margin: 0px;">${convertStringToDate(conversation.sentAt)}</p>
-          
+    nameChat.value = response.data.name
+    uidChat.value = response.data.uid
+
+    inChat.value = true;
+
+    const array1 = await loadChatMessages(ConversationId);
+    const chat = document.getElementById("chat");
+
+    chat.innerHTML = "";
+
+    array1.data.forEach((conversation) => {
+      if (conversation.sender !== userInfo.uid) {
+        if (conversation.receiverType === "user")
+          markUserConversationAsRead(userInfo.uid, conversation.sender);
+        else markGroupConversationAsRead(userInfo.uid, conversation.receiver);
+      }
+
+      // mark_user_conversation_as_delivered(userInfo.uid, ChatId);
+      const currentMessageDate = getMessageDate(conversation.sentAt);
+
+      if (lastMessageDate !== currentMessageDate) {
+        chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
+      }
+
+      lastMessageDate = currentMessageDate;
+
+      const messageClass = userInfo.uid === conversation.sender ? "missatgePropi" : "missatgeEntrant";
+
+      chat.innerHTML += `
+        <button class="${messageClass} ${userInfo.uid === conversation.sender ? 'mensaje' : ''}" style="display: flex; width: 100%; justify-content: flex-${userInfo.uid === conversation.sender ? "end" : "start"};"
+          date="${conversation.sentAt}-${conversation.deliveredAt}-${conversation.readAt}-${conversation.id}-${conversation.data.metadata ? conversation.data.metadata['confirmetAt'] : null}">
+          <div style="justify-content: center; align-items:center; height: 100%; display: flex;">
           ${userInfo.uid === conversation.sender ?
-            `<img src="${
-            conversation.sentAt > 0 && conversation.deliveredAt == null && conversation.readAt == null ? '../src/assets/images/checkmark.svg' : 
-            conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt == null && 
-            conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt > 0 ? '../src/assets/images/allcheckmark.svg' : 
-            '../src/assets/images/checkallmark.svg'}" 
-            alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`: ''}
-            
+          conversation.data.metadata ?
+            conversation.data.metadata['confirmetAt'] == 'undefined' ? '<img src="../src/assets/images/alertCircle.svg" alt="Checkmark" style="width: 25px; height: 25px; margin-right: 10px;" />'
+              : '<img src="../src/assets/images/checkmarkCircleGray.svg" alt="Checkmark" style="width: 25px; height: 25px; margin-right: 10px;" />'
+            : ''
+          : ''}
           </div>
-        </div>
-      </div>`;
+          <div class="flex gap-3 ${userInfo.uid === conversation.sender ? "py-2 px-3 bg-[#0096b2] text-white rounded-lg w-fit" : "rounded-lg w-fit py-2 px-3 bg-gray-200"} max-w-md">
+            <p style="margin: 0px; display: flex; word-break: break-word;">${conversation.data.text}</p>
+            <div style="display: flex; justify-content: flex-end; align-items: center">
+              <p style="font-size: 12px; margin: 0px;">${convertStringToDate(conversation.sentAt)}</p>
+              
+              ${userInfo.uid === conversation.sender ?
+          (conversation.sentAt > 0 && conversation.deliveredAt == null && conversation.readAt == null ?
+            `<img src="../src/assets/images/checkmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
+            :
+            (conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt == null ?
+              `<img src="../src/assets/images/allcheckmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
+              :
+              (conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt > 0 ?
+                `<img src="../src/assets/images/checkallmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
+                : '')))
+          : ''}
+                
+            </div>
+          </div>
+        </button>`;
+    });
 
-  });
+    const messageBody = document.getElementById("chat");
+    messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
+  }
+};*/
 
-  const messageBody = document.getElementById("chat");
-  messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
-};
 
 // Funció per a alternar la vista de xat a llista de xat
 const toggleInChat = () => {
@@ -454,11 +433,13 @@ const sendMessage = async () => {
   const chatId = header.getAttribute("chatId");
   const receiverType = header.getAttribute("type");
 
+  //CHATID.value = chatId
   // Controlamos que el mensaje no esté vacio
   const value = message.value.trim();
   if (value !== "") {
     sendTextMessage(userInfo.uid, message.value, chatId, receiverType);
-    await LoadChatsList()
+    await mark_user_conversation_as_delivered(userInfo.uid, sChatId);
+
   }
 
   // Netejem el text
@@ -514,10 +495,12 @@ const buildNewChat = async (id, name, type) => {
     // Obtenim les dades de l'usuari en cuestió
     const response = await getUserData(id);
     selectedChat.value = response.data;
+    console.log(response.data)
   } else if (type === "group") {
     // Obtenim les dades de l'usuari en cuestió
     const response = await getGroupData(id);
     selectedChat.value = response.data;
+    console.log(response.data)
   }
 
   if (!inChat.value) inChat.value = true;
@@ -668,6 +651,7 @@ const LoadChatsList = async () => {
 
   // Carregarem la llista de xats
   await getConversationsList(userInfo.uid);
+
 };
 
 const printTextMessage = async (textMessage) => {
@@ -678,6 +662,7 @@ const printTextMessage = async (textMessage) => {
 
   // Comprobem la data del missatge
   const currentMessageDate = getMessageDate(textMessage.sentAt);
+
 
   // Comprobem l'ultim missatge d'aquesta mateixa conversació
   const lastMessageDate = await loadChatMessages(textMessage.conversationId);
@@ -699,12 +684,10 @@ const printTextMessage = async (textMessage) => {
     return;
   }
   // En caso de estar en un chat pero no es del que recibimos el mensaje
-  if (
-    header.getAttribute("chatId") !== receiver &&
-    header.getAttribute("chatId") !== sender
-  ) {
+  if (header.getAttribute("chatId") !== receiver && header.getAttribute("chatId") !== sender) {
     // Actualizamos lista de xats
     await getConversationsList(userInfo.uid);
+    console.log(CHATID.value)
     // Volvemos a pintar el elemento
 
     document
@@ -735,19 +718,19 @@ const printTextMessage = async (textMessage) => {
   }
 
   messageBody.innerHTML += `
-    <div class="${senderClass}" style="display: flex; width: 100%; justify-content: ${senderClass === "missatgePropi" ? "flex-end" : "flex-start"
-    };">
+    <div class="${senderClass} mensaje" style="display: flex; width: 100%; justify-content: ${senderClass === "missatgePropi" ? "flex-end" : "flex-start"
+    };" date="${textMessage.sentAt}-${textMessage.deliveredAt}-${textMessage.readAt}">
       <div class="flex gap-3 py-2 px-3 ${bgColorClass} rounded-lg max-w-md">
         <p style="margin: 0px; display: flex; word-break: break-word;">${messageText}</p>
         <div style="display: flex; justify-content: flex-end; align-items: center">
           <p style="font-size: 12px; margin: 0; heigh: 100%">${messageDate}</p>
-          ${senderClass === "missatgePropi" ?
-            `<img src="${
-              textMessage.sentAt > 0 && textMessage.deliveredAt == null && textMessage.readAt == null ? '../src/assets/images/checkmark.svg' : 
-              textMessage.sentAt > 0 && textMessage.deliveredAt > 0 && textMessage.readAt == null && 
-              textMessage.sentAt > 0 && textMessage.deliveredAt > 0 && textMessage.readAt > 0 ? '../src/assets/images/allcheckmark.svg' : 
-            '../src/assets/images/checkallmark.svg'}" 
-            alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`: ''}
+          
+          ${textMessage.senderClass == "missatgePropi" ? '' :
+      `<img src="${textMessage.sentAt > 0 && textMessage.deliveredAt == null && textMessage.readAt == null ? '../src/assets/images/checkmark.svg' :
+        textMessage.sentAt > 0 && textMessage.deliveredAt > 0 && textMessage.readAt == 'null' &&
+          textMessage.sentAt > 0 && textMessage.deliveredAt > 0 && textMessage.readAt > 0 ? '../src/assets/images/checkallmark.svg' :
+          '../src/assets/images/allcheckmark.svg'}" 
+            alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`}
           
         </div>
       </div>
@@ -776,6 +759,31 @@ const searchConversationByName = async () => {
 
   conversationList.value = r;
 };
+
+const chatsTitle = (value) => {
+
+  const words = value.split(" ");
+
+  if (words.length >= 2) {
+    // Obtén las dos primeras palabras
+    const firstwords = words[0];
+    const secondwords = words[1];
+
+    // Obtiene la primera letra de cada palabra
+    const firstletter1 = firstwords.charAt(0).toUpperCase();
+    const firstletter2 = secondwords.charAt(0).toUpperCase();
+
+    // Combina las primeras letras en un resultado final
+    const finalletters = firstletter1 + firstletter2;
+
+    // Imprime el resultado final
+    return finalletters
+  }
+  else {
+    return value.charAt(0);
+  }
+}
+
 </script>
 
 <style>

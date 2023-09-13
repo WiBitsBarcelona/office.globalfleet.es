@@ -216,7 +216,11 @@ export default function useChat() {
     fetch(
       `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/users/${conversationWith}/conversation/read`,
       options
-    ).catch((err) => console.error(err));
+    ).then((response) => response.json())
+    .then((response) => {
+    })
+    .catch((err) => console.error(err));
+
   };
 
   // Funció per a marcar com a llegit un xat de grup
@@ -238,8 +242,49 @@ export default function useChat() {
       .catch((err) => console.error(err));
   };
 
+  // Marcar mensajes como enviado una conversacion entre 2 usuarios
+  const mark_user_conversation_as_delivered = async (user, conversationWith) => {
+    try {
+      const response = await fetch(
+        `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/users/${user}/conversation/delivered`,
+        {
+          method: "POST",
+          headers: {
+            accept: "application/json",
+            onBehalfOf: conversationWith,
+            apikey: cometData.value.company.cometchat.rest_api_key,
+          },
+        }
+      );
+
+      const data = await response.json();
+      return data;
+
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
+
+  // Funcion para marcar como leida una conversacion en un grupo
+  const mark_group_conversation_as_delivered = (conversationWith, user) => {
+    const options = {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        onBehalfOf: conversationWith,
+        apikey: cometData.value.company.cometchat.rest_api_key,
+      },
+    };
+
+    fetch(
+      `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/groups/${user}/conversation/delivered`,
+      options
+    ).catch((err) => console.error(err));
+  }
+
   // Funció per a enviar missatges
-  const sendTextMessage = async (user_uid, message, chat_id, receiverType) => {
+  const sendTextMessage = async (user_uid, message, chat_id, receiverType, isMetadata) => {
     const options = {
       method: "POST",
       headers: {
@@ -251,7 +296,17 @@ export default function useChat() {
       body: JSON.stringify({
         category: "message",
         type: "text",
-        data: { text: message },
+        data: {
+          text: message,
+          ...(isMetadata
+            ? {
+                metadata: {
+                  reader: '0', // Pruebas -> valor 0 es no confirmado y 1 es Confirmado
+                  confirmetAt: 'undefined'
+                }
+              }
+            : ''),
+        },
         receiver: chat_id,
         receiverType: receiverType,
       }),
@@ -325,6 +380,38 @@ export default function useChat() {
     return values;
   };
 
+  // Funcion para ConfirmarLectura (UpdateMensaje)
+  const update_datameta_message = async (idmessage) => {
+    try {
+      const response = await fetch(
+        `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/messages/${idmessage}`,
+        {
+          method: "PUT",
+          headers: {
+            accept: "application/json",
+            'content-type': 'application/json',
+            apikey: cometData.value.company.cometchat.rest_api_key,
+          },
+          body: JSON.stringify({
+            data: {
+              metadata: {
+                reader: '0', // Pruebas -> valor 0 es no confirmado y 1 es Confirmado
+                confirmetAt: 'undefined'
+              }
+            }
+          }),
+        }
+      );
+
+      const data = await response.json();
+      return data;
+
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
+
   return {
     // Variables
     cometData,
@@ -345,5 +432,7 @@ export default function useChat() {
     getUserGroups,
     getGroupMembers,
     checkUnreadMessages,
+    mark_user_conversation_as_delivered,
+    update_datameta_message
   };
 }
