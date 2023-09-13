@@ -22,86 +22,6 @@
 
         <div class="col-span-12 md:col-span-6 lg:col-span-4">
           <div class="input-form">
-            <label for="vehicle_id" class="form-label w-full">
-              {{ $t("vehicle") }}
-            </label>
-
-            <select v-model.trim="validate.vehicle_id.$model" id="vehicle_id" name="vehicle_id" class="form-control"
-              :class="{ 'border-danger': validate.vehicle_id.$error }">
-
-              <option value="" selected>Seleccione</option>
-              <option v-for="item in selectVehicles" :value="item.id">
-                {{ item.plate }}
-              </option>
-
-            </select>
-
-            <template v-if="validate.vehicle_id.$error">
-              <div v-for="(error, index) in validate.vehicle_id.$errors" :key="index" class="text-danger mt-2">
-                {{ error.$message }}
-              </div>
-            </template>
-          </div>
-        </div>
-
-
-        <div class="col-span-12 md:col-span-6 lg:col-span-4">
-          <div class="input-form">
-            <label for="trip_priority_id" class="form-label w-full">
-              {{ $t("trip_priority_id") }}
-            </label>
-
-            <select v-model.trim="validate.trip_priority_id.$model" id="trip_priority_id" name="trip_priority_id"
-              class="form-control" :class="{ 'border-danger': validate.trip_priority_id.$error }">
-
-              <option value="" selected>Seleccione</option>
-              <option v-for="item in selectTripPriorities" :value="item.id">
-                {{ item.name }}
-              </option>
-
-            </select>
-
-
-            <template v-if="validate.trip_priority_id.$error">
-              <div v-for="(error, index) in validate.trip_priority_id.$errors" :key="index" class="text-danger mt-2">
-                {{ error.$message }}
-              </div>
-            </template>
-          </div>
-        </div>
-
-
-
-
-        <div class="col-span-12 md:col-span-6 lg:col-span-4">
-          <div class="input-form">
-            <label for="driver_id" class="form-label w-full">
-              {{ $t("driver_id") }}
-            </label>
-
-            <select v-model.trim="validate.driver_id.$model" id="driver_id" name="driver_id" class="form-control"
-              :class="{ 'border-danger': validate.driver_id.$error }">
-
-              <option value="" selected>Seleccione</option>
-              <option v-for="item in selectDrivers" :value="item.id">
-                {{ item.name }} {{ item.surname }}
-              </option>
-
-            </select>
-
-
-
-            <template v-if="validate.driver_id.$error">
-              <div v-for="(error, index) in validate.driver_id.$errors" :key="index" class="text-danger mt-2">
-                {{ error.$message }}
-              </div>
-            </template>
-          </div>
-        </div>
-
-
-        <div class="col-span-12 md:col-span-6 lg:col-span-4">
-          <div class="input-form">
             <label for="reference_number" class="form-label w-full">
               {{ $t("reference_number") }}
             </label>
@@ -141,6 +61,81 @@
               class="form-control" :class="{ 'border-danger': validate.execution_at.$error }" />
             <template v-if="validate.execution_at.$error">
               <div v-for="(error, index) in validate.execution_at.$errors" :key="index" class="text-danger mt-2">
+                {{ error.$message }}
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+          <div class="input-form">
+            <label for="vehicle_id" class="form-label w-full">
+              {{ $t("vehicle") }}
+            </label>
+
+            <select v-model.trim="validate.vehicle_id.$model" id="vehicle_id" name="vehicle_id" class="form-control"
+              :class="{ 'border-danger': validate.vehicle_id.$error }">
+
+              <option value="" selected>Seleccione</option>
+              <option v-for="item in selectVehicles" :value="item.id">
+                {{ item.plate }}
+              </option>
+
+            </select>
+
+            <template v-if="validate.vehicle_id.$error">
+              <div v-for="(error, index) in validate.vehicle_id.$errors" :key="index" class="text-danger mt-2">
+                {{ error.$message }}
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+          <div class="input-form">
+            <label for="trip_priority_id" class="form-label w-full">
+              {{ $t("trip_priority_id") }}
+            </label>
+
+            <select v-model.trim="validate.trip_priority_id.$model" id="trip_priority_id" name="trip_priority_id"
+              class="form-control" :class="{ 'border-danger': validate.trip_priority_id.$error }">
+
+              <option value="" selected>Seleccione</option>
+              <option v-for="item in selectTripPriorities" :value="item.id">
+                {{ item.name }}
+              </option>
+
+            </select>
+
+
+            <template v-if="validate.trip_priority_id.$error">
+              <div v-for="(error, index) in validate.trip_priority_id.$errors" :key="index" class="text-danger mt-2">
+                {{ error.$message }}
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+          <div class="input-form">
+            <label for="driver_id" class="form-label w-full">
+              {{ $t("driver_id") }}
+            </label>
+
+            <select v-model.trim="validate.driver_id.$model" id="driver_id" name="driver_id" class="form-control"
+              :class="{ 'border-danger': validate.driver_id.$error }">
+
+              <option value="" selected>Seleccione</option>
+              <option v-for="item in selectDrivers" :value="item.id">
+                {{ item.name }} {{ item.surname }}
+              </option>
+
+            </select>
+
+
+
+            <template v-if="validate.driver_id.$error">
+              <div v-for="(error, index) in validate.driver_id.$errors" :key="index" class="text-danger mt-2">
                 {{ error.$message }}
               </div>
             </template>
@@ -232,11 +227,19 @@
         </div>
 
         <div class="col-span-2">
+          <h5 class="text-xs font-light text-gray-400">{{ $t("reference_number") }}:</h5>
+          <p class="text-md font-normal leading-6 text-gray-500">
+            {{ stage.reference_number }}
+          </p>
+        </div>
+
+        <div class="col-span-2">
           <h5 class="text-xs font-light text-gray-400">{{ $t("activity") }}:</h5>
           <p class="text-md font-normal leading-6 text-gray-500">
             {{ stage.activity_type_name }}
           </p>
         </div>
+
         <div class="col-span-3">
           <h5 class="text-xs font-light text-gray-400">{{ $t("customer") }}:</h5>
           <p class="text-md font-normal leading-6 text-gray-500">

@@ -3,11 +3,6 @@
 	<!-- BEGIN: Form -->
 	<form class="validate-form" @submit.prevent="save">
 
-
-		{{  taskIndex }}
-
-
-
 		<!-- BEGIN: container -->
 		<div class="grid grid-cols-12 gap-6">
 
