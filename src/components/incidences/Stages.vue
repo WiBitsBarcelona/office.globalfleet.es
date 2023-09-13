@@ -280,7 +280,7 @@ const initStageTabulator = () => {
         print: false,
         download: false,
         formatter: function (cell) {
-          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss')
+          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm')
         },
       },
       {
@@ -294,7 +294,7 @@ const initStageTabulator = () => {
         formatter: function (cell) {
           let data ='';
           if(cell.getValue()){
-            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss');
+            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm');
           }else{
             data = '--';
           }
@@ -426,14 +426,14 @@ const showStageIncidenceModal = async (id) => {
   stage_incidence_selected_trip = stageIncident.value.stage.trip.name;
   stage_incidence_selected_type = stageIncident.value.type.name;
   stage_incidence_selected_comment = stageIncident.value.description;
-  stage_incidence_selected_sended_at = $h.formatDate(stageIncident.value.created_at, "DD-MM-YYYY HH:mm:ss");
+  stage_incidence_selected_sended_at = $h.formatDate(stageIncident.value.created_at, "DD-MM-YYYY HH:mm");
   if(stageIncident.value.receptioned_at){
-    stage_incidence_selected_received_at = $h.formatDate(stageIncident.value.receptioned_at, "DD-MM-YYYY HH:mm:ss");
+    stage_incidence_selected_received_at = $h.formatDate(stageIncident.value.receptioned_at, "DD-MM-YYYY HH:mm");
   }else{
     stage_incidence_selected_received_at = '--';
   }
   if(stageIncident.value.readed_at){
-    stage_incidence_selected_readed_at = $h.formatDate(stageIncident.value.readed_at, "DD-MM-YYYY HH:mm:ss");
+    stage_incidence_selected_readed_at = $h.formatDate(stageIncident.value.readed_at, "DD-MM-YYYY HH:mm");
     stage_incidence_readed.value = 1;
   }else{
     stage_incidence_selected_readed_at = '--';

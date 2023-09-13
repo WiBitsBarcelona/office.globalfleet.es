@@ -495,7 +495,7 @@ const initTripsTabulator = async () => {
         print: false,
         download: false,
         formatter: function (cell) {
-          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss')
+          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm')
         },        
       },
       {
@@ -691,7 +691,7 @@ const initTripDocumentsTabulator = async () => {
         print: false,
         download: false,
         formatter: function (cell) {
-          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss')
+          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm')
         },
       },
       {
@@ -705,7 +705,7 @@ const initTripDocumentsTabulator = async () => {
         formatter: function (cell) {
           let data ='';
           if(cell.getValue()){
-            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss');
+            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm');
           }else{
             data = '--';
           }
@@ -724,7 +724,7 @@ const initTripDocumentsTabulator = async () => {
         formatter: function (cell) {
           let data ='';
           if(cell.getValue()){
-            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss');
+            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm');
           }else{
             data = '--';
           }
@@ -743,7 +743,7 @@ const initTripDocumentsTabulator = async () => {
         formatter: function (cell) {
           let data ='';
           if(cell.getValue()){
-            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss');
+            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm');
           }else{
             data = '--';
           }
@@ -1108,7 +1108,7 @@ const initStageDocumentsTabulator = async () => {
         print: false,
         download: false,
         formatter: function (cell) {
-          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss')
+          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm')
         },
       },
       {
@@ -1122,7 +1122,7 @@ const initStageDocumentsTabulator = async () => {
         formatter: function (cell) {
           let data ='';
           if(cell.getValue()){
-            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss');
+            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm');
           }else{
             data = '--';
           }
@@ -1140,7 +1140,7 @@ const initStageDocumentsTabulator = async () => {
         formatter: function (cell) {
           let data ='';
           if(cell.getValue()){
-            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss');
+            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm');
           }else{
             data = '--';
           }
@@ -1158,7 +1158,7 @@ const initStageDocumentsTabulator = async () => {
         formatter: function (cell) {
           let data ='';
           if(cell.getValue()){
-            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss');
+            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm');
           }else{
             data = '--';
           }
