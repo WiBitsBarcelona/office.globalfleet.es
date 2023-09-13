@@ -6,9 +6,7 @@ export default function useTrips(){
 
     const trip = ref([]);
     const trips = ref([]);
-
     const errors = ref('');
-    //const router = useRouter();
 
 
     let config = {
@@ -35,14 +33,18 @@ export default function useTrips(){
         errors.value = '';
         try {
             await axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/store`, data, config)
-            await router.push({ name: 'note.index' })
+            //await router.push({ name: 'note.index' })
         } catch (e) {
-            console.log(e)
-            // if (e.response.status_code === 422) {
-            //     for (const key in e.response.data.errors) {
-            //         errors.value = e.response.data.errors
-            //     }
-            // }
+            // Errors 500
+			if (e.response.status >= 500 &&  e.response.status <= 599) {
+				errors.value.push(t("errors.error_internal"));
+			}
+			// Errors 400
+			if (e.response.status_code === 422) {
+			     for (const key in e.response.data.errors) {
+			         errors.value = key
+			     }
+			}
         }
 
     }
@@ -51,14 +53,18 @@ export default function useTrips(){
         errors.value = '';
         try {
             await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/update/${id}`, data, config)
-            await router.push({ name: 'note.index' })
+            //await router.push({ name: 'note.index' })
         } catch (e) {
-            console.log(e)
-            // if (e.response.status === 422) {
-            //     for (const key in e.response.data.errors) {
-            //         errors.value = e.response.data.errors
-            //     }
-            // }
+            // Errors 500
+			if (e.response.status >= 500 &&  e.response.status <= 599) {
+				errors.value.push(t("errors.error_internal"));
+			}
+			// Errors 400
+			if (e.response.status_code === 422) {
+			     for (const key in e.response.data.errors) {
+			         errors.value = key
+			     }
+			}
         }
     }
 

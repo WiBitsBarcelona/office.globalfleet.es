@@ -1,9 +1,26 @@
 <template>
   <div class="relative">
-    <div class="grid grid-cols-12 gap-6 mt-8">
+    <div class="grid grid-cols-12 gap-6">
       <div class="col-span-12 intro-y">
         <!-- HEADER -->
-        <h2 class="text-lg font-medium truncate mr-5 mb-5">{{ $t("trips") }}</h2>
+
+        <div class="grid grid-cols-12 gap-1 mt-8">
+
+          <div class="col-span-10 intro-y mb-5">
+            <h2 class="text-lg font-medium truncate mr-5 mb-5">{{ $t("trips") }}</h2>
+          </div>
+          
+          <div class="col-span-2 intro-y mb-5 text-end">
+            <router-link :to="`/trips/create`" class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
+              <PlusCircleIcon class="w-4 h-4" />
+            </router-link>
+          </div>
+
+        </div>
+        
+
+
+
         <div class="grid grid-cols-12 gap-6 mb-5">
           <!-- FILTERS -->
           <div class="col-span-12 intro-y text-center">
@@ -57,7 +74,6 @@
             </div>
           </div>
 
-
           <!-- ORDER OPTIONS -->
           <div class="col-span-12 xl:col-span-6 intro-y">
             <div class="flex flex-col sm:flex-row mt-2">
@@ -101,6 +117,7 @@
         <!-- END HEADER -->
 
 
+        
 
         <!-- DATA BEGINS -->
         <!-- Element 1 -->
@@ -171,13 +188,16 @@ import useTrips from "@/composables/trips";
 import TripCard from '@/components/trips/TripCard.vue';
 import { helper as $h } from "@/utils/helper";
 import { useI18n } from 'vue-i18n';
-import { useRouter} from 'vue-router';
+import { useRouter, useRoute} from 'vue-router';
+
+
 
 const { trips, getTrips, getTrip, trip } = useTrips();
 const { t } = useI18n();
 let auto_refresh = import.meta.env.VITE_AUTOREFRESH_VALUE;
 
 const router = useRouter();
+const route = useRoute();
 
 const classBtnFilter = ref(classBtnAll);
 
