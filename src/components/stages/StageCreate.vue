@@ -51,7 +51,7 @@
             <div class="col-span-12 md:col-span-6 lg:col-span-5">
                 <div class="input-form">
                     <label for="activity_type_id" class="form-label w-full">
-                        {{ $t("activity_type") }}
+                        {{ $t("activity") }}
                     </label>
 
                     <select 
@@ -82,7 +82,7 @@
             <div class="col-span-12 md:col-span-6 lg:col-span-5">
                 <div class="input-form">
                     <label for="stage_type_id" class="form-label w-full">
-                        {{ $t("stage_type_id") }}
+                        {{ $t("stage_type") }}
                     </label>
 
                     <select 
