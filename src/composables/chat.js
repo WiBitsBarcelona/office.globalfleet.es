@@ -284,7 +284,7 @@ export default function useChat() {
   }
 
   // Funció per a enviar missatges
-  const sendTextMessage = async (user_uid, message, chat_id, receiverType, isMetadata) => {
+  const sendTextMessage = async (user_uid, message, chat_id, receiverType, isMetadata, arrayMedia) => {
     const options = {
       method: "POST",
       headers: {
@@ -298,6 +298,15 @@ export default function useChat() {
         type: "text",
         data: {
           text: message,
+          ...(arrayMedia
+            ? {
+                attachments: [{
+                    url: arrayMedia.url,
+                    name: arrayMedia.name,
+                    extension: arrayMedia.extension
+                }],
+            }
+            : ''),
           ...(isMetadata
             ? {
                 metadata: {
