@@ -448,9 +448,11 @@ watch(
     }
 );
 
-setInterval(async () => {
-    await commetInit()
-}, 5000);
+if(idConversation.value != null){
+    setInterval(async () => {
+        await commetInit()
+    }, 5000);
+}
 
 const commetInit = async () => {
     await loadMessages();
