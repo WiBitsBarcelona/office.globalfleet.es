@@ -163,7 +163,7 @@ const initialize = async () => {
   // Inicialitzem la App
   CometChat.init(appID, appSettings).then(() => {
 
-    console.log("Initialization completed successfully");
+    //console.log("Initialization completed successfully");
 
     // Iniciem la sessió al xat
     const UID = useAuthenticationStore().user.employee.cometchat_uid;
@@ -176,7 +176,7 @@ const initialize = async () => {
 
     CometChat.login(UID, authKey).then(
       (user) => {
-        console.log("Loggued successful:", { user });
+        //console.log("Loggued successful:", { user });
         LoadChatsList();
       },
       (error) => {
@@ -220,16 +220,16 @@ const initialize = async () => {
     CometChat.addMessageListener(chatListenerID, new CometChat.MessageListener({
 
       onTextMessageReceived: (textMessage) => {
-        console.log("Text message received successfully", textMessage);
+        //console.log("Text message received successfully", textMessage);
         printTextMessage(textMessage);
       },
 
       onMediaMessageReceived: (mediaMessage) => {
-        console.log("Media message received successfully", mediaMessage);
+        //console.log("Media message received successfully", mediaMessage);
       },
 
       onCustomMessageReceived: (customMessage) => {
-        console.log("Custom message received successfully", customMessage);
+        //console.log("Custom message received successfully", customMessage);
       },
 
     })
