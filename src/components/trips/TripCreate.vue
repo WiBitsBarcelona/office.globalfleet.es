@@ -188,12 +188,18 @@
     <!-- END: Form -->
 
 
+    
 
 
-    <div class="grid grid-cols-12 gap-1 mb-8">
+    <div class="grid grid-cols-12 gap-1 mt-10 mb-10">
       <div class="col-span-12 md:col-span-12 lg:col-span-12 text-end">
+        
         <a href="#" class="btn btn-outline-primary w-1/2 sm:w-auto mr-2" @click="showStageForm">
           <PlusCircleIcon class="w-4 h-4" /> {{ "Agregar Etapa" }}
+        </a>
+        
+        <a href="#" class="btn btn-outline-success w-1/2 sm:w-auto mr-2" @click="showStageForm">
+          <PlusCircleIcon class="w-4 h-4" /> {{ "Agregar Acción" }}
         </a>
       </div>
     </div>
@@ -391,8 +397,6 @@ const isCreateActionTask = ref(false);
 
 const stageIndex = ref();
 const taskIndex = ref();
-
-
 
 
 
