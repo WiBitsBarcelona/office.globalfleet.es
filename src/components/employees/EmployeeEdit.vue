@@ -6,22 +6,26 @@
 		<!-- BEGIN: container -->
 		<div class="grid grid-cols-12 gap-6">
 
-			<div class="col-span-12 md:col-span-6 lg:col-span-3">
+			<div class="col-span-12 md:col-span-12 lg:col-span-3">
 				<div class="input-form">
 					<label for="role_id" class="form-label w-full">
 						{{ $t("role") }}
 					</label>
 
-					<TomSelect v-model.trim="validate.role_id.$model" id="role_id" name="role_id" :options="{
-						placeholder: $t('select_role')
-					}" class="form-control w-full"
-						:class="{ 'border-danger': validate.role_id.$error }">
+					<select
+						v-model.trim="validate.role_id.$model"
+						id="role_id"
+						name="role_id"
+						class="form-control"
+						:class="{ 'border-danger': validate.role_id.$error }"
+					>
 
-						<option v-for="role in selectRoles" :key="role.id" :value="role.id" :selected="role.id == formData.role_id">
+					<option value="" selected>Seleccione</option>
+					<option v-for="role in selectRoles" :value="role.id">
 							{{ role.description }}
-						</option>
-					</TomSelect>
- 
+					</option>
+
+					</select>
 					<template v-if="validate.role_id.$error">
 						<div v-for="(error, index) in validate.role_id.$errors" :key="index" class="text-danger mt-2">
 							{{ error.$message }}
