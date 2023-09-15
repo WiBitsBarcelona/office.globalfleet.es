@@ -13,10 +13,15 @@
 						{{ $t("driver_manager") }}
 					</label>
 
-					<TomSelect v-model.trim="validate.employee_id.$model" id="employee_id" name="employee_id" :options="{
-						placeholder: $t('select_driver_manager'),
-					}" class="form-control w-full"
-						:class="{ 'border-danger': validate.employee_id.$error }">
+					<TomSelect 
+						v-model.trim="validate.employee_id.$model" 
+						id="employee_id" 
+						name="employee_id" 
+						:options="{
+							placeholder: $t('select_driver_manager'),
+						}" class="form-control w-full"
+						:class="{ 'border-danger': validate.employee_id.$error }"
+					>
 
 						<option v-for="employee in selectEmployees" 
 							:key="employee.id" 
@@ -249,7 +254,6 @@
 		formData.fiscal_identification = driver.value.fiscal_identification;
 		//formData.password = driver.value.password;
 		formData.email = driver.value.user.email;
-
 
 		//console.log(formData.employee_id);
 
