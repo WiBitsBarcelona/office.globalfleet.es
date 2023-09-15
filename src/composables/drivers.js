@@ -47,10 +47,8 @@ export default function useDriver() {
 	const storeDriver = async (data) => {
 		errors.value = '';
 
-		console.log(data);
 		try {
 			await axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}drivers/store`, data, config);
-			//await router.push({ name: 'driver.index' });
 		} catch (e) {
 			console.log(e);
 			// if (e.response.status_code === 422) {
