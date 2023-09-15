@@ -188,7 +188,7 @@
           >
             <DropdownHeader tag="div" class="!font-normal">
               <div class="font-medium">
-                {{ useAuthentication.user.name }}
+                {{ useAuthentication.getUser.employee.name }} {{ useAuthentication.getUser.employee.surname }}
               </div>
             </DropdownHeader>
             <DropdownDivider class="border-white/[0.08]" />
@@ -224,6 +224,8 @@
   import FleetModeSwitcher from "@/components/fleet-dark-mode/Main.vue";
   import ProfileAvatar from 'vue-profile-avatar'
 
+
+  
   
 
   const useAuthentication = useAuthenticationStore();
@@ -239,6 +241,8 @@
   };
 
 
+
+  console.log(useAuthentication.getUser.employee.name);
 
   const logout = async() => {    
     await useAuthentication.logout();
