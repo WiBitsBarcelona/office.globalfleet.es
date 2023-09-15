@@ -112,7 +112,7 @@
     "minLength": "Mayor a 2 caracteres",
     "email": "Campo correo electrónico"
   },
-  "role": "Tipo",
+  "role": "Rol del usuario",
   "email": "Correo electrónico",
   "password": "Contraseña",
   "roles": "Tipos",
@@ -352,5 +352,12 @@
   "days": "dias",
   "from": "Desde",
   "to": "Hasta",
-  "no_position_data": "No hay datos de posicionamiento para este conductor y estas fechas"
+  "no_position_data": "No hay datos de posicionamiento para este conductor y estas fechas",
+  "btn_create_user": "Nuevo Usuario",
+  "btn_create_driver": "Nuevo Conductor",
+  "driver_manager": "Gestor del Conductor",
+  "select_driver_manager": "Selecciona el gestor del conductor...",
+  "delete_driver_title": "Eliminar al conductor:",
+  "select_role": "Seleccionar Rol del usuario...",
+  "delete_user_title":"Eliminar al usuario:"
 }

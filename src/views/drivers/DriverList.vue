@@ -33,7 +33,7 @@
 					class="btn btn-primary w-1/2 sm:w-auto mr-2"
 					@click="createDriver"
 				>
-					<PlusCircleIcon class="w-4 h-4" />
+					<PlusCircleIcon class="w-6 h-6 mr-2" /> {{ $t("btn_create_driver") }}
 				</button>
 				<Dropdown class="w-1/2 sm:w-auto">
 					<DropdownToggle class="btn btn-outline-secondary w-full sm:w-auto">
@@ -203,7 +203,7 @@
 					},
 					cellClick: (e, cell) => {
 						//deleteDriver(cell.getData().id, cell.getData().name);
-						deleteDriver(cell.getData().id);
+						deleteDriver(cell.getData().id, cell.getData().name, cell.getData().surname);
 						e.preventDefault();
 					},
 				},
@@ -326,18 +326,20 @@
 	}
 
 	// Delete
-	const deleteDriver = async (id, description='') => {
+	const deleteDriver = async (id, name, surname) => {
 		Swal.fire({
 			icon: 'warning',
-			title: t("message.are_you_sure"),
-			text: t("delete") + (description !== '' ? ': ' + description : ''),
+			title: t("documents.swal.are_you_sure"),
+			html: '<span class="font-medium">' + t("delete_driver_title") + '</span><br /><div class="mt-2 text-sm italic"> ' + name + ' ' + surname + '</div>',
 			showCancelButton: true,
-			confirmButtonText: t("delete"),
+			confirmButtonText: t("documents.swal.yes"),
+			cancelButtonText: t("documents.swal.no"),
 			confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
 		}).then(async(result) => {
 			if (result.isConfirmed) {
 				await destroyDriver(id);
-				await getDrivers();
+				tableData.value = await findData();
+				tabulator.value.setData(tableData.value);
 				Swal.fire(t("message.record_deleted"), '', 'success');
 			}
 

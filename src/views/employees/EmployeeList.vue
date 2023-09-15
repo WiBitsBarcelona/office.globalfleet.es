@@ -35,20 +35,20 @@
 					class="btn btn-primary w-1/2 sm:w-auto mr-2"
 					@click="createEmployee"
 				>
-					<PlusCircleIcon class="w-4 h-4" />
+					<PlusCircleIcon class="w-6 h-6 mr-2" />{{ $t("btn_create_user") }}
 				</button>
 				<Dropdown class="w-1/2 sm:w-auto">
 					<DropdownToggle class="btn btn-outline-secondary w-full sm:w-auto">
-						<FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("export") }}
-						<ChevronDownIcon class="w-4 h-4 ml-auto sm:ml-2" />
+						<FileTextIcon class="w-6 h-6 mr-2" /> {{ $t("export") }}
+						<ChevronDownIcon class="w-6 h-6 ml-auto sm:ml-2" />
 					</DropdownToggle>
 					<DropdownMenu class="w-40">
 						<DropdownContent>
 							<DropdownItem @click="onExportXlsx">
-								<FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("message.export_excel") }}
+								<FileTextIcon class="w-6 h-6 mr-2" /> {{ $t("message.export_excel") }}
 							</DropdownItem>
 							<DropdownItem @click="onExportCsv">
-								<FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("message.export_csv") }}
+								<FileTextIcon class="w-6 h-6 mr-2" /> {{ $t("message.export_csv") }}
 							</DropdownItem>
 						</DropdownContent>
 					</DropdownMenu>
@@ -206,7 +206,7 @@
                         return `<i data-lucide="trash-2" class="w-6 h-6 mr-1 text-danger"></i>`;
                     },
 					cellClick: (e, cell) => {
-                        deleteEmployee(cell.getData().id);
+                        deleteEmployee(cell.getData().id, cell.getData().name, cell.getData().surname);
 						e.preventDefault(); 
                     },
                 },
@@ -331,14 +331,15 @@
 	}
 
 	// Delete
-	const deleteEmployee = async (id, description='') => {
+	const deleteEmployee = async (id, name, surname) => {
 		
 		Swal.fire({
 			icon: 'warning',
-			title: t("message.are_you_sure"),
-			text: t("delete") + (description !== '' ? ': ' + description : ''),
+			title: t("documents.swal.are_you_sure"),
+			html: '<span class="font-medium">' + t("delete_user_title") + '</span><br /><div class="mt-2 text-sm italic"> ' + name + ' ' + surname + '</div>',
 			showCancelButton: true,
-			confirmButtonText: t("delete"),
+			confirmButtonText: t("documents.swal.yes"),
+			cancelButtonText: t("documents.swal.no"),
 			confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
 		}).then(async(result) => {
 			if (result.isConfirmed) {

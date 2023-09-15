@@ -11,21 +11,15 @@
 					<label for="role_id" class="form-label w-full">
 						{{ $t("role") }}
 					</label>
+					<TomSelect v-model.trim="validate.role_id.$model" id="role_id" name="role_id" :options="{
+						placeholder: $t('select_role'),
+					}" class="form-control w-full"
+						:class="{ 'border-danger': validate.role_id.$error }">
 
-					<select
-						v-model.trim="validate.role_id.$model"
-						id="role_id"
-						name="role_id"
-						class="form-control"
-						:class="{ 'border-danger': validate.role_id.$error }"
-					>
-
-					<option value="" selected>Seleccione</option>
-					<option v-for="role in selectRoles" :value="role.id">
+						<option v-for="role in selectRoles" :value="role.id">
 							{{ role.description }}
-					</option>
-
-					</select>
+						</option>
+					</TomSelect>
 					<template v-if="validate.role_id.$error">
 						<div v-for="(error, index) in validate.role_id.$errors" :key="index" class="text-danger mt-2">
 							{{ error.$message }}
