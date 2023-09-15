@@ -812,7 +812,7 @@ const openTripFile = async (path) => {
     case 'png':
     case 'jpg':
     case 'jpeg':
-      window.open(URL.createObjectURL(new Blob(["<img src='" + tripDocumentData.value.data + "' />"], { type: "text/html" })));
+      window.open(URL.createObjectURL(new Blob(["<img width='800' src='" + tripDocumentData.value.data + "' />"], { type: "text/html" })));
       break;
     default:
       Swal.fire({
@@ -1224,7 +1224,7 @@ const openStageFile = async (path) => {
     case 'png':
     case 'jpg':
     case 'jpeg':
-      window.open(URL.createObjectURL(new Blob(["<img src='" + stageDocumentData.value.data + "' />"], { type: "text/html" })));
+      window.open(URL.createObjectURL(new Blob(["<img width='800' src='" + stageDocumentData.value.data + "' />"], { type: "text/html" })));
       break;
     default:
       Swal.fire({

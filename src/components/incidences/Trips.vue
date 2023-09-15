@@ -615,7 +615,7 @@ const openTripIncidenceFile = async (path, file_name, action) => {
     case 'png':
     case 'jpg':
     case 'jpeg':
-      window.open(URL.createObjectURL(new Blob(["<img src='" + documentData.value.data + "' />"], { type: "text/html" })));
+      window.open(URL.createObjectURL(new Blob(["<img width='800' src='" + documentData.value.data + "' />"], { type: "text/html" })));
       break;
     default:
       Swal.fire({

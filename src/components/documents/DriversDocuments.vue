@@ -491,7 +491,7 @@ const openDriverFile = async (path) => {
     case 'png':
     case 'jpg':
     case 'jpeg':
-      window.open(URL.createObjectURL(new Blob(["<img src='" + driverDocumentData.value.data + "' />"], { type: "text/html" })));
+      window.open(URL.createObjectURL(new Blob(["<img width='800' src='" + driverDocumentData.value.data + "' />"], { type: "text/html" })));
       break;
     default:
       Swal.fire({
