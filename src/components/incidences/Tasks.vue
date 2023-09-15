@@ -293,7 +293,7 @@ const initTaskTabulator = () => {
         print: false,
         download: false,
         formatter: function (cell) {
-          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss')
+          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm')
         },
       },
       {
@@ -307,7 +307,7 @@ const initTaskTabulator = () => {
         formatter: function (cell) {
           let data ='';
           if(cell.getValue()){
-            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss');
+            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm');
           }else{
             data = '--';
           }
@@ -439,14 +439,14 @@ const showTaskIncidenceModal = async (id) => {
   task_incidence_selected_trip = taskIncident.value.task.stage.trip.name;
   task_incidence_selected_type = taskIncident.value.type.name;
   task_incidence_selected_comment = taskIncident.value.description;
-  task_incidence_selected_sended_at = $h.formatDate(taskIncident.value.created_at, "DD-MM-YYYY HH:mm:ss");
+  task_incidence_selected_sended_at = $h.formatDate(taskIncident.value.created_at, "DD-MM-YYYY HH:mm");
   if(taskIncident.value.receptioned_at){
-    task_incidence_selected_received_at = $h.formatDate(taskIncident.value.receptioned_at, "DD-MM-YYYY HH:mm:ss");
+    task_incidence_selected_received_at = $h.formatDate(taskIncident.value.receptioned_at, "DD-MM-YYYY HH:mm");
   }else{
     task_incidence_selected_received_at = '--';
   }
   if(taskIncident.value.readed_at){
-    task_incidence_selected_readed_at = $h.formatDate(taskIncident.value.readed_at, "DD-MM-YYYY HH:mm:ss");
+    task_incidence_selected_readed_at = $h.formatDate(taskIncident.value.readed_at, "DD-MM-YYYY HH:mm");
     task_incidence_readed.value = 1;
   }else{
     task_incidence_selected_readed_at = '--';

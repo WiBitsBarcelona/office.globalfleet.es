@@ -209,6 +209,7 @@ onMounted(async () => {
   // pendiente por revisar: cuando no tiene cometchat activo igualmente falla 
   // por que un setInterval cada vez que se recarga un menu. ¿El setInterval se reemplaza?
   // No en recomendable haceer esto directamente "useAuthenticationStore().user.employee" crear un objeto antes. Tambien se puede reemplazar por: "useAuthentication.getUser"
+  
   if (!localStorage.getItem("token") || useAuthenticationStore().user.employee !== null) {       
     await checkUnreadMessages();
     setInterval(await checkUnreadMessages, 5000);

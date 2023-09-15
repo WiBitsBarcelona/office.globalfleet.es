@@ -267,7 +267,7 @@ const initDriverTabulator = () => {
         print: false,
         download: false,
         formatter: function (cell) {
-          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss')
+          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm')
         },
       },
       {
@@ -281,7 +281,7 @@ const initDriverTabulator = () => {
         formatter: function (cell) {
           let data ='';
           if(cell.getValue()){
-            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss');
+            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm');
           }else{
             data = '--';
           }
@@ -409,14 +409,14 @@ const showDriverIncidenceModal = async (id) => {
   driver_incidence_selected_name = driverIncident.value.driver.name + ' ' + driverIncident.value.driver.surname;
   driver_incidence_selected_type = driverIncident.value.type.name;
   driver_incidence_selected_comment = driverIncident.value.description;
-  driver_incidence_selected_sended_at = $h.formatDate(driverIncident.value.created_at, "DD-MM-YYYY HH:mm:ss");
+  driver_incidence_selected_sended_at = $h.formatDate(driverIncident.value.created_at, "DD-MM-YYYY HH:mm");
   if(driverIncident.value.receptioned_at){
-    driver_incidence_selected_received_at = $h.formatDate(driverIncident.value.receptioned_at, "DD-MM-YYYY HH:mm:ss");
+    driver_incidence_selected_received_at = $h.formatDate(driverIncident.value.receptioned_at, "DD-MM-YYYY HH:mm");
   }else{
     driver_incidence_selected_received_at = '--';
   }
   if(driverIncident.value.readed_at){
-    driver_incidence_selected_readed_at = $h.formatDate(driverIncident.value.readed_at, "DD-MM-YYYY HH:mm:ss");
+    driver_incidence_selected_readed_at = $h.formatDate(driverIncident.value.readed_at, "DD-MM-YYYY HH:mm");
     driver_incidence_readed.value = 1;
   }else{
     driver_incidence_selected_readed_at = '--';

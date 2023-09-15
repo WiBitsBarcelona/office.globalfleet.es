@@ -7,6 +7,34 @@
 		<div class="grid grid-cols-12 gap-6">
 
 			<div class="col-span-12 md:col-span-6 lg:col-span-4">
+
+				<div class="input-form">
+					<label for="employee_id" class="form-label w-full">
+						{{ $t("driver_manager") }}
+					</label>
+
+					<TomSelect v-model.trim="validate.employee_id.$model" id="employee_id" name="employee_id" :options="{
+						placeholder: $t('select_driver_manager'),
+					}" class="form-control w-full"
+						:class="{ 'border-danger': validate.employee_id.$error }">
+
+						<option v-for="employee in selectEmployees" 
+							:key="employee.id" 
+							:value="employee.id"  
+							:selected="employee.id === formData.employee_id"
+						>
+								{{ employee.name }} {{ employee.surname }}
+						</option>
+					</TomSelect>
+					<template v-if="validate.employee_id.$error">
+						<div v-for="(error, index) in validate.employee_id.$errors" :key="index" class="text-danger mt-2">
+							{{ error.$message }}
+						</div>
+					</template>
+				</div>
+			</div>
+
+			<div class="col-span-12 md:col-span-6 lg:col-span-4">
 				<div class="input-form">
 					<label for="name" class="form-label w-full">
 						{{ $t("name") }}
@@ -94,7 +122,7 @@
 			</div>
 
 
-			<div class="col-span-12 md:col-span-6 lg:col-span-4">
+<!-- 			<div class="col-span-12 md:col-span-6 lg:col-span-4 hidden">
 				<div class="input-form">
 					<label for="password" class="form-label w-full">
 						{{ $t("password") }}
@@ -120,7 +148,7 @@
 						</div>
 					</template>
 				</div>
-			</div>
+			</div> -->
 			
 			<!-- BEGIN: Buttons -->
 			<div class="col-span-12 md:col-span-12 lg:col-span-12">
@@ -146,18 +174,20 @@
 
 	import { onMounted, reactive, toRefs, ref } from 'vue';
 	import useDrivers from '@/composables/drivers';
+	import useEmployees from "@/composables/employees";
 	import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
 	import { useVuelidate } from '@vuelidate/core';
 	import { helpers } from '@vuelidate/validators';
 	import { useI18n } from 'vue-i18n';
 
 	const { driver, getDriver } = useDrivers();
+	const { employees, getEmployees } = useEmployees();
 	const { t } = useI18n();
 	const props = defineProps(['driverId']);
 	const emit = defineEmits(['cancelEdit', 'updateDriverForm']);
 
 	
-
+	const selectEmployees = ref();
 	const passwordFieldType = ref("password");
 
 	const switchVisibility = () => {
@@ -165,29 +195,33 @@
 	}
 
 	const rules = {
+		employee_id: {
+			//required: helpers.withMessage(t("form.required"), required),
+		},
 		name: {
-			required: helpers.withMessage(t("form.required"), required),
+			//required: helpers.withMessage(t("form.required"), required),
 		},
 		surname: {
-			required: helpers.withMessage(t("form.required"), required),
+			//required: helpers.withMessage(t("form.required"), required),
 		},
 		fiscal_identification: {
-			required: helpers.withMessage(t("form.required"), required),
+			//required: helpers.withMessage(t("form.required"), required),
 		},
-		password: {
+/* 		password: {
 			required: helpers.withMessage(t("form.required"), required),
-		},
+		}, */
 		email: {
-			required: helpers.withMessage(t("form.required"), required),
-			email: helpers.withMessage(t("form.email"), email),
+			//required: helpers.withMessage(t("form.required"), required),
+			//email: helpers.withMessage(t("form.email"), email),
 		},
 	};
 
 	const formData = reactive({
+		employee_id: "",
 		name: "",
 		surname: "",
 		fiscal_identification: "",
-		password: "",
+		//password: "",
 		email: ""
 	});
 
@@ -198,17 +232,29 @@
 		if (validate.value.$invalid) {
 			//TODO
 		} else {
+			console.log(formData);
 			emit('updateDriverForm', driver.value.id, formData);
 		}
 	};
 
 	onMounted(async () => {
 		await getDriver(props.driverId);
+		await getEmployees();
+
+		selectEmployees.value = employees.value;
+
+		formData.employee_id = driver.value.employee[0].id;
 		formData.name = driver.value.name;
 		formData.surname = driver.value.surname;
 		formData.fiscal_identification = driver.value.fiscal_identification;
-		formData.password = driver.value.password;
+		//formData.password = driver.value.password;
 		formData.email = driver.value.user.email;
+
+
+		//console.log(formData.employee_id);
+
+
+
 	});
 
 </script>

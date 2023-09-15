@@ -8,34 +8,37 @@
 
   <!-- BEGIN: Page Layout -->
   <div class="intro-y box p-5 mt-5" v-if="isCreateTrip">
-
-    <h2 class="text-lg font-medium mb-5">
-      {{ $t("trip") }}
-    </h2>
-
-
     <!-- BEGIN: Form -->
     <form class="validate-form" @submit.prevent="save">
 
-      <!-- BEGIN: container -->
-      <div class="grid grid-cols-12 gap-6">
+      <div class="grid grid-cols-12 gap-1 mb-8">
 
-        <div class="col-span-12 md:col-span-6 lg:col-span-4">
-          <div class="input-form">
-            <label for="reference_number" class="form-label w-full">
-              {{ $t("reference_number") }}
-            </label>
-            <input v-model.trim="validate.reference_number.$model" id="reference_number" type="text"
-              name="reference_number" class="form-control"
-              :class="{ 'border-danger': validate.reference_number.$error }" />
-            <template v-if="validate.reference_number.$error">
-              <div v-for="(error, index) in validate.reference_number.$errors" :key="index" class="text-danger mt-2">
-                {{ error.$message }}
-              </div>
-            </template>
-          </div>
+        <div class="col-span-10">
+          <h2 class="text-lg font-medium">
+            {{ $t("trip") }}
+          </h2>
         </div>
 
+
+        <!-- BEGIN: Buttons -->
+
+        <div class="col-span-2 text-right">
+          <button type="submit" class="btn btn-primary">
+            {{ $t("save") }}
+          </button>
+          <!-- <button @click.prevent="" class="btn btn-danger">
+              {{ $t("cancel") }}
+            </button> -->
+        </div>
+
+        <!-- END: Buttons -->
+
+      </div>
+
+
+
+      <!-- BEGIN: container -->
+      <div class="grid grid-cols-12 gap-6">
 
         <div class="col-span-12 md:col-span-6 lg:col-span-4">
           <div class="input-form">
@@ -52,7 +55,24 @@
           </div>
         </div>
 
-        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+
+        <div class="col-span-12 md:col-span-6 lg:col-span-5">
+          <div class="input-form">
+            <label for="reference_number" class="form-label w-full">
+              {{ $t("reference_number") }}
+            </label>
+            <input v-model.trim="validate.reference_number.$model" id="reference_number" type="text"
+              name="reference_number" class="form-control"
+              :class="{ 'border-danger': validate.reference_number.$error }" />
+            <template v-if="validate.reference_number.$error">
+              <div v-for="(error, index) in validate.reference_number.$errors" :key="index" class="text-danger mt-2">
+                {{ error.$message }}
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <div class="col-span-12 md:col-span-6 lg:col-span-3">
           <div class="input-form">
             <label for="execution_at" class="form-label w-full">
               {{ $t("execution_at") }}
@@ -66,6 +86,33 @@
             </template>
           </div>
         </div>
+
+
+        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+          <div class="input-form">
+            <label for="trip_priority_id" class="form-label w-full">
+              {{ $t("trip_priority") }}
+            </label>
+
+            <select v-model.trim="validate.trip_priority_id.$model" id="trip_priority_id" name="trip_priority_id"
+              class="form-control" :class="{ 'border-danger': validate.trip_priority_id.$error }">
+
+              <option value="" selected>Seleccione</option>
+              <option v-for="item in selectTripPriorities" :value="item.id">
+                {{ item.name }}
+              </option>
+
+            </select>
+
+
+            <template v-if="validate.trip_priority_id.$error">
+              <div v-for="(error, index) in validate.trip_priority_id.$errors" :key="index" class="text-danger mt-2">
+                {{ error.$message }}
+              </div>
+            </template>
+          </div>
+        </div>
+
 
         <div class="col-span-12 md:col-span-6 lg:col-span-4">
           <div class="input-form">
@@ -91,35 +138,12 @@
           </div>
         </div>
 
-        <div class="col-span-12 md:col-span-6 lg:col-span-4">
-          <div class="input-form">
-            <label for="trip_priority_id" class="form-label w-full">
-              {{ $t("trip_priority_id") }}
-            </label>
 
-            <select v-model.trim="validate.trip_priority_id.$model" id="trip_priority_id" name="trip_priority_id"
-              class="form-control" :class="{ 'border-danger': validate.trip_priority_id.$error }">
-
-              <option value="" selected>Seleccione</option>
-              <option v-for="item in selectTripPriorities" :value="item.id">
-                {{ item.name }}
-              </option>
-
-            </select>
-
-
-            <template v-if="validate.trip_priority_id.$error">
-              <div v-for="(error, index) in validate.trip_priority_id.$errors" :key="index" class="text-danger mt-2">
-                {{ error.$message }}
-              </div>
-            </template>
-          </div>
-        </div>
 
         <div class="col-span-12 md:col-span-6 lg:col-span-4">
           <div class="input-form">
             <label for="driver_id" class="form-label w-full">
-              {{ $t("driver_id") }}
+              {{ $t("driver") }}
             </label>
 
             <select v-model.trim="validate.driver_id.$model" id="driver_id" name="driver_id" class="form-control"
@@ -157,25 +181,6 @@
         </div>
 
 
-
-
-
-
-
-        <!-- BEGIN: Buttons -->
-        <div class="col-span-12 md:col-span-12 lg:col-span-12">
-          <div class="flex justify-center">
-            <button type="submit" class="btn btn-primary mr-5">
-              {{ $t("save") }}
-            </button>
-            <!-- <button @click.prevent="" class="btn btn-danger">
-              {{ $t("cancel") }}
-            </button> -->
-          </div>
-        </div>
-        <!-- END: Buttons -->
-
-
       </div>
       <!-- END: container -->
 
@@ -183,27 +188,21 @@
     <!-- END: Form -->
 
 
+    
 
-    <div>
-      <div class="col-span-2 intro-y mb-5 text-end">
+
+    <div class="grid grid-cols-12 gap-1 mt-10 mb-10">
+      <div class="col-span-12 md:col-span-12 lg:col-span-12 text-end">
+        
         <a href="#" class="btn btn-outline-primary w-1/2 sm:w-auto mr-2" @click="showStageForm">
           <PlusCircleIcon class="w-4 h-4" /> {{ "Agregar Etapa" }}
         </a>
+        
+        <a href="#" class="btn btn-outline-success w-1/2 sm:w-auto mr-2" @click="showStageForm">
+          <PlusCircleIcon class="w-4 h-4" /> {{ "Agregar Acción" }}
+        </a>
       </div>
     </div>
-
-
-
-    <!-- <div class="mb-10" v-if="arrStages.length > 0">
-      <ul>
-        <li v-for="item in arrStages" :key="item.id">
-          {{ item.reference_number }} - {{ item.name }}
-          <a href="#" @click.prevent="showTaskForm(item)">Task</a>
-        </li>
-      </ul>
-    </div> -->
-
-
 
 
 
@@ -345,6 +344,7 @@
     <ActionTaskCreate :stageIndex="stageIndex" :taskIndex="taskIndex" @cancelActionTaskForm="cancelActionTaskForm"
       @addActionTaskForm="addActionTaskForm" />
   </div>
+  
 </template>
 
 
@@ -400,8 +400,6 @@ const taskIndex = ref();
 
 
 
-
-
 const rules = {
   vehicle_id: {
     required: helpers.withMessage(t("form.required"), required),
@@ -427,7 +425,7 @@ const rules = {
 
 const formData = reactive({
   vehicle_id: "",
-  trip_priority_id: "",
+  trip_priority_id: "2",
   driver_id: "",
   reference_number: "",
   name: "",
@@ -572,21 +570,20 @@ const addActionTaskForm = (stage, task, data) => {
 
 onMounted(async () => {
 
-  //Vehicles
+  // Vehicles
   await getVehicles();
-  //console.log({...vehicles.value});
   selectVehicles.value = vehicles.value;
 
 
+  //Priorities
   await getTripPriorities();
-  //console.log({...tripPriorities.value});
   selectTripPriorities.value = tripPriorities.value;
 
 
-
+  //Driver
   await getDrivers();
-  //console.log({...drivers.value});
   selectDrivers.value = drivers.value;
+
 
 });
 

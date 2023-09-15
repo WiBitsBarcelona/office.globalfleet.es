@@ -5,14 +5,14 @@
       <div class="grid grid-cols-3 gap-2">
         <div class="col-span-3">
           <div class="box p-5 m-5 intro-x overflow-y-auto shadow">
-            <div v-for="trip_documents in total_trip_documents_array" :key="trip_documents.index"
+<!--             <div v-for="trip_documents in total_trip_documents_array" :key="trip_documents.index"
               class="flex absolute top-5 right-10 left-auto mt-6 mr-5 hover:cursor-pointer">
               <Tippy tag="icon" class="mr-5" variant="primary" :options="{
                 theme: 'translucent',
               }" :content="`${total_new_trip_documents}/${total_trip_documents}`">
                 <FileTextIcon class="w-8 h-8 ml-auto hover:cursor-pointer" :class="trip_documents_class" />
               </Tippy>
-            </div>
+            </div> -->
             <div v-for="trip_incidences in total_trip_incidences_array" :key="trip_incidences.index"
               class="flex absolute top-5 right-5 left-auto mt-6 mr-5 hover:cursor-pointer">
               <Tippy v-if="trip_incidences.total == total_trip_incidences_array.length" tag="icon" variant="primary"
@@ -35,9 +35,12 @@
               </div>
               <div class="col-span-2 px-2">
                 <h5 class="text-xs font-light text-gray-400">{{ $t("gps_positioning") }}:</h5>
-                <a :href="maps_link" target="_blank" class="text-md font-normal leading-6 text-gray-500 hover:text-primary">
+                <a v-if="maps_link != '#'" :href="maps_link" target="_blank" class="text-md font-normal leading-6 text-gray-500 hover:text-primary">
                   {{ gps_position }}
                 </a>
+                <p v-else class="text-md font-normal leading-6 text-gray-500">
+                  {{ gps_position }}
+                </p>
               </div>
               <div class="col-span-2 px-2">
                 <h5 class="text-xs font-light text-gray-400">{{ $t("trip_status") }}:</h5>
@@ -202,11 +205,11 @@
                             class="text-xs font-light text-gray-400">{{ $t("stage") }}:</span> {{ element.name }}</p>
                       </div>
                       <div class="flex justify-end col-span-2">
-                        <Tippy tag="icon" class="mr-5 mt-1" variant="primary" :options="{
+<!--                         <Tippy tag="icon" class="mr-5 mt-1" variant="primary" :options="{
                           theme: 'translucent',
                         }" :content="`${element.total_new_stage_documents}/${element.total_stage_documents}`">
                           <FileTextIcon :class="element.stage_documents_class" />
-                        </Tippy>
+                        </Tippy> -->
                         <span :class="element.status_class">{{ element.element_status }} {{ element.activity }}</span>
                       </div>
                       <div class="px-2 col-span-2">
@@ -230,7 +233,7 @@
                       <div class="px-2">
                         <h5 class="text-xs font-light text-gray-400">{{ $t("arrived_at") }}:</h5>
                         <p class="text-md font-normal leading-6 text-gray-500">
-                          --
+                          {{ element.arrived_at }}
                         </p>
                       </div>
                       <div class="px-2">
@@ -248,7 +251,7 @@
                       <div class="px-2">
                         <h5 class="text-xs font-light text-gray-400">{{ $t("departured_at") }}:</h5>
                         <p class="text-md font-normal leading-6 text-gray-500">
-                          --
+                          {{ element.departure_at }}
                         </p>
                       </div>
                     </div>
@@ -635,6 +638,8 @@ let currentIncidence = [];
 let currentElement = [];
 let currentTask = [];
 let element_status = '';
+let arrived_at = '';
+let departure_at = '';
 
 const TripDetails = async (id) => {
   countStage = 0;
@@ -663,8 +668,13 @@ const TripDetails = async (id) => {
       trip_status_class = status_success_class;
       break;
   }
-  gps_position.value = trip.value.driver.position.gps_positioning;
-  maps_link.value = 'https://www.google.es/maps/place/' + trip.value.driver.position.latitude + ',' + trip.value.driver.position.longitude;
+  if(trip.value.driver.position){
+    gps_position.value = trip.value.driver.position.gps_positioning;
+    maps_link.value = 'https://www.google.es/maps/place/' + trip.value.driver.position.latitude + ',' + trip.value.driver.position.longitude;
+  }else{
+    gps_position.value = '--';
+    maps_link.value = '#';
+  }
   trip_name.value = trip.value.name;
   trip_driver.value = trip.value.driver.name + ' ' + trip.value.driver.surname;
   trip_plate.value = trip.value.vehicle.plate;
@@ -815,7 +825,6 @@ const TripDetails = async (id) => {
     } else {
       executed_at = '--';
     }
-
     if (element.started_at) {
       started_at = $h.formatDate(element.started_at, 'DD/MM/YYYY HH:mm');
     } else {
@@ -825,6 +834,16 @@ const TripDetails = async (id) => {
       finished_at = $h.formatDate(element.finished_at, 'DD/MM/YYYY HH:mm');
     } else {
       finished_at = '--';
+    }
+    if (element.arrived_at) {
+      arrived_at = $h.formatDate(element.arrived_at, 'DD/MM/YYYY HH:mm');
+    }else{
+      arrived_at = '--';
+    }
+    if (element.departure_at) {
+      departure_at = $h.formatDate(element.departure_at, 'DD/MM/YYYY HH:mm');
+    }else{
+      departure_at = '--';
     }
 
     if (element.activity == null) {
@@ -869,7 +888,9 @@ const TripDetails = async (id) => {
             activity: element_activity,
             client: element_client,
             executed_at: executed_at,
-            stage_incidences_class: stage_incidences_class
+            stage_incidences_class: stage_incidences_class,
+            arrived_at: arrived_at,
+            departure_at: departure_at
           });
         } else {
           currentElement[0].class = current_element_icon_class;
@@ -880,10 +901,12 @@ const TripDetails = async (id) => {
           currentElement[0].executed_at = executed_at;
           currentElement[0].started_at = started_at;
           currentElement[0].finished_at = finished_at;
+          currentElement[0].arrived_at = arrived_at;
+          currentElement[0].departure_at = departure_at;
           currentElement[0].stage_incidences_class = stage_incidences_class;
         }
       } else {
-        trip_elements_array.value.push({ id: element.id, element_type: element_type, class: current_element_icon_class, has_icon: has_check_icon, status_class: current_element_status_class, name: element_name, element_status: element_status, value: element_value, started_at: started_at, finished_at: finished_at, box_size: box_size, activity: element_activity, client: element_client, executed_at: executed_at, stage_incidences_class: stage_incidences_class });
+        trip_elements_array.value.push({ id: element.id, element_type: element_type, class: current_element_icon_class, has_icon: has_check_icon, status_class: current_element_status_class, name: element_name, element_status: element_status, value: element_value, started_at: started_at, finished_at: finished_at, box_size: box_size, activity: element_activity, client: element_client, executed_at: executed_at, stage_incidences_class: stage_incidences_class, arrived_at: arrived_at, departure_at: departure_at });
       }
 
     } else {
@@ -1023,7 +1046,9 @@ const TripDetails = async (id) => {
             stage_badge_incidences_class: stage_badge_incidences_class,
             stage_documents_class: stage_documents_class,
             total_stage_documents: total_stage_documents,
-            total_new_stage_documents: total_new_stage_documents
+            total_new_stage_documents: total_new_stage_documents,
+            arrived_at: arrived_at,
+            departure_at: departure_at
           });
         } else {
           currentElement[0].class = current_element_icon_class;
@@ -1036,6 +1061,8 @@ const TripDetails = async (id) => {
           currentElement[0].stage_incidences_class = stage_incidences_class;
           currentElement[0].total_stage_incidences = total_stage_incidences;
           currentElement[0].total_new_stage_incidences = total_new_stage_incidences;
+          currentElement[0].arrived_at = arrived_at;
+          currentElement[0].departure_at = departure_at;
         }
       } else {
         trip_elements_array.value.push({
@@ -1059,7 +1086,9 @@ const TripDetails = async (id) => {
           stage_badge_incidences_class: stage_badge_incidences_class,
           stage_documents_class: stage_documents_class,
           total_stage_documents: total_stage_documents,
-          total_new_stage_documents: total_new_stage_documents
+          total_new_stage_documents: total_new_stage_documents,
+          arrived_at: arrived_at,
+          departure_at: departure_at
         });
       }
 

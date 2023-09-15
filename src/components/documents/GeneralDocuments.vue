@@ -277,7 +277,7 @@ const initTabulator = () => {
         print: false,
         download: false,
         formatter: function (cell) {
-          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss')
+          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm')
         },
       },
       {

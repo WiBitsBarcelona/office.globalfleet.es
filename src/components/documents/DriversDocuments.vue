@@ -368,7 +368,7 @@ const initDriverDocumentsTabulator = () => {
         print: false,
         download: false,
         formatter: function (cell) {
-          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss')
+          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm')
         },
       },
       {
@@ -383,7 +383,7 @@ const initDriverDocumentsTabulator = () => {
         formatter: function (cell) {
           let data = '';
           if (cell.getValue()) {
-            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss');
+            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm');
           } else {
             data = '--';
           }
@@ -402,7 +402,7 @@ const initDriverDocumentsTabulator = () => {
         formatter: function (cell) {
           let data = '';
           if (cell.getValue()) {
-            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss');
+            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm');
           } else {
             data = '--';
           }
@@ -421,7 +421,7 @@ const initDriverDocumentsTabulator = () => {
         formatter: function (cell) {
           let data = '';
           if (cell.getValue()) {
-            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm:ss');
+            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm');
           } else {
             data = '--';
           }

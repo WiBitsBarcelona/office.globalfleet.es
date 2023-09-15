@@ -12,19 +12,16 @@
 						{{ $t("role") }}
 					</label>
 
-					<select
-						v-model.trim="validate.role_id.$model"
-						id="role_id"
-						name="role_id"
-						class="form-control"
-						:class="{ 'border-danger': validate.role_id.$error }"
-					>
+					<TomSelect v-model.trim="validate.role_id.$model" id="role_id" name="role_id" :options="{
+						placeholder: $t('select_role')
+					}" class="form-control w-full"
+						:class="{ 'border-danger': validate.role_id.$error }">
 
-					<option v-for="role in selectRoles" :value="role.id" :selected="role.id == formData.role_id">
+						<option v-for="role in selectRoles" :key="role.id" :value="role.id" :selected="role.id == formData.role_id">
 							{{ role.description }}
-					</option>
-
-					</select>
+						</option>
+					</TomSelect>
+ 
 					<template v-if="validate.role_id.$error">
 						<div v-for="(error, index) in validate.role_id.$errors" :key="index" class="text-danger mt-2">
 							{{ error.$message }}
@@ -260,7 +257,7 @@
 			email: helpers.withMessage(t("form.email"), email),
 		},
 		password: {
-			minLength: helpers.withMessage(t("form.min_length"), minLength(2)),
+			minLength: helpers.withMessage(t("form.minLength"), minLength(2)),
 		},
 		// phone_prefix: {
 		// 	required: helpers.withMessage(t("form.required"), required),
@@ -300,6 +297,7 @@
 	onMounted(async () => {
 		await getEmployee(props.employeeId);
 		await getRoles();
+		console.log(employee.value);
 
 		//Select Roles
 		const newRoles = roles.value.filter((role) => {
