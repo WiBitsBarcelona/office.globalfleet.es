@@ -92,6 +92,7 @@
   "message": {
       "yes": "Sí",
       "no": "No",
+      "ok": "Vale",
       "error": "Error",
       "are_you_sure": "Estás seguro?",
       "record_saved": "Registro guardado",
