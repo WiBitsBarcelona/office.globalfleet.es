@@ -14,7 +14,7 @@
 					</label>
 
 					<TomSelect 
-						v-model.trim="validate.employee_id.$model" 
+						v-model="select" 
 						id="employee_id" 
 						name="employee_id" 
 						:options="{
@@ -26,7 +26,6 @@
 						<option v-for="employee in selectEmployees" 
 							:key="employee.id" 
 							:value="employee.id"  
-							:selected="employee.id === formData.employee_id"
 						>
 								{{ employee.name }} {{ employee.surname }}
 						</option>
@@ -194,6 +193,7 @@
 	
 	const selectEmployees = ref();
 	const passwordFieldType = ref("password");
+	const select = ref('');
 
 	const switchVisibility = () => {
 		passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password';
@@ -254,6 +254,7 @@
 		formData.fiscal_identification = driver.value.fiscal_identification;
 		//formData.password = driver.value.password;
 		formData.email = driver.value.user.email;
+		select.value = driver.value.employee[0].id.toString();
 
 		//console.log(formData.employee_id);
 

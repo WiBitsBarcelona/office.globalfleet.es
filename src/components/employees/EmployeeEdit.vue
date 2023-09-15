@@ -12,12 +12,12 @@
 						{{ $t("role") }}
 					</label>
 
-					<TomSelect v-model.trim="validate.role_id.$model" id="role_id" name="role_id" :options="{
+					<TomSelect v-model="select" id="role_id" name="role_id" :options="{
 						placeholder: $t('select_role')
 					}" class="form-control w-full"
 						:class="{ 'border-danger': validate.role_id.$error }">
 
-						<option v-for="role in selectRoles" :key="role.id" :value="role.id" :selected="role.id == formData.role_id">
+						<option v-for="role in selectRoles" :key="role.id" :value="role.id">
 							{{ role.description }}
 						</option>
 					</TomSelect>
@@ -230,6 +230,7 @@
 
 
 	const selectRoles = ref();
+	const select = ref('');
 
 
 	const passwordFieldType = ref("password");
@@ -312,6 +313,8 @@
 		formData.fiscal_identification = employee.value.fiscal_identification;
 		formData.email = employee.value.user.email;
 		formData.password = '';
+		select.value = employee.value.user.roles[0].id.toString();
+
 		// formData.phone_prefix = employee.value.phone_prefix;
 		// formData.phone = employee.value.phone;
 	});
