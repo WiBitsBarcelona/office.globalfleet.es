@@ -125,15 +125,13 @@ const {
 let selectedChat = ref("");
 let inChat = ref(false);
 let inNewChat = ref(false);
-let userInfo;
+let userInfo = ref("");
 let newChatsList = ref("");
 
 const propsConversationId = ref(null)
 const propsChatType = ref(null)
 const propsChatId = ref(null)
 const propsNameConversation = ref(null)
-
-const prova = ref(null)
 
 
 onMounted(async () => {
@@ -163,7 +161,7 @@ const initialize = async () => {
   // Inicialitzem la App
   CometChat.init(appID, appSettings).then(() => {
 
-    console.log("Initialization completed successfully");
+    //console.log("Initialization completed successfully");
 
     // Iniciem la sessió al xat
     const UID = useAuthenticationStore().user.employee.cometchat_uid;
@@ -176,7 +174,7 @@ const initialize = async () => {
 
     CometChat.login(UID, authKey).then(
       (user) => {
-        console.log("Loggued successful:", { user });
+        //console.log("Loggued successful:", { user });
         LoadChatsList();
       },
       (error) => {
@@ -220,16 +218,16 @@ const initialize = async () => {
     CometChat.addMessageListener(chatListenerID, new CometChat.MessageListener({
 
       onTextMessageReceived: (textMessage) => {
-        console.log("Text message received successfully", textMessage);
+        //console.log("Text message received successfully", textMessage);
         printTextMessage(textMessage);
       },
 
       onMediaMessageReceived: (mediaMessage) => {
-        console.log("Media message received successfully", mediaMessage);
+        //console.log("Media message received successfully", mediaMessage);
       },
 
       onCustomMessageReceived: (customMessage) => {
-        console.log("Custom message received successfully", customMessage);
+        //console.log("Custom message received successfully", customMessage);
       },
 
     })
@@ -262,8 +260,7 @@ const enviarVariable = async (value, value2, value3, value4) => {
   propsChatId.value = value2 //ChatId
   propsChatType.value = value3 // receiverType
   propsNameConversation.value = value4
-  await markUserConversationAsRead(userInfo.uid, prova.value);
-
+  await markUserConversationAsRead(userInfo.uid, propsChatId.value);
   LoadChatsList();
 
 }

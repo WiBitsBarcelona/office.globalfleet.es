@@ -18,8 +18,10 @@
 					}" class="form-control w-full"
 						:class="{ 'border-danger': validate.employee_id.$error }">
 
-						<option v-for="employee in selectEmployees" :key="employee.id" :value="employee.id">
-							{{ employee.name }} {{ employee.surname }}
+						<option v-for="employee in selectEmployees"
+							:key="employee.id" 
+							:value="employee.id">
+								{{ employee.name }} {{ employee.surname }}
 						</option>
 					</TomSelect>
 					<template v-if="validate.employee_id.$error">
@@ -128,9 +130,6 @@
 
 
 
-
-
-
 			<!-- BEGIN: Buttons -->
 			<div class="col-span-12 md:col-span-12 lg:col-span-12">
 				<div class="flex justify-center">
@@ -153,7 +152,6 @@
 <script setup>
 
 import { onMounted, reactive, toRefs, ref } from 'vue';
-import useDrivers from '@/composables/drivers';
 import useEmployees from "@/composables/employees";
 import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
@@ -161,9 +159,6 @@ import { helpers } from '@vuelidate/validators';
 import { useI18n } from 'vue-i18n';
 
 
-
-
-const { driver, getDriver } = useDrivers();
 const { employees, getEmployees } = useEmployees();
 
 

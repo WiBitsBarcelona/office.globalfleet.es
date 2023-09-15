@@ -7,18 +7,28 @@
 		<div class="grid grid-cols-12 gap-6">
 
 			<div class="col-span-12 md:col-span-6 lg:col-span-4">
+
 				<div class="input-form">
 					<label for="employee_id" class="form-label w-full">
 						{{ $t("driver_manager") }}
 					</label>
 
-					<TomSelect v-model.trim="validate.employee_id.$model" id="employee_id" name="employee_id" :options="{
-						placeholder: $t('select_driver_manager'),
-					}" class="form-control w-full"
-						:class="{ 'border-danger': validate.employee_id.$error }">
+					<TomSelect 
+						v-model.trim="validate.employee_id.$model" 
+						id="employee_id" 
+						name="employee_id" 
+						:options="{
+							placeholder: $t('select_driver_manager'),
+						}" class="form-control w-full"
+						:class="{ 'border-danger': validate.employee_id.$error }"
+					>
 
-						<option v-for="employee in selectEmployees" :key="employee.id" :value="employee.id"  :selected="employee.id == formData.employee_id">
-							{{ employee.name }} {{ employee.surname }}
+						<option v-for="employee in selectEmployees" 
+							:key="employee.id" 
+							:value="employee.id"  
+							:selected="employee.id === formData.employee_id"
+						>
+								{{ employee.name }} {{ employee.surname }}
 						</option>
 					</TomSelect>
 					<template v-if="validate.employee_id.$error">
@@ -235,14 +245,20 @@
 	onMounted(async () => {
 		await getDriver(props.driverId);
 		await getEmployees();
+
 		selectEmployees.value = employees.value;
+
 		formData.employee_id = driver.value.employee[0].id;
 		formData.name = driver.value.name;
 		formData.surname = driver.value.surname;
 		formData.fiscal_identification = driver.value.fiscal_identification;
 		//formData.password = driver.value.password;
 		formData.email = driver.value.user.email;
-		console.log(formData.employee_id);
+
+		//console.log(formData.employee_id);
+
+
+
 	});
 
 </script>
