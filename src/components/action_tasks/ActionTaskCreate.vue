@@ -276,6 +276,13 @@
 		];
 
 
+
+		await getActionFormFields();
+		selectActionFormFields.value = actionFormFields.value;
+
+
+
+
 	});
 
 </script>

@@ -81,7 +81,7 @@ export default function useDriver() {
 	const destroyDriver = async (id) => {
 		errors.value = '';
 		try {
-			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}drivers/destroy/${id}`, config);
+			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}drivers/delete/${id}`, config);
 		} catch (e) {
 			console.log(e);
 			// if (e.response.status === 422) {
