@@ -33,8 +33,7 @@
 
                         <div style="display: flex;">
                             <!-- MENSAJES ENVIADOS -->
-                            <div style="flex: 1px;" v-if="mensaje.data.entities.sender.entity.uid === myUid" @click="showModal(true), infoTrip(mensaje.sentAt, mensaje.deliveredAt, mensaje.readAt,
-                                !mensaje.data.metadata ? null : mensaje.data.metadata['confirmetAt'])">
+                            <div style="flex: 1px;" v-if="mensaje.data.entities.sender.entity.uid === myUid" >
                                 <div style="display: flex; float: right;">
                                     <div v-if="mensaje.data.metadata">
                                         <div v-if="mensaje.data.metadata['reader'] == 0">
@@ -57,10 +56,9 @@
                                         <div class="contMensajeEnviado">
                                             <div class="contMensajeEnviadoArchivos">
                                                 <div v-for="item in mensaje.data.attachments" :key="item.id">
-                                                    <div
-                                                        v-if="item.extension == 'jpg' || item.extension == 'jpeg' || item.extension == 'png'">
-                                                        <div style="align-items: center; display: flex; background: rgba(223, 242, 245, 0.1); 
-                                                                padding: 8px; border-radius: 8px;">
+                                                    <div v-if="item.extension == 'jpg' || item.extension == 'jpeg' || item.extension == 'png'">
+                                                        <button style="width: 100%; align-items: center; display: flex; background: rgba(223, 242, 245, 0.1); 
+                                                                padding: 8px; border-radius: 8px;"  @click="openDriverFile(item.url)">
                                                             <img src="../../assets/images/file.svg"
                                                                 style="width: 30px; height: 30px;" />
                                                             <div style="display: grid;">
@@ -69,11 +67,11 @@
                                                                     {{ item.name.length > 15 ? item.name.substring(0, 15) +
                                                                         "..." : item.name }}</p>
                                                             </div>
-                                                        </div>
+                                                        </button>
                                                     </div>
                                                     <div v-else-if="item.extension == 'pdf'">
-                                                        <div style="align-items: center; display: flex; background: rgba(223, 242, 245, 0.1);
-                                                                padding: 8px; border-radius: 8px;">
+                                                        <button style="width: 100%; align-items: center; display: flex; background: rgba(223, 242, 245, 0.1);
+                                                                padding: 8px; border-radius: 8px;" @click="openDriverFile(item.url)">
                                                             <img src="../../assets/images/pdf.svg"
                                                                 style="width: 30px; height: 30px;" />
                                                             <div style="display: grid;">
@@ -82,11 +80,12 @@
                                                                     {{ item.name.length > 15 ? item.name.substring(0, 15) +
                                                                         "..." : item.name }}</p>
                                                             </div>
-                                                        </div>
+                                                        </button>
                                                     </div>
                                                 </div>
                                                 <div style="display: flex; margin-top: 8px;"
-                                                    v-on:click="openModalInfo(true), infoTrip(mensaje.sentAt, mensaje.deliveredAt, mensaje.readAt)">
+                                                    @click="showModal(true), infoTrip(mensaje.sentAt, mensaje.deliveredAt, mensaje.readAt,
+                                                    !mensaje.data.metadata ? null : mensaje.data.metadata['confirmetAt'])">
                                                     <p class="txtMensajesEnviado" style="margin: 0px; margin-right: 5px;">{{
                                                         mensaje.data.text }}</p>
                                                     <p class="txtHoraEnviado" style="margin: 0px ;margin-left: 5px">{{
@@ -118,7 +117,9 @@
                                     </div>
                                     <!-- MENSAJES ENVIADO NORMAL -->
                                     <div v-else>
-                                        <div class="contMensajeEnviado">
+                                        <div class="contMensajeEnviado" @click="showModal(true), 
+                                            infoTrip(mensaje.sentAt, mensaje.deliveredAt, mensaje.readAt,
+                                            !mensaje.data.metadata ? null : mensaje.data.metadata['confirmetAt'])">
                                             <p class="txtMensajesEnviado">{{ mensaje.data.text }}</p>
                                             <p class="txtHoraEnviado">{{ convertStringToDate(mensaje.sentAt) }}</p>
 
@@ -152,10 +153,9 @@
                                 <div v-if="mensaje.data.attachments">
                                     <div style="padding: 8px;" class="contMensajeRecibidoArchivos">
                                         <div v-for="item in mensaje.data.attachments" :key="item.id">
-                                            <div
-                                                v-if="item.extension == 'jpg' || item.extension == 'jpeg' || item.extension == 'png'">
-                                                <div style="align-items: center; display: flex; background: rgba(146, 148, 156, 0.1); 
-                                                    padding: 8px; border-radius: 8px;">
+                                            <div v-if="item.extension == 'jpg' || item.extension == 'jpeg' || item.extension == 'png'">
+                                                <button style="width: 100%; align-items: center; display: flex; background: rgba(146, 148, 156, 0.1); 
+                                                    padding: 8px; border-radius: 8px;" @click="openDriverFile(item.url)">
                                                     <img src="../../assets/images/file.svg"
                                                         style="width: 30px; height: 30px;" />
                                                     <div style="display: grid;">
@@ -164,11 +164,11 @@
                                                             {{ item.name.length > 15 ? item.name.substring(0, 15) + "..." :
                                                                 item.name }}</p>
                                                     </div>
-                                                </div>
+                                                </button>
                                             </div>
                                             <div v-else-if="item.extension == 'pdf'">
-                                                <div style="align-items: center; display: flex; background: rgba(146, 148, 156, 0.1); 
-                                                    padding: 8px; border-radius: 8px;">
+                                                <button style="width: 100%; align-items: center; display: flex; background: rgba(146, 148, 156, 0.1); 
+                                                    padding: 8px; border-radius: 8px;"  @click="openDriverFile(item.url)">
                                                     <img src="../../assets/images/pdf.svg"
                                                         style="width: 30px; height: 30px;" />
                                                     <div style="display: grid;">
@@ -180,7 +180,7 @@
                                                             style="font-size: 12px; margin: 0px; display: flex; color: #545454; margin-left: 10px;">
                                                             {{ item.extension }} · {{ item.size }}</p>
                                                     </div>
-                                                </div>
+                                                </button>
                                             </div>
                                         </div>
                                         <div style="display: flex; margin-top: 8px;">
@@ -382,27 +382,12 @@ import { CometChat } from "@cometchat-pro/chat";
 import useChat from "@/composables/chat";
 import useDriverDocument from "@/composables/driver_documents";
 import { useAuthenticationStore } from "@/stores/auth/authentications";
+import Swal from "sweetalert2";
+import { useI18n } from 'vue-i18n';
 
-const {
-    cometData,
-    conversationList,
-    getCometChatCredentials,
-    getConversationsList,
-    getUserConversation,
-    getGroupConversation,
-    getUserData,
-    getGroupData,
-    loadChatMessages,
-    markUserConversationAsRead,
-    markGroupConversationAsRead,
-    sendTextMessage,
-    getUserGroups,
-    getGroupMembers,
-    mark_user_conversation_as_delivered,
-    update_datameta_message
-} = useChat();
-
-const { storeDriverDocumentV2 } = useDriverDocument();
+const { cometData, getCometChatCredentials, loadChatMessages, markUserConversationAsRead, sendTextMessage, mark_user_conversation_as_delivered } = useChat();
+const { storeDriverDocumentV2, downloadDriverDocument, driverDocumentData } = useDriverDocument();
+const { t } = useI18n();
 
 let userInfo;
 const isChecked = ref(false);
@@ -672,12 +657,48 @@ const removeMediaFile = () => {
     mediaSource.value = null
 }
 
+//convertir a base64
 const toBase64 = file => new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => resolve(reader.result);
     reader.onerror = reject;
 });
+
+// abrir pdf o imagenes
+const openDriverFile = async (path) => {
+  Swal.fire({
+    icon: 'info',
+    title: '',
+    text: t("documents.swal.document_wait_viewing"),
+    //toast: true,
+    position: 'center',
+    showConfirmButton: false,
+  });
+  await downloadDriverDocument(path);
+  Swal.close();
+  switch (driverDocumentData.value.type) {
+    case 'pdf':
+      window.open(driverDocumentData.value.data);
+      break;
+    case 'png':
+    case 'jpg':
+    case 'jpeg':
+      window.open(URL.createObjectURL(new Blob(["<img width='100%' src='" + driverDocumentData.value.data + "' />"], { type: "text/html" })));
+      break;
+    default:
+      Swal.fire({
+        icon: 'error',
+        title: '',
+        text: t("documents.swal.document_error_viewing"),
+        confirmButtonText: t("documents.swal.all_right_btn"),
+        buttonsStyling: false,
+        customClass: {
+          confirmButton: 'btn btn-primary shadow-md',
+        },
+      });
+  }
+}
 </script>
 <style>
 .contMensajeRecibido {

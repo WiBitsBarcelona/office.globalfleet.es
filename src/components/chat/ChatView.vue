@@ -33,7 +33,7 @@
     <div id="group-list" class="flex flex-col gap-[6px] h-[76vh] overflow-y-scroll scrollbar-hidden">
       <!-- Per cada xat farem un botó -->
       <button v-if="!inNewChat" v-for="conversation in conversationList"
-        @click="enviarVariable(conversation.conversationId, conversation.conversationWith.uid,conversation.conversationType, conversation.conversationWith.name)" :id="conversation.conversationWith.uid
+        @click="enviarVariable(conversation.conversationId, conversation.conversationWith.uid, conversation.conversationType, conversation.conversationWith.name)" :id="conversation.conversationWith.uid
           ? conversation.conversationWith.uid
           : conversation.conversationWith.guid
           " :key="conversation.conversationWith"
