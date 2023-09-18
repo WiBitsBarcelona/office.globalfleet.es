@@ -194,11 +194,11 @@
       <div class="col-span-12 md:col-span-12 lg:col-span-12 text-end">
         
         <a href="#" class="btn btn-outline-primary w-1/2 sm:w-auto mr-2" @click="showStageForm">
-          <PlusCircleIcon class="w-4 h-4" /> {{ "Agregar Etapa" }}
+          <PlusCircleIcon class="w-4 h-4" /> {{ $t("add_stage") }}
         </a>
         
         <a href="#" class="btn btn-outline-success w-1/2 sm:w-auto mr-2" @click="showStageForm">
-          <PlusCircleIcon class="w-4 h-4" /> {{ "Agregar Acción" }}
+          <PlusCircleIcon class="w-4 h-4" /> {{ $t("add_action_stage") }}
         </a>
       </div>
     </div>
@@ -213,7 +213,7 @@
 
         <div class="col-span-12 text-right">
           <a href="#" @click.prevent="showTaskForm(stage)" class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
-            <PlusCircleIcon class="w-4 h-4" /> {{ "Agregar Task" }}
+            <PlusCircleIcon class="w-4 h-4" /> {{ $t("add_task") }}
           </a>
         </div>
 
@@ -277,9 +277,10 @@
             </div>
 
 
+
+
             <!-- Action Tasks -->
             <div class="relative" v-for="action_task in task.action_tasks" :key="action_task.id">
-
               <div class="md:flex items-center md:space-x-4 mb-3">
                 <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
                   <div class="grid grid-cols-4 gap-2 mb-5">
@@ -298,6 +299,88 @@
                         {{ action_task.action_type_name }}
                       </p>
                     </div>
+
+
+                    <!-- Action Cameras -->
+                    <div  class="col-span-12" v-if="action_task.action_type_model === enumActionTask.CAMERA_ID">
+                      <div class="relative" v-for="camera in action_task.cameras" :key="camera.id">
+
+                          <div class="md:flex items-center md:space-x-4 mb-3">
+                            <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
+                              <div class="grid grid-cols-4 gap-2 mb-5">
+
+                                <div class="col-span-2">
+                                  <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
+                                  <p class="text-xs font-normal leading-6 text-gray-500">
+                                    {{ camera.name }}
+                                  </p>
+                                </div>
+                                
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                    <!-- End of Action Cameras -->
+
+
+
+                    <!-- Action Scanner -->
+                    <div class="col-span-12" v-if="action_task.action_type_model === enumActionTask.SCANNER_ID">
+                      <div class="relative" v-for="scanner in action_task.scanners" :key="scanner.id">
+                        <div class="md:flex items-center md:space-x-4 mb-3">
+                          <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
+                            <div class="grid grid-cols-4 gap-2 mb-5">
+
+                              <div class="col-span-2">
+                                <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
+                                <p class="text-xs font-normal leading-6 text-gray-500">
+                                  {{ scanner.name }}
+                                </p>
+                              </div>
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- End of Action Scanner -->
+
+
+
+
+                    <!-- Action Scanner -->
+                    <div class="col-span-12" v-if="action_task.action_type_model === enumActionTask.FORM_ID">
+                      <div class="relative" v-for="form in action_task.forms" :key="form.id">
+                        <div class="md:flex items-center md:space-x-4 mb-3">
+                          <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
+                            <div class="grid grid-cols-4 gap-2 mb-5">
+
+                              <div class="col-span-2">
+                                <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
+                                <p class="text-xs font-normal leading-6 text-gray-500">
+                                  {{ form.name }}
+                                </p>
+                              </div>
+
+                              <div class="col-span-2">
+                                <h5 class="text-xs font-light text-gray-400">{{ $t("name") }}:</h5>
+                                <p class="text-xs font-normal leading-6 text-gray-500">
+                                  {{ form.action_form_field_name }}
+                                </p>
+                              </div>
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- End of Action Scanner -->
+
+
+
+
+
 
                   </div>
                 </div>
@@ -510,7 +593,7 @@ const cancelTaskForm = () => {
 
 const addTaskForm = (stage, data) => {
   arrStages.value.forEach(el => {
-    if (el.reference_number === stage.reference_number) {
+    if (el.id === stage.id) {
       if (el.tasks === undefined) {
         el.tasks = [];
         el.tasks.push(data);
@@ -553,9 +636,10 @@ const cancelActionTaskForm = () => {
 const addActionTaskForm = (stage, task, data) => {
 
   arrStages.value.forEach(st => {
-    if (st.reference_number === stage.reference_number) {
+    if (st.id === stage.id) {
       st.tasks.forEach(t => {
-        if (t.name === task.name) {
+        
+        if (t.id === task.id) {
           if (t.action_tasks === undefined) {
 
             let dataNew = addActionTaskModel(data);
@@ -563,8 +647,10 @@ const addActionTaskForm = (stage, task, data) => {
             t.action_tasks = [];
             t.action_tasks.push(dataNew);
 
+
           } else {
-            t.action_tasks.push(data);
+            let dataNew = addActionTaskModel(data);
+            t.action_tasks.push(dataNew);
           }
 
         }
@@ -587,10 +673,14 @@ const addActionTaskModel = (data) => {
   if(parseInt(data.action_type_model) === enumActionTask.CAMERA_ID){
     let action = {}; 
     action.id = uuidv4();
-    action.name = 'Camara';
+    action.name = t("action_camera");
 
-    data.cameras = [];
-    data.cameras.push(action);
+    if (data.cameras === undefined) {
+      data.cameras = [];
+      data.cameras.push(action);
+    }else{
+      data.cameras.push(action);
+    }
 
     return data;
   }
@@ -600,10 +690,15 @@ const addActionTaskModel = (data) => {
 
     let action = {}; 
     action.id = uuidv4();
-    action.name = 'Scanner';
+    action.name = t("action_scanner");
 
-    data.scanners = [];
-    data.scanners.push(action);
+    if (data.scanners === undefined) {
+      data.scanners = [];
+      data.scanners.push(action);
+    }else{
+      data.scanners.push(action);
+    }
+    
 
     return data;
   }
@@ -612,11 +707,16 @@ const addActionTaskModel = (data) => {
 
     let action = {}; 
     action.id = uuidv4();
-    action.name = 'Form';
+    action.name = t("action_form");
     action.action_form_field_id = data.action_form_field_id;
+    action.action_form_field_name = data.action_form_field_name;
 
-    data.forms = [];
-    data.forms.push(action);
+    if (data.forms === undefined) {
+      data.forms = [];
+      data.forms.push(action);
+    }else{
+      data.forms.push(action);
+    }
 
     return data;
   }

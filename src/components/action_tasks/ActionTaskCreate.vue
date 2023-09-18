@@ -246,6 +246,19 @@ const save = () => {
 		const selectedAction = selectActionTypes.value.find(elem => elem.id === formData.action_type_id);
 		formData.action_type_name = selectedAction.name;
 
+
+
+		//Find element action form field
+		if (parseInt(formData.action_type_model) === enumActionTask.FORM_ID) {
+			const selectedForm = selectActionFormFields.value.find(elem => elem.id === formData.action_form_field_id);
+			formData.action_form_field_name = selectedForm.name;
+		}
+		
+		
+
+		
+
+
 		emit('addActionTaskForm', props.stageIndex, props.taskIndex, { ...formData });
 	}
 };

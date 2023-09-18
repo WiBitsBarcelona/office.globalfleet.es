@@ -248,11 +248,17 @@
 
 		await getRoles();
 
+
 		//Select Roles
 		const newRoles = roles.value.filter((role) => {
-			return role.id == enumRoles.TRAFFIC_CHIEF_ID || role.id == enumRoles.TRAFFIC_MANAGER_ID;
+			return parseInt(role.id) === enumRoles.MANAGER_ID || 
+			parseInt(role.id) === enumRoles.TRAFFIC_CHIEF_ID ||
+			parseInt(role.id) === enumRoles.TRAFFIC_MANAGER_ID;
 		});
 		selectRoles.value = newRoles;
+
+
+		console.log(selectRoles);
 
 	});
 
