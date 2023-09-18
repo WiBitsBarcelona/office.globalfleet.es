@@ -39,7 +39,7 @@
     "chat": "Chat"
   },
   "dashboard": {
-    "title": "Visión General",
+    "title": "Visión General de ",
     "reload": "Recargar Datos",
     "new_trips": "Nuevos Viajes",
     "new_warnings": "Nuevos Avisos",
@@ -143,7 +143,7 @@
   "trip_status": "Estatus",
   "trip_id": "Id viaje",
   "trip": "Viaje",
-  "trips": "Viajes",
+  "trips": "Viajes de ",
   "trip_date": "Fecha viaje",
   "trip_completed": "Viajes finalizados",
   "trip_created": "Nuevos viajes",
@@ -197,7 +197,8 @@
     "last_update": "Última actualización:"
   },
   "devices": "Dispositivos",
-  "devices_history": "Histórico de Dispositivos",
+  "devices_of": "Dispositivos de ",
+  "devices_history": "Histórico de Dispositivos de ",
   "filter_by_driver": "Filtrar por Conductor",
   "driving": "Circulando",
   "stopped": "Parado",
@@ -213,10 +214,10 @@
     "documents": "Documentos",
     "title": "Gestor de Documentos",
     "current_folder_lbl": "Mostrando el contenido de la carpeta:",
-    "general_files": "Documentos Generales",
-    "driver_files": "Documentos de Conductores",
-    "chat_files": "Documentos del Chat",
-    "trip_files": "Documentos de Viajes",
+    "general_files": "Documentos Generales ",
+    "driver_files": "Documentos de Conductores ",
+    "chat_files": "Documentos del Chat ",
+    "trip_files": "Documentos de Viajes ",
     "upload_document": "Subir Documentos",
     "trip": "Viaje: ",
     "stage": "Etapa: ",
@@ -379,5 +380,7 @@
   "select_driver_manager": "Selecciona el gestor del conductor...",
   "delete_driver_title": "Eliminar al conductor:",
   "select_role": "Seleccionar Rol del usuario...",
-  "delete_user_title":"Eliminar al usuario:"
+  "delete_user_title":"Eliminar al usuario:",
+  "users_of": "Usuarios Office de ",
+  "drivers_of": "Usuarios Driver de "
 }

@@ -4,7 +4,7 @@
     <div class="grid grid-cols-12 gap-6">
       <div class="col-span-12 mt-8">
         <div class="intro-y flex items-center h-10">
-          <h2 class="text-lg font-medium truncate mr-5">{{ $t("dashboard.title") }}</h2>
+          <h2 class="text-lg font-medium truncate mr-5">{{ $t("dashboard.title") }} <span class="text-xl font-bold">{{ company.name }}</span></h2>
           <a href="" class="ml-auto flex items-center text-primary dark:text-light">
             <RefreshCcwIcon class="w-4 h-4 mr-3" /> <span class="">{{ $t("dashboard.reload") }}</span>
           </a>
@@ -107,12 +107,7 @@ onMounted(async () => {
 
 
 
-  await getCompany(useAuthentication.getUser.employee.id);
-
-  console.log(useAuthentication.getUser.employee);
-
-
-  console.log(company.value);
+  await getCompany(useAuthentication.getUser.employee.company_id);
 
 });
 

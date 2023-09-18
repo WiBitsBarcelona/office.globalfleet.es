@@ -20,6 +20,11 @@
 	<Preloader v-if="loading" />
 
 	<!-- BEGIN: Page Layout Table -->
+	<div class="grid grid-cols-12 gap-6 mt-8">
+    	<div class="col-span-12 intro-y">
+        	<h2 class="text-lg font-medium truncate mr-5">{{ $t('drivers_of') }}<span class="text-xl font-bold">{{ company.name }}</span></h2>
+        </div>
+	</div>
 	<div class="intro-y box p-5 mt-5" id="div_table">
 		<div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
 			<form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
@@ -76,6 +81,8 @@
 	import { Toast } from '@/utils/toast';
 	import dom from '@left4code/tw-starter/dist/js/dom';
 	import Preloader from '@/components/preloader/Preloader.vue';
+	import useCompany from '@/composables/companies.js';
+	import { useAuthenticationStore } from '@/stores/auth/authentications';
 
 	import useDrivers from "@/composables/drivers";
 	import Create from "@/components/drivers/DriverCreate.vue";
@@ -85,7 +92,8 @@
 	const loading = ref(false);
 
 	const { drivers, getDrivers, storeDriver, updateDriver, destroyDriver} = useDrivers();
-
+	const { company, getCompany } = useCompany();
+	const useAuthentication = useAuthenticationStore();
 
 	const { t } = useI18n();
 	const isCreate = ref(false);
@@ -353,6 +361,7 @@
 		initTabulator();
 		reInitOnResizeWindow();
 		div_table = document.querySelector('#div_table');
+		await getCompany(useAuthentication.getUser.employee.company_id);
 	});
 
 </script>
