@@ -10,23 +10,18 @@
 			<div class="col-span-12 md:col-span-6 lg:col-span-4">
 				<div class="input-form">
 					<label for="employee_id" class="form-label w-full">
-						{{ $t("employee") }}
+						{{ $t("driver_manager") }}
 					</label>
 
-					<select
-						v-model.trim="validate.employee_id.$model"
-						id="employee_id"
-						name="employee_id"
-						class="form-control"
-						:class="{ 'border-danger': validate.employee_id.$error }"
-					>
+					<TomSelect v-model.trim="validate.employee_id.$model" id="employee_id" name="employee_id" :options="{
+						placeholder: $t('select_driver_manager'),
+					}" class="form-control w-full"
+						:class="{ 'border-danger': validate.employee_id.$error }">
 
-					<option value="" selected>Seleccione</option>
-					<option v-for="employee in selectEmployees" :value="employee.id">
+						<option v-for="employee in selectEmployees" :key="employee.id" :value="employee.id">
 							{{ employee.name }} {{ employee.surname }}
-					</option>
-
-					</select>
+						</option>
+					</TomSelect>
 					<template v-if="validate.employee_id.$error">
 						<div v-for="(error, index) in validate.employee_id.$errors" :key="index" class="text-danger mt-2">
 							{{ error.$message }}
