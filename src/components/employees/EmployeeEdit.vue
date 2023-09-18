@@ -21,7 +21,7 @@
 							{{ role.description }}
 					</option>
 
-					</select>
+					</TomSelect>
 					<template v-if="validate.role_id.$error">
 						<div v-for="(error, index) in validate.role_id.$errors" :key="index" class="text-danger mt-2">
 							{{ error.$message }}
