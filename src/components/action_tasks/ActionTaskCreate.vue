@@ -156,6 +156,11 @@ import { useVuelidate } from '@vuelidate/core';
 import { helpers } from '@vuelidate/validators';
 import { useI18n } from 'vue-i18n';
 import Swal from "sweetalert2";
+import { v4 as uuidv4 } from 'uuid';
+
+import enumActionTask from '@/enums/enum_action_task.js';
+
+
 
 const { t } = useI18n();
 const { actionTypes, getActionTypes } = useActionType();
@@ -165,17 +170,15 @@ const emit = defineEmits(['cancelActionTaskForm', 'addActionTaskForm']);
 const props = defineProps(['stageIndex', 'taskIndex']);
 
 
-const CAMERA_ID = 1;
-const SCANNER_ID = 2;
-const FORM_ID = 3;
+
 
 
 
 const selectActionTypes = ref([]);
 const selectActionTypeModel = ref([
-	{ id: CAMERA_ID, name: 'Camara' },
-	{ id: SCANNER_ID, name: 'Escaner' },
-	{ id: FORM_ID, name: 'Formulario' },
+	{ id: enumActionTask.CAMERA_ID, name: 'Camara' },
+	{ id: enumActionTask.SCANNER_ID, name: 'Escaner' },
+	{ id: enumActionTask.FORM_ID, name: 'Formulario' },
 ]);
 
 
@@ -201,6 +204,7 @@ const rules = {
 };
 
 const formData = reactive({
+	id: uuidv4(),
 	action_type_id: "",
 	action_type_model: "",
 	action_form_field_id: "",
@@ -221,7 +225,7 @@ const save = () => {
 
 
 		//TODO 
-		if (parseInt(formData.action_type_model) === FORM_ID) {
+		if (parseInt(formData.action_type_model) === enumActionTask.FORM_ID) {
 			if(formData.action_form_field_id === '' || formData.action_form_field_id === undefined){
 				//TODO alert
 
@@ -248,9 +252,8 @@ const save = () => {
 
 
 const onChangeSelectActionModel = (event) => {
-	console.log(event.target.value);
 
-	if (parseInt(event.target.value) === FORM_ID) {
+	if (parseInt(event.target.value) === enumActionTask.FORM_ID) {
 
 		isShowActionFormField.value = true;
 

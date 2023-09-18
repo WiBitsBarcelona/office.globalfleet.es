@@ -5,7 +5,6 @@
   </h2>
 
 
-
   <!-- BEGIN: Page Layout -->
   <div class="intro-y box p-5 mt-5" v-if="isCreateTrip">
     <!-- BEGIN: Form -->
@@ -294,7 +293,7 @@
               </div> -->
 
                     <div class="col-span-2">
-                      <h5 class="text-xs font-light text-gray-400">{{ $t("task") }}:</h5>
+                      <h5 class="text-xs font-light text-gray-400">{{ $t("action") }}:</h5>
                       <p class="text-xs font-normal leading-6 text-gray-500">
                         {{ action_task.action_type_name }}
                       </p>
@@ -366,12 +365,21 @@ import { required, minLength, maxLength, email, url, integer } from '@vuelidate/
 import { useVuelidate } from '@vuelidate/core';
 import { helpers } from '@vuelidate/validators';
 import { useI18n } from 'vue-i18n';
+import { v4 as uuidv4 } from 'uuid';
+
+
+
+
+import enumActionTask from '@/enums/enum_action_task.js';
+
 
 
 const { vehicles, getVehicles } = useVehicles();
 const { tripPriorities, getTripPriorities } = useTripPriority();
 const { drivers, getDrivers } = useDrivers();
 const { errors, storeTrip } = useTrips();
+
+
 
 
 
@@ -397,6 +405,8 @@ const isCreateActionTask = ref(false);
 
 const stageIndex = ref();
 const taskIndex = ref();
+
+
 
 
 
@@ -446,7 +456,6 @@ const save = async () => {
     console.log("envia a guardar");
 
     //await storeTrip(formData);
-
 
     console.log({ ...arrStages.value });
 
@@ -548,11 +557,16 @@ const addActionTaskForm = (stage, task, data) => {
       st.tasks.forEach(t => {
         if (t.name === task.name) {
           if (t.action_tasks === undefined) {
+
+            let dataNew = addActionTaskModel(data);
+
             t.action_tasks = [];
-            t.action_tasks.push(data);
+            t.action_tasks.push(dataNew);
+
           } else {
             t.action_tasks.push(data);
           }
+
         }
       });
     }
@@ -562,6 +576,54 @@ const addActionTaskForm = (stage, task, data) => {
   isCreateActionTask.value = false;
 }
 
+
+
+
+
+
+
+const addActionTaskModel = (data) => {
+
+  if(parseInt(data.action_type_model) === enumActionTask.CAMERA_ID){
+    let action = {}; 
+    action.id = uuidv4();
+    action.name = 'Camara';
+
+    data.cameras = [];
+    data.cameras.push(action);
+
+    return data;
+  }
+
+
+  if(parseInt(data.action_type_model) === enumActionTask.SCANNER_ID){
+
+    let action = {}; 
+    action.id = uuidv4();
+    action.name = 'Scanner';
+
+    data.scanners = [];
+    data.scanners.push(action);
+
+    return data;
+  }
+
+  if(parseInt(data.action_type_model) === enumActionTask.FORM_ID){
+
+    let action = {}; 
+    action.id = uuidv4();
+    action.name = 'Form';
+    action.action_form_field_id = data.action_form_field_id;
+
+    data.forms = [];
+    data.forms.push(action);
+
+    return data;
+  }
+
+  return;
+
+}
 
 
 

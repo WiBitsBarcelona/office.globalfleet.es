@@ -69,6 +69,7 @@ import { required, minLength, maxLength, email, url, integer } from '@vuelidate/
 import { useVuelidate } from '@vuelidate/core';
 import { helpers } from '@vuelidate/validators';
 import { useI18n } from 'vue-i18n';
+import { v4 as uuidv4 } from 'uuid';
 
 const { t } = useI18n();
 const emit = defineEmits(['cancelTaskForm', 'addTaskForm']);
@@ -87,6 +88,7 @@ const rulesTask = {
 };
 
 const formDataTask = reactive({
+	id: uuidv4(),
 	name: "Tarea 1",
 	order_number: "1",
 });
