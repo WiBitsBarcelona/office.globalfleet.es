@@ -79,7 +79,18 @@ import { ref, onMounted } from 'vue';
 import DevicesMap from "@/components/dashboard-map/Main.vue";
 import useDashboard from '@/composables/dashboard.js';
 
+import useCompany from '@/composables/companies.js';
+import { useAuthenticationStore } from '@/stores/auth/authentications';
+
+
+
 const { dashboard, getDashboard } = useDashboard();
+const { company, getCompany } = useCompany();
+
+const useAuthentication = useAuthenticationStore();
+
+
+
 
 const trip_completed_nb = ref('');
 const trip_created_nb = ref('');
@@ -92,6 +103,17 @@ onMounted(async () => {
   trip_created_nb.value = dashboard.value.trip_created_nb;
   trip_pending_nb.value = dashboard.value.trip_pending_nb;
   trip_progress_nb.value = dashboard.value.trip_progress_nb;
+
+
+
+
+  await getCompany(useAuthentication.getUser.employee.id);
+
+  console.log(useAuthentication.getUser.employee);
+
+
+  console.log(company.value);
+
 });
 
 </script>
