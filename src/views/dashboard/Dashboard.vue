@@ -107,7 +107,8 @@ onMounted(async () => {
 
 
 
-  await getCompany(useAuthentication.getUser.employee.id);
+  await getCompany(useAuthentication.getUser.employee.company_id);
+  
 
   console.log(useAuthentication.getUser.employee);
 
