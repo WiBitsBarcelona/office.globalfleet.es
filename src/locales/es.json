@@ -92,6 +92,7 @@
   "message": {
       "yes": "Sí",
       "no": "No",
+      "ok": "Vale",
       "error": "Error",
       "are_you_sure": "Estás seguro?",
       "record_saved": "Registro guardado",
@@ -201,6 +202,13 @@
   "driving": "Circulando",
   "stopped": "Parado",
   "no_display_data": "No hay datos que mostrar", 
+  "action_camera": "Camara",
+  "action_scanner": "Escaner",
+  "action_form": "Formulario",
+  "add_stage": "Agregar Etapas",
+  "add_action_stage": "Agregar Acción",
+  "add_task": "Agregar Tareas",
+  "type": "Tipo",
   "documents": {
     "documents": "Documentos",
     "title": "Gestor de Documentos",
