@@ -19,6 +19,10 @@
         </div>
 
 
+
+        <div v-if="isProcess">En Proceso....</div>
+
+
         <!-- BEGIN: Buttons -->
 
         <div class="col-span-2 text-right">
@@ -433,7 +437,11 @@
 <script setup>
 
 import { onMounted, reactive, toRefs, ref } from 'vue';
+
 import useTrips from '@/composables/trips.js';
+import useStage from '@/composables/stages.js';
+
+
 import useVehicles from '@/composables/vehicles.js';
 import useTripPriority from '@/composables/trip_priorities.js';
 import useDrivers from '@/composables/drivers.js';
@@ -460,7 +468,8 @@ import enumActionTask from '@/enums/enum_action_task.js';
 const { vehicles, getVehicles } = useVehicles();
 const { tripPriorities, getTripPriorities } = useTripPriority();
 const { drivers, getDrivers } = useDrivers();
-const { errors, storeTrip } = useTrips();
+const { trip, tripErrors, storeTrip } = useTrips();
+const { stage, stageErrors, storeStage } = useStage();
 
 
 
@@ -484,6 +493,7 @@ const isCreateTrip = ref(true);
 const isCreateStage = ref(false);
 const isCreateTask = ref(false);
 const isCreateActionTask = ref(false);
+const isProcess = ref(false);
 
 
 const stageIndex = ref();
@@ -520,10 +530,10 @@ const formData = reactive({
   vehicle_id: "",
   trip_priority_id: "2",
   driver_id: "",
-  reference_number: "",
-  name: "",
-  execution_at: "",
-  observations: "",
+  reference_number: "78978922",
+  name: "Viaje Plaza",
+  execution_at: "2023-10-10 10:00:00",
+  observations: "Sin observaciones",
 });
 
 const validate = useVuelidate(rules, toRefs(formData));
@@ -535,19 +545,49 @@ const save = async () => {
     //TODO
   } else {
 
-
-
-
-    await storeTrip(formData);
-
-    
-
+    isProcess.value = true;
 
     console.log("envia a guardar");
 
+    await storeTrip(formData);
+    console.log({ ...trip.value });
+
+
+
+
+    // arrStages.value
+
+    arrStages.value.forEach( async(eleStage) => {
+
+      eleStage.trip_id = trip.value.id;
+
+      await storeStage(eleStage);
+      console.log({...stage.value});
+
+
+
+      eleStage.tasks.forEach((eleTask) => {
+        
+      });
+
+
+
+
+
+
+
+
+    });
+    
     
 
-    console.log({ ...arrStages.value });
+
+    isProcess.value = false;
+
+  
+    
+
+    //console.log({ ...arrStages.value });
 
   }
 };
