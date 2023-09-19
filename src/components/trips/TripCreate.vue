@@ -570,11 +570,15 @@ const save = async () => {
 
       eleStage.tasks.forEach( async(eleTask) => {
 
-        eleTask.stage_id = eleStage.id;
+        eleTask.stage_id = stage.value.id;
 
         await storeTask(eleTask);
 
         console.log({ ...task.value });
+
+
+        //TODO actions
+
 
       });
 
