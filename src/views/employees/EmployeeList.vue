@@ -252,7 +252,6 @@
 
 	// Filter function
 	const onFilter = () => {
-		//tabulator.value.setFilter(filter.field, filter.type, filter.value);
         tabulator.value.setFilter([
             [
                 {field: 'name', type: 'like', value: filter.value},
