@@ -530,20 +530,33 @@ const validate = useVuelidate(rules, toRefs(formData));
 
 const save = async () => {
 
-  //validate.value.$touch();
-
+  validate.value.$touch();
   if (validate.value.$invalid) {
     //TODO
   } else {
 
+
+
+
+    await storeTrip(formData);
+
+    
+
+
     console.log("envia a guardar");
 
-    //await storeTrip(formData);
+    
 
     console.log({ ...arrStages.value });
 
   }
 };
+
+
+
+
+
+
 
 
 
