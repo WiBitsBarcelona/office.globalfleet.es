@@ -240,10 +240,6 @@
     searchDropdown.value = false;
   };
 
-
-
-  console.log(useAuthentication.getUser.employee.name);
-
   const logout = async() => {    
     await useAuthentication.logout();
     route.push({name:'login'});

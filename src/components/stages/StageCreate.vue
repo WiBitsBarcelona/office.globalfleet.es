@@ -404,7 +404,7 @@ const rulesStage = {
 };
 
 const formDataStage = reactive({
-    id: uuidv4(),
+    uuid: uuidv4(),
     activity_type_id: "",
     activity_type_name: "",
     stage_type_id: "3",

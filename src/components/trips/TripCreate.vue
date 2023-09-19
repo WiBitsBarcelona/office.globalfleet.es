@@ -440,6 +440,7 @@ import { onMounted, reactive, toRefs, ref } from 'vue';
 
 import useTrips from '@/composables/trips.js';
 import useStage from '@/composables/stages.js';
+import useTask from '@/composables/tasks.js';
 
 
 import useVehicles from '@/composables/vehicles.js';
@@ -470,6 +471,7 @@ const { tripPriorities, getTripPriorities } = useTripPriority();
 const { drivers, getDrivers } = useDrivers();
 const { trip, tripErrors, storeTrip } = useTrips();
 const { stage, stageErrors, storeStage } = useStage();
+const { task, taskErrors, storeTask } = useTask();
 
 
 
@@ -566,8 +568,14 @@ const save = async () => {
 
 
 
-      eleStage.tasks.forEach((eleTask) => {
-        
+      eleStage.tasks.forEach( async(eleTask) => {
+
+        eleTask.stage_id = eleStage.id;
+
+        await storeTask(eleTask);
+
+        console.log({ ...task.value });
+
       });
 
 
@@ -579,13 +587,8 @@ const save = async () => {
 
     });
     
-    
-
 
     isProcess.value = false;
-
-  
-    
 
     //console.log({ ...arrStages.value });
 
@@ -646,7 +649,7 @@ const cancelTaskForm = () => {
 
 const addTaskForm = (stage, data) => {
   arrStages.value.forEach(el => {
-    if (el.id === stage.id) {
+    if (el.uuid === stage.uuid) {
       if (el.tasks === undefined) {
         el.tasks = [];
         el.tasks.push(data);
@@ -689,10 +692,10 @@ const cancelActionTaskForm = () => {
 const addActionTaskForm = (stage, task, data) => {
 
   arrStages.value.forEach(st => {
-    if (st.id === stage.id) {
+    if (st.uuid === stage.uuid) {
       st.tasks.forEach(t => {
         
-        if (t.id === task.id) {
+        if (t.uuid === task.uuid) {
           if (t.action_tasks === undefined) {
 
             let dataNew = addActionTaskModel(data);
@@ -725,7 +728,7 @@ const addActionTaskModel = (data) => {
 
   if(parseInt(data.action_type_model) === enumActionTask.CAMERA_ID){
     let action = {}; 
-    action.id = uuidv4();
+    action.uuid = uuidv4();
     action.name = t("action_camera");
 
     if (data.cameras === undefined) {
@@ -742,7 +745,7 @@ const addActionTaskModel = (data) => {
   if(parseInt(data.action_type_model) === enumActionTask.SCANNER_ID){
 
     let action = {}; 
-    action.id = uuidv4();
+    action.uuid = uuidv4();
     action.name = t("action_scanner");
 
     if (data.scanners === undefined) {
@@ -759,7 +762,7 @@ const addActionTaskModel = (data) => {
   if(parseInt(data.action_type_model) === enumActionTask.FORM_ID){
 
     let action = {}; 
-    action.id = uuidv4();
+    action.uuid = uuidv4();
     action.name = t("action_form");
     action.action_form_field_id = data.action_form_field_id;
     action.action_form_field_name = data.action_form_field_name;
