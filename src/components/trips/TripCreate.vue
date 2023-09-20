@@ -440,7 +440,13 @@ import { onMounted, reactive, toRefs, ref } from 'vue';
 
 import useTrips from '@/composables/trips.js';
 import useStage from '@/composables/stages.js';
+import useActivity from '@/composables/activities.js';
 import useTask from '@/composables/tasks.js';
+import useActionTask from '@/composables/action_tasks.js';
+
+import useActionTaskCamera from '@/composables/action_task_cameras.js';
+import useActionTaskScanner from '@/composables/action_task_scanners.js';
+import useActionTaskForm from '@/composables/action_task_forms.js';
 
 
 import useVehicles from '@/composables/vehicles.js';
@@ -471,8 +477,15 @@ const { tripPriorities, getTripPriorities } = useTripPriority();
 const { drivers, getDrivers } = useDrivers();
 const { trip, tripErrors, storeTrip } = useTrips();
 const { stage, stageErrors, storeStage } = useStage();
-const { task, taskErrors, storeTask } = useTask();
+const { activity, activityErrors, storeActivity } = useActivity();
 
+
+
+const { task, taskErrors, storeTask } = useTask();
+const { actionTask, actionTaskErrors, storeActionTask } = useActionTask();
+const { actionTaskCamera, actionTaskCameraErrors, storeActionTaskCamera } = useActionTaskCamera();
+const { actionTaskScanner, actionTaskScannerErrors, storeActionTaskScanner } = useActionTaskScanner();
+const { actionTaskForm, actionTaskFormErrors, storeActionFormTask } = useActionTaskForm();
 
 
 
@@ -501,6 +514,11 @@ const isProcess = ref(false);
 const stageIndex = ref();
 const taskIndex = ref();
 
+
+let activityObj;
+let actionTaskCameraObj;
+let actionTaskScannerObj;
+let actionTaskFormObj;
 
 
 
@@ -551,14 +569,19 @@ const save = async () => {
 
     console.log("envia a guardar");
 
+
+    /**
+     * Trip
+     */
     await storeTrip(formData);
     console.log({ ...trip.value });
 
 
 
 
-    // arrStages.value
-
+    /**
+     * Stages
+     */
     arrStages.value.forEach( async(eleStage) => {
 
       eleStage.trip_id = trip.value.id;
@@ -567,7 +590,29 @@ const save = async () => {
       console.log({...stage.value});
 
 
+      
+      /**
+       * Activity
+       */
+      if(eleStage.activity_type_id){
 
+        activityObj = {
+          stage_id: stage.value.id,
+          activity_type_id: eleStage.activity_type_id
+        }
+
+        await storeActivity(activityObj);
+        console.log({ ... activity.value});
+      }
+
+      
+
+
+
+
+      /**
+       * Task
+       */
       eleStage.tasks.forEach( async(eleTask) => {
 
         eleTask.stage_id = stage.value.id;
@@ -577,7 +622,68 @@ const save = async () => {
         console.log({ ...task.value });
 
 
-        //TODO actions
+
+        /**
+         * Actions
+         */
+        eleTask.action_tasks.forEach( async(eleActionTask) => {
+
+          eleActionTask.task_id = task.value.id;
+          await storeActionTask(eleActionTask);
+
+          console.log({ ...actionTask.value });
+
+
+          /**
+           *  Action task cameras
+           */ 
+          if(eleActionTask.cameras){
+
+            actionTaskCameraObj = {
+              action_task_id: actionTask.value.id
+            }
+
+            await storeActionTaskCamera(actionTaskCameraObj);
+            console.log({...actionTaskCamera.value});
+
+          }
+
+          /**
+           * Action task scanners
+           */
+          if(eleActionTask.scanner){
+
+            actionTaskScannerObj = {
+              action_task_id: actionTask.value.id
+            }
+
+            await storeActionTaskScanner(actionTaskScannerObj);
+            console.log({...actionTaskScanner.value});
+
+          }
+
+          
+          /**
+           * Action task forms
+           */
+          if(eleActionTask.form){
+
+            actionTaskFormObj = {
+              action_task_id: actionTask.value.id,
+              action_form_field_id: eleActionTask.action_form_field_id,
+            }
+
+            await storeActionTaskForm(actionTaskFormObj);
+            console.log({...actionTaskForm.value});
+
+          }
+
+
+        });
+
+
+
+
 
 
       });
