@@ -132,7 +132,7 @@
 					<button type="submit" class="btn btn-primary mr-5">
 						{{ $t("save") }}
 					</button>
-					<button @click.prevent="emit('cancelActionTaskForm')" class="btn btn-danger">
+					<button @click.prevent="emit('cancelActionStageForm')" class="btn btn-danger">
 						{{ $t("cancel") }}
 					</button>
 				</div>
@@ -166,8 +166,8 @@ const { t } = useI18n();
 const { actionTypes, getActionTypes } = useActionType();
 const { actionFormFields, getActionFormFields } = useActionFormField();
 
-const emit = defineEmits(['cancelActionTaskForm', 'addActionTaskForm']);
-const props = defineProps(['stageIndex', 'taskIndex']);
+const emit = defineEmits(['cancelActionStageForm', 'addActionStageForm']);
+const props = defineProps(['stageIndex']);
 
 
 
@@ -202,6 +202,30 @@ const rules = {
 	action_form_field_id: {
 	},
 };
+
+
+
+
+const stageFake = {
+	uuid: uuidv4(),
+    stage_type_id: "1",
+    reference_number: "-",
+    name: "ActionStage",
+    order_number: "0",
+    client_name: "-",
+    address: "-",
+    phone: "-",
+    zip_code: "-",
+    latitude: "-",
+    longitude: "-",
+    route_code: "-",
+    route_name: "-",
+    description: "",
+    execution_at: "2023-10-10",
+}
+
+
+
 
 const formData = reactive({
 	uuid: uuidv4(),
@@ -256,10 +280,7 @@ const save = () => {
 		
 		
 
-		
-
-
-		emit('addActionTaskForm', props.stageIndex, props.taskIndex, { ...formData });
+		emit('addActionStageForm', stageFake, { ...formData });
 	}
 };
 
@@ -283,11 +304,11 @@ const onChangeSelectActionModel = (event) => {
 
 onMounted(async () => {
 
-	// await getActionTypes();
-	// selectActionTypes.value = actionTypes.value;
+	await getActionTypes();
+	selectActionTypes.value = actionTypes.value;
 
-	// await getActionFormFields();
-	// selectActionFormFields.value = actionFormFields.value;
+	await getActionFormFields();
+	selectActionFormFields.value = actionFormFields.value;
 
 });
 

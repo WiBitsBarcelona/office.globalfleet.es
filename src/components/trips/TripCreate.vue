@@ -201,7 +201,7 @@
           <PlusCircleIcon class="w-4 h-4" /> {{ $t("add_stage") }}
         </a>
 
-        <a href="#" class="btn btn-outline-success w-1/2 sm:w-auto mr-2" @click="showStageForm">
+        <a href="#" class="btn btn-outline-success w-1/2 sm:w-auto mr-2" @click="showActionStageForm">
           <PlusCircleIcon class="w-4 h-4" /> {{ $t("add_action_stage") }}
         </a>
       </div>
@@ -213,8 +213,9 @@
     <div v-for="stage in arrStages" :key="stage.id"
       class="p-4 rounded border border-slate-200 text-slate-500 shadow mb-2">
 
-      <div class="grid grid-cols-5 gap-2 mb-5 pb-2">
+      hhh {{ stage.activity_type_id }}
 
+      <div class="grid grid-cols-5 gap-2 mb-5 pb-2">
         <div class="col-span-12 text-right">
           <a href="#" @click.prevent="showTaskForm(stage)" class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
             <PlusCircleIcon class="w-4 h-4" /> {{ $t("add_task") }}
@@ -427,9 +428,27 @@
 
 
   <div class="intro-y box p-5 mt-5" v-if="isCreateActionTask">
-    <ActionTaskCreate :stageIndex="stageIndex" :taskIndex="taskIndex" @cancelActionTaskForm="cancelActionTaskForm"
-      @addActionTaskForm="addActionTaskForm" />
+    <ActionTaskCreate 
+    :stageIndex="stageIndex" 
+    :taskIndex="taskIndex" 
+    @cancelActionTaskForm="cancelActionTaskForm"
+    @addActionTaskForm="addActionTaskForm" />
   </div>
+
+
+
+
+  <div class="intro-y box p-5 mt-5" v-if="isCreateActionStage">
+    <ActionStageCreate 
+      @cancelActionStageForm="cancelActionStageForm"
+      @addActionStageForm="addActionStageForm"
+    />
+  </div>
+
+
+  
+
+
 </template>
 
 
@@ -456,6 +475,7 @@ import useDrivers from '@/composables/drivers.js';
 import StageCreate from '@/components/stages/StageCreate.vue';
 import TaskCreate from '@/components/tasks/TaskCreate.vue';
 import ActionTaskCreate from '@/components/action_tasks/ActionTaskCreate.vue';
+import ActionStageCreate from '@/components/action_stages/ActionStageCreate.vue';
 
 
 import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
@@ -507,6 +527,7 @@ const isCreateTrip = ref(true);
 const isCreateStage = ref(false);
 const isCreateTask = ref(false);
 const isCreateActionTask = ref(false);
+const isCreateActionStage = ref(false);
 const isProcess = ref(false);
 
 
@@ -645,7 +666,7 @@ const save = async () => {
               console.log({ ...actionTaskCamera.value });
 
             }
-            
+
 
             /**
              * Action task scanners
@@ -703,6 +724,9 @@ const save = async () => {
 
 
 
+
+
+
 /**
  * Stage
  */
@@ -724,6 +748,10 @@ const addStageForm = async (stage) => {
   isCreateTrip.value = true;
   isCreateStage.value = false;
 }
+
+/**
+ * End Stage
+ */
 
 
 
@@ -763,7 +791,9 @@ const addTaskForm = (stage, data) => {
   isCreateTask.value = false;
 }
 
-
+/**
+ * End Task
+ */
 
 
 
@@ -881,6 +911,47 @@ const addActionTaskModel = (data) => {
 
 }
 
+/**
+ * End Action Task
+ */
+
+
+
+
+/**
+ * Action Stage
+ */
+
+ const showActionStageForm = () =>{
+
+  isCreateTrip.value = false;
+  isCreateActionStage.value = true;
+  //console.log({ ...arrStages.value });
+
+ } 
+
+  const cancelActionStageForm = () => {
+    isCreateTrip.value = true;
+    isCreateActionStage.value = false;
+  }
+
+  const addActionStageForm = (stage, data) => {
+
+    console.log("pasaOKKKK");
+
+    stage.action_stages = [];
+    stage.action_stages.push(data);
+
+    arrStages.value.push(stage);
+
+    isCreateTrip.value = true;
+    isCreateActionStage.value = false;
+
+  }
+
+ /**
+ * End Action Stage
+ */
 
 
 
