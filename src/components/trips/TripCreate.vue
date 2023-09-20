@@ -191,16 +191,16 @@
     <!-- END: Form -->
 
 
-    
+
 
 
     <div class="grid grid-cols-12 gap-1 mt-10 mb-10">
       <div class="col-span-12 md:col-span-12 lg:col-span-12 text-end">
-        
+
         <a href="#" class="btn btn-outline-primary w-1/2 sm:w-auto mr-2" @click="showStageForm">
           <PlusCircleIcon class="w-4 h-4" /> {{ $t("add_stage") }}
         </a>
-        
+
         <a href="#" class="btn btn-outline-success w-1/2 sm:w-auto mr-2" @click="showStageForm">
           <PlusCircleIcon class="w-4 h-4" /> {{ $t("add_action_stage") }}
         </a>
@@ -306,24 +306,24 @@
 
 
                     <!-- Action Cameras -->
-                    <div  class="col-span-12" v-if="action_task.action_type_model === enumActionTask.CAMERA_ID">
+                    <div class="col-span-12" v-if="action_task.action_type_model === enumActionTask.CAMERA_ID">
                       <div class="relative" v-for="camera in action_task.cameras" :key="camera.id">
 
-                          <div class="md:flex items-center md:space-x-4 mb-3">
-                            <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
-                              <div class="grid grid-cols-4 gap-2 mb-5">
+                        <div class="md:flex items-center md:space-x-4 mb-3">
+                          <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
+                            <div class="grid grid-cols-4 gap-2 mb-5">
 
-                                <div class="col-span-2">
-                                  <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
-                                  <p class="text-xs font-normal leading-6 text-gray-500">
-                                    {{ camera.name }}
-                                  </p>
-                                </div>
-                                
+                              <div class="col-span-2">
+                                <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
+                                <p class="text-xs font-normal leading-6 text-gray-500">
+                                  {{ camera.name }}
+                                </p>
                               </div>
+
                             </div>
                           </div>
                         </div>
+                      </div>
                     </div>
                     <!-- End of Action Cameras -->
 
@@ -430,7 +430,6 @@
     <ActionTaskCreate :stageIndex="stageIndex" :taskIndex="taskIndex" @cancelActionTaskForm="cancelActionTaskForm"
       @addActionTaskForm="addActionTaskForm" />
   </div>
-  
 </template>
 
 
@@ -582,19 +581,19 @@ const save = async () => {
     /**
      * Stages
      */
-    arrStages.value.forEach( async(eleStage) => {
+    arrStages.value.forEach(async (eleStage) => {
 
       eleStage.trip_id = trip.value.id;
 
       await storeStage(eleStage);
-      console.log({...stage.value});
+      console.log({ ...stage.value });
 
 
-      
+
       /**
        * Activity
        */
-      if(eleStage.activity_type_id){
+      if (eleStage.activity_type_id) {
 
         activityObj = {
           stage_id: stage.value.id,
@@ -602,10 +601,10 @@ const save = async () => {
         }
 
         await storeActivity(activityObj);
-        console.log({ ... activity.value});
+        console.log({ ...activity.value });
       }
 
-      
+
 
 
 
@@ -613,12 +612,11 @@ const save = async () => {
       /**
        * Task
        */
-      eleStage.tasks.forEach( async(eleTask) => {
+      eleStage.tasks.forEach(async (eleTask) => {
 
         eleTask.stage_id = stage.value.id;
 
         await storeTask(eleTask);
-
         console.log({ ...task.value });
 
 
@@ -626,77 +624,69 @@ const save = async () => {
         /**
          * Actions
          */
-        eleTask.action_tasks.forEach( async(eleActionTask) => {
+        if (eleTask.action_tasks) {
+          eleTask.action_tasks.forEach(async (eleActionTask) => {
 
-          eleActionTask.task_id = task.value.id;
-          await storeActionTask(eleActionTask);
+            eleActionTask.task_id = task.value.id;
+            await storeActionTask(eleActionTask);
+            console.log({ ...actionTask.value });
 
-          console.log({ ...actionTask.value });
 
+            /**
+             *  Action task cameras
+             */
+            if (eleActionTask.cameras) {
 
-          /**
-           *  Action task cameras
-           */ 
-          if(eleActionTask.cameras){
+              actionTaskCameraObj = {
+                action_task_id: actionTask.value.id
+              }
 
-            actionTaskCameraObj = {
-              action_task_id: actionTask.value.id
+              await storeActionTaskCamera(actionTaskCameraObj);
+              console.log({ ...actionTaskCamera.value });
+
+            }
+            
+
+            /**
+             * Action task scanners
+             */
+            if (eleActionTask.scanner) {
+
+              actionTaskScannerObj = {
+                action_task_id: actionTask.value.id
+              }
+
+              await storeActionTaskScanner(actionTaskScannerObj);
+              console.log({ ...actionTaskScanner.value });
+
             }
 
-            await storeActionTaskCamera(actionTaskCameraObj);
-            console.log({...actionTaskCamera.value});
 
-          }
+            /**
+             * Action task forms
+             */
+            if (eleActionTask.form) {
 
-          /**
-           * Action task scanners
-           */
-          if(eleActionTask.scanner){
+              actionTaskFormObj = {
+                action_task_id: actionTask.value.id,
+                action_form_field_id: eleActionTask.action_form_field_id,
+              }
 
-            actionTaskScannerObj = {
-              action_task_id: actionTask.value.id
+              await storeActionTaskForm(actionTaskFormObj);
+              console.log({ ...actionTaskForm.value });
+
             }
 
-            await storeActionTaskScanner(actionTaskScannerObj);
-            console.log({...actionTaskScanner.value});
 
-          }
-
-          
-          /**
-           * Action task forms
-           */
-          if(eleActionTask.form){
-
-            actionTaskFormObj = {
-              action_task_id: actionTask.value.id,
-              action_form_field_id: eleActionTask.action_form_field_id,
-            }
-
-            await storeActionTaskForm(actionTaskFormObj);
-            console.log({...actionTaskForm.value});
-
-          }
-
-
-        });
-
-
-
-
+          });
+        }
 
 
       });
 
 
-
-
-
-
-
-
     });
-    
+
 
     isProcess.value = false;
 
@@ -804,7 +794,7 @@ const addActionTaskForm = (stage, task, data) => {
   arrStages.value.forEach(st => {
     if (st.uuid === stage.uuid) {
       st.tasks.forEach(t => {
-        
+
         if (t.uuid === task.uuid) {
           if (t.action_tasks === undefined) {
 
@@ -836,15 +826,15 @@ const addActionTaskForm = (stage, task, data) => {
 
 const addActionTaskModel = (data) => {
 
-  if(parseInt(data.action_type_model) === enumActionTask.CAMERA_ID){
-    let action = {}; 
+  if (parseInt(data.action_type_model) === enumActionTask.CAMERA_ID) {
+    let action = {};
     action.uuid = uuidv4();
     action.name = t("action_camera");
 
     if (data.cameras === undefined) {
       data.cameras = [];
       data.cameras.push(action);
-    }else{
+    } else {
       data.cameras.push(action);
     }
 
@@ -852,26 +842,26 @@ const addActionTaskModel = (data) => {
   }
 
 
-  if(parseInt(data.action_type_model) === enumActionTask.SCANNER_ID){
+  if (parseInt(data.action_type_model) === enumActionTask.SCANNER_ID) {
 
-    let action = {}; 
+    let action = {};
     action.uuid = uuidv4();
     action.name = t("action_scanner");
 
     if (data.scanners === undefined) {
       data.scanners = [];
       data.scanners.push(action);
-    }else{
+    } else {
       data.scanners.push(action);
     }
-    
+
 
     return data;
   }
 
-  if(parseInt(data.action_type_model) === enumActionTask.FORM_ID){
+  if (parseInt(data.action_type_model) === enumActionTask.FORM_ID) {
 
-    let action = {}; 
+    let action = {};
     action.uuid = uuidv4();
     action.name = t("action_form");
     action.action_form_field_id = data.action_form_field_id;
@@ -880,7 +870,7 @@ const addActionTaskModel = (data) => {
     if (data.forms === undefined) {
       data.forms = [];
       data.forms.push(action);
-    }else{
+    } else {
       data.forms.push(action);
     }
 
