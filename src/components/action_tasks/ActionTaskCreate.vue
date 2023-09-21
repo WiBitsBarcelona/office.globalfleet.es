@@ -283,11 +283,11 @@ const onChangeSelectActionModel = (event) => {
 
 onMounted(async () => {
 
-	// await getActionTypes();
-	// selectActionTypes.value = actionTypes.value;
+	await getActionTypes();
+	selectActionTypes.value = actionTypes.value;
 
-	// await getActionFormFields();
-	// selectActionFormFields.value = actionFormFields.value;
+	await getActionFormFields();
+	selectActionFormFields.value = actionFormFields.value;
 
 });
 
