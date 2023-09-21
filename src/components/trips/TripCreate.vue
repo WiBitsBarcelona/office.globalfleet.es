@@ -4,6 +4,7 @@
     {{ $t("create") }}
   </h2>
 
+  <Preloader v-if="loading" />
 
   <!-- BEGIN: Page Layout -->
   <div class="intro-y box p-5 mt-5" v-if="isCreateTrip">
@@ -18,9 +19,6 @@
           </h2>
         </div>
 
-
-
-        <div v-if="isProcess">En Proceso....</div>
 
 
         <!-- BEGIN: Buttons -->
@@ -213,7 +211,7 @@
     <div v-for="stage in arrStages" :key="stage.id"
       class="p-4 rounded border border-slate-200 text-slate-500 shadow mb-2">
 
-      hhh {{ stage.activity_type_id }}
+      {{ stage.activity_type_id }}
 
       <!-- v-if -->
       <div v-if="stage.activity_type_id">
@@ -409,147 +407,115 @@
       <div v-else>
 
         <!-- Stage -->
-        <div class="grid grid-cols-12 gap-2 mb-5 pb-2">
-          <div class="col-span-2">
-            <h5 class="text-xs font-light text-gray-400">{{ $t("stage") }}:</h5>
-            <p class="text-md font-normal leading-6 text-gray-500">
-              {{ stage.name }} -----
-            </p>
-          </div>
 
-          <div class="col-span-2">
-            <h5 class="text-xs font-light text-gray-400">{{ $t("reference_number") }}:</h5>
-            <p class="text-md font-normal leading-6 text-gray-500">
-              {{ stage.reference_number }}
-            </p>
-          </div>
 
-          <div class="col-span-2">
-            <h5 class="text-xs font-light text-gray-400">{{ $t("activity") }}:</h5>
-            <p class="text-md font-normal leading-6 text-gray-500">
-              {{ stage.activity_type_name }}
-            </p>
-          </div>
 
-          <div class="col-span-3">
-            <h5 class="text-xs font-light text-gray-400">{{ $t("customer") }}:</h5>
-            <p class="text-md font-normal leading-6 text-gray-500">
-              {{ stage.client_name }}
-            </p>
-          </div>
-          <div class="col-span-3">
-            <h5 class="text-xs font-light text-gray-400">{{ $t("execution_at") }}:</h5>
-            <p class="text-md font-normal leading-6 text-gray-500">
-              {{ stage.execution_at }}
-            </p>
-          </div>
 
-          <!-- Action Stages -->
-          <div class="relative" v-for="action_stages in task.action_stages" :key="action_stages.id">
-            <div class="md:flex items-center md:space-x-4 mb-3">
-              <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
-                <div class="grid grid-cols-4 gap-2 mb-5">
+        <!-- Action Stages -->
 
-                  <!-- <div class="col-span-12 text-right">
+        <div class="grid grid-cols-4 gap-2 mb-5" v-for="action_stage in stage.action_stages" :key="action_stage.id">
+
+          <!-- <div class="col-span-12 text-right">
                         <a href="#" @click.prevent="showActionTaskForm(stage, task)"
                           class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
                           <PlusCircleIcon class="w-4 h-4" /> {{ "Agregar Action Task" }}
                         </a>
                       </div> -->
 
-                  <div class="col-span-2">
-                    <h5 class="text-xs font-light text-gray-400">{{ $t("action") }}:</h5>
-                    <p class="text-xs font-normal leading-6 text-gray-500">
-                      {{ action_stages.action_type_name }}
-                    </p>
-                  </div>
+          <div class="col-span-2">
+            <h5 class="text-xs font-light text-gray-400">{{ $t("action") }}:</h5>
+            <p class="text-xs font-normal leading-6 text-gray-500">
+              {{ action_stage.action_type_name }}
+            </p>
+          </div>
 
 
-                  <!-- Action Cameras -->
-                  <div class="col-span-12" v-if="action_stages.action_type_model === enumActionTask.CAMERA_ID">
-                    <div class="relative" v-for="camera in action_stages.cameras" :key="camera.id">
+          <!-- Action Cameras -->
+          <div class="col-span-12" v-if="action_stage.action_type_model === enumActionTask.CAMERA_ID">
+            <div class="relative" v-for="camera in action_stage.cameras" :key="camera.id">
 
-                      <div class="md:flex items-center md:space-x-4 mb-3">
-                        <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
-                          <div class="grid grid-cols-4 gap-2 mb-5">
+              <div class="md:flex items-center md:space-x-4 mb-3">
+                <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
+                  <div class="grid grid-cols-4 gap-2 mb-5">
 
-                            <div class="col-span-2">
-                              <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
-                              <p class="text-xs font-normal leading-6 text-gray-500">
-                                {{ camera.name }}
-                              </p>
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
+                    <div class="col-span-2">
+                      <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
+                      <p class="text-xs font-normal leading-6 text-gray-500">
+                        {{ camera.name }}
+                      </p>
                     </div>
+
                   </div>
-                  <!-- End of Action Cameras -->
-
-
-
-                  <!-- Action Scanner -->
-                  <div class="col-span-12" v-if="action_stages.action_type_model === enumActionTask.SCANNER_ID">
-                    <div class="relative" v-for="scanner in action_stages.scanners" :key="scanner.id">
-                      <div class="md:flex items-center md:space-x-4 mb-3">
-                        <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
-                          <div class="grid grid-cols-4 gap-2 mb-5">
-
-                            <div class="col-span-2">
-                              <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
-                              <p class="text-xs font-normal leading-6 text-gray-500">
-                                {{ scanner.name }}
-                              </p>
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- End of Action Scanner -->
-
-
-
-
-                  <!-- Action Scanner -->
-                  <div class="col-span-12" v-if="action_stages.action_type_model === enumActionTask.FORM_ID">
-                    <div class="relative" v-for="form in action_stages.forms" :key="form.id">
-                      <div class="md:flex items-center md:space-x-4 mb-3">
-                        <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
-                          <div class="grid grid-cols-4 gap-2 mb-5">
-
-                            <div class="col-span-2">
-                              <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
-                              <p class="text-xs font-normal leading-6 text-gray-500">
-                                {{ form.name }}
-                              </p>
-                            </div>
-
-                            <div class="col-span-2">
-                              <h5 class="text-xs font-light text-gray-400">{{ $t("name") }}:</h5>
-                              <p class="text-xs font-normal leading-6 text-gray-500">
-                                {{ form.action_form_field_name }}
-                              </p>
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- End of Action Scanner -->
-
-
                 </div>
               </div>
             </div>
           </div>
-          <!-- End of Action Stages -->
+          <!-- End of Action Cameras -->
+
+
+
+          <!-- Action Scanner -->
+          <div class="col-span-12" v-if="action_stage.action_type_model === enumActionTask.SCANNER_ID">
+            <div class="relative" v-for="scanner in action_stage.scanners" :key="scanner.id">
+              <div class="md:flex items-center md:space-x-4 mb-3">
+                <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
+                  <div class="grid grid-cols-4 gap-2 mb-5">
+
+                    <div class="col-span-2">
+                      <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
+                      <p class="text-xs font-normal leading-6 text-gray-500">
+                        {{ scanner.name }}
+                      </p>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- End of Action Scanner -->
+
+
+
+
+          <!-- Action Scanner -->
+          <div class="col-span-12" v-if="action_stage.action_type_model === enumActionTask.FORM_ID">
+            <div class="relative" v-for="form in action_stage.forms" :key="form.id">
+              <div class="md:flex items-center md:space-x-4 mb-3">
+                <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
+                  <div class="grid grid-cols-4 gap-2 mb-5">
+
+                    <div class="col-span-2">
+                      <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
+                      <p class="text-xs font-normal leading-6 text-gray-500">
+                        {{ form.name }}
+                      </p>
+                    </div>
+
+                    <div class="col-span-2">
+                      <h5 class="text-xs font-light text-gray-400">{{ $t("name") }}:</h5>
+                      <p class="text-xs font-normal leading-6 text-gray-500">
+                        {{ form.action_form_field_name }}
+                      </p>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- End of Action Scanner -->
+
 
         </div>
+
+        <!-- End of Action Stages -->
+
+
         <!-- End Stage -->
+
+
+
 
       </div>
 
@@ -595,6 +561,8 @@
 <script setup>
 
 import { onMounted, reactive, toRefs, ref } from 'vue';
+import Preloader from '@/components/preloader/Preloader.vue';
+import Swal from "sweetalert2";
 
 import useTrips from '@/composables/trips.js';
 import useStage from '@/composables/stages.js';
@@ -605,6 +573,14 @@ import useActionTask from '@/composables/action_tasks.js';
 import useActionTaskCamera from '@/composables/action_task_cameras.js';
 import useActionTaskScanner from '@/composables/action_task_scanners.js';
 import useActionTaskForm from '@/composables/action_task_forms.js';
+
+
+import useActionStage from '@/composables/action_stages.js';
+import useActionStageCamera from '@/composables/action_stage_cameras.js';
+import useActionStageScanner from '@/composables/action_stage_scanners.js';
+import useActionStageForm from '@/composables/action_stage_forms.js';
+
+
 
 
 import useVehicles from '@/composables/vehicles.js';
@@ -625,9 +601,11 @@ import { useI18n } from 'vue-i18n';
 import { v4 as uuidv4 } from 'uuid';
 
 
-
-
 import enumActionTask from '@/enums/enum_action_task.js';
+
+
+
+const loading = ref(false);
 
 
 
@@ -641,7 +619,20 @@ const { task, taskErrors, storeTask } = useTask();
 const { actionTask, actionTaskErrors, storeActionTask } = useActionTask();
 const { actionTaskCamera, actionTaskCameraErrors, storeActionTaskCamera } = useActionTaskCamera();
 const { actionTaskScanner, actionTaskScannerErrors, storeActionTaskScanner } = useActionTaskScanner();
-const { actionTaskForm, actionTaskFormErrors, storeActionFormTask } = useActionTaskForm();
+const { actionTaskForm, actionTaskFormErrors, storeActionTaskForm } = useActionTaskForm();
+
+
+const { actionStage, actionStageErrors, storeActionStage } = useActionStage();
+const { actionStageCamera, actionStageCameraErrors, storeActionStageCamera } = useActionStageCamera();
+const { actionStageScanner, actionStageScannerErrors, storeActionStageScanner } = useActionStageScanner();
+const { actionStageForm, actionStageFormErrors, storeActionStageForm } = useActionStageForm();
+
+
+
+
+
+
+
 
 
 
@@ -665,7 +656,6 @@ const isCreateStage = ref(false);
 const isCreateTask = ref(false);
 const isCreateActionTask = ref(false);
 const isCreateActionStage = ref(false);
-const isProcess = ref(false);
 
 
 const stageIndex = ref();
@@ -676,6 +666,10 @@ let activityObj;
 let actionTaskCameraObj;
 let actionTaskScannerObj;
 let actionTaskFormObj;
+
+let actionStageCameraObj;
+let actionStageScannerObj;
+let actionStageFormObj;
 
 
 
@@ -717,12 +711,14 @@ const validate = useVuelidate(rules, toRefs(formData));
 
 const save = async () => {
 
+
   validate.value.$touch();
   if (validate.value.$invalid) {
     //TODO
   } else {
 
-    isProcess.value = true;
+    loading.value = true;
+    
 
     console.log("envia a guardar");
 
@@ -760,6 +756,73 @@ const save = async () => {
 
         await storeActivity(activityObj);
         console.log({ ...activity.value });
+
+      }
+
+
+
+
+      /**
+      * Action Stages
+      */
+      if (eleStage.action_stages) {
+        eleStage.action_stages.forEach(async (eleActionStage) => {
+
+          eleActionStage.stage_id = stage.value.id;
+          console.log(eleActionStage);
+
+          await storeActionStage(eleActionStage);
+
+          console.log({ ...actionStage.value });
+
+
+          /**
+           *  Action stage cameras
+           */
+          if (eleActionStage.cameras) {
+
+            actionStageCameraObj = {
+              action_stage_id: actionStage.value.id
+            }
+
+            await storeActionStageCamera(actionStageCameraObj);
+            console.log({ ...actionStageCamera.value });
+
+          }
+
+
+          /**
+           * Action stage scanners
+           */
+          if (eleActionStage.scanners) {
+
+            actionStageScannerObj = {
+              action_stage_id: actionStage.value.id
+            }
+
+            await storeActionStageScanner(actionStageScannerObj);
+            console.log({ ...actionStageScanner.value });
+
+          }
+
+
+          /**
+           * Action stage forms
+           */
+          if (eleActionStage.forms) {
+
+            actionStageFormObj = {
+              action_stage_id: actionStage.value.id,
+              action_form_field_id: eleActionStage.action_form_field_id,
+            }
+
+            await storeActionStageForm(actionStageFormObj);
+            console.log({ ...actionStageForm.value });
+
+          }
+
+
+        });
       }
 
 
@@ -767,88 +830,92 @@ const save = async () => {
 
 
 
+
+
       /**
-       * Task
+       * Tasks
        */
-      eleStage.tasks.forEach(async (eleTask) => {
+      if (eleStage.tasks) {
+        eleStage.tasks.forEach(async (eleTask) => {
 
-        eleTask.stage_id = stage.value.id;
+          eleTask.stage_id = stage.value.id;
 
-        await storeTask(eleTask);
-        console.log({ ...task.value });
-
-
-
-        /**
-         * Actions
-         */
-        if (eleTask.action_tasks) {
-          eleTask.action_tasks.forEach(async (eleActionTask) => {
-
-            eleActionTask.task_id = task.value.id;
-            await storeActionTask(eleActionTask);
-            console.log({ ...actionTask.value });
+          await storeTask(eleTask);
+          console.log({ ...task.value });
 
 
-            /**
-             *  Action task cameras
-             */
-            if (eleActionTask.cameras) {
 
-              actionTaskCameraObj = {
-                action_task_id: actionTask.value.id
+          /**
+           * Action Tasks
+           */
+          if (eleTask.action_tasks) {
+            eleTask.action_tasks.forEach(async (eleActionTask) => {
+
+              eleActionTask.task_id = task.value.id;
+              await storeActionTask(eleActionTask);
+              console.log({ ...actionTask.value });
+
+
+              /**
+               *  Action task cameras
+               */
+              if (eleActionTask.cameras) {
+
+                actionTaskCameraObj = {
+                  action_task_id: actionTask.value.id
+                }
+
+                await storeActionTaskCamera(actionTaskCameraObj);
+                console.log({ ...actionTaskCamera.value });
+
               }
 
-              await storeActionTaskCamera(actionTaskCameraObj);
-              console.log({ ...actionTaskCamera.value });
 
-            }
+              /**
+               * Action task scanners
+               */
+              if (eleActionTask.scanners) {
 
+                actionTaskScannerObj = {
+                  action_task_id: actionTask.value.id
+                }
 
-            /**
-             * Action task scanners
-             */
-            if (eleActionTask.scanner) {
+                await storeActionTaskScanner(actionTaskScannerObj);
+                console.log({ ...actionTaskScanner.value });
 
-              actionTaskScannerObj = {
-                action_task_id: actionTask.value.id
               }
 
-              await storeActionTaskScanner(actionTaskScannerObj);
-              console.log({ ...actionTaskScanner.value });
 
-            }
+              /**
+               * Action task forms
+               */
+              if (eleActionTask.forms) {
 
+                actionTaskFormObj = {
+                  action_task_id: actionTask.value.id,
+                  action_form_field_id: eleActionTask.action_form_field_id,
+                }
 
-            /**
-             * Action task forms
-             */
-            if (eleActionTask.form) {
+                await storeActionTaskForm(actionTaskFormObj);
+                console.log({ ...actionTaskForm.value });
 
-              actionTaskFormObj = {
-                action_task_id: actionTask.value.id,
-                action_form_field_id: eleActionTask.action_form_field_id,
               }
 
-              await storeActionTaskForm(actionTaskFormObj);
-              console.log({ ...actionTaskForm.value });
 
-            }
+            });
+          }
+        });
+      }
 
-
-          });
-        }
-
-
-      });
 
 
     });
 
 
-    isProcess.value = false;
-
     //console.log({ ...arrStages.value });
+
+    loading.value = false;
+    Swal.fire(t("message.record_saved"), '', 'success');
 
   }
 };
