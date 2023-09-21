@@ -562,7 +562,7 @@
 
 import { onMounted, reactive, toRefs, ref } from 'vue';
 import Preloader from '@/components/preloader/Preloader.vue';
-import Swal from "sweetalert2";
+import { Toast } from '@/utils/toast';
 
 import useTrips from '@/composables/trips.js';
 import useStage from '@/composables/stages.js';
@@ -915,7 +915,8 @@ const save = async () => {
     //console.log({ ...arrStages.value });
 
     loading.value = false;
-    Swal.fire(t("message.record_saved"), '', 'success');
+    await Toast(t("message.record_saved"), 'success');
+    
 
   }
 };
