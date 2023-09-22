@@ -33,7 +33,7 @@
                 <td :id="driver.id" class="text-sm leading-6 text-gray-500 !p-1"
                   @click="zoomDriver(driver.id)">
                   <span class="font-bold">{{ driver.name }} {{ driver.surname }}</span><br/>
-                  <span class="text-xs">{{ $h.toDate(driver.position.timestamp) }}</span>
+                  <span class="text-xs">{{ $h.formatDate(driver.position.captured_at, 'DD/MM/YYYY HH:mm') }}</span>
                 </td>
                 <td class="text-right !p-1">
                   <Tippy v-if="driver.position.speed >= 5" tag="button" class="tooltip primary ml-4 mr-2"
@@ -112,7 +112,6 @@ let cluster;
 const init = async (initializeMap) => {
 
   await getDrivers();
-  //const devices = drivers.value;
   drivers.value.forEach((d) => {
     if (d.position) {
       totalDevices.value++;
@@ -121,7 +120,7 @@ const init = async (initializeMap) => {
   });
 
   const markers = JSON.parse(JSON.stringify(markersArr));
-  //console.log(markers);
+
   const darkTheme = [
     {
       elementType: "geometry",
@@ -701,7 +700,8 @@ const init = async (initializeMap) => {
         parseFloat(markerElem.position.latitude),
         parseFloat(markerElem.position.longitude)
       );
-      const lastDate = $h.toDate(markerElem.position.timestamp);
+      //const lastDate = $h.toDate(markerElem.position.timestamp);
+      const lastDate = $h.formatDate(markerElem.position.captured_at, 'DD/MM/YYYY HH:mm');
       const speed = $h.toKmsHour(markerElem.position.speed);
       const direction = $h.getDirection(markerElem.position.heading);
       const direction_icon = $h.getDirectionIcon(direction);

@@ -19,11 +19,11 @@
          <ol class="breadcrumb breadcrumb-light">
           <li class="breadcrumb-item"><a href="#">Inicio</a></li>
           <li class="breadcrumb-item active capitalize" aria-current="page">{{ $route.name }}</li>
-          <li>
+<!--           <li>
             <Tippy tag="button" class="tooltip primary ml-4 mr-2" content="Desacoplar Ventana" :options="{
                     theme: 'light',
                   }"><ExternalLinkIcon/></Tippy>
-          </li>
+          </li> -->
         </ol> 
       </nav>
 
@@ -188,14 +188,14 @@
           >
             <DropdownHeader tag="div" class="!font-normal">
               <div class="font-medium">
-                {{ useAuthentication.getUser.employee.name }} {{ useAuthentication.getUser.employee.surname }}
+                {{ useAuthentication.getUser.employee.name }} {{ useAuthentication.getUser.employee.surname }} <br/>
+                <span class="font-light">{{ useAuthentication.getUser.roles[0].description }}</span>
               </div>
             </DropdownHeader>
             <DropdownDivider class="border-white/[0.08]" />
             <DropdownItem class="dropdown-item hover:bg-white/5">
               <UserIcon class="w-4 h-4 mr-2" /> 
-              <router-link to="/profile">{{ $t("profile") }}</router-link></DropdownItem
-            >
+              <router-link to="/profile">{{ $t("profile") }}</router-link></DropdownItem>
             <!-- <DropdownItem class="dropdown-item hover:bg-white/5">
               <EditIcon class="w-4 h-4 mr-2" /> Add Account</DropdownItem
             > -->
@@ -239,10 +239,6 @@
   const hideSearchDropdown = () => {
     searchDropdown.value = false;
   };
-
-
-
-  console.log(useAuthentication.getUser.employee.name);
 
   const logout = async() => {    
     await useAuthentication.logout();

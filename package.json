@@ -43,6 +43,7 @@
     "tippy.js": "^6.2.7",
     "toastify-js": "^1.9.3",
     "tom-select": "^1.7.5",
+    "uuid": "^9.0.1",
     "vue": "^3.2.25",
     "vue-avatar": "^2.3.3",
     "vue-dataset": "^1.1.17",

@@ -1,7 +1,7 @@
 <template>
   <div class="grid grid-cols-12 gap-6 mt-8">
     <div class="col-span-12 intro-y">
-                <h2 class="text-lg font-medium truncate mr-5">{{ $t("incidences.title") }}</h2>
+                <h2 class="text-lg font-medium truncate mr-5">{{ $t("incidences.title") }} <span class="text-xl font-bold">{{ company.name }}</span></h2>
             </div>
     <div class="col-span-12">
       <div class="intro-y flex flex-col-reverse sm:flex-row items-center">
@@ -67,6 +67,11 @@ import DriversIncidences from "@/components/incidences/Drivers.vue";
 import TripsIncidences from "@/components/incidences/Trips.vue";
 import StagesIncidences from "@/components/incidences/Stages.vue";
 import TasksIncidences from "@/components/incidences/Tasks.vue";
+import useCompany from '@/composables/companies.js';
+import { useAuthenticationStore } from '@/stores/auth/authentications';
+
+const { company, getCompany } = useCompany();
+const useAuthentication = useAuthenticationStore();
 
 let newDriverIncidences = reactive({
   emittedValue: 0
@@ -99,5 +104,9 @@ const loadNewStageIncidences= (emittedValue) => {
 const loadNewTaskIncidences= (emittedValue) => {
   newTaskIncidences.emittedValue = emittedValue;
 }
+
+onMounted(async () => {
+      await getCompany(useAuthentication.getUser.employee.company_id);
+    });
 
 </script>

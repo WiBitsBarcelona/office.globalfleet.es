@@ -334,6 +334,10 @@ import { helpers } from '@vuelidate/validators';
 import { useI18n } from 'vue-i18n';
 
 
+import { v4 as uuidv4 } from 'uuid';
+
+
+
 const { t } = useI18n();
 const { stageTypes, getStageTypes } = useStageType();
 const { activityTypes, getActivityTypes } = useActivityType();
@@ -400,6 +404,7 @@ const rulesStage = {
 };
 
 const formDataStage = reactive({
+    uuid: uuidv4(),
     activity_type_id: "",
     activity_type_name: "",
     stage_type_id: "3",
