@@ -88,8 +88,8 @@ const rulesTask = {
 };
 
 const formDataTask = reactive({
-	id: uuidv4(),
-	name: "Tarea 1",
+	uuid: uuidv4(),
+	name: "ALBARÁN 520",
 	order_number: "1",
 });
 

@@ -10,11 +10,11 @@
             <h2 class="text-lg font-medium truncate mr-5 mb-5">{{ $t("trips") }} <span class="text-xl font-bold">{{ company.name }}</span></h2>
           </div>
           
-          <!-- <div class="col-span-2 intro-y mb-5 text-end">
+          <div class="col-span-2 intro-y mb-5 text-end">
             <router-link :to="`/trips/create`" class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
               <PlusCircleIcon class="w-4 h-4" />
             </router-link>
-          </div> -->
+          </div>
 
         </div>
         

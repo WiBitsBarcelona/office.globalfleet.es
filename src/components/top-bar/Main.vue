@@ -239,6 +239,7 @@
   const hideSearchDropdown = () => {
     searchDropdown.value = false;
   };
+
   const logout = async() => {    
     await useAuthentication.logout();
     route.push({name:'login'});
