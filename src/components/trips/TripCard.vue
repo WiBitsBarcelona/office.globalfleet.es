@@ -172,7 +172,7 @@
         <!-- trip number-->
         <div class="rounded-md p-2 pb-1" :class="bg_trip">
           <h5 class="text-xs font-light text-gray-400">{{ $t("trip") }}</h5>
-          <p class="text-md font-normal leading-6 text-gray-500">{{ trip.reference_number }}</p>
+          <p class="text-xs font-normal leading-6 text-gray-500">{{ trip.reference_number }}</p>
         </div>
         <div class="rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400">
           <h5 class="text-xs font-light text-gray-400">{{ $t("vehicle") }}</h5>
@@ -188,7 +188,7 @@
         </div>
         <div class="rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400">
           <h5 class="text-xs font-light text-gray-400">F/H telemática</h5>
-          <p class="text-md font-normal leading-6 text-gray-500">-</p>
+          <p class="text-xs font-normal leading-6 text-gray-500">{{ captured_at }}</p>
         </div>
         <div class="grid grid-cols-2 justify-items-stretch gap-1">
           <div class="rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400">
@@ -227,7 +227,7 @@
         </div>
         <div class="rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400">
           <h5 class="text-xs font-light text-gray-400">{{ $t("execution_at") }}</h5>
-          <p class="text-md font-normal leading-6 text-gray-500">{{ execution_at }}</p>
+          <p class="text-xs font-normal leading-6 text-gray-500">{{ execution_at }}</p>
         </div>
         <div class="col-span-2 rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400">
           <h5 class="text-xs font-light text-gray-400">{{ $t("origin") }}</h5>
@@ -315,6 +315,7 @@ const telematic_name = ref('Movil');
 
 
 const execution_at = ref('');
+const captured_at = ref('');
 
 
 
@@ -432,6 +433,7 @@ watchEffect(() => {
    * Position
    */
   if (trip.value.driver.position) {
+    console.log(trip.value.driver.position)
     let sp = $h.toKmsHour(trip.value.driver.position.speed);
     speed.value = sp;
     if (sp >= 5) {
@@ -442,6 +444,7 @@ watchEffect(() => {
       speed_name.value = t('stopped');
     }
     gps_positioning.value = trip.value.driver.position.gps_positioning;
+    captured_at.value = $h.formatDate(trip.value.driver.position.captured_at, 'DD/MM/YYYY HH:mm');
   }
 
 

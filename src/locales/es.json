@@ -382,5 +382,82 @@
   "select_role": "Seleccionar Rol del usuario...",
   "delete_user_title":"Eliminar al usuario:",
   "users_of": "Usuarios Office de ",
-  "drivers_of": "Usuarios Driver de "
+  "drivers_of": "Usuarios Driver de ",
+  "help_screen": {
+    "menu": {
+      "welcome": "Bienvenido",
+      "home": "Pantalla de inicio",
+      "trips": "Viajes",
+      "trip_details": "Detalles del Viaje",
+      "devices": "Dispositivos",
+      "devices_history": "Histórico de Dispositivos",
+      "general_documents": "Documentos",
+      "driver_documents": "Documentos Conductor",
+      "trip_documents": "Documentos Viajes",
+      "incidences": "Incidencias",
+      "messages": "Mensajes",
+      "users": "Usuarios",
+      "drivers": "Conductores"
+    },
+    "content": {
+      "welcome": {
+        "title": "Bienvenido a la sección de ayuda de GlobalFleet Office.",
+        "content": "En esta sección encontrará toda la información para el uso de todas las funcionalidades de GlobalFleet Office."
+      },
+      "home": {
+        "title": "Pantalla de Inicio",
+        "intro_text": "En esta pantalla de inicio la aplicación nos presenta el resumen de los viajes y la última posición conocida de los dispositivos con la aplicación Driver instalada.",
+        "trips_title": "VIAJES",
+        "new_trips": "Nuevos Viajes.",
+        "pending_trips": "Viajes Pendientes.",
+        "current_trips": "Viajes en Curso.",
+        "finished_trips": "Viajes Finalizados.",
+        "new_trips_text": " Este widget nos muestra la información de la cantidad de viajes nuevos que ha recibido el sistema desde el ERP y que aún no han sido recibidos en ningún dispositivo.",
+        "pending_trips_text": " Este widget nos muestra la información de la cantidad de viajes pendientes de realizar pero que ya han sido enviados a los dispositivos.",
+        "current_trips_text": " Este widget nos muestra la información de la cantidad de viajes en curso.",
+        "finished_trips_text": " Este widget nos muestra la información de la cantidad de viajes realizados.",
+        "devices_title": "DISPOSITIVOS",
+        "devices_text_1": "En este widget nos muestra sobre un mapa la última posición conocida de los dispositivos con la aplicación Driver instalada. Cada dispositivo está identificado en el mapa con el icono de GlobalFleet en verde si el dispositivo está circulando y en rojo si el dispositivo está parado",
+        "devices_text_2": ", además, este icono muestra la información del nombre del conductor asociado a este dispositivo y la dirección en la que estaba circulando en el momento de la captura del posicionamiento. El fondo es el color",
+        "devices_text_3": " del estado del viaje si este dispositivo tiene un viaje asociado, si este dispositivo no tiene un viaje asociado en fondo será de color gris claro.",
+        "devices_text_4": "Al pulsar sobre el marcador se abre una pantalla donde se nos muestra información detallada del marcador.",
+        "devices_text_5": "En la parte superior derecha del mapa disponemos de un selector que nos permite filtrar el contenido del mapa al dispositivo/conductor seleccionado.",
+        "devices_text_6": "En la parte superior izquierda dentro del mapa disponemos de un botón que nos permite recargar el mapa con los valores por defecto.",
+        "devices_li_1": "Se considera que un vehículo está parado cuando su velocidad en igual o menor a 5 km/h.",
+        "devices_li_2": "Los colores de los estados de los viajes son: ",
+        "devices_li_2_1_title": "GRIS CLARO",
+        "devices_li_2_1_text": "Sin viaje asignado.",
+        "devices_li_2_2_title": "GRIS",
+        "devices_li_2_2_text": "Viaje confirmado pero NO iniciado.",
+        "devices_li_2_3_title": "NARANJA",
+        "devices_li_2_3_text": "Viaje pendiente de confirmar.",
+        "devices_li_2_4_title": "AZUL",
+        "devices_li_2_4_text": "Viaje en curso.",
+        "devices_li_2_5_title": "VERDE",
+        "devices_li_2_5_text": "Viaje finalizado."
+      },
+      "trips": {
+        "title": "Viajes",
+        "intro_text": "En esta pantalla de viajes la aplicación nos presenta un parrilla con los datos principales de los viajes ordenados por defecto por la fecha ETA de ejecución del Viaje.",
+        "intro_text_2": "En la parte superior de la pantalla tenemos una serie de controles que nos permiten filtrar, ordenar y buscar los viajes mostrados.",
+        "trips_filter": "Con este selector podemos filtrar la visualización de los viajes dependiendo del estado del mismo.",
+        "trips_order": "Con este selector podemos ordenar la parrilla por la fecha ETA del viaje, por defecto, por el identificador del viajes, por la matrícula del vehículo o por el conductor asignado al viaje.",
+        "trips_search": "Este campo nos permite la busqueda de un viaje por el identificador del viajes, el vehículo o el conductor asociado al viaje.",
+        "grid_text_1": "A continuación, la aplicación nos muestra un parrilla con la información más relevante de cada uno de los viajes existentes. Al pulsar sobre cualquier viaje se nos abrirá una nueva ventana con la información detallada del viaje.",
+        "info_alert_1": "El contenido de la pantalla ",
+        "info_alert_2": " se actualiza automáticamente cada 15 segundos, mostrando siempre la información más actualizada del sistema."
+      },
+      "trip_details": {
+        "title": "Detalles del Viaje",
+        "intro_text_1": "En esta pantalla de detalles del viaje la aplicación nos muestra en un formato de linea de tiempo toda la información detallada del viaje seleccionado. En esta vista podemos consultar el estado de cada uno de los niveles del viaje, las fechas y horas en la que se han realizado cada una de la acciones, etapas y tareas, así como, ver los documentos asociados a las tareas.",
+        "intro_text_2": "Dentro de esta pantalla también podemos ver y gestionar todas las incidencias relativas al viaje en pantalla y a todos sus niveles pulsando en el icono ",
+        "intro_text_3": "en cualquier nivel del viaje. Si el icono se muestra en blanco en la cabecera del viaje o en azul en los detalles significa que se han recibido nuevas incidencias, en cambio, si el icono se muestra en gris NO hay incidencias nuevas.",
+        "image_title": "Pantalla relación incidencias:"
+      },
+      "devices": {
+        "title": "Dispositivos",
+        "intro_text_1": "En esta pantalla de dispositivos, la aplicación, nos muestra la última posición conocida de los dispositivos con la aplicación Driver instalada. En la parte derecha nos muestra un lista con los nombre de los conductores asignados a cada dispositivo con el icono de GlobalFleet en verde si el dispositivo está circulando y en rojo si el dispositivo está parado"
+      }
+    }
+  }
 }
