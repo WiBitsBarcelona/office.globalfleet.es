@@ -1,22 +1,5 @@
 <template>
 
-	<!-- BEGIN: Page Layout Create -->
-	<div class="intro-y box p-5 mt-5" v-if="isCreate">
-		<Create
-			@saveDriverForm="saveDriverForm"
-			@cancelCreate="cancelCreate"
-		/>
-	</div>
-
-	<!-- BEGIN: Page Layout Update -->
-	<div class="intro-y box p-5 mt-5" v-if="isEdit">
-		<Edit
-			:driverId="driverId"
-			@cancelEdit="cancelEdit"
-			@updateDriverForm="updateDriverForm"
-		/>
-	</div>
-
 	<Preloader v-if="loading" />
 
 	<!-- BEGIN: Page Layout Table -->
@@ -68,6 +51,28 @@
 
 	<!-- END: HTML Table Data -->
 	</div>
+
+
+
+	<!-- BEGIN: Page Layout Create -->
+	<div class="intro-y box p-5 mt-5" v-if="isCreate">
+		<Create
+			@saveDriverForm="saveDriverForm"
+			@cancelCreate="cancelCreate"
+		/>
+	</div>
+
+	<!-- BEGIN: Page Layout Update -->
+	<div class="intro-y box p-5 mt-5" v-if="isEdit">
+		<Edit
+			:driverId="driverId"
+			@cancelEdit="cancelEdit"
+			@updateDriverForm="updateDriverForm"
+		/>
+	</div>
+
+
+
 
 </template>
 <script setup>
