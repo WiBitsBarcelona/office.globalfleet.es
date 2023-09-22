@@ -272,6 +272,9 @@
                     class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
                     <PlusCircleIcon class="w-4 h-4" /> {{ "Agregar Action Task" }}
                   </a>
+                  <a href="#" @click.prevent="deleteTaskForm(stage.uuid, task.uuid)" class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
+                    <TrashIcon class="w-4 h-4" />
+                  </a>
                 </div>
 
                 <div class="col-span-2">
@@ -952,7 +955,11 @@ const addStageForm = async (stage) => {
 }
 
 const deleteStageForm = (uuid) => {
-  console.log("delete: ", uuid);
+  arrStages.value.forEach((ele, index) => {
+    if(ele.uuid === uuid){
+      arrStages.value.splice(index, 1);
+    }
+  });
 }
 
 /**
@@ -996,6 +1003,25 @@ const addTaskForm = (stage, data) => {
   isCreateTrip.value = true;
   isCreateTask.value = false;
 }
+
+const deleteTaskForm = (stageUuid, taskUuid) =>{
+
+  arrStages.value.forEach((stage) => {
+    
+    if(stage.uuid === stageUuid){
+
+      stage.tasks.forEach((task, index) => {
+
+        if(task.uuid === taskUuid){
+          stage.tasks.splice(index, 1);
+        }
+
+      });
+    }
+
+  });
+  
+} 
 
 /**
  * End Task

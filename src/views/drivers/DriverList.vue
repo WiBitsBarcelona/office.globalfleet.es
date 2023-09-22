@@ -181,7 +181,6 @@
 					vertAlign: "middle",
 					headerHozAlign:"left",
 					formatter: (cell, formatterParams) => {
-						console.log(cell.getData());
 						return cell.getData().employee[0].name + ' ' + cell.getData().employee[0].surname;
 					},
 				},

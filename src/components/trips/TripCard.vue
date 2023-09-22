@@ -441,7 +441,7 @@ watchEffect(() => {
    * Position
    */
   if (trip.value.driver.position) {
-    console.log(trip.value.driver.position)
+    
     let sp = $h.toKmsHour(trip.value.driver.position.speed);
     speed.value = sp;
     if (sp >= 5) {
