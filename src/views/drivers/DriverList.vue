@@ -174,6 +174,18 @@
 					headerHozAlign:"left",
 				},
 				{
+					title: t("driver_manager"),
+					minWidth: 100,
+					responsive: 0,
+					field: "employee[0].name",
+					vertAlign: "middle",
+					headerHozAlign:"left",
+					formatter: (cell, formatterParams) => {
+						console.log(cell.getData());
+						return cell.getData().employee[0].name + ' ' + cell.getData().employee[0].surname;
+					},
+				},
+				{
 					title: t("token"),
 					minWidth: 100,
 					responsive: 0,
@@ -363,6 +375,7 @@
 	// Init table
 	onMounted(async() => {
 		tableData.value = await findData();
+
 		initTabulator();
 		reInitOnResizeWindow();
 		div_table = document.querySelector('#div_table');
