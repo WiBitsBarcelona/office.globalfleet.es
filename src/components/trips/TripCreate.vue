@@ -211,8 +211,6 @@
     <div v-for="stage in arrStages" :key="stage.id"
       class="p-4 rounded border border-slate-200 text-slate-500 shadow mb-2">
 
-      {{ stage.activity_type_id }}
-
       <!-- v-if -->
       <div v-if="stage.activity_type_id">
         <!-- Stage -->
@@ -220,6 +218,9 @@
           <div class="col-span-12 text-right">
             <a href="#" @click.prevent="showTaskForm(stage)" class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
               <PlusCircleIcon class="w-4 h-4" /> {{ $t("add_task") }}
+            </a>
+            <a href="#" @click.prevent="deleteStageForm(stage.uuid)" class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
+              <TrashIcon class="w-4 h-4" />
             </a>
           </div>
 
@@ -408,19 +409,15 @@
 
         <!-- Stage -->
 
-
-
-
         <!-- Action Stages -->
 
         <div class="grid grid-cols-4 gap-2 mb-5" v-for="action_stage in stage.action_stages" :key="action_stage.id">
 
-          <!-- <div class="col-span-12 text-right">
-                        <a href="#" @click.prevent="showActionTaskForm(stage, task)"
-                          class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
-                          <PlusCircleIcon class="w-4 h-4" /> {{ "Agregar Action Task" }}
-                        </a>
-                      </div> -->
+          <div class="col-span-12 text-right">
+            <a href="#" @click.prevent="deleteStageForm(stage.uuid)" class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
+              <TrashIcon class="w-4 h-4" />
+            </a>
+          </div>
 
           <div class="col-span-2">
             <h5 class="text-xs font-light text-gray-400">{{ $t("action") }}:</h5>
@@ -952,6 +949,10 @@ const addStageForm = async (stage) => {
 
   isCreateTrip.value = true;
   isCreateStage.value = false;
+}
+
+const deleteStageForm = (uuid) => {
+  console.log("delete: ", uuid);
 }
 
 /**
