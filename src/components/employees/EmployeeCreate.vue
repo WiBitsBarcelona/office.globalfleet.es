@@ -12,21 +12,15 @@
 					<label for="role_id" class="form-label w-full">
 						{{ $t("role") }}
 					</label>
+					<TomSelect v-model.trim="validate.role_id.$model" id="role_id" name="role_id" :options="{
+						placeholder: $t('select_role'),
+					}" class="form-control w-full"
+						:class="{ 'border-danger': validate.role_id.$error }">
 
-					<select
-						v-model.trim="validate.role_id.$model"
-						id="role_id"
-						name="role_id"
-						class="form-control"
-						:class="{ 'border-danger': validate.role_id.$error }"
-					>
-
-					<option value="" selected>Seleccione</option>
-					<option v-for="role in selectRoles" :value="role.id">
+						<option v-for="role in selectRoles" :value="role.id">
 							{{ role.description }}
-					</option>
-
-					</select>
+						</option>
+					</TomSelect>
 					<template v-if="validate.role_id.$error">
 						<div v-for="(error, index) in validate.role_id.$errors" :key="index" class="text-danger mt-2">
 							{{ error.$message }}
@@ -173,10 +167,11 @@
 	<!-- END: Form -->
 
 </template>
+
+
 <script setup>
 
 	import { onMounted, reactive, toRefs, ref } from 'vue';
-	import useEmployees from '@/composables/employees';
 	import useRoles from '@/composables/roles';
 	import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
 	import { useVuelidate } from '@vuelidate/core';
@@ -184,7 +179,6 @@
 	import { useI18n } from 'vue-i18n';
 	import enumRoles from '@/enums/enum_roles.js';
 
-	const { employee, getEmployee } = useEmployees();
 	const { roles, getRoles } = useRoles();
 	const { t } = useI18n();
 	const props = defineProps(['employeeId']);
@@ -244,13 +238,14 @@
 	};
 
 	onMounted(async () => {
-		// TODO here implements...
-
+		
 		await getRoles();
 
 		//Select Roles
 		const newRoles = roles.value.filter((role) => {
-			return role.id == enumRoles.TRAFFIC_CHIEF_ID || role.id == enumRoles.TRAFFIC_MANAGER_ID;
+			return parseInt(role.id) === enumRoles.MANAGER_ID || 
+			parseInt(role.id) === enumRoles.TRAFFIC_CHIEF_ID ||
+			parseInt(role.id) === enumRoles.TRAFFIC_MANAGER_ID;
 		});
 		selectRoles.value = newRoles;
 

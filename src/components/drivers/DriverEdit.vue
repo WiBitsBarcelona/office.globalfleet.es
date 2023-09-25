@@ -12,20 +12,23 @@
 						{{ $t("employee") }}
 					</label>
 
-					<select
-						v-model.trim="validate.employee_id.$model"
-						id="employee_id"
-						name="employee_id"
-						class="form-control"
+					<TomSelect 
+						v-model="validate.employee_id.$model" 
+						id="employee_id" 
+						name="employee_id" 
+						:options="{
+							placeholder: $t('select_driver_manager'),
+						}" class="form-control w-full"
 						:class="{ 'border-danger': validate.employee_id.$error }"
 					>
 
-					<option value="" selected>Seleccione</option>
-					<option v-for="employee in selectEmployees" :value="employee.id">
-							{{ employee.name }} {{ employee.surname }}
-					</option>
-
-					</select>
+						<option v-for="employee in selectEmployees" 
+							:key="employee.id" 
+							:value="employee.id"  
+						>
+								{{ employee.name }} {{ employee.surname }}
+						</option>
+					</TomSelect>
 					<template v-if="validate.employee_id.$error">
 						<div v-for="(error, index) in validate.employee_id.$errors" :key="index" class="text-danger mt-2">
 							{{ error.$message }}
@@ -121,34 +124,6 @@
 				</div>
 			</div>
 
-
-<!-- 			<div class="col-span-12 md:col-span-6 lg:col-span-4 hidden">
-				<div class="input-form">
-					<label for="password" class="form-label w-full">
-						{{ $t("password") }}
-					</label>
-
-					<div class="relative sm:flex items-center">
-						<input
-							v-model.trim="validate.password.$model"
-							id="password"
-							:type="passwordFieldType"
-							name="password"
-							class="form-control"
-							:class="{ 'border-danger': validate.password.$error }"
-						/>
-						<EyeIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer" @click="switchVisibility" />
-
-					</div>
-
-					
-					<template v-if="validate.password.$error">
-						<div v-for="(error, index) in validate.password.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
-			</div> -->
 			
 			<!-- BEGIN: Buttons -->
 			<div class="col-span-12 md:col-span-12 lg:col-span-12">
@@ -170,6 +145,8 @@
 	<!-- END: Form -->
 
 </template>
+
+
 <script setup>
 
 	import { onMounted, reactive, toRefs, ref } from 'vue';
@@ -190,29 +167,27 @@
 	const selectEmployees = ref();
 	const passwordFieldType = ref("password");
 
+
 	const switchVisibility = () => {
 		passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password';
 	}
 
 	const rules = {
 		employee_id: {
-			//required: helpers.withMessage(t("form.required"), required),
+			required: helpers.withMessage(t("form.required"), required),
 		},
 		name: {
-			//required: helpers.withMessage(t("form.required"), required),
+			required: helpers.withMessage(t("form.required"), required),
 		},
 		surname: {
-			//required: helpers.withMessage(t("form.required"), required),
+			required: helpers.withMessage(t("form.required"), required),
 		},
 		fiscal_identification: {
-			//required: helpers.withMessage(t("form.required"), required),
-		},
-/* 		password: {
 			required: helpers.withMessage(t("form.required"), required),
-		}, */
+		},
 		email: {
-			//required: helpers.withMessage(t("form.required"), required),
-			//email: helpers.withMessage(t("form.email"), email),
+			required: helpers.withMessage(t("form.required"), required),
+			email: helpers.withMessage(t("form.email"), email),
 		},
 	};
 
@@ -221,7 +196,6 @@
 		name: "",
 		surname: "",
 		fiscal_identification: "",
-		//password: "",
 		email: ""
 	});
 
@@ -243,16 +217,14 @@
 
 		selectEmployees.value = employees.value;
 
-		formData.employee_id = driver.value.employee[0].id;
+		formData.employee_id = driver.value.employee[0].id.toString();
+
 		formData.name = driver.value.name;
 		formData.surname = driver.value.surname;
 		formData.fiscal_identification = driver.value.fiscal_identification;
-		//formData.password = driver.value.password;
 		formData.email = driver.value.user.email;
-
-		//console.log(formData.employee_id);
-
-
+		
+		//select.value = driver.value.employee[0].id.toString();
 
 	});
 

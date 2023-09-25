@@ -3,6 +3,7 @@
 	<!-- BEGIN: Form -->
 	<form class="validate-form" @submit.prevent="save">
 
+
 		<!-- BEGIN: container -->
 		<div class="grid grid-cols-12 gap-6">
 
@@ -12,20 +13,21 @@
 						{{ $t("role") }}
 					</label>
 
-					<select
-						v-model.trim="validate.role_id.$model"
-						id="role_id"
-						name="role_id"
-						class="form-control"
-						:class="{ 'border-danger': validate.role_id.$error }"
-					>
+					<TomSelect 
+						v-model="validate.role_id.$model" 
+						id="role_id" 
+						name="role_id" 
+						:options="{
+							placeholder: $t('select_role')
+						}" 
+						class="form-control w-full"
+						:class="{ 'border-danger': validate.role_id.$error }">
 
-					<option value="" selected>Seleccione</option>
-					<option v-for="role in selectRoles" :value="role.id">
+						<option v-for="role in selectRoles" :key="role.id" :value="role.id">
 							{{ role.description }}
-					</option>
+						</option>
 
-					</select>
+					</TomSelect>
 					<template v-if="validate.role_id.$error">
 						<div v-for="(error, index) in validate.role_id.$errors" :key="index" class="text-danger mt-2">
 							{{ error.$message }}
@@ -33,7 +35,6 @@
 					</template>
 				</div>
 			</div>
-
 
 			<div class="col-span-12 md:col-span-6 lg:col-span-4">
 				<div class="input-form">
@@ -150,50 +151,6 @@
 			</div>
 
 
-			<!-- <div class="col-span-4 md:col-span-4 lg:col-span-4">
-				<div class="input-form">
-					<label for="phone_prefix" class="form-label w-full">
-						{{ $t("phone_prefix") }}
-					</label>
-					<input
-						v-model.trim="validate.phone_prefix.$model"
-						id="phone_prefix"
-						type="text"
-						name="phone_prefix"
-						class="form-control"
-						:class="{ 'border-danger': validate.phone_prefix.$error }"
-					/>
-					<template v-if="validate.phone_prefix.$error">
-						<div v-for="(error, index) in validate.phone_prefix.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
-			</div>
-
-
-			<div class="col-span-4 md:col-span-4 lg:col-span-4">
-				<div class="input-form">
-					<label for="phone" class="form-label w-full">
-						{{ $t("phone") }}
-					</label>
-					<input
-						v-model.trim="validate.phone.$model"
-						id="phone"
-						type="text"
-						name="phone"
-						class="form-control"
-						:class="{ 'border-danger': validate.phone.$error }"
-					/>
-					<template v-if="validate.phone.$error">
-						<div v-for="(error, index) in validate.phone.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
-			</div> -->
-
-
 			<!-- BEGIN: Buttons -->
 			<div class="col-span-12 md:col-span-12 lg:col-span-12">
 				<div class="flex justify-center">
@@ -263,14 +220,6 @@
 		password: {
 			minLength: helpers.withMessage(t("form.minLength"), minLength(2)),
 		},
-		// phone_prefix: {
-		// 	required: helpers.withMessage(t("form.required"), required),
-		// 	minLength: minLength(2),
-		// },
-		// phone: {
-		// 	required: helpers.withMessage(t("form.required"), required),
-		// 	minLength: minLength(2),
-		// },
 	};
 
 	const formData = reactive({
@@ -280,8 +229,6 @@
 		fiscal_identification: "",
 		email: "",
 		password: "",
-		// phone_prefix: "",
-		// phone: "",
 	});
 
 	const validate = useVuelidate(rules, toRefs(formData));
@@ -301,23 +248,25 @@
 	onMounted(async () => {
 		await getEmployee(props.employeeId);
 		await getRoles();
-		console.log(employee.value);
 
 		//Select Roles
 		const newRoles = roles.value.filter((role) => {
-			return role.id == enumRoles.TRAFFIC_CHIEF_ID || role.id == enumRoles.TRAFFIC_MANAGER_ID;
+			return parseInt(role.id) === enumRoles.MANAGER_ID || 
+			parseInt(role.id) === enumRoles.TRAFFIC_CHIEF_ID ||
+			parseInt(role.id) === enumRoles.TRAFFIC_MANAGER_ID;
 		});
 		selectRoles.value = newRoles;
 
 		//Load Data
-		formData.role_id = employee.value.user.roles[0].id;
+		formData.role_id = employee.value.user.roles[0].id.toString();
 		formData.name = employee.value.name;
 		formData.surname = employee.value.surname;
 		formData.fiscal_identification = employee.value.fiscal_identification;
 		formData.email = employee.value.user.email;
 		formData.password = '';
-		// formData.phone_prefix = employee.value.phone_prefix;
-		// formData.phone = employee.value.phone;
+
+		//select.value = employee.value.user.roles[0].id.toString();
+
 	});
 
 </script>
