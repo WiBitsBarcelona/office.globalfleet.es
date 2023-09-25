@@ -213,12 +213,10 @@ export default function useChat() {
       },
     };
 
-    fetch(
-      `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/users/${conversationWith}/conversation/read`,
+    fetch( `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/users/${conversationWith}/conversation/read`,
       options
     ).then((response) => response.json())
-    .then((response) => {
-    })
+    .then((data) => { })
     .catch((err) => console.error(err));
 
   };

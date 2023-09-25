@@ -4,7 +4,7 @@
 
             <div class="flex flex-col h-[85vh] justify-between items-center box overflow-hidden">
                 <!-- Header -->
-                <div class="bg-white h-24 w-full p2 flex items-center">
+                <div class="bg-white h-24 w-full p2 flex items-center" id="chat-header">
                     <div v-if="nameConversation" class="ml-4 flex items-center gap-4">
                         <div v-if="receiverType === 'user'">
                             <img class="w-14 h-14 rounded-full"
@@ -33,7 +33,7 @@
 
                         <div style="display: flex;">
                             <!-- MENSAJES ENVIADOS -->
-                            <div style="flex: 1px;" v-if="mensaje.data.entities.sender.entity.uid === myUid" >
+                            <div style="flex: 1px;" v-if="mensaje.data.entities.sender.entity.uid === myUid">
                                 <div style="display: flex; float: right;">
                                     <div v-if="mensaje.data.metadata">
                                         <div v-if="mensaje.data.metadata['reader'] == 0">
@@ -56,9 +56,11 @@
                                         <div class="contMensajeEnviado">
                                             <div class="contMensajeEnviadoArchivos">
                                                 <div v-for="item in mensaje.data.attachments" :key="item.id">
-                                                    <div v-if="item.extension == 'jpg' || item.extension == 'jpeg' || item.extension == 'png'">
+                                                    <div
+                                                        v-if="item.extension == 'jpg' || item.extension == 'jpeg' || item.extension == 'png'">
                                                         <button style="width: 100%; align-items: center; display: flex; background: rgba(223, 242, 245, 0.1); 
-                                                                padding: 8px; border-radius: 8px;"  @click="openDriverFile(item.url)">
+                                                                padding: 8px; border-radius: 8px;"
+                                                            @click="openDriverFile(item.url)">
                                                             <img src="../../assets/images/file.svg"
                                                                 style="width: 30px; height: 30px;" />
                                                             <div style="display: grid;">
@@ -71,7 +73,8 @@
                                                     </div>
                                                     <div v-else-if="item.extension == 'pdf'">
                                                         <button style="width: 100%; align-items: center; display: flex; background: rgba(223, 242, 245, 0.1);
-                                                                padding: 8px; border-radius: 8px;" @click="openDriverFile(item.url)">
+                                                                padding: 8px; border-radius: 8px;"
+                                                            @click="openDriverFile(item.url)">
                                                             <img src="../../assets/images/pdf.svg"
                                                                 style="width: 30px; height: 30px;" />
                                                             <div style="display: grid;">
@@ -85,7 +88,7 @@
                                                 </div>
                                                 <div style="display: flex; margin-top: 8px;"
                                                     @click="showModal(true), infoTrip(mensaje.sentAt, mensaje.deliveredAt, mensaje.readAt,
-                                                    !mensaje.data.metadata ? null : mensaje.data.metadata['confirmetAt'])">
+                                                        !mensaje.data.metadata ? null : mensaje.data.metadata['confirmetAt'])">
                                                     <p class="txtMensajesEnviado" style="margin: 0px; margin-right: 5px;">{{
                                                         mensaje.data.text }}</p>
                                                     <p class="txtHoraEnviado" style="margin: 0px ;margin-left: 5px">{{
@@ -117,9 +120,9 @@
                                     </div>
                                     <!-- MENSAJES ENVIADO NORMAL -->
                                     <div v-else>
-                                        <div class="contMensajeEnviado" @click="showModal(true), 
+                                        <div class="contMensajeEnviado" @click="showModal(true),
                                             infoTrip(mensaje.sentAt, mensaje.deliveredAt, mensaje.readAt,
-                                            !mensaje.data.metadata ? null : mensaje.data.metadata['confirmetAt'])">
+                                                !mensaje.data.metadata ? null : mensaje.data.metadata['confirmetAt'])">
                                             <p class="txtMensajesEnviado">{{ mensaje.data.text }}</p>
                                             <p class="txtHoraEnviado">{{ convertStringToDate(mensaje.sentAt) }}</p>
 
@@ -153,9 +156,11 @@
                                 <div v-if="mensaje.data.attachments">
                                     <div style="padding: 8px;" class="contMensajeRecibidoArchivos">
                                         <div v-for="item in mensaje.data.attachments" :key="item.id">
-                                            <div v-if="item.extension == 'jpg' || item.extension == 'jpeg' || item.extension == 'png'">
+                                            <div
+                                                v-if="item.extension == 'jpg' || item.extension == 'jpeg' || item.extension == 'png'">
                                                 <button style="width: 100%; align-items: center; display: flex; background: rgba(146, 148, 156, 0.1); 
-                                                    padding: 8px; border-radius: 8px;" @click="openDriverFile(item.url)">
+                                                    padding: 8px; border-radius: 8px;"
+                                                    @click="openDriverFile(item.url)">
                                                     <img src="../../assets/images/file.svg"
                                                         style="width: 30px; height: 30px;" />
                                                     <div style="display: grid;">
@@ -168,7 +173,8 @@
                                             </div>
                                             <div v-else-if="item.extension == 'pdf'">
                                                 <button style="width: 100%; align-items: center; display: flex; background: rgba(146, 148, 156, 0.1); 
-                                                    padding: 8px; border-radius: 8px;"  @click="openDriverFile(item.url)">
+                                                    padding: 8px; border-radius: 8px;"
+                                                    @click="openDriverFile(item.url)">
                                                     <img src="../../assets/images/pdf.svg"
                                                         style="width: 30px; height: 30px;" />
                                                     <div style="display: grid;">
@@ -215,7 +221,7 @@
 
                 <div
                     class="pt-4 sm:py-4 flex items-center border-t-[6px] border-slate-200/60 dark:border-darkmode-400 w-full">
-                    <textarea v-on:keyup.enter="sendMessage" id="message" class="overflow-y-scroll scrollbar-hidden chat__box__input form-control dark:bg-darkmode-600 h-11 resize-none border-transparent 
+                    <textarea v-on:keyup.enter="sendMessage" id="message" @click="onpresskey" class="overflow-y-scroll scrollbar-hidden chat__box__input form-control dark:bg-darkmode-600 h-11 resize-none border-transparent 
                         px-5 py-3 shadow-none focus:border-transparent focus:ring-0"
                         placeholder="Escribe el mensaje..."></textarea>
 
@@ -377,7 +383,7 @@ export default defineComponent({
 });
 </script>
 <script setup>
-import { ref, onMounted, defineProps, watch } from 'vue';
+import { ref, onMounted, defineProps, watch, onBeforeUnmount } from 'vue';
 import { CometChat } from "@cometchat-pro/chat";
 import useChat from "@/composables/chat";
 import useDriverDocument from "@/composables/driver_documents";
@@ -385,7 +391,8 @@ import { useAuthenticationStore } from "@/stores/auth/authentications";
 import Swal from "sweetalert2";
 import { useI18n } from 'vue-i18n';
 
-const { cometData, getCometChatCredentials, loadChatMessages, markUserConversationAsRead, sendTextMessage, mark_user_conversation_as_delivered } = useChat();
+const { cometData, getCometChatCredentials, loadChatMessages, markUserConversationAsRead, sendTextMessage, mark_user_conversation_as_delivered,
+    checkUnreadMessages } = useChat();
 const { storeDriverDocumentV2, downloadDriverDocument, driverDocumentData } = useDriverDocument();
 const { t } = useI18n();
 
@@ -404,7 +411,6 @@ const readAt = ref(null);
 const confirmetAt = ref(null)
 
 const mediaSource = ref(null)
-const Media64 = ref(null)
 const mediaAttachments = ref(null)
 // Array de mensajes
 const mensajes = ref([]);
@@ -433,11 +439,12 @@ watch(
     }
 );
 
-if(idConversation.value != null){
-    setInterval(async () => {
+
+setInterval(async () => {
+    if (idConversation.value != null) {
         await commetInit()
-    }, 5000);
-}
+    }
+}, 5000);
 
 const commetInit = async () => {
     await loadMessages();
@@ -446,6 +453,11 @@ const commetInit = async () => {
 onMounted(async () => {
     initialize();
 })
+
+onBeforeUnmount(() => {
+    const UNIQUE_LISTENER_ID = "INCOMING_MESSAGES_LISTENER";
+    CometChat.removeUserListener(UNIQUE_LISTENER_ID);
+});
 
 // Funcion que va a correr al iniciar la pagina
 const initialize = async () => {
@@ -479,14 +491,14 @@ const initialize = async () => {
 
         myUid.value = user.uid
 
-        CometChat.login(UID, authKey).then(
+        /*CometChat.login(UID, authKey).then(
             (user) => {
                 //console.log("Loggued successful:", { user });
             },
             (error) => {
                 console.log("Login failed with exception:", { error });
             }
-        );
+        );*/
 
         // Afegirem un listener dels missatges
         const listenerID = "INCOMING_MESSAGES_LISTENER";
@@ -502,14 +514,22 @@ const initialize = async () => {
                     mensajes.value.push(textMessage);
 
                     //Para leer los mensajes
-                    markUserConversationAsRead(myUid.value, ChatId.value)
+                    if (textMessage.receiverId == myUid.value) {
+                        //markUserConversationAsRead(myUid.value, ChatId.value)
+                    }
 
                 },
                 onMediaMessageReceived: (mediaMessage) => {
                     //console.log("Media message received successfully", mediaMessage);
+                    // if (mediaMessage.receiverId == myUid.value) {
+                    //     markUserConversationAsRead(myUid.value, ChatId.value)
+                    // }
                 },
                 onCustomMessageReceived: (customMessage) => {
                     //console.log("Custom message received successfully", customMessage);
+                    // if (customMessage.receiverId == myUid.value) {
+                    //     markUserConversationAsRead(myUid.value, ChatId.value)
+                    // }
                 },
             })
         );
@@ -527,7 +547,7 @@ const loadMessages = async () => {
 
     if (response) {
         //Para leer los mensajes
-        markUserConversationAsRead(myUid.value, ChatId.value);
+        //markUserConversationAsRead(myUid.value, ChatId.value);
         await mark_user_conversation_as_delivered(myUid.value, ChatId.value);
     }
 }
@@ -562,11 +582,13 @@ const sendMessage = async () => {
     const message = document.getElementById("message");
 
     // Controlamos que el mensaje no esté vacio
-    const value = message.value.trim();
+    const valueText = message.value.trim();
+
     // Envio de mensjae con archivos
     if (mediaSource.value != null) {
 
         const mediaPath = await storeDriverDocumentV2(mediaAttachments.value);
+
         // creamos un array con los datos
         let arrayMedia = { url: mediaPath.data.path, name: mediaAttachments.value.file_name, extension: mediaAttachments.value.type }
         await sendTextMessage(myUid.value, message.value == '' ? 'Documento Adjunto' : message.value, ChatId.value, receiverType.value, '', arrayMedia);
@@ -577,23 +599,32 @@ const sendMessage = async () => {
         chatCont.scrollTop = chatCont.scrollHeight;
 
         await mark_user_conversation_as_delivered(myUid.value, ChatId.value);
+
+
+        // Netejem el text
+        message.value = "";
+
         await loadMessages()
 
     } else {
         // Envio de mensjae sin archivos
-        await sendTextMessage(myUid.value, message.value, ChatId.value, receiverType.value, isChecked.value, '');
-        isChecked.value = false
 
-        const chatCont = document.getElementById('chat');
-        chatCont.scrollTop = chatCont.scrollHeight;
+        if (valueText != '') {
+            await sendTextMessage(myUid.value, message.value, ChatId.value, receiverType.value, isChecked.value, '');
+            isChecked.value = false
 
-        await mark_user_conversation_as_delivered(myUid.value, ChatId.value);
-        await loadMessages()
-    
+            const chatCont = document.getElementById('chat');
+            chatCont.scrollTop = chatCont.scrollHeight;
+
+            await mark_user_conversation_as_delivered(myUid.value, ChatId.value);
+
+            // Netejem el text
+            message.value = "";
+
+            await loadMessages()
+        }
+
     }
-
-    // Netejem el text
-    message.value = "";
 };
 
 // Funcion para mostrar el modal
@@ -640,8 +671,8 @@ const onFileChange = async (event) => {
     let filePath = URL.createObjectURL(fileData); // Obtiene el web path del archivo
 
     mediaSource.value = fileData.name
-    console.log(fileData);
-    console.log(filePath); // Muestra el web path en la consola
+    //console.log(fileData);
+    //console.log(filePath); // Muestra el web path en la consola
 
     let data64 = await toBase64(fileData)
 
@@ -667,37 +698,67 @@ const toBase64 = file => new Promise((resolve, reject) => {
 
 // abrir pdf o imagenes
 const openDriverFile = async (path) => {
-  Swal.fire({
-    icon: 'info',
-    title: '',
-    text: t("documents.swal.document_wait_viewing"),
-    //toast: true,
-    position: 'center',
-    showConfirmButton: false,
-  });
-  await downloadDriverDocument(path);
-  Swal.close();
-  switch (driverDocumentData.value.type) {
-    case 'pdf':
-      window.open(driverDocumentData.value.data);
-      break;
-    case 'png':
-    case 'jpg':
-    case 'jpeg':
-      window.open(URL.createObjectURL(new Blob(["<img width='100%' src='" + driverDocumentData.value.data + "' />"], { type: "text/html" })));
-      break;
-    default:
-      Swal.fire({
-        icon: 'error',
+    Swal.fire({
+        icon: 'info',
         title: '',
-        text: t("documents.swal.document_error_viewing"),
-        confirmButtonText: t("documents.swal.all_right_btn"),
-        buttonsStyling: false,
-        customClass: {
-          confirmButton: 'btn btn-primary shadow-md',
-        },
-      });
-  }
+        text: t("documents.swal.document_wait_viewing"),
+        //toast: true,
+        position: 'center',
+        showConfirmButton: false,
+    });
+    await downloadDriverDocument(path);
+    Swal.close();
+    switch (driverDocumentData.value.type) {
+        case 'pdf':
+            window.open(driverDocumentData.value.data);
+            break;
+        case 'png':
+        case 'jpg':
+        case 'jpeg':
+            window.open(URL.createObjectURL(new Blob(["<img width='100%' src='" + driverDocumentData.value.data + "' />"], { type: "text/html" })));
+            break;
+        default:
+            Swal.fire({
+                icon: 'error',
+                title: '',
+                text: t("documents.swal.document_error_viewing"),
+                confirmButtonText: t("documents.swal.all_right_btn"),
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-primary shadow-md',
+                },
+            });
+    }
+}
+
+const onpresskey = async () => {
+    await markUserConversationAsRead(myUid.value, ChatId.value);
+    await checkUnreadMessages();
+
+    if (ChatId.value != null) {
+        // Suponiendo que ChatId.value contiene el ID del componente
+        const elementSeleccionat = document.getElementById(ChatId.value);
+
+        // Verifica si se encontró el elemento con el ID
+        if (elementSeleccionat) {
+            // Obtén todos los divs dentro del elemento seleccionado
+            const divs = elementSeleccionat.getElementsByTagName('div');
+
+            // Verifica si hay al menos tres divs
+            if (divs.length >= 3) {
+                // Obtén el tercer div (índice 2 porque los índices comienzan en 0)
+                const tercerDiv = divs[2];
+
+                // Elimina la clase 'baloon' del tercer div
+                tercerDiv.parentNode.removeChild(tercerDiv);
+            } else {
+                //console.log("No hay al menos tres divs dentro del elemento seleccionado.");
+            }
+        } else {
+            //console.log("No se encontró ningún elemento con el ID proporcionado.");
+        }
+
+    }
 }
 </script>
 <style>

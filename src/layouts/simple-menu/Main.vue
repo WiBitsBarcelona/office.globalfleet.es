@@ -212,7 +212,7 @@ onMounted(async () => {
   
   if (!localStorage.getItem("token") || useAuthenticationStore().user.employee !== null) {       
     await checkUnreadMessages();
-    setInterval(await checkUnreadMessages, 5000);
+    setInterval(await checkUnreadMessages, 4000);
   }
 
 });

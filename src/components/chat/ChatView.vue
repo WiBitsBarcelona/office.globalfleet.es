@@ -33,7 +33,8 @@
     <div id="group-list" class="flex flex-col gap-[6px] h-[76vh] overflow-y-scroll scrollbar-hidden">
       <!-- Per cada xat farem un botó -->
       <button v-if="!inNewChat" v-for="conversation in conversationList"
-        @click="enviarVariable(conversation.conversationId, conversation.conversationWith.uid, conversation.conversationType, conversation.conversationWith.name)" :id="conversation.conversationWith.uid
+        @click="enviarVariable(conversation.conversationId, conversation.conversationWith.uid, conversation.conversationType, conversation.conversationWith.name)"
+        :id="conversation.conversationWith.uid
           ? conversation.conversationWith.uid
           : conversation.conversationWith.guid
           " :key="conversation.conversationWith"
@@ -82,7 +83,8 @@
   </div>
 
   <!-- Cuadre de xat -->
-  <ChatsV2 :idConversation="propsConversationId" :ChatId="propsChatId" :receiverType="propsChatType" :nameConversation="propsNameConversation"/>
+  <ChatsV2 :idConversation="propsConversationId" :ChatId="propsChatId" :receiverType="propsChatType"
+    :nameConversation="propsNameConversation" />
 </template>
 
 <script>
@@ -96,7 +98,7 @@ export default {
 
 <script setup>
 import { CometChat } from "@cometchat-pro/chat";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeUnmount} from "vue";
 
 // Hooks
 import { useAuthenticationStore } from "@/stores/auth/authentications";
@@ -108,18 +110,12 @@ const {
   conversationList,
   getCometChatCredentials,
   getConversationsList,
-  getUserConversation,
-  getGroupConversation,
-  getUserData,
-  getGroupData,
   loadChatMessages,
   markUserConversationAsRead,
   markGroupConversationAsRead,
-  sendTextMessage,
   getUserGroups,
   getGroupMembers,
-  mark_user_conversation_as_delivered,
-  update_datameta_message
+  checkUnreadMessages,
 } = useChat();
 
 let selectedChat = ref("");
@@ -136,8 +132,13 @@ const propsNameConversation = ref(null)
 
 onMounted(async () => {
   initialize();
-
 })
+
+onBeforeUnmount(() => {
+  const chatListenerID = "chat_incoming_messages_unique_id_globaltank_apliemporda";
+  //const chatListenerID = 'INCOMING_MESSAGES_LISTENER'
+  CometChat.removeUserListener(chatListenerID);
+});
 
 // Funcion que va a correr al iniciar la pagina
 const initialize = async () => {
@@ -261,118 +262,9 @@ const enviarVariable = async (value, value2, value3, value4) => {
   propsChatType.value = value3 // receiverType
   propsNameConversation.value = value4
   await markUserConversationAsRead(userInfo.uid, propsChatId.value);
-  LoadChatsList();
-
+  await checkUnreadMessages();
+  await LoadChatsList();
 }
-
-// Funció per montar la pantalla del xat
-/*const buildChat = async (ConversationId, ChatType, ChatId) => {
-
-  if (conversationList != null && ChatType != null && ChatId != null) {
-
-    await mark_user_conversation_as_delivered(userInfo.uid, ChatId);
-
-    //console.log(ChatId);
-    sConversationId.value = ConversationId;
-    sChatType.value = ChatType;
-    sChatId.value = ChatId;
-
-    let lastMessageDate = "";
-
-    const messagesBalloon = document.getElementById(ChatId)?.querySelector(".inner-messages-balloon");
-
-    if (messagesBalloon) {
-      messagesBalloon.remove();
-    }
-
-    document.querySelectorAll(".conversations-list-item").forEach((element) => {
-      element.classList.replace("bg-gray-200", "bg-white");
-      element.classList.remove("selected");
-    });
-
-
-    const elementSeleccionat = document.getElementById(ChatId);
-    elementSeleccionat.classList.remove("bg-white");
-    elementSeleccionat.classList.add("bg-gray-200");
-
-    const response = ChatType === "user" ? await getUserData(ChatId) : await getGroupData(ChatId);
-    selectedChat.value = response.data;
-
-    nameChat.value = response.data.name
-    uidChat.value = response.data.uid
-
-    inChat.value = true;
-
-    const array1 = await loadChatMessages(ConversationId);
-    const chat = document.getElementById("chat");
-
-    chat.innerHTML = "";
-
-    array1.data.forEach((conversation) => {
-      if (conversation.sender !== userInfo.uid) {
-        if (conversation.receiverType === "user")
-          markUserConversationAsRead(userInfo.uid, conversation.sender);
-        else markGroupConversationAsRead(userInfo.uid, conversation.receiver);
-      }
-
-      // mark_user_conversation_as_delivered(userInfo.uid, ChatId);
-      const currentMessageDate = getMessageDate(conversation.sentAt);
-
-      if (lastMessageDate !== currentMessageDate) {
-        chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
-      }
-
-      lastMessageDate = currentMessageDate;
-
-      const messageClass = userInfo.uid === conversation.sender ? "missatgePropi" : "missatgeEntrant";
-
-      chat.innerHTML += `
-        <button class="${messageClass} ${userInfo.uid === conversation.sender ? 'mensaje' : ''}" style="display: flex; width: 100%; justify-content: flex-${userInfo.uid === conversation.sender ? "end" : "start"};"
-          date="${conversation.sentAt}-${conversation.deliveredAt}-${conversation.readAt}-${conversation.id}-${conversation.data.metadata ? conversation.data.metadata['confirmetAt'] : null}">
-          <div style="justify-content: center; align-items:center; height: 100%; display: flex;">
-          ${userInfo.uid === conversation.sender ?
-          conversation.data.metadata ?
-            conversation.data.metadata['confirmetAt'] == 'undefined' ? '<img src="../src/assets/images/alertCircle.svg" alt="Checkmark" style="width: 25px; height: 25px; margin-right: 10px;" />'
-              : '<img src="../src/assets/images/checkmarkCircleGray.svg" alt="Checkmark" style="width: 25px; height: 25px; margin-right: 10px;" />'
-            : ''
-          : ''}
-          </div>
-          <div class="flex gap-3 ${userInfo.uid === conversation.sender ? "py-2 px-3 bg-[#0096b2] text-white rounded-lg w-fit" : "rounded-lg w-fit py-2 px-3 bg-gray-200"} max-w-md">
-            <p style="margin: 0px; display: flex; word-break: break-word;">${conversation.data.text}</p>
-            <div style="display: flex; justify-content: flex-end; align-items: center">
-              <p style="font-size: 12px; margin: 0px;">${convertStringToDate(conversation.sentAt)}</p>
-              
-              ${userInfo.uid === conversation.sender ?
-          (conversation.sentAt > 0 && conversation.deliveredAt == null && conversation.readAt == null ?
-            `<img src="../src/assets/images/checkmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
-            :
-            (conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt == null ?
-              `<img src="../src/assets/images/allcheckmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
-              :
-              (conversation.sentAt > 0 && conversation.deliveredAt > 0 && conversation.readAt > 0 ?
-                `<img src="../src/assets/images/checkallmark.svg" alt="Checkmark" style="width: 15px; height: 15px; margin-left: 5px;">`
-                : '')))
-          : ''}
-                
-            </div>
-          </div>
-        </button>`;
-    });
-
-    const messageBody = document.getElementById("chat");
-    messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
-  }
-};*/
-
-
-// Funció per a alternar la vista de xat a llista de xat
-const toggleInChat = () => {
-  inChat.value = false;
-  selectedChat.value = "";
-
-  // Recarreguem la llista de missatges per reposicionar i per actualitzar el últim missatge enviat
-  LoadChatsList();
-};
 
 // Funció per a comparar la data dels missatges
 const getMessageDate = (strTime) => {
@@ -423,26 +315,6 @@ const convertStringToDate = (strTime) => {
   return timeStr.toString();
 };
 
-// Funció per a enviar missatges
-const sendMessage = async () => {
-  const message = document.getElementById("message");
-  const header = document.getElementById("chat-header");
-  const chatId = header.getAttribute("chatId");
-  const receiverType = header.getAttribute("type");
-
-  //CHATID.value = chatId
-  // Controlamos que el mensaje no esté vacio
-  const value = message.value.trim();
-  if (value !== "") {
-    sendTextMessage(userInfo.uid, message.value, chatId, receiverType);
-    await mark_user_conversation_as_delivered(userInfo.uid, sChatId);
-
-  }
-
-  // Netejem el text
-  message.value = "";
-};
-
 // Funció per a carregar la llista de xats nous
 const toggleNewChat = async () => {
   const chatButton = document.getElementById("chat-button");
@@ -483,151 +355,9 @@ const toggleNewChat = async () => {
   }
 };
 
-// Funció per carregar un nou xat
-const buildNewChat = async (id, name, type) => {
-  let lastMessageDate = "";
-  let currentMessageDate;
-
-  if (type === "user") {
-    // Obtenim les dades de l'usuari en cuestió
-    const response = await getUserData(id);
-    selectedChat.value = response.data;
-    console.log(response.data)
-  } else if (type === "group") {
-    // Obtenim les dades de l'usuari en cuestió
-    const response = await getGroupData(id);
-    selectedChat.value = response.data;
-    console.log(response.data)
-  }
-
-  if (!inChat.value) inChat.value = true;
-
-  if (type === "user") {
-    // Revisem que no tinguem alguna conversa amb aquest usuari
-    const conversation = await getUserConversation(userInfo.uid, id);
-    const hasConversation = conversation.error ? false : true;
-
-    // Netejem el xat
-    const chat = document.getElementById("chat");
-    chat.innerHTML = "";
-
-    LoadChatsList();
-
-    // En cas de tenir alguna conversa la carregarem
-    if (hasConversation) {
-      const messages = await loadChatMessages(conversation.data.conversationId);
-
-      messages.data.map((message) => {
-        if (message.sender != userInfo.uid) {
-          if (message.receiverType === "user")
-            markUserConversationAsRead(userInfo.uid, message.sender);
-          else markGroupConversationAsRead(userInfo.uid, message.receiver);
-        }
-
-        // Comprobem la data del missatge
-        currentMessageDate = getMessageDate(message.sentAt);
-
-        if (lastMessageDate !== currentMessageDate) {
-          chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
-        }
-
-        lastMessageDate = currentMessageDate;
-
-        if (userInfo.uid === message.sender) {
-          chat.innerHTML += `<div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
-                              <div class="flex gap-3 py-2 px-3 bg-[#0096b2] text-white rounded-lg max-w-md">
-                              <p style="margin: 0px;">${message.data.text}</p>
-                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
-                                <p style="font-size: 12px; color: white; margin: 0px; heigh: 100%">
-                                  ${convertStringToDate(message.sentAt)}
-                                </p>
-                              </div>
-                            </div>
-                           </div>`;
-        } else {
-          chat.innerHTML += `<div class="missatgeEntrant" style="display: flex; width: 100%; justify-content: flex-start;">
-                              <div class="flex gap-3 rounded-lg w-fit py-2 px-3 bg-gray-200 max-w-md">
-                              <p style="margin: 0px;">${message.data.text}</p>
-                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
-                                <p style="font-size: 12px; margin: 0px; heigh: 100%">
-                                  ${convertStringToDate(message.sentAt)}
-                                </p>
-                              </div>
-                            </div>
-                          </div>`;
-        }
-
-        const messageBody = document.getElementById("chat");
-        messageBody.scrollTop =
-          messageBody.scrollHeight - messageBody.clientHeight;
-      });
-    }
-  } else if (type === "group") {
-    // Revisem que no tinguem alguna conversa amb aquest usuari
-    const conversation = await getGroupConversation(userInfo.uid, id);
-    const hasConversation = conversation.error ? false : true;
-
-    // Netejem el xat
-    const chat = document.getElementById("chat");
-    chat.innerHTML = "";
-
-    LoadChatsList();
-
-    // En cas de tenir alguna conversa la carregarem
-    if (hasConversation) {
-      const messages = await loadChatMessages(conversation.data.conversationId);
-
-      messages.data.map((message) => {
-        if (message.sender != userInfo.uid) {
-          if (message.receiverType === "user")
-            markUserConversationAsRead(userInfo.uid, message.sender);
-          else markGroupConversationAsRead(userInfo.uid, message.receiver);
-        }
-
-        // Comprobem la data del missatge
-        currentMessageDate = getMessageDate(message.sentAt);
-
-        if (lastMessageDate !== currentMessageDate) {
-          chat.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
-        }
-
-        lastMessageDate = currentMessageDate;
-
-        if (userInfo.uid === message.sender) {
-          chat.innerHTML += `<div class="missatgePropi" style="display: flex; width: 100%; justify-content: flex-end;">
-                              <div class="flex gap-3 py-2 px-3 bg-[#0096b2] text-white rounded-lg max-w-md">
-                              <p style="margin: 0px;">${message.data.text}</p>
-                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
-                                <p style="font-size: 12px; color: white; margin: 0px; heigh: 100%">
-                                  ${convertStringToDate(message.sentAt)}
-                                </p>
-                              </div>
-                            </div>
-                           </div>`;
-        } else {
-          chat.innerHTML += `<div class="missatgeEntrant" style="display: flex; width: 100%; justify-content: flex-start;">
-                              <div class="flex gap-3 rounded-lg w-fit py-2 px-3 bg-gray-200 max-w-md">
-                              <p style="margin: 0px;">${message.data.text}</p>
-                              <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center">
-                                <p style="font-size: 12px; margin: 0px; heigh: 100%">
-                                  ${convertStringToDate(message.sentAt)}
-                                </p>
-                              </div>
-                            </div>
-                          </div>`;
-        }
-
-        const messageBody = document.getElementById("chat");
-        messageBody.scrollTop =
-          messageBody.scrollHeight - messageBody.clientHeight;
-      });
-    }
-  }
-  document.getElementById(id).classList.add("selected");
-};
-
 // Funció per carregar/reiniciar els xats
 const LoadChatsList = async () => {
+
   const chatButton = document.getElementById("chat-button");
   const newChatButton = document.getElementById("new-chat-button");
 
@@ -645,10 +375,21 @@ const LoadChatsList = async () => {
     if (!chatButton.classList.contains("bg-[#0096b2]"))
       chatButton.classList.add("bg-[#0096b2]", "text-white", "rounded-lg");
   }
+  
 
   // Carregarem la llista de xats
   await getConversationsList(userInfo.uid);
 
+
+  if (propsChatId.value != null) {
+    document.querySelectorAll(".conversations-list-item").forEach((element) => {
+      element.classList.replace("bg-gray-200", "bg-white");
+      element.classList.remove("selected");
+    });
+    const elementSeleccionat = document.getElementById(propsChatId.value);
+    elementSeleccionat.classList.remove("bg-white");
+    elementSeleccionat.classList.add("bg-gray-200");
+  }
 };
 
 const printTextMessage = async (textMessage) => {
@@ -659,7 +400,6 @@ const printTextMessage = async (textMessage) => {
 
   // Comprobem la data del missatge
   const currentMessageDate = getMessageDate(textMessage.sentAt);
-
 
   // Comprobem l'ultim missatge d'aquesta mateixa conversació
   const lastMessageDate = await loadChatMessages(textMessage.conversationId);
@@ -680,33 +420,28 @@ const printTextMessage = async (textMessage) => {
     await getConversationsList(userInfo.uid);
     return;
   }
+
   // En caso de estar en un chat pero no es del que recibimos el mensaje
-  if (header.getAttribute("chatId") !== receiver && header.getAttribute("chatId") !== sender) {
+  if (document.getElementById("chat-header") !== receiver && document.getElementById("chat-header") !== sender) {
     // Actualizamos lista de xats
     await getConversationsList(userInfo.uid);
-    console.log(CHATID.value)
     // Volvemos a pintar el elemento
 
-    document
-      .getElementById(header.getAttribute("chatId"))
-      .classList.add("selected");
+    document.getElementById(propsChatId.value).classList.add("selected");
     // Volvemos a seleccionar el chat con el color gris
     return;
+
+
   }
 
-  const senderClass =
-    textMessage.sender.uid === userInfo.uid
-      ? "missatgePropi"
-      : "missatgeEntrant";
-  const bgColorClass =
-    textMessage.sender.uid === userInfo.uid
-      ? "bg-[#0096b2] text-white"
-      : "bg-gray-200";
+  const senderClass = textMessage.sender.uid === userInfo.uid ? "missatgePropi" : "missatgeEntrant";
+  const bgColorClass = textMessage.sender.uid === userInfo.uid ? "bg-[#0096b2] text-white" : "bg-gray-200";
   const messageText = textMessage.text;
   const messageDate = convertStringToDate(textMessage.sentAt);
 
   // Marcamos el nuevo mensaje como leido
-  if (sender !== userInfo.uid) {
+  if (sender != userInfo.uid) {
+    console.log(userInfo.uid)
     if (textMessage.receiverType === "group") {
       markGroupConversationAsRead(userInfo.uid, receiver);
     } else {
@@ -738,9 +473,7 @@ const printTextMessage = async (textMessage) => {
   await getConversationsList(userInfo.uid);
 
   // Volvemos a seleccionar el chat con el color gris
-  document
-    .getElementById(header.getAttribute("chatId"))
-    .classList.add("selected");
+  document.getElementById(propsChatId.value).classList.add("selected");
 };
 
 const searchConversationByName = async () => {
