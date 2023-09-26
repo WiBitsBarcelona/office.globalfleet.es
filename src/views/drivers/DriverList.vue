@@ -1,22 +1,5 @@
 <template>
 
-	<!-- BEGIN: Page Layout Create -->
-	<div class="intro-y box p-5 mt-5" v-if="isCreate">
-		<Create
-			@saveDriverForm="saveDriverForm"
-			@cancelCreate="cancelCreate"
-		/>
-	</div>
-
-	<!-- BEGIN: Page Layout Update -->
-	<div class="intro-y box p-5 mt-5" v-if="isEdit">
-		<Edit
-			:driverId="driverId"
-			@cancelEdit="cancelEdit"
-			@updateDriverForm="updateDriverForm"
-		/>
-	</div>
-
 	<Preloader v-if="loading" />
 
 	<!-- BEGIN: Page Layout Table -->
@@ -68,6 +51,28 @@
 
 	<!-- END: HTML Table Data -->
 	</div>
+
+
+
+	<!-- BEGIN: Page Layout Create -->
+	<div class="intro-y box p-5 mt-5" v-if="isCreate">
+		<Create
+			@saveDriverForm="saveDriverForm"
+			@cancelCreate="cancelCreate"
+		/>
+	</div>
+
+	<!-- BEGIN: Page Layout Update -->
+	<div class="intro-y box p-5 mt-5" v-if="isEdit">
+		<Edit
+			:driverId="driverId"
+			@cancelEdit="cancelEdit"
+			@updateDriverForm="updateDriverForm"
+		/>
+	</div>
+
+
+
 
 </template>
 <script setup>
@@ -167,6 +172,18 @@
 					field: "user.email",
 					vertAlign: "middle",
 					headerHozAlign:"left",
+				},
+				{
+					title: t("driver_manager"),
+					minWidth: 100,
+					responsive: 0,
+					field: "employee[0].name",
+					vertAlign: "middle",
+					headerHozAlign:"left",
+					formatter: (cell, formatterParams) => {
+						console.log(cell.getData());
+						return cell.getData().employee[0].name + ' ' + cell.getData().employee[0].surname;
+					},
 				},
 				{
 					title: t("token"),
@@ -358,6 +375,7 @@
 	// Init table
 	onMounted(async() => {
 		tableData.value = await findData();
+
 		initTabulator();
 		reInitOnResizeWindow();
 		div_table = document.querySelector('#div_table');

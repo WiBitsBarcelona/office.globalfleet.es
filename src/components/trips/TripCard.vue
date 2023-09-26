@@ -371,8 +371,16 @@ watchEffect(() => {
   let countStage = 0;
   if (trip.value.stages.length > 0) {
 
+
+
     let find = trip.value.stages.find(element => element.activity !== null);
-    origin.value = find.name;
+
+
+    
+    if(find){
+      origin.value = find.name;
+    }
+    
 
     //destination.value = trip.value.stages[trip.value.stages.length - 1].name;
     trip.value.stages.forEach(element => {

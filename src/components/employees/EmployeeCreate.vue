@@ -167,10 +167,11 @@
 	<!-- END: Form -->
 
 </template>
+
+
 <script setup>
 
 	import { onMounted, reactive, toRefs, ref } from 'vue';
-	import useEmployees from '@/composables/employees';
 	import useRoles from '@/composables/roles';
 	import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
 	import { useVuelidate } from '@vuelidate/core';
@@ -178,7 +179,6 @@
 	import { useI18n } from 'vue-i18n';
 	import enumRoles from '@/enums/enum_roles.js';
 
-	const { employee, getEmployee } = useEmployees();
 	const { roles, getRoles } = useRoles();
 	const { t } = useI18n();
 	const props = defineProps(['employeeId']);
@@ -238,10 +238,8 @@
 	};
 
 	onMounted(async () => {
-		// TODO here implements...
-
+		
 		await getRoles();
-
 
 		//Select Roles
 		const newRoles = roles.value.filter((role) => {
@@ -250,9 +248,6 @@
 			parseInt(role.id) === enumRoles.TRAFFIC_MANAGER_ID;
 		});
 		selectRoles.value = newRoles;
-
-
-		console.log(selectRoles);
 
 	});
 

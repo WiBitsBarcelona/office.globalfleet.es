@@ -151,6 +151,7 @@
   "observations": "Observaciones",
   "trip_priority": "Prioridad",
   "driver": "Conductor",
+  "token": "Token de acceso",
   "drivers": "Conductores",
   "trip_comm_status": "Estatus Comunicación",
   "trip_status": "Estatus",

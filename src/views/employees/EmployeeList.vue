@@ -1,26 +1,7 @@
 <template>
 
-	<!-- BEGIN: Page Layout Create -->
-	<div class="intro-y box p-5 mt-5" v-if="isCreate">
-		<Create
-			@saveEmployeeForm="saveEmployeeForm"
-			@cancelCreate="cancelCreate"
-		/>
-	</div>
-
-	<!-- BEGIN: Page Layout Update -->
-	<div class="intro-y box p-5 mt-5" v-if="isEdit">
-		<Edit
-			:employeeId="employeeId"
-			@cancelEdit="cancelEdit"
-			@updateEmployeeForm="updateEmployeeForm"
-		/>
-	</div>
-
-
     <Preloader v-if="loading" />
     
-
 	<!-- BEGIN: Page Layout Table -->
 	<div class="grid grid-cols-12 gap-6 mt-8">
     	<div class="col-span-12 intro-y">
@@ -70,6 +51,27 @@
 
 	<!-- END: HTML Table Data -->
 	</div>
+
+
+
+	<!-- BEGIN: Page Layout Create -->
+	<div class="intro-y box p-5 mt-5" v-if="isCreate">
+		<Create
+			@saveEmployeeForm="saveEmployeeForm"
+			@cancelCreate="cancelCreate"
+		/>
+	</div>
+
+	<!-- BEGIN: Page Layout Update -->
+	<div class="intro-y box p-5 mt-5" v-if="isEdit">
+		<Edit
+			:employeeId="employeeId"
+			@cancelEdit="cancelEdit"
+			@updateEmployeeForm="updateEmployeeForm"
+		/>
+	</div>
+
+
 
 </template>
 <script setup>
