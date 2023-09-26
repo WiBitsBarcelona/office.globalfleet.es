@@ -46,7 +46,12 @@
             <label for="name" class="form-label w-full">
               {{ $t("name") }}
             </label>
-            <input v-model.trim="validate.name.$model" id="name" type="text" name="name" class="form-control"
+            <input 
+              v-model.trim="validate.name.$model" 
+              id="name" 
+              type="text" 
+              name="name" 
+              class="form-control"
               :class="{ 'border-danger': validate.name.$error }" />
             <template v-if="validate.name.$error">
               <div v-for="(error, index) in validate.name.$errors" :key="index" class="text-danger mt-2">
@@ -78,7 +83,11 @@
             <label for="execution_at" class="form-label w-full">
               {{ $t("execution_at") }}
             </label>
-            <input v-model.trim="validate.execution_at.$model" id="execution_at" type="text" name="execution_at"
+            <input 
+              v-model.trim="validate.execution_at.$model" 
+              id="execution_at" 
+              type="datetime-local" 
+              name="execution_at"
               class="form-control" :class="{ 'border-danger': validate.execution_at.$error }" />
             <template v-if="validate.execution_at.$error">
               <div v-for="(error, index) in validate.execution_at.$errors" :key="index" class="text-danger mt-2">
@@ -95,16 +104,25 @@
               {{ $t("trip_priority") }}
             </label>
 
-            <select v-model.trim="validate.trip_priority_id.$model" id="trip_priority_id" name="trip_priority_id"
-              class="form-control" :class="{ 'border-danger': validate.trip_priority_id.$error }">
 
-              <option value="" selected>Seleccione</option>
+
+
+            <TomSelect 
+              v-model.trim="validate.trip_priority_id.$model"
+              id="trip_priority_id" 
+              name="trip_priority_id" 
+              :options="{
+                placeholder: $t('message.select'),
+              }" 
+              class="form-control w-full"
+						  :class="{ 'border-danger': validate.trip_priority_id.$error }">
+
+              <option :value="0"></option>
               <option v-for="item in selectTripPriorities" :value="item.id">
                 {{ item.name }}
               </option>
 
-            </select>
-
+					  </TomSelect>
 
             <template v-if="validate.trip_priority_id.$error">
               <div v-for="(error, index) in validate.trip_priority_id.$errors" :key="index" class="text-danger mt-2">
@@ -121,15 +139,21 @@
               {{ $t("vehicle") }}
             </label>
 
-            <select v-model.trim="validate.vehicle_id.$model" id="vehicle_id" name="vehicle_id" class="form-control"
-              :class="{ 'border-danger': validate.vehicle_id.$error }">
+            <TomSelect 
+              v-model.trim="validate.vehicle_id.$model"
+              id="vehicle_id" 
+              name="vehicle_id" 
+              :options="{
+                placeholder: $t('message.select'),
+              }" 
+              class="form-control w-full"
+						  :class="{ 'border-danger': validate.vehicle_id.$error }">
 
-              <option value="" selected>Seleccione</option>
               <option v-for="item in selectVehicles" :value="item.id">
                 {{ item.plate }}
               </option>
 
-            </select>
+					  </TomSelect>
 
             <template v-if="validate.vehicle_id.$error">
               <div v-for="(error, index) in validate.vehicle_id.$errors" :key="index" class="text-danger mt-2">
@@ -147,16 +171,21 @@
               {{ $t("driver") }}
             </label>
 
-            <select v-model.trim="validate.driver_id.$model" id="driver_id" name="driver_id" class="form-control"
-              :class="{ 'border-danger': validate.driver_id.$error }">
+            <TomSelect 
+              v-model.trim="validate.driver_id.$model"
+              id="driver_id" 
+              name="driver_id" 
+              :options="{
+                placeholder: $t('message.select'),
+              }" 
+              class="form-control w-full"
+						  :class="{ 'border-danger': validate.driver_id.$error }">
 
-              <option value="" selected>Seleccione</option>
               <option v-for="item in selectDrivers" :value="item.id">
                 {{ item.name }} {{ item.surname }}
               </option>
 
-            </select>
-
+					  </TomSelect>
 
 
             <template v-if="validate.driver_id.$error">
@@ -312,7 +341,7 @@
 
 
                       <!-- Action Cameras -->
-                      <div class="col-span-12" v-if="action_task.action_type_model === enumActionTask.CAMERA_ID">
+                      <div class="col-span-12" v-if="parseInt(action_task.action_type_model) === enumActionTask.CAMERA_ID">
                         <div class="relative" v-for="camera in action_task.cameras" :key="camera.id">
 
                           <div class="md:flex items-center md:space-x-4 mb-3">
@@ -336,7 +365,7 @@
 
 
                       <!-- Action Scanner -->
-                      <div class="col-span-12" v-if="action_task.action_type_model === enumActionTask.SCANNER_ID">
+                      <div class="col-span-12" v-if="parseInt(action_task.action_type_model) === enumActionTask.SCANNER_ID">
                         <div class="relative" v-for="scanner in action_task.scanners" :key="scanner.id">
                           <div class="md:flex items-center md:space-x-4 mb-3">
                             <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
@@ -360,7 +389,7 @@
 
 
                       <!-- Action Scanner -->
-                      <div class="col-span-12" v-if="action_task.action_type_model === enumActionTask.FORM_ID">
+                      <div class="col-span-12" v-if="parseInt(action_task.action_type_model) === enumActionTask.FORM_ID">
                         <div class="relative" v-for="form in action_task.forms" :key="form.id">
                           <div class="md:flex items-center md:space-x-4 mb-3">
                             <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
@@ -431,7 +460,7 @@
 
 
           <!-- Action Cameras -->
-          <div class="col-span-12" v-if="action_stage.action_type_model === enumActionTask.CAMERA_ID">
+          <div class="col-span-12" v-if="parseInt(action_stage.action_type_model) === enumActionTask.CAMERA_ID">
             <div class="relative" v-for="camera in action_stage.cameras" :key="camera.id">
 
               <div class="md:flex items-center md:space-x-4 mb-3">
@@ -455,7 +484,7 @@
 
 
           <!-- Action Scanner -->
-          <div class="col-span-12" v-if="action_stage.action_type_model === enumActionTask.SCANNER_ID">
+          <div class="col-span-12" v-if="parseInt(action_stage.action_type_model) === enumActionTask.SCANNER_ID">
             <div class="relative" v-for="scanner in action_stage.scanners" :key="scanner.id">
               <div class="md:flex items-center md:space-x-4 mb-3">
                 <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
@@ -479,7 +508,7 @@
 
 
           <!-- Action Scanner -->
-          <div class="col-span-12" v-if="action_stage.action_type_model === enumActionTask.FORM_ID">
+          <div class="col-span-12" v-if="parseInt(action_stage.action_type_model) === enumActionTask.FORM_ID">
             <div class="relative" v-for="form in action_stage.forms" :key="form.id">
               <div class="md:flex items-center md:space-x-4 mb-3">
                 <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
@@ -563,6 +592,7 @@
 import { onMounted, reactive, toRefs, ref } from 'vue';
 import Preloader from '@/components/preloader/Preloader.vue';
 import { Toast } from '@/utils/toast';
+import { helper as $h } from "@/utils/helper";
 
 import useTrips from '@/composables/trips.js';
 import useStage from '@/composables/stages.js';
@@ -628,18 +658,7 @@ const { actionStageScanner, actionStageScannerErrors, storeActionStageScanner } 
 const { actionStageForm, actionStageFormErrors, storeActionStageForm } = useActionStageForm();
 
 
-
-
-
-
-
-
-
-
-
 const { t } = useI18n();
-
-
 
 
 const selectVehicles = ref([]);
@@ -648,7 +667,6 @@ const selectDrivers = ref([]);
 
 
 const arrStages = ref([]);
-
 
 
 const isCreateTrip = ref(true);
@@ -697,14 +715,16 @@ const rules = {
   },
 };
 
+
+
 const formData = reactive({
   vehicle_id: "",
-  trip_priority_id: "2",
+  trip_priority_id: "",
   driver_id: "",
-  reference_number: "78978922",
+  reference_number: Math.floor(Math.random() * 100000),
   name: "Viaje Plaza",
-  execution_at: "2023-10-10 10:00:00",
-  observations: "Sin observaciones",
+  execution_at: $h.nowTimestamp('-').substr(0,16),
+  observations: "",
 });
 
 const validate = useVuelidate(rules, toRefs(formData));
@@ -717,9 +737,12 @@ const save = async () => {
     //TODO
   } else {
 
-    loading.value = true;
-    
 
+    //Validacion sobre los stage
+
+
+    loading.value = true;
+  
     console.log("envia a guardar");
 
 
@@ -728,6 +751,7 @@ const save = async () => {
      */
     await storeTrip(formData);
     console.log({ ...trip.value });
+    console.log(tripErrors);
 
 
 

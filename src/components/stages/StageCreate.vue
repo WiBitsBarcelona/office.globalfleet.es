@@ -12,8 +12,6 @@
         <!-- BEGIN: container -->
         <div class="grid grid-cols-12 gap-6">
 
-
-
             <div class="col-span-12 md:col-span-8 lg:col-span-8">
                 <div class="input-form">
                     <label for="name" class="form-label w-full">

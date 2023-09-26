@@ -109,6 +109,7 @@
   },
 
   "form": {
+    "name": "Formulario",
     "required": "Campo requerido",
     "minLength": "Mayor a 2 caracteres",
     "email": "Campo correo electrónico"
