@@ -12,7 +12,7 @@
 
 			<div class="grid grid-cols-12 gap-1 mb-8">
 
-				<div class="col-span-10">
+				<div class="col-span-8">
 					<h2 class="text-lg font-medium">
 						{{ $t("trip") }}
 					</h2>
@@ -20,13 +20,11 @@
 
 				<!-- BEGIN: Buttons -->
 
-				<div class="col-span-2 text-right">
-					<button type="submit" class="btn btn-primary">
+				<div class="col-span-4 text-right">
+					<button type="submit" class="btn btn-primary mr-2">
 						{{ $t("save") }}
 					</button>
-					<!-- <button @click.prevent="" class="btn btn-danger">
-              {{ $t("cancel") }}
-            </button> -->
+					<router-link :to="`/trips`" class="btn btn-danger">{{ $t("cancel") }}</router-link>
 				</div>
 
 				<!-- END: Buttons -->
@@ -94,9 +92,6 @@
 						<label for="trip_priority_id" class="form-label w-full">
 							{{ $t("trip_priority") }}
 						</label>
-
-
-
 
 						<TomSelect v-model.trim="validate.trip_priority_id.$model" id="trip_priority_id"
 							name="trip_priority_id" :options="{

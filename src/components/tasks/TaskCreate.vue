@@ -9,7 +9,7 @@
 		<!-- BEGIN: container -->
 		<div class="grid grid-cols-12 gap-6">
 
-			<div class="col-span-12 md:col-span-6 lg:col-span-4">
+			<div class="col-span-12 md:col-span-6 lg:col-span-10">
 				<div class="input-form">
 					<label for="name" class="form-label w-full">
 						{{ $t("name") }}
@@ -25,12 +25,12 @@
 			</div>
 
 
-			<div class="col-span-12 md:col-span-6 lg:col-span-4">
+			<div class="col-span-12 md:col-span-6 lg:col-span-2">
 				<div class="input-form">
 					<label for="order_number" class="form-label w-full">
 						{{ $t("order_number") }}
 					</label>
-					<input v-model.trim="validateTask.order_number.$model" id="order_number" type="text" name="order_number"
+					<input v-model.trim="validateTask.order_number.$model" id="order_number" type="number" name="order_number"
 						class="form-control" :class="{ 'border-danger': validateTask.order_number.$error }" />
 					<template v-if="validateTask.order_number.$error">
 						<div v-for="(error, index) in validateTask.order_number.$errors" :key="index"
