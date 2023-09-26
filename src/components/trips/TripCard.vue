@@ -17,7 +17,9 @@
 
               <div class="flex items-center justify-center">
 
-                <CheckSquareIcon class="w-5 h-5 text-primary" @click="editTrip(trip.id)" />
+                <router-link :to="`trips/edit/${trip.id}`">
+                  <CheckSquareIcon class="w-5 h-5 text-primary" />
+                </router-link>
 
               </div>
 
