@@ -10,11 +10,11 @@
             <h2 class="text-lg font-medium truncate mr-5 mb-5">{{ $t("trips") }} <span class="text-xl font-bold">{{ company.name }}</span></h2>
           </div>
           
-          <!-- <div class="col-span-2 intro-y mb-5 text-end">
+          <div class="col-span-2 intro-y mb-5 text-end">
             <router-link :to="`/trips/create`" class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
               <PlusCircleIcon class="w-4 h-4" />
             </router-link>
-          </div> -->
+          </div>
 
         </div>
         
@@ -123,8 +123,7 @@
         <!-- Element 1 -->
 
         <div v-if="searchedTrips.length > 0">
-            <TripCard v-for="trip in searchedTrips" :key="trip.id" :trip="trip" :classBtnFilter="classBtnFilter"
-            @click="openTrip(trip.id)" />
+            <TripCard v-for="trip in searchedTrips" :key="trip.id" :trip="trip" :classBtnFilter="classBtnFilter" />
         </div>
         <div v-else>
           <div class="box p-1 mb-2 intro-x hover:cursor-pointer hover:ring-2 hover:ring-primary">
@@ -188,29 +187,22 @@ import useTrips from "@/composables/trips";
 import TripCard from '@/components/trips/TripCard.vue';
 import { helper as $h } from "@/utils/helper";
 import { useI18n } from 'vue-i18n';
-import { useRouter, useRoute} from 'vue-router';
 import useCompany from '@/composables/companies.js';
 import { useAuthenticationStore } from '@/stores/auth/authentications';
 
 
 const { trips, getTrips, getTrip, trip } = useTrips();
 const { t } = useI18n();
-let auto_refresh = import.meta.env.VITE_AUTOREFRESH_VALUE;
 
-const router = useRouter();
-const route = useRoute();
+
+
 const { company, getCompany } = useCompany();
 const useAuthentication = useAuthenticationStore();
 
 const classBtnFilter = ref(classBtnAll);
 
 
-const openTrip = async (id) => {
-  let route = router.resolve({ path: "/trip/" + id });     
-  let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,
-width=1000,height=800,left=50,top=50`;  
-  window.open(route.href, '_blank', params);
-}
+
 
 
 
@@ -383,7 +375,7 @@ const onClickCompleted = () => {
 
   interval.value = setInterval(async () => {
     await find();
-  }, auto_refresh);
+  }, import.meta.env.VITE_AUTOREFRESH_VALUE);
 
 
 

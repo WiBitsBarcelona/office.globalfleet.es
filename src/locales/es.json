@@ -1,4 +1,17 @@
 {
+  "lang_select": "Cambiar Idioma",
+  "mode_select": "Cambiar Modo",
+  "breadcrumbs": {
+    "dashboard": "Visión General",
+    "trips": "Viajes",
+    "devices": "Dispositivos",
+    "documents": "Documentos",
+    "incidents": "Incidencias",
+    "chat": "Mensajes",
+    "users": "Usuarios",
+    "drivers": "Conductores",
+    "help": "Ayuda"
+  },
   "auth_footer":{
     "all_rights": "Todos los derechos reservados.",
     "developed": "Desarrollado por"
@@ -109,6 +122,7 @@
   },
 
   "form": {
+    "name": "Formulario",
     "required": "Campo requerido",
     "minLength": "Mayor a 2 caracteres",
     "email": "Campo correo electrónico"
@@ -457,7 +471,9 @@
       },
       "devices": {
         "title": "Dispositivos",
-        "intro_text_1": "En esta pantalla de dispositivos, la aplicación, nos muestra la última posición conocida de los dispositivos con la aplicación Driver instalada. En la parte derecha nos muestra un lista con los nombre de los conductores asignados a cada dispositivo con el icono de GlobalFleet en verde si el dispositivo está circulando y en rojo si el dispositivo está parado"
+        "intro_text_1": "En esta pantalla de dispositivos, la aplicación, nos muestra la última posición conocida de los dispositivos con la aplicación Driver instalada. En la parte izquierda nos muestra un lista con los nombre de los conductores asignados a cada dispositivo con el icono de GlobalFleet en verde si el dispositivo está circulando y en rojo si el dispositivo está parado",
+        "intro_text_2": ", el nombre del conductor asignado al dispositivo y la fecha y hora de la última actualización del posicionamiento. En la parte derecha veremos esa misma información representada en el mapa. Podemos pulsar sobre el nombre del conductor de la lista o encima del marcador del mapa para ver información más detallada del registro de posicionamiento.",
+        "intro_text_3": "En la parte superior derecha tenemos un botón para acceder a la pantalla de histórico de dispositivos."
       }
     }
   }

@@ -41,19 +41,24 @@ export default function useTrips(){
         })
             .then(res => res.json())
             .then((res) => {
-                trip.value = res.data;
+
+                // Errors 400
+                if (res.data.status_code === 422) {
+                    for (const key in e.response.data.errors) {
+                        tripErrors.value = key
+                    }
+                }else{
+                    trip.value = res.data;
+                }
+
             })
             .catch((e) => {
+
                 // Errors 500
                 if (e.response.status >= 500 &&  e.response.status <= 599) {
                     tripErrors.value.push(t("errors.error_internal"));
                 }
-                // Errors 400
-                if (e.response.status_code === 422) {
-                    for (const key in e.response.data.errors) {
-                        tripErrors.value = key
-                    }
-                }
+                
             });
 
     }
