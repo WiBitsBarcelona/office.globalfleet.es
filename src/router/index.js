@@ -95,7 +95,7 @@ const routes = [
       },
       {
         path: "trips/edit/:id",
-        name: "trips-create",
+        name: "trips-edit",
         component: () => import('@/components/trips/TripEdit.vue'),
       },
       {
