@@ -89,8 +89,8 @@ const rulesTask = {
 
 const formDataTask = reactive({
 	uuid: uuidv4(),
-	name: "ALBARÁN 520",
-	order_number: "1",
+	name: "ALBARÁN " + Math.floor(Math.random() * 1000),
+	order_number: "",
 });
 
 
@@ -101,20 +101,28 @@ const validateTask = useVuelidate(rulesTask, toRefs(formDataTask));
 
 const saveTask = () => {
 
-
-	emit('addTaskForm', props.stageIndex, { ...formDataTask });
-
-
-	// validateTask.value.$touch();
-	// if (validateTask.value.$invalid) {
-	// 	//TODO
-	// } else {
-	// 	//emit('saveTaskForm', formDataTask);
-	// }
+	validateTask.value.$touch();
+	if (validateTask.value.$invalid) {
+		//TODO
+	} else {
+		emit('addTaskForm', props.stageIndex, { ...formDataTask });
+	}
 };
 
 onMounted(async () => {
-	// TODO here implements...
+	
+
+
+	/**
+	 * order_number
+	 */
+	if(props.stageIndex.tasks === undefined){
+		formDataTask.order_number = 1;
+		
+	}else{
+		formDataTask.order_number = props.stageIndex.tasks.length + 1;
+	}
+
 });
 
 </script>

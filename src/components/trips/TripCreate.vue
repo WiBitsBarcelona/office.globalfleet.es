@@ -221,28 +221,28 @@
     <div class="grid grid-cols-12 gap-1 mt-10 mb-10">
       <div class="col-span-12 md:col-span-12 lg:col-span-12 text-end">
 
+        <a href="#" class="btn btn-outline border-blue-300 text-blue-400 w-1/2 sm:w-auto mr-2" @click="showActionStageForm">
+          <PlusCircleIcon class="w-4 h-4" /> {{ $t("add_action_stage") }}
+        </a>
+
         <a href="#" class="btn btn-outline-primary w-1/2 sm:w-auto mr-2" @click="showStageForm">
           <PlusCircleIcon class="w-4 h-4" /> {{ $t("add_stage") }}
         </a>
-
-        <a href="#" class="btn btn-outline-success w-1/2 sm:w-auto mr-2" @click="showActionStageForm">
-          <PlusCircleIcon class="w-4 h-4" /> {{ $t("add_action_stage") }}
-        </a>
+        
       </div>
     </div>
 
 
 
     <!-- Stage Card -->
-    <div v-for="stage in arrStages" :key="stage.id"
-      class="p-4 rounded border border-slate-200 text-slate-500 shadow mb-2">
+    <div v-for="stage in arrStages" :key="stage.id">
 
       <!-- v-if -->
-      <div v-if="stage.activity_type_id">
+      <div v-if="stage.activity_type_id" class="p-4 rounded border border-blue-300 text-slate-500 shadow mb-2">
         <!-- Stage -->
         <div class="grid grid-cols-12 gap-2 mb-5 pb-2">
           <div class="col-span-12 text-right">
-            <a href="#" @click.prevent="showTaskForm(stage)" class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
+            <a href="#" @click.prevent="showTaskForm(stage)" class="btn btn-outline border-teal-500 text-teal-500 w-1/2 sm:w-auto mr-2">
               <PlusCircleIcon class="w-4 h-4" /> {{ $t("add_task") }}
             </a>
             <a href="#" @click.prevent="deleteStageForm(stage.uuid)" class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
@@ -290,12 +290,12 @@
         <!-- Tasks -->
         <div class="relative" v-for="task in stage.tasks" :key="task.id">
           <div class="md:flex items-center md:space-x-4 mb-3">
-            <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
+            <div class="w-full p-4 rounded border border-teal-500 text-slate-500 shadow">
               <div class="grid grid-cols-4 gap-2 mb-5">
 
                 <div class="col-span-12 text-right">
                   <a href="#" @click.prevent="showActionTaskForm(stage, task)"
-                    class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
+                    class="btn btn-outline border-violet-300 text-violet-400  w-1/2 sm:w-auto mr-2">
                     <PlusCircleIcon class="w-4 h-4" /> {{ "Agregar Action Task" }}
                   </a>
                   <a href="#" @click.prevent="deleteTaskForm(stage.uuid, task.uuid)" class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
@@ -310,6 +310,13 @@
                   </p>
                 </div>
 
+                <div class="col-span-2">
+                  <h5 class="text-xs font-light text-gray-400">{{ $t("order_number") }}:</h5>
+                  <p class="text-xs font-normal leading-6 text-gray-500">
+                    {{ task.order_number }}
+                  </p>
+                </div>
+
               </div>
 
 
@@ -318,7 +325,7 @@
               <!-- Action Tasks -->
               <div class="relative" v-for="action_task in task.action_tasks" :key="action_task.id">
                 <div class="md:flex items-center md:space-x-4 mb-3">
-                  <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
+                  <div class="w-full p-4 rounded border border-violet-300 text-slate-500 shadow">
                     <div class="grid grid-cols-4 gap-2 mb-5">
 
 
@@ -434,9 +441,7 @@
 
       </div>
       <!-- v-else -->
-      <div v-else>
-
-        <!-- Stage -->
+      <div v-else class="p-4 rounded border border-slate-200 text-slate-500 shadow mb-2">
 
         <!-- Action Stages -->
 
@@ -558,13 +563,21 @@
 
 
   <div class="intro-y box p-5 mt-5" v-if="isCreateStage">
-    <StageCreate @cancelStageForm="cancelStageForm" @addStageForm="addStageForm" />
+    <StageCreate 
+      @cancelStageForm="cancelStageForm" 
+      @addStageForm="addStageForm"
+      :arrStages="arrStages"
+    />
   </div>
 
 
 
   <div class="intro-y box p-5 mt-5" v-if="isCreateTask">
-    <TaskCreate :stageIndex="stageIndex" @cancelTaskForm="cancelTaskForm" @addTaskForm="addTaskForm" />
+    <TaskCreate 
+      :stageIndex="stageIndex" 
+      @cancelTaskForm="cancelTaskForm" 
+      @addTaskForm="addTaskForm" 
+    />
   </div>
 
 
@@ -579,7 +592,11 @@
 
 
   <div class="intro-y box p-5 mt-5" v-if="isCreateActionStage">
-    <ActionStageCreate @cancelActionStageForm="cancelActionStageForm" @addActionStageForm="addActionStageForm" />
+    <ActionStageCreate 
+      @cancelActionStageForm="cancelActionStageForm"
+      @addActionStageForm="addActionStageForm" 
+      :arrStages="arrStages"
+    />
   </div>
 </template>
 

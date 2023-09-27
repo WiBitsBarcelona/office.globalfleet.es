@@ -335,10 +335,7 @@ import { useVuelidate } from '@vuelidate/core';
 import { helpers } from '@vuelidate/validators';
 import { useI18n } from 'vue-i18n';
 import { helper as $h } from "@/utils/helper";
-
-
 import { v4 as uuidv4 } from 'uuid';
-
 
 
 const { t } = useI18n();
@@ -346,17 +343,12 @@ const { stageTypes, getStageTypes } = useStageType();
 const { activityTypes, getActivityTypes } = useActivityType();
 
 
-
 const emit = defineEmits(['addStageForm', 'cancelStageForm']);
-
-//const props = defineProps(['arrStages']);
-
-
+const props = defineProps(['arrStages']);
 
 
 const selectStageTypes = ref([]);
 const selectActivityTypes = ref([]);
-
 
 
 const rulesStage = {
@@ -412,8 +404,8 @@ const formDataStage = reactive({
     activity_type_name: "",
     stage_type_id: "3",
     reference_number: "1000",
-    name: "Viaje Nuevo Hannover",
-    order_number: "1",
+    name: "Etapa Hannover",
+    order_number: "",
     client_name: "Pepito",
     address: "Calle hambrosio 2-4",
     phone: "890890890",
@@ -425,6 +417,13 @@ const formDataStage = reactive({
     description: "Descripcion para la Etapa",
     execution_at: $h.nowTimestamp('-').substr(0,16),
 });
+
+
+//console.log(props.arrStages.value);
+
+
+
+
 
 const validate = useVuelidate(rulesStage, toRefs(formDataStage));
 
@@ -438,15 +437,11 @@ const saveStage = () => {
         //TODO
     } else {
 
-
         //Find element activity
         const selectedActivity = selectActivityTypes.value.find(elem => elem.id === parseInt(formDataStage.activity_type_id));
         formDataStage.activity_type_name = selectedActivity.name;
 
         emit('addStageForm', { ...formDataStage });
-
-        console.log("Guarda Stage");
-        //TODO reset fields
         
     }
 };
@@ -465,6 +460,13 @@ onMounted(async () => {
     //Load activity types
     await getActivityTypes();
     selectActivityTypes.value = activityTypes.value;
+
+
+    if(props.arrStages.length === 0){
+        formDataStage.order_number = 1;
+    }else{
+        formDataStage.order_number = props.arrStages.length + 1;
+    }
 
 
 });
