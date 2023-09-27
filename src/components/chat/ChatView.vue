@@ -34,12 +34,13 @@
       <!-- Per cada xat farem un botó -->
       <button v-if="!inNewChat" v-for="conversation in conversationList"
         @click="enviarVariable(conversation.conversationId, conversation.conversationWith.uid, conversation.conversationType, conversation.conversationWith.name)"
-        :id="conversation.conversationWith.uid
-          ? conversation.conversationWith.uid
-          : conversation.conversationWith.guid
-          " :key="conversation.conversationWith"
+        :id="conversation.conversationWith.uid ? conversation.conversationWith.uid : conversation.conversationWith.guid"
+        :key="conversation.conversationWith"
         class="flex gap-3 p-3 pl-2 h-16 box cursor-pointer border-b bg-white items-center conversations-list-item">
         <!-- En cas de ser un xat amb un usuari -->
+        <!-- <p>{{conversation.conversationId}} - {{ conversation.conversationWith.uid}} - {{conversation.conversationType}} - 
+        {{ conversation.conversationWith.name}}</p> -->
+
         <img v-if="conversation.conversationType === 'user'" class="w-14 h-14 rounded-full" :src="conversation.conversationWith.avatar
           ? conversation.conversationWith.avatar
           : `https://ui-avatars.com/api/?name=${chatsTitle(conversation.conversationWith.name)}&color=FFFFFF&background=4EDDFF&font-size=0.38`
@@ -79,6 +80,35 @@
                 conversation.lastMessage.data.text.substring(0, 30) + "..." : "" }} </p>
         </div>
       </button>
+
+      <!-- Per cada nou possible xat, farem un botó també -->
+      <button v-if="inNewChat" v-for="chatList in newChatsList"
+        class="flex gap-3 p-3 pl-2 h-16 box cursor-pointer border-b bg-white items-center"
+        @click="enviarVariable(chatList.conversationId, chatList.uid ? chatList.uid : chatList.guid, chatList.uid ? 'user' : 'group', chatList.name)">
+
+        <!-- <p>{{ chatList.conversationId }}</p> -->
+        <!-- En cas de ser un xat amb un usuari -->
+        <img v-if="chatList.uid" class="w-14 h-14 rounded-full" :src="chatList.avatar
+          ? chatList.avatar
+          : `https://ui-avatars.com/api/?name=${chatList.name.charAt(
+            0
+          )}&color=FFFFFF&background=4EDDFF&font-size=0.38`
+          " />
+        <!-- En cas de ser un grup -->
+        <img v-if="chatList.guid" class="w-14 h-14 rounded-full" :src="chatList.icon
+          ? chatList.icon
+          : `https://ui-avatars.com/api/?name=${chatList.name.charAt(
+            0
+          )}&color=FFFFFF&background=BCBCBC&font-size=0.38`
+          " />
+        <div class="flex flex-col justify-between h-full w-full text-left gap-1">
+          <div class="flex w-full justify-between">
+            <h2 class="font-semibold">
+              {{ chatList.name }}
+            </h2>
+          </div>
+        </div>
+      </button>
     </div>
   </div>
 
@@ -98,7 +128,7 @@ export default {
 
 <script setup>
 import { CometChat } from "@cometchat-pro/chat";
-import { ref, onMounted, onBeforeUnmount} from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 
 // Hooks
 import { useAuthenticationStore } from "@/stores/auth/authentications";
@@ -116,6 +146,7 @@ const {
   getUserGroups,
   getGroupMembers,
   checkUnreadMessages,
+  getUserConversation
 } = useChat();
 
 let selectedChat = ref("");
@@ -128,7 +159,6 @@ const propsConversationId = ref(null)
 const propsChatType = ref(null)
 const propsChatId = ref(null)
 const propsNameConversation = ref(null)
-
 
 onMounted(async () => {
   initialize();
@@ -257,13 +287,31 @@ const initialize = async () => {
 
 // FUNCION UE RECOGE LOS VALORES
 const enviarVariable = async (value, value2, value3, value4) => {
-  propsConversationId.value = value // idConversation
+
+  if (value == undefined || value == null) {
+    // Revisem que no tinguem alguna conversa amb aquest usuari
+    const response = await getUserConversation(userInfo.uid, value2);
+
+    if ('data' in response) {
+      propsConversationId.value = response.data.conversationId // idConversation
+    } else if ('error' in response) {
+      propsConversationId.value = value
+    }
+
+  } else {
+    propsConversationId.value = value
+  }
+
   propsChatId.value = value2 //ChatId
   propsChatType.value = value3 // receiverType
   propsNameConversation.value = value4
-  await markUserConversationAsRead(userInfo.uid, propsChatId.value);
-  await checkUnreadMessages();
-  await LoadChatsList();
+
+  if (inNewChat.value == false) {
+    await markUserConversationAsRead(userInfo.uid, propsChatId.value);
+    await checkUnreadMessages();
+    await LoadChatsList();
+  }
+
 }
 
 // Funció per a comparar la data dels missatges
@@ -345,7 +393,6 @@ const toggleNewChat = async () => {
       otherUsers.push(group);
       const members = await getGroupMembers(group.guid);
       const otherMembers = members.filter((user) => user.uid !== userInfo.uid);
-
       for (const member of otherMembers) {
         otherUsers.push(member);
       }
@@ -375,21 +422,25 @@ const LoadChatsList = async () => {
     if (!chatButton.classList.contains("bg-[#0096b2]"))
       chatButton.classList.add("bg-[#0096b2]", "text-white", "rounded-lg");
   }
-  
 
   // Carregarem la llista de xats
   await getConversationsList(userInfo.uid);
-
 
   if (propsChatId.value != null) {
     document.querySelectorAll(".conversations-list-item").forEach((element) => {
       element.classList.replace("bg-gray-200", "bg-white");
       element.classList.remove("selected");
     });
+
     const elementSeleccionat = document.getElementById(propsChatId.value);
-    elementSeleccionat.classList.remove("bg-white");
-    elementSeleccionat.classList.add("bg-gray-200");
+
+    if (elementSeleccionat != null) {
+      elementSeleccionat.classList.remove("bg-white");
+      elementSeleccionat.classList.add("bg-gray-200");
+    }
+
   }
+
 };
 
 const printTextMessage = async (textMessage) => {

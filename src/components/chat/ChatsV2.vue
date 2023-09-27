@@ -1,6 +1,6 @@
 <template>
     <div class="w-full">
-        <div v-if="idConversation">
+        <div v-if="nameConversation">
 
             <div class="flex flex-col h-[85vh] justify-between items-center box overflow-hidden">
                 <!-- Header -->
@@ -17,9 +17,10 @@
                         <p class="text-xl">{{ nameConversation }}</p>
                     </div>
                 </div>
+
                 <!-- Chat -->
-                <div class="scrollbar-hidden w-full" id="chat"
-                    style="overflow: scroll; height: 100%; background-color: white; padding: 8px;">
+                <div class="overflow-scroll scrollbar-hidden w-full h-full p-4 bg-white" id="chat" @scroll="detectScroll">
+
                     <div v-for="(mensaje, index) in mensajes" :key="mensaje.id">
 
                         <!-- Verificar si la fecha actual es diferente a la fecha anterior -->
@@ -205,6 +206,26 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Botón "Ir al último mensaje" fuera del bucle -->
+                        <button @click="scrollToLast" style="position: absolute; bottom: 13%; right: 1%; width: 50px; height: 50px; 
+                            background-color: white; border-radius: 50px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);"
+                            class="hidden items-center justify-center" id="btnScroll">
+
+                            <div v-if="countUnreadMessage > 0">
+                                <p class="absolute -top-1 -right-1 rounded-full bg-amber-500 text-white"
+                                    style="width: 20px;">
+                                    {{ countUnreadMessage }}
+                                </p>
+                            </div>
+
+
+                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 21 21">
+                                <path fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"
+                                    d="m14.5 8.5l-4 4l-4-4" />
+                            </svg>
+                        </button>
+
                     </div>
                 </div>
 
@@ -219,8 +240,7 @@
                     </div>
                 </div>
 
-                <div
-                    class="pt-4 sm:py-4 flex items-center border-t-[6px] border-slate-200/60 dark:border-darkmode-400 w-full">
+                <div class="pt-4 sm:py-4 flex items-center border-t-8 border-slate-200/60 dark:border-darkmode-400 w-full">
                     <textarea v-on:keyup.enter="sendMessage" id="message" @click="onpresskey" class="overflow-y-scroll scrollbar-hidden chat__box__input form-control dark:bg-darkmode-600 h-11 resize-none border-transparent 
                         px-5 py-3 shadow-none focus:border-transparent focus:ring-0"
                         placeholder="Escribe el mensaje..."></textarea>
@@ -258,6 +278,7 @@
 
                     </button>
                 </div>
+                <!-- FIN BARRA DE ENVIO -->
 
                 <!-- Modal Checkmark -->
                 <div v-if="modalMessage == true"
@@ -327,10 +348,12 @@
 
     </div>
 </template>
+
 <script>
 import { defineComponent } from "vue";
 
 export default defineComponent({
+
 
     methods: {
         onFileChange(event) {
@@ -377,11 +400,12 @@ export default defineComponent({
                 date.getMonth() === yesterday.getMonth() &&
                 date.getFullYear() === yesterday.getFullYear()
             );
-        }
+        },
     },
 
 });
 </script>
+
 <script setup>
 import { ref, onMounted, defineProps, watch, onBeforeUnmount } from 'vue';
 import { CometChat } from "@cometchat-pro/chat";
@@ -392,9 +416,11 @@ import Swal from "sweetalert2";
 import { useI18n } from 'vue-i18n';
 
 const { cometData, getCometChatCredentials, loadChatMessages, markUserConversationAsRead, sendTextMessage, mark_user_conversation_as_delivered,
-    checkUnreadMessages } = useChat();
+    checkUnreadMessages, getConversationsList } = useChat();
 const { storeDriverDocumentV2, downloadDriverDocument, driverDocumentData } = useDriverDocument();
 const { t } = useI18n();
+
+const chatContainer = ref(null);
 
 let userInfo;
 const isChecked = ref(false);
@@ -412,6 +438,8 @@ const confirmetAt = ref(null)
 
 const mediaSource = ref(null)
 const mediaAttachments = ref(null)
+
+let countUnreadMessage;
 // Array de mensajes
 const mensajes = ref([]);
 
@@ -430,12 +458,12 @@ watch(
         receiverType.value = newReceiverType;
         nameConversation.value = newNameConversation;
 
+        commetInit()
+
         setTimeout(() => {
             const chatCont = document.getElementById('chat');
             chatCont.scrollTop = chatCont.scrollHeight;
         }, 500);
-
-        commetInit()
     }
 );
 
@@ -444,7 +472,7 @@ setInterval(async () => {
     if (idConversation.value != null) {
         await commetInit()
     }
-}, 5000);
+}, 4000);
 
 const commetInit = async () => {
     await loadMessages();
@@ -510,12 +538,23 @@ const initialize = async () => {
                     // Cuando llegue un nuevo mensaje
                     //console.log("Text message received successfully", textMessage);
 
+                    //mensajes.value.push(textMessage);
+
+                    unreadMessageCount()
+
                     // Actualizamos los mensajes
-                    mensajes.value.push(textMessage);
+                    if (nameConversation.value == undefined) {
+                        nameConversation.value = textMessage.conversationId
+                    }
 
                     //Para leer los mensajes
                     if (textMessage.receiverId == myUid.value) {
                         //markUserConversationAsRead(myUid.value, ChatId.value)
+                        if (seDesplazo == true) {
+                            setTimeout(() => {
+                                scrollToLast()
+                            }, 5000)
+                        }
                     }
 
                 },
@@ -545,7 +584,7 @@ const loadMessages = async () => {
     const response = await loadChatMessages(idConversation.value);
     mensajes.value = response.data
 
-    if (response) {
+    if (response.data > 0) {
         //Para leer los mensajes
         //markUserConversationAsRead(myUid.value, ChatId.value);
         await mark_user_conversation_as_delivered(myUid.value, ChatId.value);
@@ -595,8 +634,10 @@ const sendMessage = async () => {
 
         mediaSource.value = null
 
-        const chatCont = document.getElementById('chat');
-        chatCont.scrollTop = chatCont.scrollHeight;
+        setTimeout(() => {
+            const chatCont = document.getElementById('chat');
+            chatCont.scrollTop = chatCont.scrollHeight;
+        }, 400);
 
         await mark_user_conversation_as_delivered(myUid.value, ChatId.value);
 
@@ -613,8 +654,10 @@ const sendMessage = async () => {
             await sendTextMessage(myUid.value, message.value, ChatId.value, receiverType.value, isChecked.value, '');
             isChecked.value = false
 
-            const chatCont = document.getElementById('chat');
-            chatCont.scrollTop = chatCont.scrollHeight;
+            setTimeout(() => {
+                const chatCont = document.getElementById('chat');
+                chatCont.scrollTop = chatCont.scrollHeight;
+            }, 400);
 
             await mark_user_conversation_as_delivered(myUid.value, ChatId.value);
 
@@ -684,6 +727,7 @@ const onFileChange = async (event) => {
     mediaAttachments.value = arrayFile
 }
 
+// eliminar archivo que se subira
 const removeMediaFile = () => {
     mediaSource.value = null
 }
@@ -731,6 +775,7 @@ const openDriverFile = async (path) => {
     }
 }
 
+// Actualizar mensajes no leidos cuando se pulsa el textarea o el boton de desplazamientos
 const onpresskey = async () => {
     await markUserConversationAsRead(myUid.value, ChatId.value);
     await checkUnreadMessages();
@@ -751,6 +796,7 @@ const onpresskey = async () => {
 
                 // Elimina la clase 'baloon' del tercer div
                 tercerDiv.parentNode.removeChild(tercerDiv);
+                countUnreadMessage = 0
             } else {
                 //console.log("No hay al menos tres divs dentro del elemento seleccionado.");
             }
@@ -760,6 +806,54 @@ const onpresskey = async () => {
 
     }
 }
+
+let seDesplazo = false;
+
+// desplazar hacia el ultimo mensaje
+const scrollToLast = async () => {
+
+    // Obtén el elemento que representa el último mensaje
+    const chatContainer = document.getElementById('chat');
+    const lastMessage = chatContainer.lastElementChild;
+
+    if (lastMessage) {
+        // Haz scroll hasta el último mensaje
+        lastMessage.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    if (countUnreadMessage > 0) {
+        onpresskey()
+    }
+}
+
+// detectar el moviemiento del scroll de los mensajes
+const detectScroll = async () => {
+    const chatContainer = document.getElementById('chat');
+    const btnScroll = document.getElementById("btnScroll");
+
+    // Verifica si está en el último mensaje
+    if (chatContainer.scrollTop + chatContainer.clientHeight >= chatContainer.scrollHeight) {
+        // Está en el último mensaje, añade la clase "hidden" al botón
+        btnScroll.classList.add("hidden");
+        seDesplazo = true;
+    } else {
+        // No está en el último mensaje, elimina la clase "hidden" del botón
+        btnScroll.classList.remove("hidden");
+        seDesplazo = false;
+    }
+}
+
+// verificar cuantos mensajes existen sin leer
+const unreadMessageCount = async () => {
+    const conversations = await getConversationsList(userInfo.uid);
+
+    conversations.forEach(i => {
+        if (i.conversationId == idConversation.value) {
+            countUnreadMessage = i.unreadMessageCount
+        }
+    });
+}
+
 </script>
 <style>
 .contMensajeRecibido {
