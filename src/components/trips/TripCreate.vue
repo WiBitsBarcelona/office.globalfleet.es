@@ -13,7 +13,7 @@
 
       <div class="grid grid-cols-12 gap-1 mb-8">
 
-        <div class="col-span-10">
+        <div class="col-span-8">
           <h2 class="text-lg font-medium">
             {{ $t("trip") }}
           </h2>
@@ -23,13 +23,11 @@
 
         <!-- BEGIN: Buttons -->
 
-        <div class="col-span-2 text-right">
-          <button type="submit" class="btn btn-primary">
+        <div class="col-span-4 text-right">
+          <button type="submit" class="btn btn-primary mr-2">
             {{ $t("save") }}
           </button>
-          <!-- <button @click.prevent="" class="btn btn-danger">
-              {{ $t("cancel") }}
-            </button> -->
+          <router-link :to="`/trips`" class="btn btn-danger">{{ $t("cancel") }}</router-link>
         </div>
 
         <!-- END: Buttons -->
@@ -117,7 +115,6 @@
               class="form-control w-full"
 						  :class="{ 'border-danger': validate.trip_priority_id.$error }">
 
-              <option :value="0"></option>
               <option v-for="item in selectTripPriorities" :value="item.id">
                 {{ item.name }}
               </option>
