@@ -8,18 +8,26 @@
 			<div class="col-span-12 md:col-span-5 lg:col-span-5">
 				<div class="input-form">
 					<label for="action_type_id" class="form-label w-full">
-						{{ $t("action_type") }}
+						{{ $t("action") }}
 					</label>
 
-					<select v-model.trim="validate.action_type_id.$model" id="action_type_id" name="action_type_id"
-						class="form-control" :class="{ 'border-danger': validate.action_type_id.$error }">
+					<TomSelect 
+						v-model.trim="validate.action_type_id.$model"
+						id="action_type_id" 
+						name="action_type_id" 
+						:options="{
+							placeholder: $t('message.select'),
+						}" 
+						class="form-control w-full"
+						:class="{ 'border-danger': validate.action_type_id.$error }"
+					>
 
-						<option value="" selected>Seleccione</option>
+						<option :value="0"></option>
 						<option v-for="item in selectActionTypes" :value="item.id">
 							{{ item.name }}
 						</option>
 
-					</select>
+					</TomSelect>
 
 
 
@@ -39,18 +47,23 @@
 						{{ $t("action_type") }}
 					</label>
 
-					<select v-model.trim="validate.action_type_model.$model" id="action_type_model" name="action_type_model"
-						class="form-control" :class="{ 'border-danger': validate.action_type_model.$error }"
-						@change="onChangeSelectActionModel($event)">
+					<TomSelect 
+						v-model.trim="validate.action_type_model.$model"
+						id="action_type_model" 
+						name="action_type_model" 
+						:options="{
+							placeholder: $t('message.select'),
+						}" 
+						class="form-control w-full"
+						:class="{ 'border-danger': validate.action_type_model.$error }"
+						@change="onChangeSelectActionModel"	
+					>
 
-						<option value="" selected>Seleccione</option>
+						<option :value="0"></option>
 						<option v-for="item in selectActionTypeModel" :value="item.id">
 							{{ item.name }}
 						</option>
-
-					</select>
-
-
+					</TomSelect>
 
 					<template v-if="validate.action_type_model.$error">
 						<div v-for="(error, index) in validate.action_type_model.$errors" :key="index"
@@ -68,8 +81,13 @@
 					<label for="order_number" class="form-label w-full">
 						{{ $t("order_number") }}
 					</label>
-					<input v-model.trim="validate.order_number.$model" id="order_number" type="text" name="order_number"
-						class="form-control" :class="{ 'border-danger': validate.order_number.$error }" />
+					<input 
+						v-model.trim="validate.order_number.$model" 
+						id="order_number" 
+						type="number" 
+						name="order_number"
+						class="form-control" 
+						:class="{ 'border-danger': validate.order_number.$error }" />
 					<template v-if="validate.order_number.$error">
 						<div v-for="(error, index) in validate.order_number.$errors" :key="index" class="text-danger mt-2">
 							{{ error.$message }}
@@ -78,23 +96,28 @@
 				</div>
 			</div>
 
+
 			<div class="col-span-12 md:col-span-5 lg:col-span-5" v-if="isShowActionFormField">
 				<div class="input-form">
 					<label for="action_form_field_id" class="form-label w-full">
-						{{ $t("action_form_field") }}
+						{{ $t("form.name") }}
 					</label>
 
-					<select v-model.trim="validate.action_form_field_id.$model" id="action_form_field" name="action_form_field"
-						class="form-control" :class="{ 'border-danger': validate.action_form_field_id.$error }">
+					<TomSelect 
+						v-model.trim="validate.action_form_field_id.$model"
+						id="action_form_field_id" 
+						name="action_form_field_id" 
+						:options="{
+							placeholder: $t('message.select'),
+						}" 
+						class="form-control w-full"
+						:class="{ 'border-danger': validate.action_form_field_id.$error }">
 
-						<option value="" selected>Seleccione</option>
+						<option :value="0"></option>
 						<option v-for="item in selectActionFormFields" :value="item.id">
 							{{ item.name }}
 						</option>
-
-					</select>
-
-
+					</TomSelect>
 
 					<template v-if="validate.action_form_field_id.$error">
 						<div v-for="(error, index) in validate.action_form_field_id.$errors" :key="index"
@@ -102,6 +125,7 @@
 							{{ error.$message }}
 						</div>
 					</template>
+
 				</div>
 			</div>
 
@@ -157,6 +181,7 @@ import { helpers } from '@vuelidate/validators';
 import { useI18n } from 'vue-i18n';
 import Swal from "sweetalert2";
 import { v4 as uuidv4 } from 'uuid';
+import { helper as $h } from "@/utils/helper";
 
 import enumActionTask from '@/enums/enum_action_task.js';
 
@@ -167,7 +192,7 @@ const { actionTypes, getActionTypes } = useActionType();
 const { actionFormFields, getActionFormFields } = useActionFormField();
 
 const emit = defineEmits(['cancelActionStageForm', 'addActionStageForm']);
-const props = defineProps(['stageIndex']);
+//const props = defineProps(['stageIndex']);
 
 
 
@@ -176,6 +201,7 @@ const props = defineProps(['stageIndex']);
 
 const selectActionTypes = ref([]);
 const selectActionTypeModel = ref([
+	{ id: 0, name: '' },
 	{ id: enumActionTask.CAMERA_ID, name: 'Camara' },
 	{ id: enumActionTask.SCANNER_ID, name: 'Escaner' },
 	{ id: enumActionTask.FORM_ID, name: 'Formulario' },
@@ -206,11 +232,11 @@ const rules = {
 
 
 
-const stageFake = {
+let stageFake = {
 	uuid: uuidv4(),
     stage_type_id: "1",
     reference_number: "-",
-    name: "ActionStage",
+    name: "",
     order_number: "0",
     client_name: "-",
     address: "-",
@@ -221,7 +247,7 @@ const stageFake = {
     route_code: "-",
     route_name: "-",
     description: "",
-    execution_at: "2023-10-10",
+    execution_at: $h.nowTimestamp('-').substr(0,16),
 }
 
 
@@ -248,6 +274,8 @@ const save = () => {
 	} else {
 
 
+
+
 		//TODO 
 		if (parseInt(formData.action_type_model) === enumActionTask.FORM_ID) {
 			if(formData.action_form_field_id === '' || formData.action_form_field_id === undefined){
@@ -266,28 +294,29 @@ const save = () => {
 
 		}
 
+
 		//Find element action
-		const selectedAction = selectActionTypes.value.find(elem => elem.id === formData.action_type_id);
+		const selectedAction = selectActionTypes.value.find(elem => elem.id === parseInt(formData.action_type_id));
 		formData.action_type_name = selectedAction.name;
 
 
 
 		//Find element action form field
 		if (parseInt(formData.action_type_model) === enumActionTask.FORM_ID) {
-			const selectedForm = selectActionFormFields.value.find(elem => elem.id === formData.action_form_field_id);
+			const selectedForm = selectActionFormFields.value.find(elem => elem.id === parseInt(formData.action_form_field_id));
 			formData.action_form_field_name = selectedForm.name;
 		}
-		
-		
+
+		stageFake.name = selectedAction.name;
 
 		emit('addActionStageForm', stageFake, { ...formData });
 	}
 };
 
 
-const onChangeSelectActionModel = (event) => {
-
-	if (parseInt(event.target.value) === enumActionTask.FORM_ID) {
+const onChangeSelectActionModel = () => {
+	
+	if (parseInt(formData.action_type_model) === enumActionTask.FORM_ID) {
 
 		isShowActionFormField.value = true;
 

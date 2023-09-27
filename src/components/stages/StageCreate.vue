@@ -12,8 +12,6 @@
         <!-- BEGIN: container -->
         <div class="grid grid-cols-12 gap-6">
 
-
-
             <div class="col-span-12 md:col-span-8 lg:col-span-8">
                 <div class="input-form">
                     <label for="name" class="form-label w-full">
@@ -427,23 +425,25 @@ const validateStage = useVuelidate(rulesStage, toRefs(formDataStage));
 
 const saveStage = () => {
 
-    //Find element activity
-    const selectedActivity = selectActivityTypes.value.find(elem => elem.id === formDataStage.activity_type_id);
-    formDataStage.activity_type_name = selectedActivity.name;
-
-    emit('addStageForm', { ...formDataStage });
+    
 
 
-    // validateStage.value.$touch();    
-    // if (validateStage.value.$invalid) {
-    //     //TODO
-    //     //console.log({...validateStage});
-    // } else {
+    validateStage.value.$touch();    
+    if (validateStage.value.$invalid) {
+        //TODO
+    } else {
 
-    //     console.log("Guarda Stage");
-    //     emit('addStageArr', {...formDataStage});
-    //     //TODO reset fields
-    // }
+
+        //Find element activity
+        const selectedActivity = selectActivityTypes.value.find(elem => elem.id === formDataStage.activity_type_id);
+        formDataStage.activity_type_name = selectedActivity.name;
+
+        emit('addStageForm', { ...formDataStage });
+
+        console.log("Guarda Stage");
+        //TODO reset fields
+        
+    }
 };
 
 

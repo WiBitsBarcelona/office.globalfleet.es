@@ -216,18 +216,32 @@ const helpers = {
     }
     return icon;
   },
-  nowTimestamp(){
+  nowTimestamp(separator = '/', isViewFormat = false){
     const today = new Date();
     const yyyy = today.getFullYear();
     let mm = today.getMonth() + 1; // Months start at 0!
     let dd = today.getDate();
     let hours = today.getHours();
+    let min = today.getMinutes();
+    let seg = today.getSeconds();
 
     if (dd < 10) dd = '0' + dd;
     if (mm < 10) mm = '0' + mm;
     if (hours < 10) hours = '0' + hours;
+    if (min < 10) min = '0' + min;
+    if (seg < 10) seg = '0' + seg;
 
-    return  dd + '/' + mm + '/' + yyyy + " " + hours + ":" + today.getMinutes() + ":" + today.getSeconds();
+
+    if(isViewFormat){
+
+      return  dd + separator + mm + separator + yyyy + " " + hours + ":" + min + ":" + seg;
+
+    }else{
+
+      return  yyyy + separator + mm + separator + dd + " " + hours + ":" + min + ":" + seg;
+      
+    }
+
   },
   formatBytes(bytes, decimals = 2){
     if (!+bytes) return '0 Bytes'
