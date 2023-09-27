@@ -176,7 +176,7 @@
 
 						<textarea v-model.trim="validate.observations.$model" id="observations" name="observations"
 							class="form-control">
-            </textarea>
+            			</textarea>
 
 					</div>
 				</div>
