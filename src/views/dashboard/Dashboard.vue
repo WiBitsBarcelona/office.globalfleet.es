@@ -109,6 +109,11 @@ onMounted(async () => {
 
   await getCompany(useAuthentication.getUser.employee.company_id);
 
+  //FIXME:
+  console.log(useAuthentication.getUser.employee.company.name);
+
+
+
 });
 
 </script>

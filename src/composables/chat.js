@@ -159,6 +159,7 @@ export default function useChat() {
         apikey: cometData.value.company.cometchat.rest_api_key,
       },
     };
+    
 
     const response = await fetch(
       `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/users/${other_user_uid}/conversation`,
