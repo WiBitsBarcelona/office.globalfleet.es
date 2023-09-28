@@ -185,8 +185,6 @@
 
 
 
-
-
     <div class="grid grid-cols-12 gap-1 mt-10 mb-10">
       <div class="col-span-12 md:col-span-12 lg:col-span-12 text-end">
 
@@ -745,10 +743,16 @@ const save = async () => {
     /**
      * Stages
      */
-    arrStages.value.forEach(async (eleStage) => {
+
+
+     for (const eleStage of arrStages.value) {
+    //arrStages.value.forEach(async (eleStage) => {
+
+      console.log(eleStage.name);
+
+      stage.value = [];
 
       eleStage.trip_id = trip.value.id;
-
       await storeStage(eleStage);
       console.log({ ...stage.value });
 
@@ -776,13 +780,11 @@ const save = async () => {
       * Action Stages
       */
       if (eleStage.action_stages) {
-        eleStage.action_stages.forEach(async (eleActionStage) => {
+        for (const eleActionStage of eleStage.action_stages){
 
           eleActionStage.stage_id = stage.value.id;
-          console.log(eleActionStage);
 
           await storeActionStage(eleActionStage);
-
           console.log({ ...actionStage.value });
 
 
@@ -832,12 +834,8 @@ const save = async () => {
           }
 
 
-        });
+        };
       }
-
-
-
-
 
 
 
@@ -845,81 +843,81 @@ const save = async () => {
       /**
        * Tasks
        */
-      if (eleStage.tasks) {
-        eleStage.tasks.forEach(async (eleTask) => {
+      // if (eleStage.tasks) {
+      //   eleStage.tasks.forEach(async (eleTask) => {
 
-          eleTask.stage_id = stage.value.id;
+      //     eleTask.stage_id = stage.value.id;
 
-          await storeTask(eleTask);
-          console.log({ ...task.value });
-
-
-
-          /**
-           * Action Tasks
-           */
-          if (eleTask.action_tasks) {
-            eleTask.action_tasks.forEach(async (eleActionTask) => {
-
-              eleActionTask.task_id = task.value.id;
-              await storeActionTask(eleActionTask);
-              console.log({ ...actionTask.value });
-
-
-              /**
-               *  Action task cameras
-               */
-              if (eleActionTask.cameras) {
-
-                actionTaskCameraObj = {
-                  action_task_id: actionTask.value.id
-                }
-
-                await storeActionTaskCamera(actionTaskCameraObj);
-                console.log({ ...actionTaskCamera.value });
-
-              }
-
-
-              /**
-               * Action task scanners
-               */
-              if (eleActionTask.scanners) {
-
-                actionTaskScannerObj = {
-                  action_task_id: actionTask.value.id
-                }
-
-                await storeActionTaskScanner(actionTaskScannerObj);
-                console.log({ ...actionTaskScanner.value });
-
-              }
-
-
-              /**
-               * Action task forms
-               */
-              if (eleActionTask.forms) {
-
-                actionTaskFormObj = {
-                  action_task_id: actionTask.value.id,
-                  action_form_field_id: eleActionTask.action_form_field_id,
-                }
-
-                await storeActionTaskForm(actionTaskFormObj);
-                console.log({ ...actionTaskForm.value });
-
-              }
-
-
-            });
-          }
-        });
-      }
+      //     await storeTask(eleTask);
+      //     console.log({ ...task.value });
 
 
 
-    });
+      //     /**
+      //      * Action Tasks
+      //      */
+      //     if (eleTask.action_tasks) {
+      //       eleTask.action_tasks.forEach(async (eleActionTask) => {
+
+      //         eleActionTask.task_id = task.value.id;
+      //         await storeActionTask(eleActionTask);
+      //         console.log({ ...actionTask.value });
+
+
+      //         /**
+      //          *  Action task cameras
+      //          */
+      //         if (eleActionTask.cameras) {
+
+      //           actionTaskCameraObj = {
+      //             action_task_id: actionTask.value.id
+      //           }
+
+      //           await storeActionTaskCamera(actionTaskCameraObj);
+      //           console.log({ ...actionTaskCamera.value });
+
+      //         }
+
+
+      //         /**
+      //          * Action task scanners
+      //          */
+      //         if (eleActionTask.scanners) {
+
+      //           actionTaskScannerObj = {
+      //             action_task_id: actionTask.value.id
+      //           }
+
+      //           await storeActionTaskScanner(actionTaskScannerObj);
+      //           console.log({ ...actionTaskScanner.value });
+
+      //         }
+
+
+      //         /**
+      //          * Action task forms
+      //          */
+      //         if (eleActionTask.forms) {
+
+      //           actionTaskFormObj = {
+      //             action_task_id: actionTask.value.id,
+      //             action_form_field_id: eleActionTask.action_form_field_id,
+      //           }
+
+      //           await storeActionTaskForm(actionTaskFormObj);
+      //           console.log({ ...actionTaskForm.value });
+
+      //         }
+
+
+      //       });
+      //     }
+      //   });
+      // }
+
+
+
+    };
 
 
     //console.log({ ...arrStages.value });

@@ -204,7 +204,6 @@
   
   
 
-	  
 
 	  <!-- Stage Card -->
 	  <div v-for="stage in arrStages" :key="stage.id">
@@ -254,6 +253,13 @@
 					</p>
 				  </div>
   
+				  <div class="col-span-1">
+					<h5 class="text-xs font-light text-gray-400">{{ $t("order") }}:</h5>
+					<p class="text-md font-normal leading-6 text-gray-500">
+					  {{ stage.order_number }}
+					</p>
+				  </div>
+
 				  <div class="col-span-1">
 					<h5 class="text-xs font-light text-gray-400">{{ $t("activity") }}:</h5>
 					<p class="text-md font-normal leading-6 text-gray-500">
@@ -409,13 +415,9 @@
 		  <!-- End Stage -->
   
 		</div>
-  
-  
-  
 		<!-- v-else -->
 		<div v-else>
-  
-  
+
 		  <!-- Action Stages -->
 		  <div v-for="action_stage in stage.actions" :key="action_stage.id">
   
@@ -436,6 +438,11 @@
 						<p class="text-md font-normal leading-6 text-gray-500">
 						  <span class="text-xs font-light text-gray-400">{{ $t("action") }}
 						  </span> {{ action_stage.type.name }}
+						</p>
+
+						<p class="text-md font-normal leading-6 text-gray-500">
+						  <span class="text-xs font-light text-gray-400">{{ $t("order") }}
+						  </span> {{ stage.order_number }}
 						</p>
   
 						<div class="text-right">
