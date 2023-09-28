@@ -110,7 +110,6 @@
 						name="email"
 						class="form-control"
 						:class="{ 'border-danger': validate.email.$error }"
-						autocomplete="off"
 					/>
 					<template v-if="validate.email.$error">
 						<div v-for="(error, index) in validate.email.$errors" :key="index" class="text-danger mt-2">
@@ -136,7 +135,7 @@
 							name="password"
 							class="form-control"
 							:class="{ 'border-danger': validate.password.$error }"
-							autocomplete="off"
+							autocomplete="new-password"
 						/>
 						<EyeIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer" @click="switchVisibility" />
 

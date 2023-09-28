@@ -420,10 +420,7 @@ onBeforeUnmount(() => {
 
 
 onMounted(async () => {
-  
   await find();
-  await getCompany(useAuthentication.getUser.employee.company_id);
-
 });
 
 </script>
