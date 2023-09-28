@@ -210,8 +210,8 @@
 	  <div v-for="stage in arrStages" :key="stage.id">
 
 
-		<!-- v-if -->
-		<div v-if="stage.activity"> <!-- class="p-4 rounded border border-slate-200 text-slate-500 shadow mb-2" -->
+		<!-- v-if Activity -->
+		<div v-if="stage.activity"> 
   
 		  <!-- Stage -->
 		  <div class="relative">
@@ -237,7 +237,7 @@
 						  class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
 						  <PlusCircleIcon class="w-4 h-4" /> {{ $t("add_task") }}
 						</a>
-						<a href="#" @click.prevent="deleteStageForm(stage.uuid)"
+						<a href="#" @click.prevent="deleteStageForm(stage.id)"
 						  class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
 						  <TrashIcon class="w-4 h-4" />
 						</a>
@@ -439,7 +439,7 @@
 						</p>
   
 						<div class="text-right">
-						  <a href="#" @click.prevent="deleteStageForm(stage.uuid)"
+						  <a href="#" @click.prevent="deleteStageForm(stage.id)"
 							class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
 							<TrashIcon class="w-4 h-4" />
 						  </a>
@@ -565,30 +565,25 @@
   import { useRoute } from 'vue-router';
 
   
+  //Composables
   import useTrips from '@/composables/trips.js';
   import useStage from '@/composables/stages.js';
   import useActivity from '@/composables/activities.js';
   import useTask from '@/composables/tasks.js';
   import useActionTask from '@/composables/action_tasks.js';
-  
   import useActionTaskCamera from '@/composables/action_task_cameras.js';
   import useActionTaskScanner from '@/composables/action_task_scanners.js';
   import useActionTaskForm from '@/composables/action_task_forms.js';
-  
-  
   import useActionStage from '@/composables/action_stages.js';
   import useActionStageCamera from '@/composables/action_stage_cameras.js';
   import useActionStageScanner from '@/composables/action_stage_scanners.js';
   import useActionStageForm from '@/composables/action_stage_forms.js';
-  
-  
-  
-  
   import useVehicles from '@/composables/vehicles.js';
   import useTripPriority from '@/composables/trip_priorities.js';
   import useDrivers from '@/composables/drivers.js';
   
   
+  //Components
   import StageCreate from '@/components/stages/StageCreate.vue';
   import TaskCreate from '@/components/tasks/TaskCreate.vue';
   import ActionTaskCreate from '@/components/action_tasks/ActionTaskCreate.vue';
@@ -599,7 +594,7 @@
   import { useVuelidate } from '@vuelidate/core';
   import { helpers } from '@vuelidate/validators';
   import { useI18n } from 'vue-i18n';
-  import { v4 as uuidv4 } from 'uuid';
+  //import { v4 as uuidv4 } from 'uuid';
   
   
   import enumActionTask from '@/enums/enum_action_task.js';
@@ -693,9 +688,9 @@
 	vehicle_id: "",
 	trip_priority_id: "",
 	driver_id: "",
-	reference_number: Math.floor(Math.random() * 100000),
-	name: "Viaje Plaza",
-	execution_at: $h.nowTimestamp('-').substr(0, 16),
+	reference_number: "",
+	name: "",
+	execution_at: "",
 	observations: "",
   });
   
@@ -721,7 +716,7 @@
 	  /**
 	   * Trip
 	   */
-	  await storeTrip(formData);
+	  await updateTrip(trip.value.id, formData);
 	  console.log({ ...trip.value });
 	  console.log(tripErrors);
   
@@ -950,9 +945,9 @@
 	isCreateStage.value = false;
   }
   
-  const deleteStageForm = (uuid) => {
+  const deleteStageForm = (id) => {
 	arrStages.value.forEach((ele, index) => {
-	  if (ele.uuid === uuid) {
+	  if (ele.id === id) {
 		arrStages.value.splice(index, 1);
 	  }
 	});
@@ -1213,7 +1208,7 @@
 
 	arrStages.value = trip.value.stages;
 
-	console.log(arrStages.value)
+	console.log(arrStages.value);
 
 
 	
@@ -1221,8 +1216,6 @@
 	formData.trip_priority_id = trip.value.trip_priority_id.toString();
 	formData.driver_id = trip.value.driver_id.toString();
 	formData.vehicle_id = trip.value.vehicle_id.toString();
-
-
 	formData.reference_number = trip.value.reference_number;
 	formData.name = trip.value.name;
 	formData.execution_at = trip.value.execution_at;
