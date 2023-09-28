@@ -416,7 +416,7 @@ import Swal from "sweetalert2";
 import { useI18n } from 'vue-i18n';
 
 const { cometData, getCometChatCredentials, loadChatMessages, markUserConversationAsRead, sendTextMessage, mark_user_conversation_as_delivered,
-    checkUnreadMessages, getConversationsList } = useChat();
+    mark_group_conversation_as_delivered, checkUnreadMessages, getConversationsList } = useChat();
 const { storeDriverDocumentV2, downloadDriverDocument, driverDocumentData } = useDriverDocument();
 const { t } = useI18n();
 
@@ -440,6 +440,7 @@ const mediaSource = ref(null)
 const mediaAttachments = ref(null)
 
 let countUnreadMessage;
+let isMoving = false;
 // Array de mensajes
 const mensajes = ref([]);
 
@@ -538,7 +539,7 @@ const initialize = async () => {
                     // Cuando llegue un nuevo mensaje
                     //console.log("Text message received successfully", textMessage);
 
-                    //mensajes.value.push(textMessage);
+                    mensajes.value.push(textMessage);
 
                     unreadMessageCount()
 
@@ -550,10 +551,10 @@ const initialize = async () => {
                     //Para leer los mensajes
                     if (textMessage.receiverId == myUid.value) {
                         //markUserConversationAsRead(myUid.value, ChatId.value)
-                        if (seDesplazo == true) {
+                        if (isMoving == true) {
                             setTimeout(() => {
                                 scrollToLast()
-                            }, 5000)
+                            }, 2000)
                         }
                     }
 
@@ -584,10 +585,15 @@ const loadMessages = async () => {
     const response = await loadChatMessages(idConversation.value);
     mensajes.value = response.data
 
-    if (response.data > 0) {
+    if (mensajes.value.length > 0) {
         //Para leer los mensajes
         //markUserConversationAsRead(myUid.value, ChatId.value);
-        await mark_user_conversation_as_delivered(myUid.value, ChatId.value);
+        if (receiverType.value == 'user') {
+           await mark_user_conversation_as_delivered(myUid.value, ChatId.value) 
+        } else {
+            await mark_group_conversation_as_delivered(myUid.value, ChatId.value) 
+        }
+        
     }
 }
 
@@ -639,7 +645,11 @@ const sendMessage = async () => {
             chatCont.scrollTop = chatCont.scrollHeight;
         }, 400);
 
-        await mark_user_conversation_as_delivered(myUid.value, ChatId.value);
+        if (receiverType.value == 'user') {
+           await mark_user_conversation_as_delivered(myUid.value, ChatId.value) 
+        } else {
+            await mark_group_conversation_as_delivered(myUid.value, ChatId.value) 
+        }
 
 
         // Netejem el text
@@ -659,7 +669,11 @@ const sendMessage = async () => {
                 chatCont.scrollTop = chatCont.scrollHeight;
             }, 400);
 
-            await mark_user_conversation_as_delivered(myUid.value, ChatId.value);
+            if (receiverType.value == 'user') {
+                await mark_user_conversation_as_delivered(myUid.value, ChatId.value) 
+            } else {
+                await mark_group_conversation_as_delivered(myUid.value, ChatId.value) 
+            }
 
             // Netejem el text
             message.value = "";
@@ -807,8 +821,6 @@ const onpresskey = async () => {
     }
 }
 
-let seDesplazo = false;
-
 // desplazar hacia el ultimo mensaje
 const scrollToLast = async () => {
 
@@ -831,16 +843,19 @@ const detectScroll = async () => {
     const chatContainer = document.getElementById('chat');
     const btnScroll = document.getElementById("btnScroll");
 
-    // Verifica si está en el último mensaje
-    if (chatContainer.scrollTop + chatContainer.clientHeight >= chatContainer.scrollHeight) {
-        // Está en el último mensaje, añade la clase "hidden" al botón
-        btnScroll.classList.add("hidden");
-        seDesplazo = true;
-    } else {
-        // No está en el último mensaje, elimina la clase "hidden" del botón
-        btnScroll.classList.remove("hidden");
-        seDesplazo = false;
+    if (mensajes.value.length > 0) {
+        // Verifica si está en el último mensaje
+        if (chatContainer.scrollTop + chatContainer.clientHeight >= chatContainer.scrollHeight) {
+            // Está en el último mensaje, añade la clase "hidden" al botón
+            btnScroll.classList.add("hidden");
+            isMoving = true;
+        } else {
+            // No está en el último mensaje, elimina la clase "hidden" del botón
+            btnScroll.classList.remove("hidden");
+            isMoving = false;
+        }
     }
+
 }
 
 // verificar cuantos mensajes existen sin leer

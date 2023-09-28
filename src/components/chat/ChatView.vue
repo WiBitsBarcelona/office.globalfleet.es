@@ -33,7 +33,9 @@
     <div id="group-list" class="flex flex-col gap-[6px] h-[76vh] overflow-y-scroll scrollbar-hidden">
       <!-- Per cada xat farem un botó -->
       <button v-if="!inNewChat" v-for="conversation in conversationList"
-        @click="enviarVariable(conversation.conversationId, conversation.conversationWith.uid, conversation.conversationType, conversation.conversationWith.name)"
+        @click="enviarVariable(conversation.conversationId, 
+        conversation.conversationWith.uid ? conversation.conversationWith.uid : conversation.conversationWith.guid, 
+        conversation.conversationType, conversation.conversationWith.name)"
         :id="conversation.conversationWith.uid ? conversation.conversationWith.uid : conversation.conversationWith.guid"
         :key="conversation.conversationWith"
         class="flex gap-3 p-3 pl-2 h-16 box cursor-pointer border-b bg-white items-center conversations-list-item">
@@ -307,7 +309,13 @@ const enviarVariable = async (value, value2, value3, value4) => {
   propsNameConversation.value = value4
 
   if (inNewChat.value == false) {
-    await markUserConversationAsRead(userInfo.uid, propsChatId.value);
+
+    if (propsChatType.value === "group") {
+      await markGroupConversationAsRead(userInfo.uid, propsChatId.value);
+    } else {
+      await markUserConversationAsRead(userInfo.uid, propsChatId.value);
+    }
+
     await checkUnreadMessages();
     await LoadChatsList();
   }
@@ -447,13 +455,13 @@ const printTextMessage = async (textMessage) => {
   const receiver = textMessage.receiverId;
   const sender = textMessage.sender.uid;
   const header = document.getElementById("chat-header");
-  const messageBody = document.getElementById("chat");
+  //const messageBody = document.getElementById("chat");
 
   // Comprobem la data del missatge
   const currentMessageDate = getMessageDate(textMessage.sentAt);
 
   // Comprobem l'ultim missatge d'aquesta mateixa conversació
-  const lastMessageDate = await loadChatMessages(textMessage.conversationId);
+  /*const lastMessageDate = await loadChatMessages(textMessage.conversationId);
   const lastDate =
     lastMessageDate.data.length > 1
       ? getMessageDate(
@@ -463,7 +471,7 @@ const printTextMessage = async (textMessage) => {
 
   if (lastDate !== currentMessageDate) {
     messageBody.innerHTML += `<div class="flex justify-center align-center"><p class="p-2 rounded-lg bg-gray-200">${currentMessageDate}</p></div>`;
-  }
+  }*/
 
   // En caso de no encontrar ningun xat abierto
   if (!inChat || !header) {

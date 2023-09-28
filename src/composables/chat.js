@@ -160,8 +160,7 @@ export default function useChat() {
       },
     };
     
-
-    const response = await fetch(
+    const response = await fetch( 
       `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/users/${other_user_uid}/conversation`,
       options
     )
@@ -266,18 +265,18 @@ export default function useChat() {
   }
 
   // Funcion para marcar como leida una conversacion en un grupo
-  const mark_group_conversation_as_delivered = (conversationWith, user) => {
+  const mark_group_conversation_as_delivered = (user, conversationWith) => {
     const options = {
       method: "POST",
       headers: {
         accept: "application/json",
-        onBehalfOf: conversationWith,
+        onBehalfOf: user,
         apikey: cometData.value.company.cometchat.rest_api_key,
       },
     };
 
     fetch(
-      `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/groups/${user}/conversation/delivered`,
+      `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/groups/${conversationWith}/conversation/delivered`,
       options
     ).catch((err) => console.error(err));
   }
@@ -441,6 +440,7 @@ export default function useChat() {
     getGroupMembers,
     checkUnreadMessages,
     mark_user_conversation_as_delivered,
+    mark_group_conversation_as_delivered,
     update_datameta_message
   };
 }
