@@ -843,84 +843,84 @@ const save = async () => {
       /**
        * Tasks
        */
-      // if (eleStage.tasks) {
-      //   eleStage.tasks.forEach(async (eleTask) => {
-
-      //     eleTask.stage_id = stage.value.id;
-
-      //     await storeTask(eleTask);
-      //     console.log({ ...task.value });
+      if (eleStage.tasks) {
+        for (const eleTask of eleStage.tasks){
 
 
+          eleTask.stage_id = stage.value.id;
 
-      //     /**
-      //      * Action Tasks
-      //      */
-      //     if (eleTask.action_tasks) {
-      //       eleTask.action_tasks.forEach(async (eleActionTask) => {
-
-      //         eleActionTask.task_id = task.value.id;
-      //         await storeActionTask(eleActionTask);
-      //         console.log({ ...actionTask.value });
+          await storeTask(eleTask);
+          console.log({ ...task.value });
 
 
-      //         /**
-      //          *  Action task cameras
-      //          */
-      //         if (eleActionTask.cameras) {
 
-      //           actionTaskCameraObj = {
-      //             action_task_id: actionTask.value.id
-      //           }
+          /**
+           * Action Tasks
+           */
+          if (eleTask.action_tasks) {
+            for (const eleActionTask of eleTask.action_tasks){
 
-      //           await storeActionTaskCamera(actionTaskCameraObj);
-      //           console.log({ ...actionTaskCamera.value });
-
-      //         }
+              eleActionTask.task_id = task.value.id;
+              await storeActionTask(eleActionTask);
+              console.log({ ...actionTask.value });
 
 
-      //         /**
-      //          * Action task scanners
-      //          */
-      //         if (eleActionTask.scanners) {
+              /**
+               *  Action task cameras
+               */
+              if (eleActionTask.cameras) {
 
-      //           actionTaskScannerObj = {
-      //             action_task_id: actionTask.value.id
-      //           }
+                actionTaskCameraObj = {
+                  action_task_id: actionTask.value.id
+                }
 
-      //           await storeActionTaskScanner(actionTaskScannerObj);
-      //           console.log({ ...actionTaskScanner.value });
+                await storeActionTaskCamera(actionTaskCameraObj);
+                console.log({ ...actionTaskCamera.value });
 
-      //         }
-
-
-      //         /**
-      //          * Action task forms
-      //          */
-      //         if (eleActionTask.forms) {
-
-      //           actionTaskFormObj = {
-      //             action_task_id: actionTask.value.id,
-      //             action_form_field_id: eleActionTask.action_form_field_id,
-      //           }
-
-      //           await storeActionTaskForm(actionTaskFormObj);
-      //           console.log({ ...actionTaskForm.value });
-
-      //         }
+              }
 
 
-      //       });
-      //     }
-      //   });
-      // }
+              /**
+               * Action task scanners
+               */
+              if (eleActionTask.scanners) {
+
+                actionTaskScannerObj = {
+                  action_task_id: actionTask.value.id
+                }
+
+                await storeActionTaskScanner(actionTaskScannerObj);
+                console.log({ ...actionTaskScanner.value });
+
+              }
+
+
+              /**
+               * Action task forms
+               */
+              if (eleActionTask.forms) {
+
+                actionTaskFormObj = {
+                  action_task_id: actionTask.value.id,
+                  action_form_field_id: eleActionTask.action_form_field_id,
+                }
+
+                await storeActionTaskForm(actionTaskFormObj);
+                console.log({ ...actionTaskForm.value });
+
+              }
+              
+            };
+
+          }
+        };
+      }
 
 
 
     };
 
 
-    //console.log({ ...arrStages.value });
 
     loading.value = false;
     await Toast(t("message.record_saved"), 'success');
