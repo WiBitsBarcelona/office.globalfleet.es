@@ -403,6 +403,7 @@ const formDataStage = reactive({
     activity_type_id: "",
     activity_type_name: "",
     stage_type_id: "3",
+    stage_type_name: "",
     reference_number: "1000",
     name: "Etapa Hannover",
     order_number: "",
@@ -440,6 +441,12 @@ const saveStage = () => {
         //Find element activity
         const selectedActivity = selectActivityTypes.value.find(elem => elem.id === parseInt(formDataStage.activity_type_id));
         formDataStage.activity_type_name = selectedActivity.name;
+
+
+
+        const selectedStageType = selectStageTypes.value.find(elem => elem.id === parseInt(formDataStage.stage_type_id));
+        formDataStage.stage_type_name = selectedStageType.name;
+
 
         emit('addStageForm', { ...formDataStage });
         
