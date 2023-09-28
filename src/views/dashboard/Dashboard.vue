@@ -4,7 +4,7 @@
     <div class="grid grid-cols-12 gap-6">
       <div class="col-span-12 mt-8">
         <div class="intro-y flex items-center h-10">
-          <h2 class="text-lg font-medium truncate mr-5">{{ $t("dashboard.title") }} <span class="text-xl font-bold">{{ company.name }}</span></h2>
+          <h2 class="text-lg font-medium truncate mr-5">{{ $t("dashboard.title") }} <span class="text-xl font-bold">{{ useAuthentication.getUser.employee.company.name }}</span></h2>
           <a href="" class="ml-auto flex items-center text-primary dark:text-light">
             <RefreshCcwIcon class="w-4 h-4 mr-3" /> <span class="">{{ $t("dashboard.reload") }}</span>
           </a>
@@ -78,19 +78,10 @@
 import { ref, onMounted } from 'vue';
 import DevicesMap from "@/components/dashboard-map/Main.vue";
 import useDashboard from '@/composables/dashboard.js';
-
-import useCompany from '@/composables/companies.js';
 import { useAuthenticationStore } from '@/stores/auth/authentications';
 
-
-
 const { dashboard, getDashboard } = useDashboard();
-const { company, getCompany } = useCompany();
-
 const useAuthentication = useAuthenticationStore();
-
-
-
 
 const trip_completed_nb = ref('');
 const trip_created_nb = ref('');
@@ -103,16 +94,6 @@ onMounted(async () => {
   trip_created_nb.value = dashboard.value.trip_created_nb;
   trip_pending_nb.value = dashboard.value.trip_pending_nb;
   trip_progress_nb.value = dashboard.value.trip_progress_nb;
-
-
-
-
-  await getCompany(useAuthentication.getUser.employee.company_id);
-
-  //FIXME:
-  console.log(useAuthentication.getUser.employee.company.name);
-
-
 
 });
 

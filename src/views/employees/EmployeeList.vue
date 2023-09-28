@@ -5,7 +5,7 @@
 	<!-- BEGIN: Page Layout Table -->
 	<div class="grid grid-cols-12 gap-6 mt-8">
     	<div class="col-span-12 intro-y">
-        	<h2 class="text-lg font-medium truncate mr-5">{{ $t('users_of') }}<span class="text-xl font-bold">{{ company.name }}</span></h2>
+        	<h2 class="text-lg font-medium truncate mr-5">{{ $t('users_of') }}<span class="text-xl font-bold">{{ useAuthentication.getUser.employee.company.name }}</span></h2>
         </div>
 	</div>
 	<div class="intro-y box p-5 mt-5" id="div_table">
@@ -88,13 +88,10 @@
 	import useEmployees from "@/composables/employees";
 	import Create from "@/components/employees/EmployeeCreate.vue";
 	import Edit from "@/components/employees/EmployeeEdit.vue";
-
-	import useCompany from '@/composables/companies.js';
 	import { useAuthenticationStore } from '@/stores/auth/authentications';
 
 	const loading = ref(false);
 
-	const { company, getCompany } = useCompany();
 	const useAuthentication = useAuthenticationStore();
 
 	const { employees, getEmployees, storeEmployee, updateEmployee, destroyEmployee, errors} = useEmployees();
@@ -387,7 +384,6 @@
 		initTabulator();
 		reInitOnResizeWindow();
 		div_table = document.querySelector('#div_table');
-		await getCompany(useAuthentication.getUser.employee.company_id);
 	});
 
 </script>
