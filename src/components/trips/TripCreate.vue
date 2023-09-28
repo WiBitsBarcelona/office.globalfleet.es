@@ -6,6 +6,7 @@
 
   <Preloader v-if="loading" />
 
+
   <!-- BEGIN: Page Layout -->
   <div class="intro-y box p-5 mt-5" v-if="isCreateTrip">
     <!-- BEGIN: Form -->
@@ -13,23 +14,19 @@
 
       <div class="grid grid-cols-12 gap-1 mb-8">
 
-        <div class="col-span-10">
+        <div class="col-span-8">
           <h2 class="text-lg font-medium">
             {{ $t("trip") }}
           </h2>
         </div>
 
-
-
         <!-- BEGIN: Buttons -->
 
-        <div class="col-span-2 text-right">
-          <button type="submit" class="btn btn-primary">
+        <div class="col-span-4 text-right">
+          <button type="submit" class="btn btn-primary mr-2">
             {{ $t("save") }}
           </button>
-          <!-- <button @click.prevent="" class="btn btn-danger">
-              {{ $t("cancel") }}
-            </button> -->
+          <router-link :to="`/trips`" class="btn btn-danger">{{ $t("cancel") }}</router-link>
         </div>
 
         <!-- END: Buttons -->
@@ -46,12 +43,7 @@
             <label for="name" class="form-label w-full">
               {{ $t("name") }}
             </label>
-            <input 
-              v-model.trim="validate.name.$model" 
-              id="name" 
-              type="text" 
-              name="name" 
-              class="form-control"
+            <input v-model.trim="validate.name.$model" id="name" type="text" name="name" class="form-control"
               :class="{ 'border-danger': validate.name.$error }" />
             <template v-if="validate.name.$error">
               <div v-for="(error, index) in validate.name.$errors" :key="index" class="text-danger mt-2">
@@ -83,11 +75,7 @@
             <label for="execution_at" class="form-label w-full">
               {{ $t("execution_at") }}
             </label>
-            <input 
-              v-model.trim="validate.execution_at.$model" 
-              id="execution_at" 
-              type="datetime-local" 
-              name="execution_at"
+            <input v-model.trim="validate.execution_at.$model" id="execution_at" type="datetime-local" name="execution_at"
               class="form-control" :class="{ 'border-danger': validate.execution_at.$error }" />
             <template v-if="validate.execution_at.$error">
               <div v-for="(error, index) in validate.execution_at.$errors" :key="index" class="text-danger mt-2">
@@ -103,26 +91,16 @@
             <label for="trip_priority_id" class="form-label w-full">
               {{ $t("trip_priority") }}
             </label>
-
-
-
-
-            <TomSelect 
-              v-model.trim="validate.trip_priority_id.$model"
-              id="trip_priority_id" 
-              name="trip_priority_id" 
+            <TomSelect v-model.trim="validate.trip_priority_id.$model" id="trip_priority_id" name="trip_priority_id"
               :options="{
                 placeholder: $t('message.select'),
-              }" 
-              class="form-control w-full"
-						  :class="{ 'border-danger': validate.trip_priority_id.$error }">
+              }" class="form-control w-full" :class="{ 'border-danger': validate.trip_priority_id.$error }">
 
-              <option :value="0"></option>
               <option v-for="item in selectTripPriorities" :value="item.id">
                 {{ item.name }}
               </option>
 
-					  </TomSelect>
+            </TomSelect>
 
             <template v-if="validate.trip_priority_id.$error">
               <div v-for="(error, index) in validate.trip_priority_id.$errors" :key="index" class="text-danger mt-2">
@@ -139,21 +117,15 @@
               {{ $t("vehicle") }}
             </label>
 
-            <TomSelect 
-              v-model.trim="validate.vehicle_id.$model"
-              id="vehicle_id" 
-              name="vehicle_id" 
-              :options="{
-                placeholder: $t('message.select'),
-              }" 
-              class="form-control w-full"
-						  :class="{ 'border-danger': validate.vehicle_id.$error }">
+            <TomSelect v-model.trim="validate.vehicle_id.$model" id="vehicle_id" name="vehicle_id" :options="{
+              placeholder: $t('message.select'),
+            }" class="form-control w-full" :class="{ 'border-danger': validate.vehicle_id.$error }">
 
               <option v-for="item in selectVehicles" :value="item.id">
                 {{ item.plate }}
               </option>
 
-					  </TomSelect>
+            </TomSelect>
 
             <template v-if="validate.vehicle_id.$error">
               <div v-for="(error, index) in validate.vehicle_id.$errors" :key="index" class="text-danger mt-2">
@@ -171,21 +143,15 @@
               {{ $t("driver") }}
             </label>
 
-            <TomSelect 
-              v-model.trim="validate.driver_id.$model"
-              id="driver_id" 
-              name="driver_id" 
-              :options="{
-                placeholder: $t('message.select'),
-              }" 
-              class="form-control w-full"
-						  :class="{ 'border-danger': validate.driver_id.$error }">
+            <TomSelect v-model.trim="validate.driver_id.$model" id="driver_id" name="driver_id" :options="{
+              placeholder: $t('message.select'),
+            }" class="form-control w-full" :class="{ 'border-danger': validate.driver_id.$error }">
 
               <option v-for="item in selectDrivers" :value="item.id">
                 {{ item.name }} {{ item.surname }}
               </option>
 
-					  </TomSelect>
+            </TomSelect>
 
 
             <template v-if="validate.driver_id.$error">
@@ -224,208 +190,223 @@
     <div class="grid grid-cols-12 gap-1 mt-10 mb-10">
       <div class="col-span-12 md:col-span-12 lg:col-span-12 text-end">
 
+        <a href="#" class="btn btn-outline border-slate-200 w-1/2 sm:w-auto mr-2" @click="showActionStageForm">
+          <PlusCircleIcon class="w-4 h-4" /> {{ $t("add_action_stage") }}
+        </a>
+
         <a href="#" class="btn btn-outline-primary w-1/2 sm:w-auto mr-2" @click="showStageForm">
           <PlusCircleIcon class="w-4 h-4" /> {{ $t("add_stage") }}
         </a>
 
-        <a href="#" class="btn btn-outline-success w-1/2 sm:w-auto mr-2" @click="showActionStageForm">
-          <PlusCircleIcon class="w-4 h-4" /> {{ $t("add_action_stage") }}
-        </a>
       </div>
     </div>
-
 
 
     <!-- Stage Card -->
-    <div v-for="stage in arrStages" :key="stage.id"
-      class="p-4 rounded border border-slate-200 text-slate-500 shadow mb-2">
-
+    <div v-for="stage in arrStages" :key="stage.id">
       <!-- v-if -->
-      <div v-if="stage.activity_type_id">
+      <div v-if="stage.activity_type_id"> <!-- class="p-4 rounded border border-slate-200 text-slate-500 shadow mb-2" -->
+
         <!-- Stage -->
-        <div class="grid grid-cols-12 gap-2 mb-5 pb-2">
-          <div class="col-span-12 text-right">
-            <a href="#" @click.prevent="showTaskForm(stage)" class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
-              <PlusCircleIcon class="w-4 h-4" /> {{ $t("add_task") }}
-            </a>
-            <a href="#" @click.prevent="deleteStageForm(stage.uuid)" class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
-              <TrashIcon class="w-4 h-4" />
-            </a>
-          </div>
-
-          <div class="col-span-2">
-            <h5 class="text-xs font-light text-gray-400">{{ $t("stage") }}:</h5>
-            <p class="text-md font-normal leading-6 text-gray-500">
-              {{ stage.name }}
-            </p>
-          </div>
-
-          <div class="col-span-2">
-            <h5 class="text-xs font-light text-gray-400">{{ $t("reference_number") }}:</h5>
-            <p class="text-md font-normal leading-6 text-gray-500">
-              {{ stage.reference_number }}
-            </p>
-          </div>
-
-          <div class="col-span-2">
-            <h5 class="text-xs font-light text-gray-400">{{ $t("activity") }}:</h5>
-            <p class="text-md font-normal leading-6 text-gray-500">
-              {{ stage.activity_type_name }}
-            </p>
-          </div>
-
-          <div class="col-span-3">
-            <h5 class="text-xs font-light text-gray-400">{{ $t("customer") }}:</h5>
-            <p class="text-md font-normal leading-6 text-gray-500">
-              {{ stage.client_name }}
-            </p>
-          </div>
-          <div class="col-span-3">
-            <h5 class="text-xs font-light text-gray-400">{{ $t("execution_at") }}:</h5>
-            <p class="text-md font-normal leading-6 text-gray-500">
-              {{ stage.execution_at }}
-            </p>
-          </div>
-
-        </div>
-        <!-- End Stage -->
-
-        <!-- Tasks -->
-        <div class="relative" v-for="task in stage.tasks" :key="task.id">
+        <div class="relative">
           <div class="md:flex items-center md:space-x-4 mb-3">
-            <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
-              <div class="grid grid-cols-4 gap-2 mb-5">
+            <div class="flex items-center space-x-4 md:space-x-2 md:space-x-reverse">
+              <div
+                class="flex items-center justify-center w-10 h-10 rounded-full bg-white border border-gray-300 shadow md:order-1 dark:bg-darkmode-600 dark:border-gray-700">
+              </div>
+            </div>
 
-                <div class="col-span-12 text-right">
-                  <a href="#" @click.prevent="showActionTaskForm(stage, task)"
-                    class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
-                    <PlusCircleIcon class="w-4 h-4" /> {{ "Agregar Action Task" }}
-                  </a>
-                  <a href="#" @click.prevent="deleteTaskForm(stage.uuid, task.uuid)" class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
-                    <TrashIcon class="w-4 h-4" />
-                  </a>
+            <div class="p-4 rounded border border-slate-200 text-slate-500 shadow ml-14 md:ml-44 w-full">
+              <div class="grid grid-cols-6 gap-2 mb-5 pb-2">
+                <div class="col-span-6">
+                  <div class="flex flex-row justify-between">
+
+                    <p class="text-md font-normal leading-6 text-gray-500">
+                      <span class="text-xs font-light text-gray-400">{{ $t("stage") }}
+                      </span> {{ stage.name }}
+                    </p>
+
+                    <div class="text-right">
+                      <a href="#" @click.prevent="showTaskForm(stage)"
+                        class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
+                        <PlusCircleIcon class="w-4 h-4" /> {{ $t("add_task") }}
+                      </a>
+                      <a href="#" @click.prevent="deleteStageForm(stage.uuid)"
+                        class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
+                        <TrashIcon class="w-4 h-4" />
+                      </a>
+                    </div>
+
+                  </div>
+
                 </div>
 
-                <div class="col-span-2">
-                  <h5 class="text-xs font-light text-gray-400">{{ $t("task") }}:</h5>
-                  <p class="text-xs font-normal leading-6 text-gray-500">
-                    {{ task.name }}
+                <div class="col-span-1">
+                  <h5 class="text-xs font-light text-gray-400">{{ $t("reference_number") }}:</h5>
+                  <p class="text-md font-normal leading-6 text-gray-500">
+                    {{ stage.reference_number }}
                   </p>
                 </div>
 
+                <div class="col-span-1">
+                  <h5 class="text-xs font-light text-gray-400">{{ $t("activity") }}:</h5>
+                  <p class="text-md font-normal leading-6 text-gray-500">
+                    {{ stage.activity_type_name }}
+                  </p>
+                </div>
+
+                <div class="col-span-1">
+                  <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
+                  <p class="text-md font-normal leading-6 text-gray-500">
+                    {{ stage.stage_type_name }}
+                  </p>
+                </div>
+
+                <div class="col-span-1">
+                  <h5 class="text-xs font-light text-gray-400">{{ $t("customer") }}:</h5>
+                  <p class="text-md font-normal leading-6 text-gray-500">
+                    {{ stage.client_name }}
+                  </p>
+                </div>
+                <div class="col-span-1">
+                  <h5 class="text-xs font-light text-gray-400">{{ $t("execution_at") }}:</h5>
+                  <p class="text-md font-normal leading-6 text-gray-500">
+                    {{ stage.execution_at }}
+                  </p>
+                </div>
               </div>
 
 
+              <!-- Tasks -->
+              <div v-for="task in stage.tasks" :key="task.id">
 
+                <div
+                  class="mt-5 space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:ml-[1.20rem] md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-300 before:to-transparent">
 
-              <!-- Action Tasks -->
-              <div class="relative" v-for="action_task in task.action_tasks" :key="action_task.id">
-                <div class="md:flex items-center md:space-x-4 mb-3">
-                  <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
-                    <div class="grid grid-cols-4 gap-2 mb-5">
-
-
-                      <!-- <div class="col-span-12 text-right">
-                <a href="#" @click.prevent="showActionTaskForm(stage, task)"
-                  class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
-                  <PlusCircleIcon class="w-4 h-4" /> {{ "Agregar Action Task" }}
-                </a>
-              </div> -->
-
-                      <div class="col-span-2">
-                        <h5 class="text-xs font-light text-gray-400">{{ $t("action") }}:</h5>
-                        <p class="text-xs font-normal leading-6 text-gray-500">
-                          {{ action_task.action_type_name }}
-                        </p>
-                      </div>
-
-
-                      <!-- Action Cameras -->
-                      <div class="col-span-12" v-if="parseInt(action_task.action_type_model) === enumActionTask.CAMERA_ID">
-                        <div class="relative" v-for="camera in action_task.cameras" :key="camera.id">
-
-                          <div class="md:flex items-center md:space-x-4 mb-3">
-                            <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
-                              <div class="grid grid-cols-4 gap-2 mb-5">
-
-                                <div class="col-span-2">
-                                  <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
-                                  <p class="text-xs font-normal leading-6 text-gray-500">
-                                    {{ camera.name }}
-                                  </p>
-                                </div>
-
-                              </div>
-                            </div>
-                          </div>
+                  <div class="relative">
+                    <div class="md:flex items-center md:space-x-4 mb-3">
+                      <div class="flex items-center space-x-4 md:space-x-2 md:space-x-reverse">
+                        <div
+                          class="flex items-center justify-center w-10 h-10 rounded-full bg-white border border-gray-300 shadow md:order-1 dark:bg-darkmode-600 dark:border-gray-700">
                         </div>
                       </div>
-                      <!-- End of Action Cameras -->
+                      <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow ml-14 md:ml-44">
+                        <div class="grid grid-cols-4 gap-2 mb-5pb-2">
 
+                          <div class="col-span-4">
 
+                            <div class="flex flex-row justify-between">
 
-                      <!-- Action Scanner -->
-                      <div class="col-span-12" v-if="parseInt(action_task.action_type_model) === enumActionTask.SCANNER_ID">
-                        <div class="relative" v-for="scanner in action_task.scanners" :key="scanner.id">
-                          <div class="md:flex items-center md:space-x-4 mb-3">
-                            <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
-                              <div class="grid grid-cols-4 gap-2 mb-5">
+                              <p class="text-md font-normal leading-6 text-gray-500 mt-2"><span
+                                  class="text-xs font-light text-gray-400">{{ $t("task") }}:
+                                </span>
+                                {{ task.name }}
+                              </p>
 
-                                <div class="col-span-2">
-                                  <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
-                                  <p class="text-xs font-normal leading-6 text-gray-500">
-                                    {{ scanner.name }}
-                                  </p>
-                                </div>
-
+                              <div class="col-span-12 text-right">
+                                <a href="#" @click.prevent="showActionTaskForm(stage, task)"
+                                  class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
+                                  <PlusCircleIcon class="w-4 h-4" /> {{ "Agregar Action Task" }}
+                                </a>
+                                <a href="#" @click.prevent="deleteTaskForm(stage.uuid, task.uuid)"
+                                  class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
+                                  <TrashIcon class="w-4 h-4" />
+                                </a>
                               </div>
+
+                            </div>
+
+                          </div>
+
+
+
+                          <!-- Action Tasks -->
+                          <div v-for="action_task in task.action_tasks" :key="action_task.id">
+
+                            <div class="grid grid-cols-6 gap-2">
+
+                              <div class="col-span-3">
+                                <h5 class="text-xs font-light text-gray-400">{{ $t("action") }}:</h5>
+                                <p class="text-xs font-normal leading-6 text-gray-500">
+                                  {{ action_task.action_type_name }}
+                                </p>
+                              </div>
+
+
+
+                              <!-- Action Cameras -->
+                              <div v-if="parseInt(action_task.action_type_model) === enumActionTask.CAMERA_ID">
+                                <div v-for="camera in action_task.cameras" :key="camera.id">
+
+                                  <div class="col-span-2">
+                                    <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
+                                    <p class="text-xs font-normal leading-6 text-gray-500">
+                                      {{ camera.name }}
+                                    </p>
+                                  </div>
+
+                                </div>
+                              </div>
+                              <!-- End of Action Cameras -->
+
+
+
+                              <!-- Action Scanner -->
+                              <div v-if="parseInt(action_task.action_type_model) === enumActionTask.SCANNER_ID">
+                                <div v-for="scanner in action_task.scanners" :key="scanner.id">
+
+
+                                  <div class="col-span-3">
+                                    <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
+                                    <p class="text-xs font-normal leading-6 text-gray-500">
+                                      {{ scanner.name }}
+                                    </p>
+                                  </div>
+
+                                </div>
+                              </div>
+                              <!-- End of Action Scanner -->
+
+
+
+
+                              <!-- Action Scanner -->
+                              <div v-if="parseInt(action_task.action_type_model) === enumActionTask.FORM_ID">
+                                <div v-for="form in action_task.forms" :key="form.id">
+
+
+                                  <div class="col-span-3">
+                                    <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
+                                    <p class="text-xs font-normal leading-6 text-gray-500">
+                                      {{ form.name }}
+                                    </p>
+                                  </div>
+
+                                  <div class="col-span-3">
+                                    <h5 class="text-xs font-light text-gray-400">{{ $t("name") }}:</h5>
+                                    <p class="text-xs font-normal leading-6 text-gray-500">
+                                      {{ form.action_form_field_name }}
+                                    </p>
+                                  </div>
+
+                                </div>
+                              </div>
+                              <!-- End of Action Scanner -->
+
+
                             </div>
                           </div>
+
                         </div>
+                        <!-- End Action Tasks -->
+
                       </div>
-                      <!-- End of Action Scanner -->
-
-
-
-
-                      <!-- Action Scanner -->
-                      <div class="col-span-12" v-if="parseInt(action_task.action_type_model) === enumActionTask.FORM_ID">
-                        <div class="relative" v-for="form in action_task.forms" :key="form.id">
-                          <div class="md:flex items-center md:space-x-4 mb-3">
-                            <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
-                              <div class="grid grid-cols-4 gap-2 mb-5">
-
-                                <div class="col-span-2">
-                                  <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
-                                  <p class="text-xs font-normal leading-6 text-gray-500">
-                                    {{ form.name }}
-                                  </p>
-                                </div>
-
-                                <div class="col-span-2">
-                                  <h5 class="text-xs font-light text-gray-400">{{ $t("name") }}:</h5>
-                                  <p class="text-xs font-normal leading-6 text-gray-500">
-                                    {{ form.action_form_field_name }}
-                                  </p>
-                                </div>
-
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- End of Action Scanner -->
-
-
-
-
-
-
-                    </div>
+                    </div><!-- Card -->
                   </div>
                 </div>
               </div>
-              <!-- End of Action Tasks -->
+
+              <!-- End Task 1 Stage 1 -->
 
 
             </div>
@@ -433,127 +414,128 @@
           </div>
 
         </div>
-        <!-- End of Tasks -->
+        <!-- End Stage -->
 
       </div>
+
+
+
       <!-- v-else -->
       <div v-else>
 
-        <!-- Stage -->
 
         <!-- Action Stages -->
+        <div v-for="action_stage in stage.action_stages" :key="action_stage.id">
 
-        <div class="grid grid-cols-4 gap-2 mb-5" v-for="action_stage in stage.action_stages" :key="action_stage.id">
+          <div class="relative">
+            <div class="md:flex items-center md:space-x-4 mb-3">
+              <div class="flex items-center space-x-4 md:space-x-2 md:space-x-reverse">
+                <div
+                  class="flex items-center justify-center w-10 h-10 rounded-full bg-white border border-gray-300 shadow md:order-1 dark:bg-darkmode-600 dark:border-gray-700">
+                </div>
+              </div>
 
-          <div class="col-span-12 text-right">
-            <a href="#" @click.prevent="deleteStageForm(stage.uuid)" class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
-              <TrashIcon class="w-4 h-4" />
-            </a>
-          </div>
+              <div class="p-4 rounded border border-slate-200 text-slate-500 shadow ml-14 md:ml-44 w-3/4">
+                <div class="grid grid-cols-6 gap-2 mb-5 pb-2">
 
-          <div class="col-span-2">
-            <h5 class="text-xs font-light text-gray-400">{{ $t("action") }}:</h5>
-            <p class="text-xs font-normal leading-6 text-gray-500">
-              {{ action_stage.action_type_name }}
-            </p>
-          </div>
+                  <div class="col-span-6">
+                    <div class="flex flex-row justify-between">
 
-
-          <!-- Action Cameras -->
-          <div class="col-span-12" v-if="parseInt(action_stage.action_type_model) === enumActionTask.CAMERA_ID">
-            <div class="relative" v-for="camera in action_stage.cameras" :key="camera.id">
-
-              <div class="md:flex items-center md:space-x-4 mb-3">
-                <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
-                  <div class="grid grid-cols-4 gap-2 mb-5">
-
-                    <div class="col-span-2">
-                      <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
-                      <p class="text-xs font-normal leading-6 text-gray-500">
-                        {{ camera.name }}
+                      <p class="text-md font-normal leading-6 text-gray-500">
+                        <span class="text-xs font-light text-gray-400">{{ $t("action") }}
+                        </span> {{ action_stage.action_type_name }}
                       </p>
+
+                      <div class="text-right">
+                        <a href="#" @click.prevent="deleteStageForm(stage.uuid)"
+                          class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
+                          <TrashIcon class="w-4 h-4" />
+                        </a>
+                      </div>
+
                     </div>
 
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- End of Action Cameras -->
 
 
 
-          <!-- Action Scanner -->
-          <div class="col-span-12" v-if="parseInt(action_stage.action_type_model) === enumActionTask.SCANNER_ID">
-            <div class="relative" v-for="scanner in action_stage.scanners" :key="scanner.id">
-              <div class="md:flex items-center md:space-x-4 mb-3">
-                <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
-                  <div class="grid grid-cols-4 gap-2 mb-5">
 
-                    <div class="col-span-2">
-                      <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
-                      <p class="text-xs font-normal leading-6 text-gray-500">
-                        {{ scanner.name }}
-                      </p>
+
+                  <!-- Action Cameras -->
+                  <div v-if="parseInt(action_stage.action_type_model) === enumActionTask.CAMERA_ID">
+                    <div v-for="camera in action_stage.cameras" :key="camera.id">
+
+                      <div class="col-span-2">
+                        <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
+                        <p class="text-xs font-normal leading-6 text-gray-500">
+                          {{ camera.name }}
+                        </p>
+                      </div>
+
                     </div>
-
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- End of Action Scanner -->
+                  <!-- End of Action Cameras -->
 
 
 
+                  <!-- Action Scanner -->
+                  <div v-if="parseInt(action_stage.action_type_model) === enumActionTask.SCANNER_ID">
+                    <div v-for="scanner in action_stage.scanners" :key="scanner.id">
 
-          <!-- Action Scanner -->
-          <div class="col-span-12" v-if="parseInt(action_stage.action_type_model) === enumActionTask.FORM_ID">
-            <div class="relative" v-for="form in action_stage.forms" :key="form.id">
-              <div class="md:flex items-center md:space-x-4 mb-3">
-                <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow">
-                  <div class="grid grid-cols-4 gap-2 mb-5">
 
-                    <div class="col-span-2">
-                      <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
-                      <p class="text-xs font-normal leading-6 text-gray-500">
-                        {{ form.name }}
-                      </p>
+                      <div class="col-span-3">
+                        <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
+                        <p class="text-xs font-normal leading-6 text-gray-500">
+                          {{ scanner.name }}
+                        </p>
+                      </div>
+
                     </div>
-
-                    <div class="col-span-2">
-                      <h5 class="text-xs font-light text-gray-400">{{ $t("name") }}:</h5>
-                      <p class="text-xs font-normal leading-6 text-gray-500">
-                        {{ form.action_form_field_name }}
-                      </p>
-                    </div>
-
                   </div>
+                  <!-- End of Action Scanner -->
+
+
+
+
+                  <!-- Action Scanner -->
+                  <div v-if="parseInt(action_stage.action_type_model) === enumActionTask.FORM_ID">
+                    <div v-for="form in action_stage.forms" :key="form.id">
+
+
+                      <div class="col-span-3">
+                        <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
+                        <p class="text-xs font-normal leading-6 text-gray-500">
+                          {{ form.name }}
+                        </p>
+                      </div>
+
+                      <div class="col-span-3">
+                        <h5 class="text-xs font-light text-gray-400">{{ $t("name") }}:</h5>
+                        <p class="text-xs font-normal leading-6 text-gray-500">
+                          {{ form.action_form_field_name }}
+                        </p>
+                      </div>
+
+                    </div>
+                  </div>
+                  <!-- End of Action Scanner -->
+
                 </div>
+                <!-- End <div class="grid grid-cols-6 gap-2 mb-5 pb-2"> -->
               </div>
             </div>
           </div>
-          <!-- End of Action Scanner -->
-
-
+          <!-- End relative -->
         </div>
-
-        <!-- End of Action Stages -->
-
-
-        <!-- End Stage -->
-
-
-
+        <!-- End Action Stages -->
 
       </div>
-
+      <!-- End v-else -->
 
     </div>
-    <!-- End of Stage Card -->
-
-
+    
   </div>
+  <!-- End of Stage Card -->
 
 
 
@@ -561,7 +543,7 @@
 
 
   <div class="intro-y box p-5 mt-5" v-if="isCreateStage">
-    <StageCreate @cancelStageForm="cancelStageForm" @addStageForm="addStageForm" />
+    <StageCreate @cancelStageForm="cancelStageForm" @addStageForm="addStageForm" :arrStages="arrStages" />
   </div>
 
 
@@ -582,7 +564,8 @@
 
 
   <div class="intro-y box p-5 mt-5" v-if="isCreateActionStage">
-    <ActionStageCreate @cancelActionStageForm="cancelActionStageForm" @addActionStageForm="addActionStageForm" />
+    <ActionStageCreate @cancelActionStageForm="cancelActionStageForm" @addActionStageForm="addActionStageForm"
+      :arrStages="arrStages" />
   </div>
 </template>
 
@@ -591,6 +574,9 @@
 
 import { onMounted, reactive, toRefs, ref } from 'vue';
 import Preloader from '@/components/preloader/Preloader.vue';
+
+import StageViewCard from '@/components/stages/StageViewCard.vue';
+
 import { Toast } from '@/utils/toast';
 import { helper as $h } from "@/utils/helper";
 
@@ -723,7 +709,7 @@ const formData = reactive({
   driver_id: "",
   reference_number: Math.floor(Math.random() * 100000),
   name: "Viaje Plaza",
-  execution_at: $h.nowTimestamp('-').substr(0,16),
+  execution_at: $h.nowTimestamp('-').substr(0, 16),
   observations: "",
 });
 
@@ -742,7 +728,7 @@ const save = async () => {
 
 
     loading.value = true;
-  
+
     console.log("envia a guardar");
 
 
@@ -940,7 +926,7 @@ const save = async () => {
 
     loading.value = false;
     await Toast(t("message.record_saved"), 'success');
-    
+
 
   }
 };
@@ -980,7 +966,7 @@ const addStageForm = async (stage) => {
 
 const deleteStageForm = (uuid) => {
   arrStages.value.forEach((ele, index) => {
-    if(ele.uuid === uuid){
+    if (ele.uuid === uuid) {
       arrStages.value.splice(index, 1);
     }
   });
@@ -1028,15 +1014,15 @@ const addTaskForm = (stage, data) => {
   isCreateTask.value = false;
 }
 
-const deleteTaskForm = (stageUuid, taskUuid) =>{
+const deleteTaskForm = (stageUuid, taskUuid) => {
 
   arrStages.value.forEach((stage) => {
-    
-    if(stage.uuid === stageUuid){
+
+    if (stage.uuid === stageUuid) {
 
       stage.tasks.forEach((task, index) => {
 
-        if(task.uuid === taskUuid){
+        if (task.uuid === taskUuid) {
           stage.tasks.splice(index, 1);
         }
 
@@ -1044,8 +1030,8 @@ const deleteTaskForm = (stageUuid, taskUuid) =>{
     }
 
   });
-  
-} 
+
+}
 
 /**
  * End Task
