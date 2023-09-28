@@ -1,6 +1,6 @@
 
 <template>
-  <Dropdown class="intro-x">
+<!--   <Dropdown class="intro-x">
     <DropdownToggle tag="div" role="button" class="cursor-pointer">
       <Tippy tag="button" class="intro-x notification mr-4 z-50" @click="switchMode" :content="$t('lang_select')" :options="{theme: 'light',}">
         <span class="uppercase font-medium text-white border rounded-md p-1">{{ $i18n.locale }}</span>
@@ -13,21 +13,27 @@
         </DropdownItem>
       </DropdownContent>
     </DropdownMenu>
-  </Dropdown>
+  </Dropdown> -->
+  <div class="z-50 mr-2">
+    <select class="uppercase bg-primary text-white rounded border-none form-select" v-model="$i18n.locale" id="locale" @change="changeLocale($i18n.locale)">
+    <option v-for="locale in $i18n.availableLocales" :value="locale">{{ locale }}</option>
+  </select>
+  </div>
 </template>
 
 <script setup>
+import { computed, onBeforeMount } from "vue";
 import { allLocales, setLocale } from "@/i18n";
+import { useLocaleStore } from "@/stores/locale";
 
-const chanlng = (lang) => {
-  setLocale(lang);
-  document.querySelector("html").setAttribute("lang", lang)
+const localeStore = useLocaleStore();
+function changeLocale(locale){
+  localeStore.setLocale(locale);  
+
 }
+
+onBeforeMount(async () => {
+});
+
 
 </script>
-
-<style scoped>
-#dropdownDefaultButton {
-  z-index: 9999;
-}
-</style>

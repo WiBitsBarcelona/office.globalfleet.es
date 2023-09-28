@@ -24,13 +24,21 @@ export async function setLocale (locale) {
       return;
     }
 
-    // Add locale.
-    i18n.global.setLocaleMessage(locale, messages);
+    if (!localStorage.getItem("locale") === null) {
+      const currentLocale = localStorage.getItem("locale");
+      i18n.global.setLocaleMessage(currentLocale, messages);
+      i18n.global.locale.value = currentLocale;
+    }else{
+      // Add locale standar local.
+      i18n.global.setLocaleMessage(locale, messages);
+      i18n.global.locale.value = locale;
+    }
+
+
   }
 
   // Set locale.
-  i18n.global.locale.value = locale;
-  console.log('Seteo Idioma');
+  
 }
 
 // Fetch locale.
