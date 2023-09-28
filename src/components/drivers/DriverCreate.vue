@@ -108,7 +108,7 @@
 					<div class="relative sm:flex items-center">
 						<!-- <input v-model.trim="validate.password.$model" id="password" :type="passwordFieldType" -->
 						<input v-model="passTmp" id="password" :type="passwordFieldType"
-							name="password" class="form-control" :class="{ 'border-danger': validate.password.$error }" />
+							name="password" class="form-control" :class="{ 'border-danger': validate.password.$error }" autocomplete="new-password" />
 						<EyeIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer"
 							@click="switchVisibility" />
 
@@ -211,6 +211,7 @@ const validate = useVuelidate(rules, toRefs(formData));
 const save = () => {
 	validate.value.$touch();
 	if (validate.value.$invalid) {
+		
 		//TODO
 	} else {
 		formData.password = passTmp.value;

@@ -192,6 +192,8 @@ const { actionTypes, getActionTypes } = useActionType();
 const { actionFormFields, getActionFormFields } = useActionFormField();
 
 const emit = defineEmits(['cancelActionStageForm', 'addActionStageForm']);
+const props = defineProps(['arrStages']);
+
 //const props = defineProps(['stageIndex']);
 
 
@@ -237,7 +239,7 @@ let stageFake = {
     stage_type_id: "1",
     reference_number: "-",
     name: "",
-    order_number: "0",
+    order_number: "",
     client_name: "-",
     address: "-",
     phone: "-",
@@ -272,9 +274,6 @@ const save = () => {
 	if (validate.value.$invalid) {
 		//TODO
 	} else {
-
-
-
 
 		//TODO 
 		if (parseInt(formData.action_type_model) === enumActionTask.FORM_ID) {
@@ -338,6 +337,13 @@ onMounted(async () => {
 
 	await getActionFormFields();
 	selectActionFormFields.value = actionFormFields.value;
+
+
+	if(props.arrStages.length === 0){
+        stageFake.order_number = 1;
+    }else{
+        stageFake.order_number = props.arrStages.length + 1;
+    }
 
 });
 

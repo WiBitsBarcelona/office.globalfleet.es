@@ -17,10 +17,10 @@
                     <label for="name" class="form-label w-full">
                         {{ $t("name") }}
                     </label>
-                    <input v-model.trim="validateStage.name.$model" id="name" type="text" name="name" class="form-control"
-                        :class="{ 'border-danger': validateStage.name.$error }" />
-                    <template v-if="validateStage.name.$error">
-                        <div v-for="(error, index) in validateStage.name.$errors" :key="index" class="text-danger mt-2">
+                    <input v-model.trim="validate.name.$model" id="name" type="text" name="name" class="form-control"
+                        :class="{ 'border-danger': validate.name.$error }" />
+                    <template v-if="validate.name.$error">
+                        <div v-for="(error, index) in validate.name.$errors" :key="index" class="text-danger mt-2">
                             {{ error.$message }}
                         </div>
                     </template>
@@ -32,11 +32,11 @@
                     <label for="reference_number" class="form-label w-full">
                         {{ $t("reference_number") }}
                     </label>
-                    <input v-model.trim="validateStage.reference_number.$model" id="reference_number" type="text"
+                    <input v-model.trim="validate.reference_number.$model" id="reference_number" type="text"
                         name="reference_number" class="form-control"
-                        :class="{ 'border-danger': validateStage.reference_number.$error }" />
-                    <template v-if="validateStage.reference_number.$error">
-                        <div v-for="(error, index) in validateStage.reference_number.$errors" :key="index"
+                        :class="{ 'border-danger': validate.reference_number.$error }" />
+                    <template v-if="validate.reference_number.$error">
+                        <div v-for="(error, index) in validate.reference_number.$errors" :key="index"
                             class="text-danger mt-2">
                             {{ error.$message }}
                         </div>
@@ -52,24 +52,23 @@
                         {{ $t("activity") }}
                     </label>
 
-                    <select 
-                        v-model.trim="validateStage.activity_type_id.$model" 
-                        id="activity_type_id"          
-                        name="activity_type_id"
-                        class="form-control" 
-                        :class="{ 'border-danger': validateStage.activity_type_id.$error }">
+                    <TomSelect 
+                        v-model.trim="validate.activity_type_id.$model" 
+                        id="activity_type_id" 
+                        name="activity_type_id" 
+                        :options="{ placeholder: $t('message.select'),}" 
+                        class="form-control w-full" 
+                        :class="{ 'border-danger': validate.activity_type_id.$error }"
+                    >
 
-                        <option value="" selected>Seleccione</option>
                         <option v-for="item in selectActivityTypes" :value="item.id">
                             {{ item.name }}
                         </option>
 
-                    </select>
+					</TomSelect>
 
-
-
-                    <template v-if="validateStage.activity_type_id.$error">
-                        <div v-for="(error, index) in validateStage.activity_type_id.$errors" :key="index"
+                    <template v-if="validate.activity_type_id.$error">
+                        <div v-for="(error, index) in validate.activity_type_id.$errors" :key="index"
                             class="text-danger mt-2">
                             {{ error.$message }}
                         </div>
@@ -83,24 +82,24 @@
                         {{ $t("stage_type") }}
                     </label>
 
-                    <select 
-                        v-model.trim="validateStage.stage_type_id.$model" 
+                    <TomSelect 
+                        v-model.trim="validate.stage_type_id.$model"
                         id="stage_type_id" 
-                        name="stage_type_id"
-                        class="form-control" 
-                        :class="{ 'border-danger': validateStage.stage_type_id.$error }">
+                        name="stage_type_id" 
+                        :options="{
+                            placeholder: $t('message.select'),
+                        }" 
+                        class="form-control w-full"
+                        :class="{ 'border-danger': validate.stage_type_id.$error }">
 
-                        <option value="" selected>Seleccione</option>
                         <option v-for="item in selectStageTypes" :value="item.id">
                             {{ item.name }}
                         </option>
 
-                    </select>
+					</TomSelect>
 
-
-
-                    <template v-if="validateStage.stage_type_id.$error">
-                        <div v-for="(error, index) in validateStage.stage_type_id.$errors" :key="index"
+                    <template v-if="validate.stage_type_id.$error">
+                        <div v-for="(error, index) in validate.stage_type_id.$errors" :key="index"
                             class="text-danger mt-2">
                             {{ error.$message }}
                         </div>
@@ -115,11 +114,11 @@
                     <label for="order_number" class="form-label w-full">
                         {{ $t("order_number") }}
                     </label>
-                    <input v-model.trim="validateStage.order_number.$model" id="order_number" type="number"
+                    <input v-model.trim="validate.order_number.$model" id="order_number" type="number"
                         name="order_number" class="form-control"
-                        :class="{ 'border-danger': validateStage.order_number.$error }" />
-                    <template v-if="validateStage.order_number.$error">
-                        <div v-for="(error, index) in validateStage.order_number.$errors" :key="index"
+                        :class="{ 'border-danger': validate.order_number.$error }" />
+                    <template v-if="validate.order_number.$error">
+                        <div v-for="(error, index) in validate.order_number.$errors" :key="index"
                             class="text-danger mt-2">
                             {{ error.$message }}
                         </div>
@@ -134,10 +133,10 @@
                     <label for="client_name" class="form-label w-full">
                         {{ $t("client_name") }}
                     </label>
-                    <input v-model.trim="validateStage.client_name.$model" id="client_name" type="text" name="client_name"
-                        class="form-control" :class="{ 'border-danger': validateStage.client_name.$error }" />
-                    <template v-if="validateStage.client_name.$error">
-                        <div v-for="(error, index) in validateStage.client_name.$errors" :key="index"
+                    <input v-model.trim="validate.client_name.$model" id="client_name" type="text" name="client_name"
+                        class="form-control" :class="{ 'border-danger': validate.client_name.$error }" />
+                    <template v-if="validate.client_name.$error">
+                        <div v-for="(error, index) in validate.client_name.$errors" :key="index"
                             class="text-danger mt-2">
                             {{ error.$message }}
                         </div>
@@ -151,10 +150,10 @@
                     <label for="address" class="form-label w-full">
                         {{ $t("address") }}
                     </label>
-                    <input v-model.trim="validateStage.address.$model" id="address" type="text" name="address"
-                        class="form-control" :class="{ 'border-danger': validateStage.address.$error }" />
-                    <template v-if="validateStage.address.$error">
-                        <div v-for="(error, index) in validateStage.address.$errors" :key="index" class="text-danger mt-2">
+                    <input v-model.trim="validate.address.$model" id="address" type="text" name="address"
+                        class="form-control" :class="{ 'border-danger': validate.address.$error }" />
+                    <template v-if="validate.address.$error">
+                        <div v-for="(error, index) in validate.address.$errors" :key="index" class="text-danger mt-2">
                             {{ error.$message }}
                         </div>
                     </template>
@@ -167,10 +166,10 @@
                     <label for="phone" class="form-label w-full">
                         {{ $t("phone") }}
                     </label>
-                    <input v-model.trim="validateStage.phone.$model" id="phone" type="text" name="phone"
-                        class="form-control" :class="{ 'border-danger': validateStage.phone.$error }" />
-                    <template v-if="validateStage.phone.$error">
-                        <div v-for="(error, index) in validateStage.phone.$errors" :key="index" class="text-danger mt-2">
+                    <input v-model.trim="validate.phone.$model" id="phone" type="text" name="phone"
+                        class="form-control" :class="{ 'border-danger': validate.phone.$error }" />
+                    <template v-if="validate.phone.$error">
+                        <div v-for="(error, index) in validate.phone.$errors" :key="index" class="text-danger mt-2">
                             {{ error.$message }}
                         </div>
                     </template>
@@ -183,10 +182,10 @@
                     <label for="zip_code" class="form-label w-full">
                         {{ $t("zip_code") }}
                     </label>
-                    <input v-model.trim="validateStage.zip_code.$model" id="zip_code" type="text" name="zip_code"
-                        class="form-control" :class="{ 'border-danger': validateStage.zip_code.$error }" />
-                    <template v-if="validateStage.zip_code.$error">
-                        <div v-for="(error, index) in validateStage.zip_code.$errors" :key="index" class="text-danger mt-2">
+                    <input v-model.trim="validate.zip_code.$model" id="zip_code" type="text" name="zip_code"
+                        class="form-control" :class="{ 'border-danger': validate.zip_code.$error }" />
+                    <template v-if="validate.zip_code.$error">
+                        <div v-for="(error, index) in validate.zip_code.$errors" :key="index" class="text-danger mt-2">
                             {{ error.$message }}
                         </div>
                     </template>
@@ -199,10 +198,10 @@
                     <label for="latitude" class="form-label w-full">
                         {{ $t("latitude") }}
                     </label>
-                    <input v-model.trim="validateStage.latitude.$model" id="latitude" type="text" name="latitude"
-                        class="form-control" :class="{ 'border-danger': validateStage.latitude.$error }" />
-                    <template v-if="validateStage.latitude.$error">
-                        <div v-for="(error, index) in validateStage.latitude.$errors" :key="index" class="text-danger mt-2">
+                    <input v-model.trim="validate.latitude.$model" id="latitude" type="text" name="latitude"
+                        class="form-control" :class="{ 'border-danger': validate.latitude.$error }" />
+                    <template v-if="validate.latitude.$error">
+                        <div v-for="(error, index) in validate.latitude.$errors" :key="index" class="text-danger mt-2">
                             {{ error.$message }}
                         </div>
                     </template>
@@ -215,10 +214,10 @@
                     <label for="longitude" class="form-label w-full">
                         {{ $t("longitude") }}
                     </label>
-                    <input v-model.trim="validateStage.longitude.$model" id="longitude" type="text" name="longitude"
-                        class="form-control" :class="{ 'border-danger': validateStage.longitude.$error }" />
-                    <template v-if="validateStage.longitude.$error">
-                        <div v-for="(error, index) in validateStage.longitude.$errors" :key="index"
+                    <input v-model.trim="validate.longitude.$model" id="longitude" type="text" name="longitude"
+                        class="form-control" :class="{ 'border-danger': validate.longitude.$error }" />
+                    <template v-if="validate.longitude.$error">
+                        <div v-for="(error, index) in validate.longitude.$errors" :key="index"
                             class="text-danger mt-2">
                             {{ error.$message }}
                         </div>
@@ -232,10 +231,10 @@
                     <label for="route_code" class="form-label w-full">
                         {{ $t("route_code") }}
                     </label>
-                    <input v-model.trim="validateStage.route_code.$model" id="route_code" type="text" name="route_code"
-                        class="form-control" :class="{ 'border-danger': validateStage.route_code.$error }" />
-                    <template v-if="validateStage.route_code.$error">
-                        <div v-for="(error, index) in validateStage.route_code.$errors" :key="index"
+                    <input v-model.trim="validate.route_code.$model" id="route_code" type="text" name="route_code"
+                        class="form-control" :class="{ 'border-danger': validate.route_code.$error }" />
+                    <template v-if="validate.route_code.$error">
+                        <div v-for="(error, index) in validate.route_code.$errors" :key="index"
                             class="text-danger mt-2">
                             {{ error.$message }}
                         </div>
@@ -249,10 +248,10 @@
                     <label for="route_name" class="form-label w-full">
                         {{ $t("route_name") }}
                     </label>
-                    <input v-model.trim="validateStage.route_name.$model" id="route_name" type="text" name="route_name"
-                        class="form-control" :class="{ 'border-danger': validateStage.route_name.$error }" />
-                    <template v-if="validateStage.route_name.$error">
-                        <div v-for="(error, index) in validateStage.route_name.$errors" :key="index"
+                    <input v-model.trim="validate.route_name.$model" id="route_name" type="text" name="route_name"
+                        class="form-control" :class="{ 'border-danger': validate.route_name.$error }" />
+                    <template v-if="validate.route_name.$error">
+                        <div v-for="(error, index) in validate.route_name.$errors" :key="index"
                             class="text-danger mt-2">
                             {{ error.$message }}
                         </div>
@@ -269,12 +268,17 @@
                     <label for="execution_at" class="form-label w-full">
                         {{ $t("execution_at") }}
                     </label>
-                    <input v-model.trim="validateStage.execution_at.$model" id="execution_at" type="text"
-                        name="execution_at" class="form-control"
-                        :class="{ 'border-danger': validateStage.execution_at.$error }" />
+                    <input 
+                        v-model.trim="validate.execution_at.$model" 
+                        id="execution_at" 
+                        type="datetime-local"
+                        name="execution_at" 
+                        class="form-control"
+                        :class="{ 'border-danger': validate.execution_at.$error }" 
+                    />
                         
-                    <template v-if="validateStage.execution_at.$error">
-                        <div v-for="(error, index) in validateStage.execution_at.$errors" :key="index"
+                    <template v-if="validate.execution_at.$error">
+                        <div v-for="(error, index) in validate.execution_at.$errors" :key="index"
                             class="text-danger mt-2">
                             {{ error.$message }}
                         </div>
@@ -291,7 +295,7 @@
                     </label>
 
 
-                    <textarea v-model.trim="validateStage.description.$model" id="description" name="description" class="form-control">
+                    <textarea v-model.trim="validate.description.$model" id="description" name="description" class="form-control">
                     </textarea>
                     
                     
@@ -330,10 +334,8 @@ import { required, minLength, maxLength, email, url, integer } from '@vuelidate/
 import { useVuelidate } from '@vuelidate/core';
 import { helpers } from '@vuelidate/validators';
 import { useI18n } from 'vue-i18n';
-
-
+import { helper as $h } from "@/utils/helper";
 import { v4 as uuidv4 } from 'uuid';
-
 
 
 const { t } = useI18n();
@@ -341,17 +343,12 @@ const { stageTypes, getStageTypes } = useStageType();
 const { activityTypes, getActivityTypes } = useActivityType();
 
 
-
 const emit = defineEmits(['addStageForm', 'cancelStageForm']);
-
-//const props = defineProps(['arrStages']);
-
-
+const props = defineProps(['arrStages']);
 
 
 const selectStageTypes = ref([]);
 const selectActivityTypes = ref([]);
-
 
 
 const rulesStage = {
@@ -406,9 +403,10 @@ const formDataStage = reactive({
     activity_type_id: "",
     activity_type_name: "",
     stage_type_id: "3",
+    stage_type_name: "",
     reference_number: "1000",
-    name: "Viaje Nuevo Hannover",
-    order_number: "1",
+    name: "Etapa Hannover",
+    order_number: "",
     client_name: "Pepito",
     address: "Calle hambrosio 2-4",
     phone: "890890890",
@@ -418,30 +416,39 @@ const formDataStage = reactive({
     route_code: "Route 678678",
     route_name: "Nombre Route",
     description: "Descripcion para la Etapa",
-    execution_at: "2023-10-10",
+    execution_at: $h.nowTimestamp('-').substr(0,16),
 });
 
-const validateStage = useVuelidate(rulesStage, toRefs(formDataStage));
+
+//console.log(props.arrStages.value);
+
+
+
+
+
+const validate = useVuelidate(rulesStage, toRefs(formDataStage));
 
 const saveStage = () => {
 
     
 
 
-    validateStage.value.$touch();    
-    if (validateStage.value.$invalid) {
+    validate.value.$touch();    
+    if (validate.value.$invalid) {
         //TODO
     } else {
 
-
         //Find element activity
-        const selectedActivity = selectActivityTypes.value.find(elem => elem.id === formDataStage.activity_type_id);
+        const selectedActivity = selectActivityTypes.value.find(elem => elem.id === parseInt(formDataStage.activity_type_id));
         formDataStage.activity_type_name = selectedActivity.name;
 
-        emit('addStageForm', { ...formDataStage });
 
-        console.log("Guarda Stage");
-        //TODO reset fields
+
+        const selectedStageType = selectStageTypes.value.find(elem => elem.id === parseInt(formDataStage.stage_type_id));
+        formDataStage.stage_type_name = selectedStageType.name;
+
+
+        emit('addStageForm', { ...formDataStage });
         
     }
 };
@@ -460,6 +467,13 @@ onMounted(async () => {
     //Load activity types
     await getActivityTypes();
     selectActivityTypes.value = activityTypes.value;
+
+
+    if(props.arrStages.length === 0){
+        formDataStage.order_number = 1;
+    }else{
+        formDataStage.order_number = props.arrStages.length + 1;
+    }
 
 
 });

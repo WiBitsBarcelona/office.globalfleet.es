@@ -7,7 +7,7 @@
         <div class="grid grid-cols-12 gap-1 mt-8">
 
           <div class="col-span-10 intro-y mb-5">
-            <h2 class="text-lg font-medium truncate mr-5 mb-5">{{ $t("trips") }} <span class="text-xl font-bold">{{ company.name }}</span></h2>
+            <h2 class="text-lg font-medium truncate mr-5 mb-5">{{ $t("trips") }} <span class="text-xl font-bold">{{ useAuthentication.getUser.employee.company.name }}</span></h2>
           </div>
           
           <div class="col-span-2 intro-y mb-5 text-end">
@@ -187,16 +187,12 @@ import useTrips from "@/composables/trips";
 import TripCard from '@/components/trips/TripCard.vue';
 import { helper as $h } from "@/utils/helper";
 import { useI18n } from 'vue-i18n';
-import useCompany from '@/composables/companies.js';
 import { useAuthenticationStore } from '@/stores/auth/authentications';
 
 
 const { trips, getTrips, getTrip, trip } = useTrips();
 const { t } = useI18n();
 
-
-
-const { company, getCompany } = useCompany();
 const useAuthentication = useAuthenticationStore();
 
 const classBtnFilter = ref(classBtnAll);
@@ -424,10 +420,7 @@ onBeforeUnmount(() => {
 
 
 onMounted(async () => {
-  
   await find();
-  await getCompany(useAuthentication.getUser.employee.company_id);
-
 });
 
 </script>

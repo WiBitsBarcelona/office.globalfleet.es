@@ -1,7 +1,7 @@
 <template>
 
 	<!-- BEGIN: Form -->
-	<form class="validate-form" @submit.prevent="save">
+	<form class="validate-form" autocomplete="off" @submit.prevent="save">
 
 		<!-- BEGIN: container -->
 		<div class="grid grid-cols-12 gap-6">
@@ -64,6 +64,7 @@
 						name="surname"
 						class="form-control"
 						:class="{ 'border-danger': validate.surname.$error }"
+						autocomplete="off"
 					/>
 					<template v-if="validate.surname.$error">
 						<div v-for="(error, index) in validate.surname.$errors" :key="index" class="text-danger mt-2">
@@ -86,6 +87,7 @@
 						name="fiscal_identification"
 						class="form-control"
 						:class="{ 'border-danger': validate.fiscal_identification.$error }"
+						autocomplete="off"
 					/>
 					<template v-if="validate.fiscal_identification.$error">
 						<div v-for="(error, index) in validate.fiscal_identification.$errors" :key="index" class="text-danger mt-2">
@@ -133,6 +135,7 @@
 							name="password"
 							class="form-control"
 							:class="{ 'border-danger': validate.password.$error }"
+							autocomplete="new-password"
 						/>
 						<EyeIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer" @click="switchVisibility" />
 
