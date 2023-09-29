@@ -140,6 +140,18 @@ const { t } = useI18n();
 const { driverPositions, getDriverPositions } = useDriverPosition();
 const currentLocale = ref("es-ES");
 
+switch(localStorage.getItem('locale')){
+  case 'es':
+    currentLocale.value = "es-ES";
+    break;
+  case 'en':
+    currentLocale.value = "en-US";
+    break;
+  default:
+    currentLocale.value = "es-ES";
+    break;
+}
+
 const props = defineProps({
   width: {
     type: Number,
