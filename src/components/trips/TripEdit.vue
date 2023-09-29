@@ -204,7 +204,6 @@
   
   
 
-	  
 
 	  <!-- Stage Card -->
 	  <div v-for="stage in arrStages" :key="stage.id">
@@ -254,6 +253,13 @@
 					</p>
 				  </div>
   
+				  <div class="col-span-1">
+					<h5 class="text-xs font-light text-gray-400">{{ $t("order") }}:</h5>
+					<p class="text-md font-normal leading-6 text-gray-500">
+					  {{ stage.order_number }}
+					</p>
+				  </div>
+
 				  <div class="col-span-1">
 					<h5 class="text-xs font-light text-gray-400">{{ $t("activity") }}:</h5>
 					<p class="text-md font-normal leading-6 text-gray-500">
@@ -409,13 +415,9 @@
 		  <!-- End Stage -->
   
 		</div>
-  
-  
-  
 		<!-- v-else -->
 		<div v-else>
-  
-  
+
 		  <!-- Action Stages -->
 		  <div v-for="action_stage in stage.actions" :key="action_stage.id">
   
@@ -436,6 +438,11 @@
 						<p class="text-md font-normal leading-6 text-gray-500">
 						  <span class="text-xs font-light text-gray-400">{{ $t("action") }}
 						  </span> {{ action_stage.type.name }}
+						</p>
+
+						<p class="text-md font-normal leading-6 text-gray-500">
+						  <span class="text-xs font-light text-gray-400">{{ $t("order") }}
+						  </span> {{ stage.order_number }}
 						</p>
   
 						<div class="text-right">
@@ -526,7 +533,7 @@
   
   
 	<div class="intro-y box p-5 mt-5" v-if="isCreateStage">
-	  <StageCreate @cancelStageForm="cancelStageForm" @addStageForm="addStageForm" :arrStages="arrStages" />
+	  <StageEdit @cancelStageForm="cancelStageForm" @addStageForm="addStageForm" :arrStages="arrStages" />
 	</div>
   
   
@@ -558,7 +565,6 @@
   import { onMounted, reactive, toRefs, ref } from 'vue';
   import Preloader from '@/components/preloader/Preloader.vue';
   
-  import StageViewCard from '@/components/stages/StageViewCard.vue';
   
   import { Toast } from '@/utils/toast';
   import { helper as $h } from "@/utils/helper";
@@ -584,10 +590,15 @@
   
   
   //Components
-  import StageCreate from '@/components/stages/StageCreate.vue';
+  import StageEdit from '@/components/stages/StageEdit.vue';
+
+
+  //TODO cambiar por edit
   import TaskCreate from '@/components/tasks/TaskCreate.vue';
   import ActionTaskCreate from '@/components/action_tasks/ActionTaskCreate.vue';
   import ActionStageCreate from '@/components/action_stages/ActionStageCreate.vue';
+
+
   
   
   import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
@@ -726,95 +737,95 @@
 	  /**
 	   * Stages
 	   */
-	  arrStages.value.forEach(async (eleStage) => {
+	//   arrStages.value.forEach(async (eleStage) => {
   
-		eleStage.trip_id = trip.value.id;
+	// 	eleStage.trip_id = trip.value.id;
   
-		await storeStage(eleStage);
-		console.log({ ...stage.value });
+	// 	await storeStage(eleStage);
+	// 	console.log({ ...stage.value });
   
   
   
-		/**
-		 * Activity
-		 */
-		if (eleStage.activity_type_id) {
+	// 	/**
+	// 	 * Activity
+	// 	 */
+	// 	if (eleStage.activity_type_id) {
   
-		  activityObj = {
-			stage_id: stage.value.id,
-			activity_type_id: eleStage.activity_type_id
-		  }
+	// 	  activityObj = {
+	// 		stage_id: stage.value.id,
+	// 		activity_type_id: eleStage.activity_type_id
+	// 	  }
   
-		  await storeActivity(activityObj);
-		  console.log({ ...activity.value });
+	// 	  await storeActivity(activityObj);
+	// 	  console.log({ ...activity.value });
   
-		}
+	// 	}
   
   
   
   
-		/**
-		* Action Stages
-		*/
-		if (eleStage.action_stages) {
-		  eleStage.action_stages.forEach(async (eleActionStage) => {
+	// 	/**
+	// 	* Action Stages
+	// 	*/
+	// 	if (eleStage.action_stages) {
+	// 	  eleStage.action_stages.forEach(async (eleActionStage) => {
   
-			eleActionStage.stage_id = stage.value.id;
-			console.log(eleActionStage);
+	// 		eleActionStage.stage_id = stage.value.id;
+	// 		console.log(eleActionStage);
   
-			await storeActionStage(eleActionStage);
+	// 		await storeActionStage(eleActionStage);
   
-			console.log({ ...actionStage.value });
+	// 		console.log({ ...actionStage.value });
   
   
-			/**
-			 *  Action stage cameras
-			 */
-			if (eleActionStage.cameras) {
+	// 		/**
+	// 		 *  Action stage cameras
+	// 		 */
+	// 		if (eleActionStage.cameras) {
   
-			  actionStageCameraObj = {
-				action_stage_id: actionStage.value.id
-			  }
+	// 		  actionStageCameraObj = {
+	// 			action_stage_id: actionStage.value.id
+	// 		  }
   
-			  await storeActionStageCamera(actionStageCameraObj);
-			  console.log({ ...actionStageCamera.value });
+	// 		  await storeActionStageCamera(actionStageCameraObj);
+	// 		  console.log({ ...actionStageCamera.value });
   
-			}
+	// 		}
   
   
-			/**
-			 * Action stage scanners
-			 */
-			if (eleActionStage.scanners) {
+	// 		/**
+	// 		 * Action stage scanners
+	// 		 */
+	// 		if (eleActionStage.scanners) {
   
-			  actionStageScannerObj = {
-				action_stage_id: actionStage.value.id
-			  }
+	// 		  actionStageScannerObj = {
+	// 			action_stage_id: actionStage.value.id
+	// 		  }
   
-			  await storeActionStageScanner(actionStageScannerObj);
-			  console.log({ ...actionStageScanner.value });
+	// 		  await storeActionStageScanner(actionStageScannerObj);
+	// 		  console.log({ ...actionStageScanner.value });
   
-			}
+	// 		}
   
   
-			/**
-			 * Action stage forms
-			 */
-			if (eleActionStage.forms) {
+	// 		/**
+	// 		 * Action stage forms
+	// 		 */
+	// 		if (eleActionStage.forms) {
   
-			  actionStageFormObj = {
-				action_stage_id: actionStage.value.id,
-				action_form_field_id: eleActionStage.action_form_field_id,
-			  }
+	// 		  actionStageFormObj = {
+	// 			action_stage_id: actionStage.value.id,
+	// 			action_form_field_id: eleActionStage.action_form_field_id,
+	// 		  }
   
-			  await storeActionStageForm(actionStageFormObj);
-			  console.log({ ...actionStageForm.value });
+	// 		  await storeActionStageForm(actionStageFormObj);
+	// 		  console.log({ ...actionStageForm.value });
   
-			}
+	// 		}
   
   
-		  });
-		}
+	// 	  });
+	// 	}
   
   
   
@@ -823,84 +834,84 @@
   
   
   
-		/**
-		 * Tasks
-		 */
-		if (eleStage.tasks) {
-		  eleStage.tasks.forEach(async (eleTask) => {
+	// 	/**
+	// 	 * Tasks
+	// 	 */
+	// 	if (eleStage.tasks) {
+	// 	  eleStage.tasks.forEach(async (eleTask) => {
   
-			eleTask.stage_id = stage.value.id;
+	// 		eleTask.stage_id = stage.value.id;
   
-			await storeTask(eleTask);
-			console.log({ ...task.value });
+	// 		await storeTask(eleTask);
+	// 		console.log({ ...task.value });
   
   
   
-			/**
-			 * Action Tasks
-			 */
-			if (eleTask.action_tasks) {
-			  eleTask.action_tasks.forEach(async (eleActionTask) => {
+	// 		/**
+	// 		 * Action Tasks
+	// 		 */
+	// 		if (eleTask.action_tasks) {
+	// 		  eleTask.action_tasks.forEach(async (eleActionTask) => {
   
-				eleActionTask.task_id = task.value.id;
-				await storeActionTask(eleActionTask);
-				console.log({ ...actionTask.value });
+	// 			eleActionTask.task_id = task.value.id;
+	// 			await storeActionTask(eleActionTask);
+	// 			console.log({ ...actionTask.value });
   
   
-				/**
-				 *  Action task cameras
-				 */
-				if (eleActionTask.cameras) {
+	// 			/**
+	// 			 *  Action task cameras
+	// 			 */
+	// 			if (eleActionTask.cameras) {
   
-				  actionTaskCameraObj = {
-					action_task_id: actionTask.value.id
-				  }
+	// 			  actionTaskCameraObj = {
+	// 				action_task_id: actionTask.value.id
+	// 			  }
   
-				  await storeActionTaskCamera(actionTaskCameraObj);
-				  console.log({ ...actionTaskCamera.value });
+	// 			  await storeActionTaskCamera(actionTaskCameraObj);
+	// 			  console.log({ ...actionTaskCamera.value });
   
-				}
+	// 			}
   
   
-				/**
-				 * Action task scanners
-				 */
-				if (eleActionTask.scanners) {
+	// 			/**
+	// 			 * Action task scanners
+	// 			 */
+	// 			if (eleActionTask.scanners) {
   
-				  actionTaskScannerObj = {
-					action_task_id: actionTask.value.id
-				  }
+	// 			  actionTaskScannerObj = {
+	// 				action_task_id: actionTask.value.id
+	// 			  }
   
-				  await storeActionTaskScanner(actionTaskScannerObj);
-				  console.log({ ...actionTaskScanner.value });
+	// 			  await storeActionTaskScanner(actionTaskScannerObj);
+	// 			  console.log({ ...actionTaskScanner.value });
   
-				}
+	// 			}
   
   
-				/**
-				 * Action task forms
-				 */
-				if (eleActionTask.forms) {
+	// 			/**
+	// 			 * Action task forms
+	// 			 */
+	// 			if (eleActionTask.forms) {
   
-				  actionTaskFormObj = {
-					action_task_id: actionTask.value.id,
-					action_form_field_id: eleActionTask.action_form_field_id,
-				  }
+	// 			  actionTaskFormObj = {
+	// 				action_task_id: actionTask.value.id,
+	// 				action_form_field_id: eleActionTask.action_form_field_id,
+	// 			  }
   
-				  await storeActionTaskForm(actionTaskFormObj);
-				  console.log({ ...actionTaskForm.value });
+	// 			  await storeActionTaskForm(actionTaskFormObj);
+	// 			  console.log({ ...actionTaskForm.value });
   
-				}
+	// 			}
   
   
-			  });
-			}
-		  });
-		}
+	// 		  });
+	// 		}
+	// 	  });
+	// 	}
   
   
   
-	  });
+	//   });
   
   
 	  //console.log({ ...arrStages.value });
@@ -911,7 +922,6 @@
   
 	}
   };
-  
   
   
   

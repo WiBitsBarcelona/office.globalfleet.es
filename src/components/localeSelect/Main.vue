@@ -28,8 +28,7 @@ import { useLocaleStore } from "@/stores/locale";
 
 const localeStore = useLocaleStore();
 function changeLocale(locale){
-  localeStore.setLocale(locale);  
-
+  localeStore.setLocale(locale);
 }
 
 onBeforeMount(async () => {
