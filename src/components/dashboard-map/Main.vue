@@ -755,16 +755,16 @@ const init = async (initializeMap) => {
 
       google.maps.event.addListener(marker, "click", function () {
         infoWindow.setContent(infowincontent);
-        google.maps.event.addListener(infoWindow, "domready", function () {
-/*           cash(".arrow_box").closest(".gm-style-iw-d").removeAttr("style");
+/*       google.maps.event.addListener(infoWindow, "domready", function () {
+           cash(".arrow_box").closest(".gm-style-iw-d").removeAttr("style");
           cash(".arrow_box")
             .closest(".gm-style-iw-d")
             .attr("style", "overflow:visible");
           cash(".arrow_box")
             .closest(".gm-style-iw-d")
             .parent() 
-            .removeAttr("style");*/
-        });
+            .removeAttr("style");
+        });*/
         infoWindow.setPosition(marker.getPosition());
         infoWindow.open(map, marker);
 
