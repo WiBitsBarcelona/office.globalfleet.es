@@ -548,15 +548,15 @@ const initialize = async () => {
                         nameConversation.value = textMessage.conversationId
                     }
 
-                    //Para leer los mensajes
+                    // Si mi usuario recibe los mensajes y esta en el ultimo mensaje
                     if (textMessage.receiverId == myUid.value) {
                         //markUserConversationAsRead(myUid.value, ChatId.value)
                         if (isMoving == true) {
                             setTimeout(() => {
                                 scrollToLast()
-                            }, 2000)
+                            }, 1000)
                         }
-                    }
+                    } 
 
                 },
                 onMediaMessageReceived: (mediaMessage) => {
@@ -589,11 +589,11 @@ const loadMessages = async () => {
         //Para leer los mensajes
         //markUserConversationAsRead(myUid.value, ChatId.value);
         if (receiverType.value == 'user') {
-           await mark_user_conversation_as_delivered(myUid.value, ChatId.value) 
+            await mark_user_conversation_as_delivered(myUid.value, ChatId.value)
         } else {
-            await mark_group_conversation_as_delivered(myUid.value, ChatId.value) 
+            await mark_group_conversation_as_delivered(myUid.value, ChatId.value)
         }
-        
+
     }
 }
 
@@ -643,12 +643,12 @@ const sendMessage = async () => {
         setTimeout(() => {
             const chatCont = document.getElementById('chat');
             chatCont.scrollTop = chatCont.scrollHeight;
-        }, 400);
+        }, 800);
 
         if (receiverType.value == 'user') {
-           await mark_user_conversation_as_delivered(myUid.value, ChatId.value) 
+            await mark_user_conversation_as_delivered(myUid.value, ChatId.value)
         } else {
-            await mark_group_conversation_as_delivered(myUid.value, ChatId.value) 
+            await mark_group_conversation_as_delivered(myUid.value, ChatId.value)
         }
 
 
@@ -664,15 +664,16 @@ const sendMessage = async () => {
             await sendTextMessage(myUid.value, message.value, ChatId.value, receiverType.value, isChecked.value, '');
             isChecked.value = false
 
+
             setTimeout(() => {
                 const chatCont = document.getElementById('chat');
                 chatCont.scrollTop = chatCont.scrollHeight;
-            }, 400);
+            }, 800);
 
             if (receiverType.value == 'user') {
-                await mark_user_conversation_as_delivered(myUid.value, ChatId.value) 
+                await mark_user_conversation_as_delivered(myUid.value, ChatId.value)
             } else {
-                await mark_group_conversation_as_delivered(myUid.value, ChatId.value) 
+                await mark_group_conversation_as_delivered(myUid.value, ChatId.value)
             }
 
             // Netejem el text
@@ -840,15 +841,18 @@ const scrollToLast = async () => {
 
 // detectar el moviemiento del scroll de los mensajes
 const detectScroll = async () => {
+
     const chatContainer = document.getElementById('chat');
     const btnScroll = document.getElementById("btnScroll");
 
     if (mensajes.value.length > 0) {
         // Verifica si está en el último mensaje
         if (chatContainer.scrollTop + chatContainer.clientHeight >= chatContainer.scrollHeight) {
+
             // Está en el último mensaje, añade la clase "hidden" al botón
             btnScroll.classList.add("hidden");
             isMoving = true;
+
         } else {
             // No está en el último mensaje, elimina la clase "hidden" del botón
             btnScroll.classList.remove("hidden");
