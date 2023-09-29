@@ -176,9 +176,20 @@ const helpers = {
     return formattedDate;
   },
   getDirection(angle) {
-    var directions = ['Norte', 'Noreste', 'Este', 'Sureste', 'Sur', 'Suroeste', 'Oeste', 'Noroeste'];
+    var directions_es = ['Norte', 'Noreste', 'Este', 'Sureste', 'Sur', 'Suroeste', 'Oeste', 'Noroeste'];
+    var directions_en = ['North', 'Northeast', 'East', 'Southeast', 'South', 'Southwest', 'West', 'Northwest'];
     var index = Math.round(((angle %= 360) < 0 ? angle + 360 : angle) / 45) % 8;
-    return directions[index];
+    switch(localStorage.getItem('locale')){
+      case 'es':
+        return directions_es[index];
+        break;
+      case 'en':
+        return directions_en[index];
+        break;
+      default:
+        return directions_es[index];
+        break;
+    }
   },
   toKms(meters) {
     let accuracy = parseFloat(meters) / 1000;
@@ -188,28 +199,36 @@ const helpers = {
     let icon;
     switch(direction) {
       case "Norte":
-        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/north.svg"].default +  '" alt="Norte"/>';
+      case "North":
+        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/north.svg"].default +  '"/>';
         break;
       case "Noreste":
-        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/north_east.svg"].default +  '" alt="Noreste"/>';
+      case "Northeast":
+        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/north_east.svg"].default +  '"/>';
         break; 
       case "Este":
-        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/east.svg"].default +  '" alt="Este"/>';
+      case "East":
+        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/east.svg"].default +  '"/>';
         break;
       case "Sureste":
-        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/south_east.svg"].default +  '" alt="Sureste"/>';
+      case "Southeast":
+        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/south_east.svg"].default +  '"/>';
         break;
       case "Sur":
-        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/south.svg"].default +  '" alt="Sur"/>';
+      case "South":
+        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/south.svg"].default +  '"/>';
         break;
       case "Suroeste":
-        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/south_west.svg"].default +  '" alt="Suroeste"/>';
+      case "Southwest":
+        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/south_west.svg"].default +  '"/>';
         break;
       case "Oeste":
-        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/west.svg"].default +  '" alt="Oeste"/>';
+      case "West":
+        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/west.svg"].default +  '"/>';
         break;
       case "Noroeste":
-        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/north_west.svg"].default +  '" alt="Noroeste"/>';
+      case "Northwest":
+        icon = '<img class="inline-flex ml-2" src = "' + iconsAssets["/src/assets/images/icons/north_west.svg"].default +  '"/>';
         break;
       default:
         icon = '';           
