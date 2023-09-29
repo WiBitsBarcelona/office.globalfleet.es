@@ -304,7 +304,7 @@
                               <div class="col-span-12 text-right">
                                 <a href="#" @click.prevent="showActionTaskForm(stage, task)"
                                   class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
-                                  <PlusCircleIcon class="w-4 h-4" /> {{ "Agregar Action Task" }}
+                                  <PlusCircleIcon class="w-4 h-4" /> {{ t("add_action_task") }}
                                 </a>
                                 <a href="#" @click.prevent="deleteTaskForm(stage.uuid, task.uuid)"
                                   class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
@@ -576,6 +576,7 @@ import Preloader from '@/components/preloader/Preloader.vue';
 
 import { Toast } from '@/utils/toast';
 import { helper as $h } from "@/utils/helper";
+import Swal from "sweetalert2";
 
 import useTrips from '@/composables/trips.js';
 import useStage from '@/composables/stages.js';
@@ -700,15 +701,28 @@ const rules = {
 
 
 
+// const formData = reactive({
+//   vehicle_id: "",
+//   trip_priority_id: "",
+//   driver_id: "",
+//   reference_number: Math.floor(Math.random() * 100000),
+//   name: "Viaje Plaza",
+//   execution_at: $h.nowTimestamp('-').substr(0, 16),
+//   observations: "",
+// });
+
+
+
 const formData = reactive({
   vehicle_id: "",
   trip_priority_id: "",
   driver_id: "",
-  reference_number: Math.floor(Math.random() * 100000),
-  name: "Viaje Plaza",
+  reference_number: "",
+  name: "",
   execution_at: $h.nowTimestamp('-').substr(0, 16),
   observations: "",
 });
+
 
 const validate = useVuelidate(rules, toRefs(formData));
 
@@ -720,6 +734,17 @@ const save = async () => {
     //TODO
   } else {
 
+
+    if(arrStages.value.length <= 0){
+      Swal.fire({
+					icon: 'warning',
+					title: t("message.it_must_have_action_stage"),
+					showCancelButton: false,
+					confirmButtonText: t("message.ok"),
+					confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
+				});
+        return;
+    }
 
     //Validacion sobre los stage
 
@@ -919,11 +944,9 @@ const save = async () => {
 
     };
 
-
-
     loading.value = false;
     await Toast(t("message.record_saved"), 'success');
-
+    setTimeout(() => location.reload(), 3000);
 
   }
 };

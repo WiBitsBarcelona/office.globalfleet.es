@@ -87,9 +87,16 @@ const rulesTask = {
 	},
 };
 
+// const formDataTask = reactive({
+// 	uuid: uuidv4(),
+// 	name: "ALBARÁN " + Math.floor(Math.random() * 1000),
+// 	order_number: "",
+// });
+
+
 const formDataTask = reactive({
 	uuid: uuidv4(),
-	name: "ALBARÁN " + Math.floor(Math.random() * 1000),
+	name: "",
 	order_number: "",
 });
 
@@ -111,8 +118,6 @@ const saveTask = () => {
 
 onMounted(async () => {
 	
-
-
 	/**
 	 * order_number
 	 */

@@ -99,7 +99,7 @@
 			<div class="col-span-12 md:col-span-5 lg:col-span-5" v-if="isShowActionFormField">
 				<div class="input-form">
 					<label for="action_form_field_id" class="form-label w-full">
-						{{ $t("action_form_field") }}
+						{{ $t("form.name") }}
 					</label>
 
 					<TomSelect 
