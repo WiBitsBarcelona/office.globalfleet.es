@@ -18,7 +18,7 @@
           singleMode: false,
           numberOfColumns: 2,
           numberOfMonths: 2,
-          lang: 'es-ES',
+          lang: currentLocale,
           showWeekNumbers: false,
           dropdowns: {
             minYear: 2000,
@@ -120,7 +120,7 @@
 </template>
 
 <script setup>
-import { watch, computed, ref, defineProps, onMounted } from "vue";
+import { watch, computed, ref, defineProps, onMounted, onUpdated } from "vue";
 import useDriver from "@/composables/drivers";
 import { helper as $h } from "@/utils/helper";
 import Swal from "sweetalert2";
@@ -138,6 +138,7 @@ const time_at = ref("23:59");
 const { drivers, getDrivers } = useDriver();
 const { t } = useI18n();
 const { driverPositions, getDriverPositions } = useDriverPosition();
+const currentLocale = ref("es-ES");
 
 const props = defineProps({
   width: {
@@ -298,6 +299,8 @@ const getData = async () => {
     let dateFrom = $h.formatDate(dateFromTmp, "YYYY-MM-DD HH:mm:ss");
     let dateTo = $h.formatDate(dateToTmp, "YYYY-MM-DD HH:mm:ss");
 
+    
+
 
     let currentData = { from_at: dateFrom, to_at: dateTo };;
     await getDriverPositions(selected_driver.value, currentData);
@@ -328,19 +331,28 @@ const getData = async () => {
         maxWidth: 500,
         pixelOffset: new google.maps.Size(0, -10),
       });
-
+      let totalArr = driverPositions.value.length;
+      let indexArr = 0;
+      let markerScale = 4;
       driverPositions.value.forEach(element => {
         if ($h.toKmsHour(element.speed) >= 5) {
           markerColor = markerColorDriving;
         } else {
           markerColor = markerColorStopped;
         }
+        if(indexArr == 0){
+          markerScale = 10;
+        }else if(indexArr == totalArr -1){
+          markerScale = 10;
+        }else{
+          markerScale = 4;
+        }
         var marker = new google.maps.Marker({
           position: new google.maps.LatLng(element.latitude, element.longitude),
           id: element.id,
           icon: {
             path: google.maps.SymbolPath.CIRCLE,
-            scale: 4,
+            scale: markerScale,
             strokeColor: markerColor,
             strokeWeight: 2,
             fillColor: markerColor,
@@ -365,6 +377,7 @@ const getData = async () => {
           infoWindow.setPosition(marker.getPosition());
           infoWindow.open(mapa, marker);
         });
+        indexArr++;
       });
 
       for (let i = 0; i < markers.length; i++) {
@@ -1010,7 +1023,6 @@ onMounted(() => {
   endDate.value = $h.formatDate(dateNowTmp, "DD/MM/YYYY");
 
 });
-
 </script>
 
 <style>

@@ -1,7 +1,5 @@
 import { defineStore } from "pinia";
 
-console.log(localStorage.getItem("locale"));
-
 export const useSimpleMenuStore = defineStore("simpleMenu", {
   state: () => ({
     menu: [
