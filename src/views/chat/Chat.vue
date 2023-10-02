@@ -5,16 +5,15 @@
       <ChatView />
     </div>
   </div>
-  
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import ChatView from "../../components/chat/ChatView.vue";
 import { useAuthenticationStore } from "@/stores/auth/authentications";
 import Swal from "sweetalert2";
 import { useRouter } from 'vue-router';
-import FleetFooter from "@/components/fleet-footer/Main.vue"; 
+import FleetFooter from "@/components/fleet-footer/Main.vue";
 
 export default {
   components: {
@@ -47,6 +46,11 @@ export default {
           }
         });
       }
+    });
+
+    onBeforeUnmount(() => {
+      const footer = document.getElementById('footer');
+      footer.classList.remove("hidden")
     });
 
     return {

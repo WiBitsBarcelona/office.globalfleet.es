@@ -177,6 +177,7 @@ onBeforeUnmount(() => {
   const chatListenerID = "chat_incoming_messages_unique_id_globaltank_apliemporda";
   //const chatListenerID = 'INCOMING_MESSAGES_LISTENER'
   CometChat.removeUserListener(chatListenerID);
+  
 });
 
 // Funcion que va a correr al iniciar la pagina
