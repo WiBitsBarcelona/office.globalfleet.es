@@ -757,16 +757,16 @@ const toBase64 = file => new Promise((resolve, reject) => {
 
 // abrir pdf o imagenes
 const openDriverFile = async (path) => {
-    Swal.fire({
+    /*Swal.fire({
         icon: 'info',
         title: '',
         text: t("documents.swal.document_wait_viewing"),
         //toast: true,
         position: 'center',
         showConfirmButton: false,
-    });
+    });*/
     await downloadDriverDocument(path);
-    Swal.close();
+    //Swal.close();
     switch (driverDocumentData.value.type) {
         case 'pdf':
             window.open(driverDocumentData.value.data);

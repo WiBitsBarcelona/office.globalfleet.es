@@ -3,8 +3,12 @@
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
   <!-- Chat -->
   <div class="flex flex-col w-1/3 gap-4">
+
+    <Preloader v-if="loading" />
+
     <!-- Botons menú -->
     <div class="box p-2 grid grid-cols-2 justify-between">
+
       <button id="chat-button"
         class="flex items-center justify-center gap-1 py-2 w-full bg-[#0096b2] chat-button active text-white rounded-lg"
         @click="LoadChatsList">
@@ -30,11 +34,10 @@
     </div>
 
     <!-- Llista de xats -->
-    <div id="group-list" class="flex flex-col gap-[6px] h-[76vh] overflow-y-scroll scrollbar-hidden">
+    <div id="group-list" class="flex flex-col gap-[6px] h-full overflow-y-scroll scrollbar-hidden">
       <!-- Per cada xat farem un botó -->
-      <button v-if="!inNewChat" v-for="conversation in conversationList"
-        @click="enviarVariable(conversation.conversationId, 
-        conversation.conversationWith.uid ? conversation.conversationWith.uid : conversation.conversationWith.guid, 
+      <button v-if="!inNewChat" v-for="conversation in conversationList" @click="enviarVariable(conversation.conversationId,
+        conversation.conversationWith.uid ? conversation.conversationWith.uid : conversation.conversationWith.guid,
         conversation.conversationType, conversation.conversationWith.name)"
         :id="conversation.conversationWith.uid ? conversation.conversationWith.uid : conversation.conversationWith.guid"
         :key="conversation.conversationWith"
@@ -131,11 +134,12 @@ export default {
 <script setup>
 import { CometChat } from "@cometchat-pro/chat";
 import { ref, onMounted, onBeforeUnmount } from "vue";
+import Preloader from '@/components/preloader/Preloader.vue';
 
 // Hooks
 import { useAuthenticationStore } from "@/stores/auth/authentications";
 import useChat from "@/composables/chat";
-
+import Swal from "sweetalert2";
 
 const {
   cometData,
@@ -151,6 +155,7 @@ const {
   getUserConversation
 } = useChat();
 
+const loading = ref(false);
 let selectedChat = ref("");
 let inChat = ref(false);
 let inNewChat = ref(false);
@@ -163,6 +168,8 @@ const propsChatId = ref(null)
 const propsNameConversation = ref(null)
 
 onMounted(async () => {
+  //set value
+  loading.value = true;
   initialize();
 })
 
@@ -212,6 +219,16 @@ const initialize = async () => {
       },
       (error) => {
         console.log("Login failed with exception:", { error });
+        loading.value = false;
+
+        Swal.fire({
+          icon: 'info',
+          title: '',
+          text: "No existe ninguna conversacion",
+          //toast: true,
+          position: 'center',
+          showConfirmButton: false,
+        });
       }
     );
 
@@ -397,14 +414,17 @@ const toggleNewChat = async () => {
     const groups = await getUserGroups(userInfo.uid);
     const otherUsers = [];
 
-    for (const group of groups) {
-      otherUsers.push(group);
-      const members = await getGroupMembers(group.guid);
-      const otherMembers = members.filter((user) => user.uid !== userInfo.uid);
-      for (const member of otherMembers) {
-        otherUsers.push(member);
+    if (groups != undefined) {
+      for (const group of groups) {
+        otherUsers.push(group);
+        const members = await getGroupMembers(group.guid);
+        const otherMembers = members.filter((user) => user.uid !== userInfo.uid);
+        for (const member of otherMembers) {
+          otherUsers.push(member);
+        }
       }
     }
+
 
     newChatsList.value = otherUsers;
   }
@@ -433,6 +453,8 @@ const LoadChatsList = async () => {
 
   // Carregarem la llista de xats
   await getConversationsList(userInfo.uid);
+
+  loading.value = false;
 
   if (propsChatId.value != null) {
     document.querySelectorAll(".conversations-list-item").forEach((element) => {

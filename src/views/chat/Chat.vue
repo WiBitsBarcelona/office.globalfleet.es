@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Chat -->
-    <div v-if="isViewLoaded" id="app" class="flex gap-6 mt-5">
+    <div v-if="isViewLoaded" id="app" class="flex gap-6 pt-5">
       <ChatView />
     </div>
   </div>
@@ -25,6 +25,10 @@ export default {
     const router = useRouter();
 
     onMounted(() => {
+
+      const footer = document.getElementById('footer');
+      footer.classList.add("hidden")
+
       // Comprobamos si el usuario tiene permisos de chat
       if (localStorage.getItem("token") && useAuthenticationStore().user.employee) {
         // Simulación de un retraso en la carga de la vista

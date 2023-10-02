@@ -103,27 +103,24 @@ export default function useChat() {
 
   // Funció per llistar tots els xats
   const getConversationsList = async (user_uid) => {
-    const options = {
-      method: "GET",
-      headers: {
-        accept: "application/json",
-        onBehalfOf: user_uid,
-        apikey: cometData.value.company.cometchat.rest_api_key,
-      },
-    };
 
-    const response = await fetch(
-      `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/conversations`,
-      options
-    )
-      .then(async (response) => await response.json())
-      .then((response) => {
-        conversationList.value = response.data;
-        return response.data;
-      })
-      .catch((err) => console.error(err));
+    const response = await fetch(`https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/conversations`,
+      {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          onBehalfOf: user_uid,
+          apikey: cometData.value.company.cometchat.rest_api_key,
+        }
+      });
+    const data = await response.json();
 
-    return response;
+    if (data.error) {
+      console.log('No se puede ejecutar la funcion')
+    } else {
+      conversationList.value = data.data;
+      return data.data;
+    }
   };
 
   // Funció per llistar els missatges del xat seleccionat
@@ -159,8 +156,8 @@ export default function useChat() {
         apikey: cometData.value.company.cometchat.rest_api_key,
       },
     };
-    
-    const response = await fetch( 
+
+    const response = await fetch(
       `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/users/${other_user_uid}/conversation`,
       options
     )
@@ -213,11 +210,11 @@ export default function useChat() {
       },
     };
 
-    fetch( `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/users/${conversationWith}/conversation/read`,
+    fetch(`https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/users/${conversationWith}/conversation/read`,
       options
     ).then((response) => response.json())
-    .then((data) => { })
-    .catch((err) => console.error(err));
+      .then((data) => { })
+      .catch((err) => console.error(err));
 
   };
 
@@ -298,20 +295,20 @@ export default function useChat() {
           text: message,
           ...(arrayMedia
             ? {
-                attachments: [{
-                    url: arrayMedia.url,
-                    name: arrayMedia.name,
-                    extension: arrayMedia.extension
-                }],
+              attachments: [{
+                url: arrayMedia.url,
+                name: arrayMedia.name,
+                extension: arrayMedia.extension
+              }],
             }
             : ''),
           ...(isMetadata
             ? {
-                metadata: {
-                  reader: '0', // Pruebas -> valor 0 es no confirmado y 1 es Confirmado
-                  confirmetAt: 'undefined'
-                }
+              metadata: {
+                reader: '0', // Pruebas -> valor 0 es no confirmado y 1 es Confirmado
+                confirmetAt: 'undefined'
               }
+            }
             : ''),
         },
         receiver: chat_id,
@@ -379,12 +376,17 @@ export default function useChat() {
     const user_uid = useAuthenticationStore().user.employee.cometchat_uid;
     const response = await getConversationsList(user_uid);
 
-    const values = response.reduce((total, conversation) => {
-      return total + parseInt(conversation.unreadMessageCount);
-    }, 0);
+    if (response == undefined) {
+      console.log('No se puede ejecutar la funcion')
+      return false;
+    } else {
+      const values = response.reduce((total, conversation) => {
+        return total + parseInt(conversation.unreadMessageCount);
+      }, 0);
 
-    unreadMessageCount.value = values;
-    return values;
+      unreadMessageCount.value = values;
+      return values;
+    }
   };
 
   // Funcion para ConfirmarLectura (UpdateMensaje)
