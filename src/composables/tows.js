@@ -21,17 +21,17 @@ export default function useTow() {
 		towErrors.value = [];
 		try {
 			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}tows/list`, config);
+			// Errors 400
+			if (parseInt(response.data.status_code) === 422) {
+				for (const key in response.data.errors) {
+					towErrors.value = key
+				}
+			}
 			tows.value = response.data.data;
 		} catch (e) {
 			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
+			if (e.response.status >= 500) {
 				towErrors.value.push(t("errors.error_internal"));
-			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					towErrors.value = key
-				}
 			}
 		}
 	}
@@ -41,17 +41,17 @@ export default function useTow() {
 		towErrors.value = [];
 		try {
 			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}tows/show/${id}`, config);
+			// Errors 400
+			if (parseInt(response.data.status_code) === 422) {
+				for (const key in response.data.errors) {
+					towErrors.value = key
+				}
+			}
 			tow.value = response.data.data;
 		} catch (e) {
 			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
+			if (e.response.status >= 500) {
 				towErrors.value.push(t("errors.error_internal"));
-			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					towErrors.value = key
-				}
 			}
 		}
 	}
@@ -66,22 +66,19 @@ export default function useTow() {
 		})
 		.then(res => res.json())
 		.then((res) => {
-
-            // Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
+			// Errors 400
+			if (parseInt(res.data.status_code) === 422) {
+				for (const key in res.data.errors) {
 					towErrors.value = key
 				}
 			}
-
 			tow.value = res.data;
 		})
 		.catch((e) => {
 			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
+			if (e.response.status >= 500) {
 				towErrors.value.push(t("errors.error_internal"));
 			}
-			
 		});
 	}
 
@@ -95,44 +92,45 @@ export default function useTow() {
 		})
 		.then(res => res.json())
 		.then((res) => {
-			
-            // Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
+			// Errors 400
+			if (parseInt(res.data.status_code) === 422) {
+				for (const key in res.data.errors) {
 					towErrors.value = key
 				}
 			}
-            
-            tow.value = res.data;
-
-
+			tow.value = res.data;
 		})
 		.catch((e) => {
 			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
+			if (e.response.status >= 500) {
 				towErrors.value.push(t("errors.error_internal"));
 			}
-			
 		});
 	}
 
 
 	const destroyTow = async (id) => {
 		towErrors.value = [];
-		try {
-			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}tows/delete/${id}`, config);
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				towErrors.value.push(t("errors.error_internal"));
-			}
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}tows/delete/${id}`,{
+			method: 'DELETE',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
 			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
+			if (parseInt(res.data.status_code) === 422) {
+				for (const key in res.data.errors) {
 					towErrors.value = key
 				}
 			}
-		}
+			tow.value = res.data;
+		})
+		.catch((e) => {
+			// Errors 500
+			if (e.response.status >= 500) {
+				towErrors.value.push(t("errors.error_internal"));
+			}
+		});
 	}
 
 
