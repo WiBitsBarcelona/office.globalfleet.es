@@ -169,9 +169,9 @@
               {{ $t("trip_tow") }}
             </label>
 
-            <TomSelect v-model.trim="validate.tows_id.$model" id="tows_id" name="tows_id" :options="{
+            <TomSelect v-model.trim="validate.tow_id.$model" id="tow_id" name="tow_id" :options="{
               placeholder: $t('message.select'),
-            }" class="form-control w-full" :class="{ 'border-danger': validate.tows_id.$error }">
+            }" class="form-control w-full" :class="{ 'border-danger': validate.tow_id.$error }">
 
               <option v-for="item in selectTows" :value="item.id">
                 {{ item.name }} {{ item.plate }}
@@ -180,8 +180,8 @@
             </TomSelect>
 
 
-            <template v-if="validate.tows_id.$error">
-              <div v-for="(error, index) in validate.tows_id.$errors" :key="index" class="text-danger mt-2">
+            <template v-if="validate.tow_id.$error">
+              <div v-for="(error, index) in validate.tow_id.$errors" :key="index" class="text-danger mt-2">
                 {{ error.$message }}
               </div>
             </template>
@@ -629,6 +629,7 @@ import useVehicles from '@/composables/vehicles.js';
 import useTripPriority from '@/composables/trip_priorities.js';
 import useDrivers from '@/composables/drivers.js';
 import useTow from '@/composables/tows.js';
+import useTripTow from '@/composables/trip_tows.js';
 
 
 
@@ -673,6 +674,9 @@ const { actionStage, actionStageErrors, storeActionStage } = useActionStage();
 const { actionStageCamera, actionStageCameraErrors, storeActionStageCamera } = useActionStageCamera();
 const { actionStageScanner, actionStageScannerErrors, storeActionStageScanner } = useActionStageScanner();
 const { actionStageForm, actionStageFormErrors, storeActionStageForm } = useActionStageForm();
+
+const { tripTow, errorTripTow, storeTripTow } = useTripTow();
+
 
 
 const { t } = useI18n();
@@ -720,7 +724,7 @@ const rules = {
   driver_id: {
     required: helpers.withMessage(t("form.required"), required),
   },
-  tows_id: {
+  tow_id: {
     required: helpers.withMessage(t("form.required"), required),
   },
   reference_number: {
@@ -738,29 +742,29 @@ const rules = {
 
 
 
+const formData = reactive({
+  vehicle_id: "",
+  trip_priority_id: "",
+  driver_id: "",
+  tow_id: "",
+  reference_number: Math.floor(Math.random() * 100000),
+  name: "Viaje Plaza",
+  execution_at: $h.nowTimestamp('-').substr(0, 16),
+  observations: "",
+});
+
+
+
 // const formData = reactive({
 //   vehicle_id: "",
 //   trip_priority_id: "",
 //   driver_id: "",
 //   tows_id: "",
-//   reference_number: Math.floor(Math.random() * 100000),
-//   name: "Viaje Plaza",
+//   reference_number: "",
+//   name: "",
 //   execution_at: $h.nowTimestamp('-').substr(0, 16),
 //   observations: "",
 // });
-
-
-
-const formData = reactive({
-  vehicle_id: "",
-  trip_priority_id: "",
-  driver_id: "",
-  tows_id: "",
-  reference_number: "",
-  name: "",
-  execution_at: $h.nowTimestamp('-').substr(0, 16),
-  observations: "",
-});
 
 
 const validate = useVuelidate(rules, toRefs(formData));
@@ -804,10 +808,21 @@ const save = async () => {
 
 
     /**
+     * Trip tows
+     */
+    const dataTripTow = {
+      trip_id: trip.value.id,
+      tow_id: formData.tow_id
+    }
+    await storeTripTow(dataTripTow);
+    console.log({...tripTow});
+
+
+
+
+    /**
      * Stages
      */
-
-
      for (const eleStage of arrStages.value) {
     //arrStages.value.forEach(async (eleStage) => {
 
@@ -816,8 +831,13 @@ const save = async () => {
       stage.value = [];
 
       eleStage.trip_id = trip.value.id;
+      
       await storeStage(eleStage);
+      
       console.log({ ...stage.value });
+
+
+
 
 
 
@@ -1279,9 +1299,6 @@ onMounted(async () => {
   //Tows
   await getTows();
   selectTows.value = tows.value;
-
-  console.log(selectTows.value);
-
 
 });
 
