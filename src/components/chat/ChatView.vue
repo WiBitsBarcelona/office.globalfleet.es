@@ -13,13 +13,13 @@
       <button id="chat-button"
         class="flex items-center justify-center gap-1 py-2 w-full bg-[#0096b2] chat-button active text-white rounded-lg"
         :class="conversationList.length == 0 ? 'opacity-60 cursor-not-allowed' : ''"
-        @click="conversationList.length == 0 ? '' : LoadChatsList">
+        @click="conversationList.length == 0 ? '' : LoadChatsList()">
         <span class="material-symbols-outlined"> chat </span>
         Chats
       </button>
       <button id="new-chat-button" class="flex items-center justify-center gap-1 py-2 w-full chat-button"
         :class="conversationList.length == 0 ? 'opacity-60 cursor-not-allowed' : ''"
-        @click="conversationList.length == 0 ? '' : toggleNewChat">
+        @click="conversationList.length == 0 ? '' : toggleNewChat()">
         <span class="material-symbols-outlined"> add_comment </span>
         Nuevo
       </button>
