@@ -243,11 +243,11 @@
                 <div class="pt-4 sm:py-4 flex items-center border-t-8 border-slate-200/60 dark:border-darkmode-400 w-full">
                     <textarea v-on:keyup.enter="sendMessage" id="message" @click="onpresskey" class="overflow-y-scroll scrollbar-hidden chat__box__input form-control dark:bg-darkmode-600 h-11 resize-none border-transparent 
                         px-5 py-3 shadow-none focus:border-transparent focus:ring-0"
-                        placeholder="Escribe el mensaje..."></textarea>
+                        :placeholder="$t('chat.messageInput')"></textarea>
 
                     <div
                         style="display: flex; justify-content: center; align-items: center; width:200px; margin-right: 10px;">
-                        <p style="font-size: 16px; margin-right: 5px; ">Confirmar lectura</p>
+                        <p style="font-size: 16px; margin-right: 5px; ">{{ $t("chat.confirmRead") }}</p>
                         <input type="checkbox" value="first_checkbox" v-model="isChecked" @change="handleCheckboxChange" />
                     </div>
 
