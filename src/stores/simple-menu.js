@@ -51,6 +51,12 @@ export const useSimpleMenuStore = defineStore("simpleMenu", {
         title: "Conductores",
         isManager: true,
       },
+      {
+        icon: "CarIcon",
+        pageName: "vehicles",
+        title: "Tractoras",
+        isManager: true,
+      },
     ],
   }),
 });

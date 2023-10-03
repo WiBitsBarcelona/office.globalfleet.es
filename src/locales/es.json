@@ -50,7 +50,11 @@
     "devices": "Dispositivos",
     "documents": "Documentos",
     "incidents": "Incidencias",
-    "chat": "Chat"
+    "chat": "Chat",
+    "employees": "Usuarios Office",
+    "drivers": "Conductores Driver",
+    "plates": "Matrículas",
+    "tows": "Remolques"
   },
   "dashboard": {
     "title": "Visión General de ",

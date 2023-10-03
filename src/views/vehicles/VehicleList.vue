@@ -1,5 +1,5 @@
 <template>
-
+	<Preloader v-if="loading" />
 	<!-- BEGIN: Page Layout Create -->
 	<div class="intro-y box p-5 mt-5" v-if="isCreate">
 		<Create
@@ -18,69 +18,17 @@
 	</div>
 
 	<!-- BEGIN: Page Layout Table -->
+	<div class="grid grid-cols-12 gap-6 mt-8">
+    	<div class="col-span-12 intro-y">
+        	<h2 class="text-lg font-medium truncate mr-5">{{ $t('drivers_of') }}<span class="text-xl font-bold">{{ useAuthentication.getUser.employee.company.name }}</span></h2>
+        </div>
+	</div>
 	<div class="intro-y box p-5 mt-5" id="div_table">
 		<div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
 			<form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
-				<div class="sm:flex items-center sm:mr-4">
-					<label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">
-						{{ $t("field") }}
-					</label>
-					<select
-						id="tabulator-html-filter-field"
-						v-model="filter.field"
-						class="form-select w-full sm:w-32 2xl:w-full mt-2 sm:mt-0 sm:w-auto"
-					>
-						<option value="plate">{{ $t("plate") }}</option>
-						<option value="employee_id">{{ $t("employee_id") }}</option>
-						<option value="company_id">{{ $t("company_id") }}</option>
-					</select>
-				</div>
-				<div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
-					<label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">
-						{{ $t("filter") }}
-					</label>
-					<select
-						id="tabulator-html-filter-type"
-						v-model="filter.type"
-						class="form-select w-full mt-2 sm:mt-0 sm:w-auto"
-					>
-						<option value="like" selected>like</option>
-						<option value="=">=</option>
-						<option value="<">&lt;</option>
-						<option value="<=">&lt;=</option>
-						<option value=">">></option>
-						<option value=">=">>=</option>
-						<option value="!=">!=</option>
-					</select>
-				</div>
-				<div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
-					<label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">
-						{{ $t("value") }}
-					</label>
-						<input
-						id="tabulator-html-filter-value"
-						v-model="filter.value"
-						type="text"
-						class="form-control sm:w-40 2xl:w-full mt-2 sm:mt-0"
-					/>
-				</div>
-				<div class="mt-2 xl:mt-0">
-					<button
-						id="tabulator-html-filter-go"
-						type="button"
-						class="btn btn-primary w-full sm:w-16"
-						@click="onFilter"
-					>
-						<SearchIcon class="w-4 h-4"></SearchIcon>
-					</button>
-					<button
-						id="tabulator-html-filter-reset"
-						type="button"
-						class="btn btn-secondary w-full sm:w-16 mt-2 sm:mt-0 sm:ml-1"
-						@click="onResetFilter"
-					>
-						<RotateCcwIcon class="w-4 h-4"></RotateCcwIcon>
-					</button>
+				<div class="relative sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
+					<input id="tabulator-html-filter-value" v-model="filter.value" type="text" class="w-full xl:w-[600px] form-control mt-2 sm:mt-0" :placeholder="$t('search')" @keyup="onFilter" />
+					<XCircleIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer" @click="onResetFilter" />
 				</div>
 			</form>
 			<div class="flex mt-5 sm:mt-0">
@@ -88,20 +36,20 @@
 					class="btn btn-primary w-1/2 sm:w-auto mr-2"
 					@click="createVehicle"
 				>
-					<PlusCircleIcon class="w-4 h-4" />
+					<PlusCircleIcon class="w-6 h-6 mr-2" /> {{ $t("btn_create_driver") }}
 				</button>
 				<Dropdown class="w-1/2 sm:w-auto">
 					<DropdownToggle class="btn btn-outline-secondary w-full sm:w-auto">
-						<FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("export") }}
-						<ChevronDownIcon class="w-4 h-4 ml-auto sm:ml-2" />
+						<FileTextIcon class="w-6 h-6 mr-2" /> {{ $t("export") }}
+						<ChevronDownIcon class="w-6 h-6 ml-auto sm:ml-2" />
 					</DropdownToggle>
 					<DropdownMenu class="w-40">
 						<DropdownContent>
 							<DropdownItem @click="onExportXlsx">
-								<FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("message.export_excel") }}
+								<FileTextIcon class="w-6 h-6 mr-2" /> {{ $t("message.export_excel") }}
 							</DropdownItem>
 							<DropdownItem @click="onExportCsv">
-								<FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("message.export_csv") }}
+								<FileTextIcon class="w-6 h-6 mr-2" /> {{ $t("message.export_csv") }}
 							</DropdownItem>
 						</DropdownContent>
 					</DropdownMenu>
@@ -132,6 +80,8 @@
 	import useVehicles from "@/composables/vehicles";
 	import Create from "@/components/vehicles/VehicleCreate.vue";
 	import Edit from "@/components/vehicles/VehicleEdit.vue";
+	import { useAuthenticationStore } from '@/stores/auth/authentications';
+	import Preloader from '@/components/preloader/Preloader.vue';
 
 	const { vehicles, getVehicles, storeVehicle, updateVehicle, destroyVehicle} = useVehicles();
 	const { t } = useI18n();
@@ -149,6 +99,8 @@
 		type: "like",
 		value: "",
 	});
+	const useAuthentication = useAuthenticationStore();
+	const loading = ref(false);
 
 	const findData = async() => {
 		let dataArr = [];
@@ -303,11 +255,13 @@
 	}
 
 	const saveVehicleForm = async (form) => {
+		loading.value = true;
 		await storeVehicle({ ...form });
 		//await getVehicles();
 		tableData.value = await findData();
 		tabulator.value.replaceData(tableData.value);
 		isCreate.value = false;
+		loading.value = false;
 		div_table.style.display = 'block';
 	}
 
@@ -324,11 +278,13 @@
 	}
 
 	const updateVehicleForm = async (id, data) => {
+		loading.value = true;
 		await updateVehicle(id, data);
 		//await getVehicles();
 		tableData.value = await findData();
 		tabulator.value.updateData(tableData.value);
 		isEdit.value = false;
+		loading.value = false;
 		div_table.style.display = 'block';
 	}
 
