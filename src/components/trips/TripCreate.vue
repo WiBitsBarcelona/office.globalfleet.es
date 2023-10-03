@@ -163,7 +163,35 @@
         </div>
 
 
-        <div class="col-span-12 md:col-span-12 lg:col-span-12">
+        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+          <div class="input-form">
+            <label for="driver_id" class="form-label w-full">
+              {{ $t("trip_tow") }}
+            </label>
+
+            <TomSelect v-model.trim="validate.tows_id.$model" id="tows_id" name="tows_id" :options="{
+              placeholder: $t('message.select'),
+            }" class="form-control w-full" :class="{ 'border-danger': validate.tows_id.$error }">
+
+              <option v-for="item in selectTows" :value="item.id">
+                {{ item.name }} {{ item.plate }}
+              </option>
+
+            </TomSelect>
+
+
+            <template v-if="validate.tows_id.$error">
+              <div v-for="(error, index) in validate.tows_id.$errors" :key="index" class="text-danger mt-2">
+                {{ error.$message }}
+              </div>
+            </template>
+          </div>
+        </div>
+
+
+
+
+        <div class="col-span-12 md:col-span-6 lg:col-span-8">
           <div class="input-form">
             <label for="observations" class="form-label w-full">
               {{ $t("observations") }}
@@ -600,6 +628,8 @@ import useActionStageForm from '@/composables/action_stage_forms.js';
 import useVehicles from '@/composables/vehicles.js';
 import useTripPriority from '@/composables/trip_priorities.js';
 import useDrivers from '@/composables/drivers.js';
+import useTow from '@/composables/tows.js';
+
 
 
 import StageCreate from '@/components/stages/StageCreate.vue';
@@ -626,6 +656,9 @@ const loading = ref(false);
 const { vehicles, getVehicles } = useVehicles();
 const { tripPriorities, getTripPriorities } = useTripPriority();
 const { drivers, getDrivers } = useDrivers();
+const { tows, getTows } = useTow();
+
+
 const { trip, tripErrors, storeTrip } = useTrips();
 const { stage, stageErrors, storeStage } = useStage();
 const { activity, activityErrors, storeActivity } = useActivity();
@@ -648,6 +681,7 @@ const { t } = useI18n();
 const selectVehicles = ref([]);
 const selectTripPriorities = ref([]);
 const selectDrivers = ref([]);
+const selectTows = ref([]);
 
 
 const arrStages = ref([]);
@@ -686,6 +720,9 @@ const rules = {
   driver_id: {
     required: helpers.withMessage(t("form.required"), required),
   },
+  tows_id: {
+    required: helpers.withMessage(t("form.required"), required),
+  },
   reference_number: {
     required: helpers.withMessage(t("form.required"), required),
   },
@@ -705,6 +742,7 @@ const rules = {
 //   vehicle_id: "",
 //   trip_priority_id: "",
 //   driver_id: "",
+//   tows_id: "",
 //   reference_number: Math.floor(Math.random() * 100000),
 //   name: "Viaje Plaza",
 //   execution_at: $h.nowTimestamp('-').substr(0, 16),
@@ -717,6 +755,7 @@ const formData = reactive({
   vehicle_id: "",
   trip_priority_id: "",
   driver_id: "",
+  tows_id: "",
   reference_number: "",
   name: "",
   execution_at: $h.nowTimestamp('-').substr(0, 16),
@@ -1235,6 +1274,13 @@ onMounted(async () => {
   //Driver
   await getDrivers();
   selectDrivers.value = drivers.value;
+
+
+  //Tows
+  await getTows();
+  selectTows.value = tows.value;
+
+  console.log(selectTows.value);
 
 
 });
