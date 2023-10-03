@@ -25,8 +25,8 @@ export default {
 
     onMounted(() => {
 
-      const footer = document.getElementById('footer');
-      footer.classList.add("hidden")
+      // const footer = document.getElementById('footer');
+      // footer.classList.add("hidden")
 
       // Comprobamos si el usuario tiene permisos de chat
       if (localStorage.getItem("token") && useAuthenticationStore().user.employee) {
@@ -49,8 +49,8 @@ export default {
     });
 
     onBeforeUnmount(() => {
-      const footer = document.getElementById('footer');
-      footer.classList.remove("hidden")
+      // const footer = document.getElementById('footer');
+      // footer.classList.remove("hidden")
     });
 
     return {

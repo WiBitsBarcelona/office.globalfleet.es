@@ -2,9 +2,9 @@
     <div class="w-full">
         <div v-if="nameConversation">
 
-            <div class="flex flex-col h-[85vh] justify-between items-center box overflow-hidden">
+            <div class="flex flex-col h-[80vh] justify-between items-center box overflow-hidden">
                 <!-- Header -->
-                <div class="bg-white h-24 w-full p2 flex items-center" id="chat-header">
+                <div class="bg-white w-full p2 pt-3 pb-3 flex items-center" id="chat-header">
                     <div v-if="nameConversation" class="ml-4 flex items-center gap-4">
                         <div v-if="receiverType === 'user'">
                             <img class="w-14 h-14 rounded-full"
@@ -636,8 +636,8 @@ const sendMessage = async () => {
 
         // creamos un array con los datos
         let arrayMedia = { url: mediaPath.data.path, name: mediaAttachments.value.file_name, extension: mediaAttachments.value.type }
-        await sendTextMessage(myUid.value, message.value == '' ? 'Documento Adjunto' : message.value, ChatId.value, receiverType.value, '', arrayMedia);
-
+        await sendTextMessage(myUid.value, message.value == '' ? 'Documento Adjunto' : message.value, ChatId.value, receiverType.value, isChecked.value, arrayMedia);
+        isChecked.value = false
         mediaSource.value = null
 
         setTimeout(() => {
@@ -654,6 +654,7 @@ const sendMessage = async () => {
 
         // Netejem el text
         message.value = "";
+        
 
         await loadMessages()
 
@@ -840,27 +841,24 @@ const scrollToLast = async () => {
 }
 
 // detectar el moviemiento del scroll de los mensajes
-const detectScroll = async () => {
 
+const detectScroll = () => {
     const chatContainer = document.getElementById('chat');
     const btnScroll = document.getElementById("btnScroll");
+    
+    // Calcula la distancia entre la parte inferior del contenedor y la parte inferior del último mensaje
+    const distanceToBottom = chatContainer.scrollHeight - (chatContainer.scrollTop + chatContainer.clientHeight);
 
-    if (mensajes.value.length > 0) {
-        // Verifica si está en el último mensaje
-        if (chatContainer.scrollTop + chatContainer.clientHeight >= chatContainer.scrollHeight) {
-
-            // Está en el último mensaje, añade la clase "hidden" al botón
-            btnScroll.classList.add("hidden");
-            isMoving = true;
-
-        } else {
-            // No está en el último mensaje, elimina la clase "hidden" del botón
-            btnScroll.classList.remove("hidden");
-            isMoving = false;
-        }
+    if (distanceToBottom <= 1) {
+        // Está en el último mensaje o muy cerca de él, añade la clase "hidden" al botón
+        btnScroll.classList.add("hidden");
+        isMoving = true;
+    } else {
+        // No está en el último mensaje, elimina la clase "hidden" del botón
+        btnScroll.classList.remove("hidden");
+        isMoving = false;
     }
-
-}
+};
 
 // verificar cuantos mensajes existen sin leer
 const unreadMessageCount = async () => {

@@ -9,14 +9,17 @@
     <!-- Botons menú -->
     <div class="box p-2 grid grid-cols-2 justify-between">
 
+
       <button id="chat-button"
         class="flex items-center justify-center gap-1 py-2 w-full bg-[#0096b2] chat-button active text-white rounded-lg"
-        @click="LoadChatsList">
+        :class="conversationList.length == 0 ? 'opacity-60 cursor-not-allowed' : ''"
+        @click="conversationList.length == 0 ? '' : LoadChatsList">
         <span class="material-symbols-outlined"> chat </span>
         Chats
       </button>
       <button id="new-chat-button" class="flex items-center justify-center gap-1 py-2 w-full chat-button"
-        @click="toggleNewChat">
+        :class="conversationList.length == 0 ? 'opacity-60 cursor-not-allowed' : ''"
+        @click="conversationList.length == 0 ? '' : toggleNewChat">
         <span class="material-symbols-outlined"> add_comment </span>
         Nuevo
       </button>
@@ -30,7 +33,8 @@
     <div class="w-full relative mr-auto mt-3 sm:mt-0">
       <SearchIcon class="w-4 h-4 absolute my-auto inset-y-0 ml-3 left-0 z-10 text-slate-500" />
       <input id="search-conversation" type="text" class="form-control w-full box px-10" placeholder="Buscar conversación"
-        v-on:input="searchConversationByName" />
+        v-on:input="conversationList.length == 0 ? '' : searchConversationByName" 
+        :class="conversationList.length == 0 ? 'opacity-60 cursor-not-allowed' : ''"/>
     </div>
 
     <!-- Llista de xats -->
@@ -177,7 +181,7 @@ onBeforeUnmount(() => {
   const chatListenerID = "chat_incoming_messages_unique_id_globaltank_apliemporda";
   //const chatListenerID = 'INCOMING_MESSAGES_LISTENER'
   CometChat.removeUserListener(chatListenerID);
-  
+
 });
 
 // Funcion que va a correr al iniciar la pagina
