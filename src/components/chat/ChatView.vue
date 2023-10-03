@@ -15,13 +15,13 @@
         :class="conversationList.length == 0 ? 'opacity-60 cursor-not-allowed' : ''"
         @click="conversationList.length == 0 ? '' : LoadChatsList()">
         <span class="material-symbols-outlined"> chat </span>
-        Chats
+        {{ $t("chat.chats") }}
       </button>
       <button id="new-chat-button" class="flex items-center justify-center gap-1 py-2 w-full chat-button"
         :class="conversationList.length == 0 ? 'opacity-60 cursor-not-allowed' : ''"
         @click="conversationList.length == 0 ? '' : toggleNewChat()">
         <span class="material-symbols-outlined"> add_comment </span>
-        Nuevo
+        {{ $t("chat.newChat") }}
       </button>
       <div id="new-chat-menu"
         class="hidden flex-col w-60 bg-white absolute z-10 right-0 top-14 border border-gray-100 rounded">
@@ -32,7 +32,7 @@
     </div>
     <div class="w-full relative mr-auto mt-3 sm:mt-0">
       <SearchIcon class="w-4 h-4 absolute my-auto inset-y-0 ml-3 left-0 z-10 text-slate-500" />
-      <input id="search-conversation" type="text" class="form-control w-full box px-10" placeholder="Buscar conversación"
+      <input id="search-conversation" type="text" class="form-control w-full box px-10" :placeholder="$t('chat.searchTitle')"
         v-on:input="conversationList.length == 0 ? '' : searchConversationByName" 
         :class="conversationList.length == 0 ? 'opacity-60 cursor-not-allowed' : ''"/>
     </div>
