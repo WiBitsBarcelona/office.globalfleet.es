@@ -163,6 +163,35 @@
         </div>
 
 
+
+        <!-- TODO aquyiii -->
+
+        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+          <div class="input-form">
+            <label for="driver_id" class="form-label w-full">
+              {{ $t("trip_tow") }}
+            </label>
+
+            <TomSelect v-model.trim="validate.driver_id.$model" id="driver_id" name="driver_id" :options="{
+              placeholder: $t('message.select'),
+            }" class="form-control w-full" :class="{ 'border-danger': validate.driver_id.$error }">
+
+              <option v-for="item in selectDrivers" :value="item.id">
+                {{ item.name }} {{ item.surname }}
+              </option>
+
+            </TomSelect>
+
+
+            <template v-if="validate.driver_id.$error">
+              <div v-for="(error, index) in validate.driver_id.$errors" :key="index" class="text-danger mt-2">
+                {{ error.$message }}
+              </div>
+            </template>
+          </div>
+        </div>
+
+
         <div class="col-span-12 md:col-span-12 lg:col-span-12">
           <div class="input-form">
             <label for="observations" class="form-label w-full">
