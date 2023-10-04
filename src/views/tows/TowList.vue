@@ -5,7 +5,7 @@
 	<!-- BEGIN: Page Layout Table -->
 	<div class="grid grid-cols-12 gap-6 mt-8">
     	<div class="col-span-12 intro-y">
-        	<h2 class="text-lg font-medium truncate mr-5">{{ $t('vehicles_of') }}<span class="text-xl font-bold">{{ useAuthentication.getUser.employee.company.name }}</span></h2>
+        	<h2 class="text-lg font-medium truncate mr-5">{{ $t('tows_of') }}<span class="text-xl font-bold">{{ useAuthentication.getUser.employee.company.name }}</span></h2>
         </div>
 	</div>
 	<div class="intro-y box p-5 mt-5" id="div_table">
@@ -21,7 +21,7 @@
 					class="btn btn-primary w-1/2 sm:w-auto mr-2"
 					@click="createVehicle"
 				>
-					<PlusCircleIcon class="w-6 h-6 mr-2" /> {{ $t("btn_create_vehicle") }}
+					<PlusCircleIcon class="w-6 h-6 mr-2" /> {{ $t("btn_create_tow") }}
 				</button>
 				<Dropdown class="w-1/2 sm:w-auto">
 					<DropdownToggle class="btn btn-outline-secondary w-full sm:w-auto">
@@ -80,13 +80,14 @@
 	import xlsx from "xlsx";
 	import Tabulator from "tabulator-tables";
 
-	import useVehicles from "@/composables/vehicles";
-	import Create from "@/components/vehicles/VehicleCreate.vue";
-	import Edit from "@/components/vehicles/VehicleEdit.vue";
+	import useTow from "@/composables/tows";
+	import Create from "@/components/tows/TowCreate.vue";
+	import Edit from "@/components/tows/TowEdit.vue";
 	import { useAuthenticationStore } from '@/stores/auth/authentications';
 	import Preloader from '@/components/preloader/Preloader.vue';
 
-	const { vehicles, getVehicles, storeVehicle, updateVehicle, destroyVehicle} = useVehicles();
+	//const { vehicles, getVehicles, storeVehicle, updateVehicle, destroyVehicle} = useTow();
+	const { tows, getTows, storeTow, updateTow, destroyTow} = useTow();
 	const { t } = useI18n();
 	const isCreate = ref(false);
 	const isEdit = ref(false);
@@ -107,9 +108,9 @@
 
 	const findData = async() => {
 		let dataArr = [];
-		await getVehicles();
+		await getTows();
 
-		vehicles.value.forEach((elem)=>{
+		tows.value.forEach((elem)=>{
 			dataArr.push(toRaw(elem));
 		});
 	return dataArr;
@@ -252,8 +253,7 @@
 
 	const saveVehicleForm = async (form) => {
 		loading.value = true;
-		await storeVehicle({ ...form });
-		//await getVehicles();
+		await storeTow({ ...form });
 		tableData.value = await findData();
 		tabulator.value.replaceData(tableData.value);
 		isCreate.value = false;
@@ -275,7 +275,7 @@
 
 	const updateVehicleForm = async (id, data) => {
 		loading.value = true;
-		await updateVehicle(id, data);
+		await updateTow(id, data);
 		//await getVehicles();
 		tableData.value = await findData();
 		tabulator.value.updateData(tableData.value);
@@ -286,17 +286,16 @@
 
 	// Delete
 	const deleteVehicle = async (id, plate) => {
-		console.log(plate);
 		Swal.fire({
 			icon: 'warning',
 			title: t("message.are_you_sure"),
-			html: '<span class="font-medium">' + t("delete_plate_title") + '</span><br /><div class="mt-2 text-sm italic"> ' + plate + '</div>',
+			html: '<span class="font-medium">' + t("delete_tow_title") + '</span><br /><div class="mt-2 text-sm italic"> ' + plate + '</div>',
 			showCancelButton: true,
 			confirmButtonText: t("delete"),
 			confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
 		}).then(async(result) => {
 			if (result.isConfirmed) {
-				await destroyVehicle(id);
+				await destroyTow(id);
 				tableData.value = await findData();
 				tabulator.value.setData(tableData.value);
 				Swal.fire(t("message.record_deleted"), '', 'success');

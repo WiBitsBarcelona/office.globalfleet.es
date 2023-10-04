@@ -83,14 +83,9 @@ export default function useVehicle() {
 
 	const destroyVehicle = async (id) => {
 		try {
-			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}vehicles/destroy/${id}`, config);
+			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}vehicles/delete/${id}`, config);
 		} catch (e) {
-			console.log(e)
-			// if (e.response.status === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
+			console.log(e);
 		}
 	}
 

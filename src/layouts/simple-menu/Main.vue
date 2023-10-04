@@ -17,7 +17,7 @@
             <li v-else :key="menu + menuKey" class="text-end">
               <Tippy
                 tag="a"
-                :content="menu.title"
+                :content="t(menu.title)"
                 :options="{
                   placement: 'left',
                 }"
@@ -172,7 +172,7 @@ import { useAuthenticationStore } from "@/stores/auth/authentications";
 import useChat from "@/composables/chat";
 import enumRoles from '@/enums/enum_roles.js';
 import FleetFooter from "@/components/fleet-footer/Main.vue";
-
+import { useI18n } from "vue-i18n";
 
 const { unreadMessageCount, checkUnreadMessages, getCometChatCredentials } = useChat();
 
@@ -183,7 +183,7 @@ const simpleMenuStore = useSimpleMenuStore();
 const simpleMenu = computed(() => nestedMenu(simpleMenuStore.menu, route));
 const useAuthentication = useAuthenticationStore();
 
-
+const { t } = useI18n();
 
 
 provide("forceActiveMenu", (pageName) => {

@@ -11,7 +11,9 @@
     "chat": "Messages",
     "users": "Users",
     "drivers": "Drivers",
-    "help": "Help"
+    "help": "Help",
+    "vehicles": "Vehicles",
+    "tows": "Tows"
   },
   "auth_footer": {
     "all_rights": "All rights reserved.",
@@ -51,10 +53,10 @@
     "documents": "Documents",
     "incidents": "Incidents",
     "chat": "Chat",
-    "employees": "Usuarios Office",
-    "drivers": "Conductores Driver",
-    "plates": "Matrículas",
-    "tows": "Remolques"
+    "employees": "Office Users",
+    "drivers": "Driver Drivers",
+    "plates": "Plates",
+    "tows": "Tows"
   },
   "dashboard": {
     "title": "Overview of ",
@@ -403,6 +405,16 @@
   "delete_user_title": "Delete user:",
   "users_of": "Office Users of ",
   "drivers_of": "Driver Users of ",
+  "vehicles_of": "Vehicles of ",
+  "btn_create_vehicle": "New Vehicle",
+  "tractor_manager": "Vehicle Manager",
+  "select_tractor_manager": "Select Vehicle Manager...",
+  "delete_plate_title": "Delete Plate:",
+  "tows_of": "Remolques de ",
+  "btn_create_tow": "Nuevo Remolque",
+  "tow_manager":"Tow Manager",
+  "select_tow_manager": "Select Tow Manager...",
+  "delete_tow_title":"Delete Tow:",
   "help_screen": {
     "menu": {
       "welcome": "Welcome",
