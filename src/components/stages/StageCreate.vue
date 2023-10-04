@@ -399,49 +399,49 @@ const rulesStage = {
 };
 
 
-// const formDataStage = reactive({
-//     uuid: uuidv4(),
-//     activity_type_id: "",
-//     activity_type_name: "",
-//     stage_type_id: "3",
-//     stage_type_name: "",
-//     reference_number: "1000",
-//     name: "Etapa Hannover",
-//     order_number: "",
-//     client_name: "Pepito",
-//     address: "Calle hambrosio 2-4",
-//     phone: "890890890",
-//     zip_code: "08029",
-//     latitude: "67.899978",
-//     longitude: "78.90099",
-//     route_code: "Route 678678",
-//     route_name: "Nombre Route",
-//     description: "Descripcion para la Etapa",
-//     execution_at: $h.nowTimestamp('-').substr(0,16),
-// });
-
-
-
 const formDataStage = reactive({
     uuid: uuidv4(),
     activity_type_id: "",
     activity_type_name: "",
-    stage_type_id: "",
+    stage_type_id: "3",
     stage_type_name: "",
-    reference_number: "",
-    name: "",
+    reference_number: "1000",
+    name: "Etapa Hannover",
     order_number: "",
-    client_name: "",
-    address: "",
-    phone: "",
-    zip_code: "",
-    latitude: "",
-    longitude: "",
-    route_code: "",
-    route_name: "",
-    description: "",
+    client_name: "Pepito",
+    address: "Calle hambrosio 2-4",
+    phone: "890890890",
+    zip_code: "08029",
+    latitude: "67.899978",
+    longitude: "78.90099",
+    route_code: "Route 678678",
+    route_name: "Nombre Route",
+    description: "Descripcion para la Etapa",
     execution_at: $h.nowTimestamp('-').substr(0,16),
 });
+
+
+
+// const formDataStage = reactive({
+//     uuid: uuidv4(),
+//     activity_type_id: "",
+//     activity_type_name: "",
+//     stage_type_id: "",
+//     stage_type_name: "",
+//     reference_number: "",
+//     name: "",
+//     order_number: "",
+//     client_name: "",
+//     address: "",
+//     phone: "",
+//     zip_code: "",
+//     latitude: "",
+//     longitude: "",
+//     route_code: "",
+//     route_name: "",
+//     description: "",
+//     execution_at: $h.nowTimestamp('-').substr(0,16),
+// });
 
 
 
