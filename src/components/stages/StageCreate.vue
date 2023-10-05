@@ -390,6 +390,8 @@ const rulesStage = {
     tow_id: {
         required: helpers.withMessage(t("form.required"), required),
     },
+    tow_plate: {
+    },
     reference_number: {
         required: helpers.withMessage(t("form.required"), required),
     },
@@ -435,6 +437,7 @@ const formDataStage = reactive({
     uuid: uuidv4(),
     activity_type_id: "",
     tow_id: "",
+    tow_plate: "",
     activity_type_name: "",
     stage_type_id: "3",
     stage_type_name: "",
@@ -497,6 +500,13 @@ const saveStage = () => {
 
         const selectedStageType = selectStageTypes.value.find(elem => elem.id === parseInt(formDataStage.stage_type_id));
         formDataStage.stage_type_name = selectedStageType.name;
+
+
+
+
+
+        const selectedStageTow = selectTows.value.find(elem => elem.id === parseInt(formDataStage.tow_id));
+        formDataStage.tow_plate = selectedStageTow.plate;
 
 
         emit('addStageForm', { ...formDataStage });
