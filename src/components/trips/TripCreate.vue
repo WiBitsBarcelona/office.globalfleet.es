@@ -569,7 +569,7 @@
 
 
   <div class="intro-y box p-5 mt-5" v-if="isCreateStage">
-    <StageCreate @cancelStageForm="cancelStageForm" @addStageForm="addStageForm" :arrStages="arrStages" />
+    <StageCreate @cancelStageForm="cancelStageForm" @addStageForm="addStageForm" :arrStages="arrStages" :trip_tow_selected="trip_tow_selected" />
   </div>
 
 
@@ -630,6 +630,7 @@ import useTripPriority from '@/composables/trip_priorities.js';
 import useDrivers from '@/composables/drivers.js';
 import useTow from '@/composables/tows.js';
 import useTripTow from '@/composables/trip_tows.js';
+import useStageTow from '@/composables/stage_tows.js';
 
 
 
@@ -676,6 +677,7 @@ const { actionStageScanner, actionStageScannerErrors, storeActionStageScanner } 
 const { actionStageForm, actionStageFormErrors, storeActionStageForm } = useActionStageForm();
 
 const { tripTow, errorTripTow, storeTripTow } = useTripTow();
+const { stageTow, errorStageTow, storeStageTow } = useStageTow();
 
 
 
@@ -702,7 +704,11 @@ const stageIndex = ref();
 const taskIndex = ref();
 
 
+const trip_tow_selected = ref(); //trip_tow selected
+
+
 let activityObj;
+let towObj;
 let actionTaskCameraObj;
 let actionTaskScannerObj;
 let actionTaskFormObj;
@@ -771,7 +777,6 @@ const validate = useVuelidate(rules, toRefs(formData));
 
 const save = async () => {
 
-
   validate.value.$touch();
   if (validate.value.$invalid) {
     //TODO
@@ -836,6 +841,24 @@ const save = async () => {
       
       console.log({ ...stage.value });
 
+
+
+
+
+      /**
+       * Stage Tow TODOO:.............
+       */
+       if (eleStage.tow_id) {
+
+        towObj = {
+          stage_id: stage.value.id,
+          tow_id: eleStage.tow_id
+        }
+
+        await storeStageTow(towObj);
+        console.log({ ...stageTow.value });
+
+      }
 
 
 
@@ -1027,6 +1050,7 @@ const save = async () => {
 const showStageForm = () => {
   isCreateTrip.value = false;
   isCreateStage.value = true;
+  trip_tow_selected.value = formData.tow_id;
   console.log({ ...arrStages.value });
 }
 
