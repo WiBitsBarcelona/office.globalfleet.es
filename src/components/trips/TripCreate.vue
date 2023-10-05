@@ -38,7 +38,8 @@
       <!-- BEGIN: container -->
       <div class="grid grid-cols-12 gap-6">
 
-        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+        
+        <div class="col-span-12 md:col-span-6 lg:col-span-8">
           <div class="input-form">
             <label for="name" class="form-label w-full">
               {{ $t("name") }}
@@ -54,7 +55,7 @@
         </div>
 
 
-        <div class="col-span-12 md:col-span-6 lg:col-span-5">
+        <div class="col-span-12 md:col-span-6 lg:col-span-4">
           <div class="input-form">
             <label for="reference_number" class="form-label w-full">
               {{ $t("reference_number") }}
@@ -86,7 +87,7 @@
         </div>
 
 
-        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+        <div class="col-span-12 md:col-span-6 lg:col-span-5">
           <div class="input-form">
             <label for="trip_priority_id" class="form-label w-full">
               {{ $t("trip_priority") }}
@@ -137,7 +138,7 @@
 
 
 
-        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+        <div class="col-span-12 md:col-span-6 lg:col-span-6">
           <div class="input-form">
             <label for="driver_id" class="form-label w-full">
               {{ $t("driver") }}
@@ -163,7 +164,7 @@
         </div>
 
 
-        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+        <div class="col-span-12 md:col-span-6 lg:col-span-6">
           <div class="input-form">
             <label for="driver_id" class="form-label w-full">
               {{ $t("trip_tow") }}
@@ -191,7 +192,7 @@
 
 
 
-        <div class="col-span-12 md:col-span-6 lg:col-span-8">
+        <div class="col-span-12 md:col-span-12 lg:col-span-12">
           <div class="input-form">
             <label for="observations" class="form-label w-full">
               {{ $t("observations") }}
