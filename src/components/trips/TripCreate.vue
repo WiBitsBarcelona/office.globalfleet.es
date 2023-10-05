@@ -296,7 +296,7 @@
                 </div>
 
                 <div class="col-span-1">
-                  <h5 class="text-xs font-light text-gray-400">{{ $t("customer") }}:</h5>
+                  <h5 class="text-xs font-light text-gray-400">{{ $t("tow") }}:</h5>
                   <p class="text-md font-normal leading-6 text-gray-500">
                     {{ stage.tow_plate }}
                   </p>
