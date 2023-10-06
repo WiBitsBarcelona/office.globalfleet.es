@@ -8,6 +8,8 @@ const requireAuth = async(to, from, next) => {
   try {
       await useAuthentication.currentUser();
 
+      //console.log(useAuthentication.getUser.employee);
+
       //TODO pendiente de implementar:
       //SI ---> useAuthentication.getUser.employee
       //No ---> console.log(useAuthentication.user);
@@ -155,6 +157,18 @@ const routes = [
         name: "drivers",
         beforeEnter: checkManager,
         component: () => import('@/views/drivers/DriverList.vue'),
+      },
+      {
+        path: "vehicles",
+        name: "vehicles",
+        beforeEnter: checkManager,
+        component: () => import('@/views/vehicles/VehicleList.vue'),
+      },
+      {
+        path: "tows",
+        name: "tows",
+        beforeEnter: checkManager,
+        component: () => import('@/views/tows/TowList.vue'),
       },
     ],
   },

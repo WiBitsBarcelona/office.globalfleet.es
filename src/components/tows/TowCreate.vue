@@ -7,11 +7,11 @@
 			<div class="col-span-12 md:col-span-6 lg:col-span-4">
 				<div class="input-form">
 					<label for="employee_id" class="form-label w-full">
-						{{ $t("tractor_manager") }}
+						{{ $t("tow_manager") }}
 					</label>
 
 					<TomSelect v-model.trim="validate.employee_id.$model" id="employee_id" name="employee_id" :options="{
-						placeholder: $t('select_tractor_manager'),
+						placeholder: $t('select_tow_manager'),
 					}" class="form-control w-full"
 						:class="{ 'border-danger': validate.employee_id.$error }">
 

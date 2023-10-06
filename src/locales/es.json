@@ -11,7 +11,9 @@
     "chat": "Mensajes",
     "users": "Usuarios",
     "drivers": "Conductores",
-    "help": "Ayuda"
+    "help": "Ayuda",
+    "vehicles": "Tractoras",
+    "tows": "Remolques"
   },
   "auth_footer":{
     "all_rights": "Todos los derechos reservados.",
@@ -50,7 +52,11 @@
     "devices": "Dispositivos",
     "documents": "Documentos",
     "incidents": "Incidencias",
-    "chat": "Chat"
+    "chat": "Chat",
+    "employees": "Usuarios Office",
+    "drivers": "Conductores Driver",
+    "plates": "Tractoras",
+    "tows": "Remolques"
   },
   "dashboard": {
     "title": "Visión General de ",
@@ -161,6 +167,7 @@
   "trip_id": "Id viaje",
   "trip": "Viaje",
   "trips": "Viajes de ",
+  "trip_tow": "Remolque",
   "trip_date": "Fecha viaje",
   "trip_completed": "Viajes finalizados",
   "trip_created": "Nuevos viajes",
@@ -171,6 +178,7 @@
   "vehicles": "Vehículos",
   "stage": "Etapa",
   "stages": "Etapas",
+  "stage_tow": "Remolque",
   "stage_type": "Tipo etapa",
   "current_stage": "Etapa Actual",
   "current_stage_execution_at": "ETA Etapa Actual",
@@ -402,6 +410,16 @@
   "delete_user_title":"Eliminar al usuario:",
   "users_of": "Usuarios Office de ",
   "drivers_of": "Usuarios Driver de ",
+  "vehicles_of": "Tractoras de ",
+  "btn_create_vehicle": "Nueva Tractora",
+  "tractor_manager": "Gestor de la Tractora",
+  "select_tractor_manager": "Selecciona el Gestor de la Tractora...",
+  "delete_plate_title": "Eliminar la matrícula:",
+  "tows_of": "Remolques de ",
+  "btn_create_tow": "Nuevo Remolque",
+  "tow_manager":"Gestor del Remolque",
+  "select_tow_manager": "Selecciona el Gestor del Remolque...",
+  "delete_tow_title":"Eliminar el remolque:",
   "help_screen": {
     "menu": {
       "welcome": "Bienvenido",

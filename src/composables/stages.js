@@ -51,6 +51,8 @@ export default function useStage() {
 
 	const storeStage = async (data) => {
 		stageErrors.value = '';
+
+		console.log(data);
 		
 		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}stages/store`,{
 			method: 'POST',
@@ -63,15 +65,17 @@ export default function useStage() {
 			})
 			.catch((e) => {
                 // Errors 500
-                if (e.response.status >= 500 &&  e.response.status <= 599) {
-                    stageErrors.value.push(t("errors.error_internal"));
-                }
-                // Errors 400
-                if (e.response.status_code === 422) {
-                    for (const key in e.response.data.errors) {
-                        stageErrors.value = key
-                    }
-                }
+
+				console.log("error", e);
+                // if (e.response.status >= 500) {
+                //     stageErrors.value.push(t("errors.error_internal"));
+                // }
+                // // Errors 400
+                // if (e.response.status_code === 422) {
+                //     for (const key in e.response.data.errors) {
+                //         stageErrors.value = key
+                //     }
+                // }
             });
 
 		

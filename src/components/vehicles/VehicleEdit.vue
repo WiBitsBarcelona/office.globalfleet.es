@@ -6,7 +6,38 @@
 		<!-- BEGIN: container -->
 		<div class="grid grid-cols-12 gap-6">
 
-			<div class="col-span-12 md:col-span-12 lg:col-span-12">
+			<div class="col-span-12 md:col-span-6 lg:col-span-4">
+				<div class="input-form">
+					<label for="employee_id" class="form-label w-full">
+						{{ $t("tractor_manager") }}
+					</label>
+
+					<TomSelect 
+						v-model="validate.employee_id.$model" 
+						id="employee_id" 
+						name="employee_id" 
+						:options="{
+							placeholder: $t('select_tractor_manager'),
+						}" class="form-control w-full"
+						:class="{ 'border-danger': validate.employee_id.$error }"
+					>
+
+						<option v-for="employee in selectEmployees" 
+							:key="employee.id" 
+							:value="employee.id"  
+						>
+								{{ employee.name }} {{ employee.surname }}
+						</option>
+					</TomSelect>
+					<template v-if="validate.employee_id.$error">
+						<div v-for="(error, index) in validate.employee_id.$errors" :key="index" class="text-danger mt-2">
+							{{ error.$message }}
+						</div>
+					</template>
+				</div>
+			</div>
+
+			<div class="col-span-6 md:col-span-4 lg:col-span-4">
 
 				<div class="input-form">
 					<label for="plate" class="form-label w-full">
@@ -26,45 +57,6 @@
 						</div>
 					</template>
 				</div>
-
-				<div class="input-form">
-					<label for="plate" class="form-label w-full">
-						{{ $t("employee_id") }}
-					</label>
-					<input
-						v-model.trim="validate.employee_id.$model"
-						id="employee_id"
-						type="text"
-						name="employee_id"
-						class="form-control"
-						:class="{ 'border-danger': validate.employee_id.$error }"
-					/>
-					<template v-if="validate.employee_id.$error">
-						<div v-for="(error, index) in validate.employee_id.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
-
-				<div class="input-form">
-					<label for="plate" class="form-label w-full">
-						{{ $t("company_id") }}
-					</label>
-					<input
-						v-model.trim="validate.company_id.$model"
-						id="company_id"
-						type="text"
-						name="company_id"
-						class="form-control"
-						:class="{ 'border-danger': validate.company_id.$error }"
-					/>
-					<template v-if="validate.company_id.$error">
-						<div v-for="(error, index) in validate.company_id.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
-
 			</div>
 
 			<!-- BEGIN: Buttons -->
@@ -89,17 +81,21 @@
 </template>
 
 <script setup>
-	import { onMounted, reactive, toRefs } from 'vue';
+	import { onMounted, reactive, toRefs, ref } from 'vue';
 	import useVehicles from '@/composables/vehicles';
 	import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
 	import { useVuelidate } from '@vuelidate/core';
 	import { helpers } from '@vuelidate/validators';
 	import { useI18n } from 'vue-i18n';
+	import useEmployees from "@/composables/employees";
 
 	const { vehicle, getVehicle } = useVehicles();
 	const { t } = useI18n();
 	const props = defineProps(['vehicleId']);
 	const emit = defineEmits(['cancelEdit', 'updateVehicleForm']);
+	const { employees, getEmployees } = useEmployees();
+
+	const selectEmployees = ref();
 
 	const rules = {
 		plate: {
@@ -109,15 +105,11 @@
 		employee_id: {
 			required: helpers.withMessage(t("form.required"), required),
 		},
-		company_id: {
-			required: helpers.withMessage(t("form.required"), required),
-		},
 	};
 
 	const formData = reactive({
 		plate: "",
 		employee_id: "",
-		company_id: "",
 	});
 
 	const validate = useVuelidate(rules, toRefs(formData));
@@ -133,10 +125,11 @@
 
 	onMounted(async () => {
 		await getVehicle(props.vehicleId);
-		console.log(vehicle);
+		await getEmployees();
+		selectEmployees.value = employees.value;
 		formData.plate = vehicle.value.plate;
-		formData.employee_id = vehicle.value.employee_id;
-		formData.company_id = vehicle.value.company_id;
+		formData.employee_id = vehicle.value.employee_id.toString();
+
 	});
 
 </script>
