@@ -458,6 +458,9 @@ const rulesStage = {
 
 
 
+
+
+
 const formDataStage = reactive({
     uuid: uuidv4(),
     activity_type_id: "",
