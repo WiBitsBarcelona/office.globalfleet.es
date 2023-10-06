@@ -279,7 +279,7 @@ export default function useChat() {
   }
 
   // Funció per a enviar missatges
-  const sendTextMessage = async (user_uid, message, chat_id, receiverType, isMetadata, arrayMedia) => {
+  const sendTextMessage = async (user_uid, message, chat_id, receiverType, isMetadata, arrayMedia, translateText) => {
     const options = {
       method: "POST",
       headers: {
@@ -293,6 +293,10 @@ export default function useChat() {
         type: "text",
         data: {
           text: message,
+          customData: {
+            translateText: translateText[0].text,
+            titleText: translateText[1].text
+          },
           ...(arrayMedia
             ? {
               attachments: [{
@@ -421,6 +425,26 @@ export default function useChat() {
     }
   }
 
+  // Funcion para obtener el lenguage x UID
+  const getLangxuid = async (userUID) => {
+    try {
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}cometchat/show/uid/${userUID}`, {
+        method: "GET",
+        headers: {
+          "Accept": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      const data = await response.json();
+      return data.data.language.name
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return {
     // Variables
     cometData,
@@ -443,6 +467,7 @@ export default function useChat() {
     checkUnreadMessages,
     mark_user_conversation_as_delivered,
     mark_group_conversation_as_delivered,
-    update_datameta_message
+    update_datameta_message,
+    getLangxuid
   };
 }

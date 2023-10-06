@@ -121,31 +121,73 @@
                                     </div>
                                     <!-- MENSAJES ENVIADO NORMAL -->
                                     <div v-else>
-                                        <div class="contMensajeEnviado" @click="showModal(true),
+                                        <div @click="showModal(true),
                                             infoTrip(mensaje.sentAt, mensaje.deliveredAt, mensaje.readAt,
                                                 !mensaje.data.metadata ? null : mensaje.data.metadata['confirmetAt'])">
-                                            <p class="txtMensajesEnviado">{{ mensaje.data.text }}</p>
-                                            <p class="txtHoraEnviado">{{ convertStringToDate(mensaje.sentAt) }}</p>
 
-                                            <div style="display: flex; align-items: flex-end; text-align: right;">
+                                            <!-- Pintado de mensaje traducido si es que existiera -->
+                                            <div v-if="mensaje.data.customData" style="background: #0096B2; padding: 8px; float: right; 
+                                                border-radius: 8px 2px 8px 8px; gap: 8px; margin-bottom: 8px; max-width: 253px;">
 
-                                                <p
-                                                    v-if="mensaje.sentAt > 0 && mensaje.deliveredAt == null && mensaje.readAt == null">
-                                                    <img src="../../assets/images/checkmark.svg" alt="Checkmark"
-                                                        style="width: 15px; height: 15px; margin-left: 5px;" />
+                                                <p style="color: #D0D0D0; font-size: 16px; margin: 8px 0px 0px 0px;
+                                                    font-style: italic; font-weight: 400; line-height: normal;">
+                                                    {{ mensaje.data.customData.titleText }}
+                                                </p>
+                                                <p style="margin: 0px; padding-top: 8px; color: #D0D0D0; font-size: 16px;">
+                                                    {{ mensaje.data.text }}
                                                 </p>
 
-                                                <p
-                                                    v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt == null">
-                                                    <img src="../../assets/images/allcheckmark.svg" alt="Checkmark"
-                                                        style="width: 15px; height: 15px; margin-left: 5px;" />
-                                                </p>
 
-                                                <p
-                                                    v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt > 0">
-                                                    <img src="../../assets/images/checkallmark.svg" alt="Checkmark"
-                                                        style="width: 15px; height: 15px; margin-left: 5px;" />
-                                                </p>
+                                                <div style="display: flex; flex-direction: row; gap: 2px; padding-top: 8px;">
+                                                    <p class="txtMensajesEnviado" style="padding-right: 4px;">{{ mensaje.data.customData.translateText }}</p>
+                                                    <p class="txtHoraEnviado">{{ convertStringToDate(mensaje.sentAt) }}</p>
+                                                    <div style="display: flex; align-items: flex-end; text-align: right;">
+
+                                                        <p style="margin: 0px; margin-bottom: 6px;"
+                                                            v-if="mensaje.sentAt > 0 && mensaje.deliveredAt == null && mensaje.readAt == null">
+                                                            <ion-icon id="sentAt" :icon="checkmarkOutline"
+                                                                style=" width: 15px; height: 15px; color: #545454;" />
+                                                        </p>
+
+                                                        <p style="margin: 0px; margin-bottom: 6px;"
+                                                            v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt == null">
+                                                            <ion-icon id="deliveredAt" :icon="checkmarkDoneOutline"
+                                                                style=" width: 15px; height: 15px; color: #545454;" />
+                                                        </p>
+
+                                                        <p style="margin: 0px; margin-bottom: 6px;"
+                                                            v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt > 0">
+                                                            <ion-icon id="readAt" :icon="checkmarkDoneOutline"
+                                                                style=" width: 15px; height: 15px; color: #00C7F7;" />
+                                                        </p>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div v-else class="contMensajeEnviado" >
+                                                <p class="txtMensajesEnviado" style="padding-right: 4px;">{{ mensaje.data.text }}</p>
+                                                <p class="txtHoraEnviado">{{ convertStringToDate(mensaje.sentAt) }}</p>
+
+                                                <div style="display: flex; align-items: flex-end; text-align: right;">
+
+                                                    <p
+                                                        v-if="mensaje.sentAt > 0 && mensaje.deliveredAt == null && mensaje.readAt == null">
+                                                        <img src="../../assets/images/checkmark.svg" alt="Checkmark"
+                                                            style="width: 15px; height: 15px; margin-left: 5px;" />
+                                                    </p>
+
+                                                    <p
+                                                        v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt == null">
+                                                        <img src="../../assets/images/allcheckmark.svg" alt="Checkmark"
+                                                            style="width: 15px; height: 15px; margin-left: 5px;" />
+                                                    </p>
+
+                                                    <p
+                                                        v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt > 0">
+                                                        <img src="../../assets/images/checkallmark.svg" alt="Checkmark"
+                                                            style="width: 15px; height: 15px; margin-left: 5px;" />
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -199,9 +241,34 @@
                                 </div>
                                 <div v-else>
                                     <!-- MENSAJES RECIBIDOS NORMAL -->
-                                    <div class="contMensajeRecibido">
-                                        <p class="txtMensajesRecibido">{{ mensaje.data.text }}</p>
-                                        <p class="txtHoraRecibido">{{ convertStringToDate(mensaje.sentAt) }}</p>
+
+                                    <!-- Cuando el mensaje tiene un texto traducido -->
+                                    <div v-if="mensaje.data.customData">
+                                        <div style="background: #E5E7EB; padding: 8px; border-radius: 2px 8px 8px 8px; 
+                                            gap: 8px; margin-bottom: 8px;max-width: 253px">
+
+                                            <div>
+                                                <p style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px">
+                                                    {{ mensaje.data.customData.titleText }}
+                                                </p>
+                                                <p style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px">
+                                                    {{ mensaje.data.text }}
+                                                </p>
+                                            </div>
+
+                                            <div
+                                                style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; align-items: end;">
+                                                <p class="txtMensajes" style="padding-right: 4px;">{{ mensaje.data.customData.translateText }}</p>
+                                                <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- cuando solo es texto normal sin traducir -->
+                                    <div v-else>
+                                        <div class="contMensajeRecibido">
+                                            <p class="txtMensajes" style="padding-right: 4px;">{{ mensaje.data.text }}</p>
+                                            <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -411,13 +478,15 @@ import { ref, onMounted, defineProps, watch, onBeforeUnmount } from 'vue';
 import { CometChat } from "@cometchat-pro/chat";
 import useChat from "@/composables/chat";
 import useDriverDocument from "@/composables/driver_documents";
+import translateApi from "@/composables/translate_api"
 import { useAuthenticationStore } from "@/stores/auth/authentications";
 import Swal from "sweetalert2";
 import { useI18n } from 'vue-i18n';
 
 const { cometData, getCometChatCredentials, loadChatMessages, markUserConversationAsRead, sendTextMessage, mark_user_conversation_as_delivered,
-    mark_group_conversation_as_delivered, checkUnreadMessages, getConversationsList } = useChat();
+    mark_group_conversation_as_delivered, checkUnreadMessages, getConversationsList, getLangxuid } = useChat();
 const { storeDriverDocumentV2, downloadDriverDocument, driverDocumentData } = useDriverDocument();
+const { translateText } = translateApi()
 const { t } = useI18n();
 
 const chatContainer = ref(null);
@@ -556,7 +625,7 @@ const initialize = async () => {
                                 scrollToLast()
                             }, 1000)
                         }
-                    } 
+                    }
 
                 },
                 onMediaMessageReceived: (mediaMessage) => {
@@ -654,7 +723,7 @@ const sendMessage = async () => {
 
         // Netejem el text
         message.value = "";
-        
+
 
         await loadMessages()
 
@@ -662,9 +731,13 @@ const sendMessage = async () => {
         // Envio de mensjae sin archivos
 
         if (valueText != '') {
-            await sendTextMessage(myUid.value, message.value, ChatId.value, receiverType.value, isChecked.value, '');
-            isChecked.value = false
 
+            const myLang = await getLangxuid(myUid.value);
+            const chatUserLang = await getLangxuid(ChatId.value)
+            const textTranslate = await translateText(message.value, chatUserLang, myLang)
+
+            await sendTextMessage(myUid.value, message.value, ChatId.value, receiverType.value, isChecked.value, '', textTranslate);
+            isChecked.value = false
 
             setTimeout(() => {
                 const chatCont = document.getElementById('chat');
@@ -845,7 +918,7 @@ const scrollToLast = async () => {
 const detectScroll = () => {
     const chatContainer = document.getElementById('chat');
     const btnScroll = document.getElementById("btnScroll");
-    
+
     // Calcula la distancia entre la parte inferior del contenedor y la parte inferior del último mensaje
     const distanceToBottom = chatContainer.scrollHeight - (chatContainer.scrollTop + chatContainer.clientHeight);
 

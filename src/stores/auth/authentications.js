@@ -33,7 +33,7 @@ export const useAuthenticationStore = defineStore("authStore", {
               body: JSON.stringify({ email, password }),
             });
             const response = await res.json();
-
+            
             //Remove localStore
             if(localStorage.getItem('token')){
                 localStorage.removeItem('token');

@@ -77,13 +77,6 @@
         "reload_map": "Reset Map",
         "no_data": "--"
     },
-    "chat":{
-        "chats": "Chats",
-        "newChat" : "New Chat",
-        "searchTitle": "Search Conversation",
-        "confirmRead": "Confirm reading",
-        "messageInput": "Write the message..."
-    },
     "profile": "Profile",
     "reset_password": "Reset Password",
     "help": "Help",
@@ -484,5 +477,12 @@
                 "intro_text_3": "In the top right corner there is a button to access the device history screen."
             }
         }
+    },
+    "chat":{
+        "chats": "Chats",
+        "newChat" : "New Chat",
+        "searchTitle": "Search Conversation",
+        "confirmRead": "Confirm reading",
+        "messageInput": "Write the message..."
     }
 }
