@@ -461,6 +461,34 @@ const rulesStage = {
 
 
 
+const formDataStage = reactive({
+    uuid: uuidv4(),
+    activity_type_id: "",
+    activity_type_name: "",
+    tow_id: "",
+    tow_plate: "",
+    stage_type_id: "",
+    stage_type_name: "",
+    reference_number: "",
+    name: "",
+    order_number: "",
+    client_name: "",
+    address: "",
+    phone: "",
+    zip_code: "",
+    latitude: "",
+    longitude: "",
+    route_code: "",
+    route_name: "",
+    description: "",
+    execution_at: $h.nowTimestamp('-').substr(0,16),
+});
+
+
+
+
+
+
 const validate = useVuelidate(rulesStage, toRefs(formDataStage));
 
 const saveStage = () => {
