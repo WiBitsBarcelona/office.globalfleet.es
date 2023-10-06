@@ -38,7 +38,8 @@
       <!-- BEGIN: container -->
       <div class="grid grid-cols-12 gap-6">
 
-        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+        
+        <div class="col-span-12 md:col-span-6 lg:col-span-8">
           <div class="input-form">
             <label for="name" class="form-label w-full">
               {{ $t("name") }}
@@ -54,7 +55,7 @@
         </div>
 
 
-        <div class="col-span-12 md:col-span-6 lg:col-span-5">
+        <div class="col-span-12 md:col-span-6 lg:col-span-4">
           <div class="input-form">
             <label for="reference_number" class="form-label w-full">
               {{ $t("reference_number") }}
@@ -86,7 +87,7 @@
         </div>
 
 
-        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+        <div class="col-span-12 md:col-span-6 lg:col-span-5">
           <div class="input-form">
             <label for="trip_priority_id" class="form-label w-full">
               {{ $t("trip_priority") }}
@@ -137,7 +138,7 @@
 
 
 
-        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+        <div class="col-span-12 md:col-span-6 lg:col-span-6">
           <div class="input-form">
             <label for="driver_id" class="form-label w-full">
               {{ $t("driver") }}
@@ -163,7 +164,7 @@
         </div>
 
 
-        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+        <div class="col-span-12 md:col-span-6 lg:col-span-6">
           <div class="input-form">
             <label for="driver_id" class="form-label w-full">
               {{ $t("trip_tow") }}
@@ -191,7 +192,7 @@
 
 
 
-        <div class="col-span-12 md:col-span-6 lg:col-span-8">
+        <div class="col-span-12 md:col-span-12 lg:col-span-12">
           <div class="input-form">
             <label for="observations" class="form-label w-full">
               {{ $t("observations") }}
@@ -294,6 +295,14 @@
                     {{ stage.client_name }}
                   </p>
                 </div>
+
+                <div class="col-span-1">
+                  <h5 class="text-xs font-light text-gray-400">{{ $t("tow") }}:</h5>
+                  <p class="text-md font-normal leading-6 text-gray-500">
+                    {{ stage.tow_plate }}
+                  </p>
+                </div>
+
                 <div class="col-span-1">
                   <h5 class="text-xs font-light text-gray-400">{{ $t("execution_at") }}:</h5>
                   <p class="text-md font-normal leading-6 text-gray-500">
@@ -569,7 +578,7 @@
 
 
   <div class="intro-y box p-5 mt-5" v-if="isCreateStage">
-    <StageCreate @cancelStageForm="cancelStageForm" @addStageForm="addStageForm" :arrStages="arrStages" />
+    <StageCreate @cancelStageForm="cancelStageForm" @addStageForm="addStageForm" :arrStages="arrStages" :trip_tow_selected="trip_tow_selected" />
   </div>
 
 
@@ -630,6 +639,7 @@ import useTripPriority from '@/composables/trip_priorities.js';
 import useDrivers from '@/composables/drivers.js';
 import useTow from '@/composables/tows.js';
 import useTripTow from '@/composables/trip_tows.js';
+import useStageTow from '@/composables/stage_tows.js';
 
 
 
@@ -676,6 +686,7 @@ const { actionStageScanner, actionStageScannerErrors, storeActionStageScanner } 
 const { actionStageForm, actionStageFormErrors, storeActionStageForm } = useActionStageForm();
 
 const { tripTow, errorTripTow, storeTripTow } = useTripTow();
+const { stageTow, errorStageTow, storeStageTow } = useStageTow();
 
 
 
@@ -702,7 +713,11 @@ const stageIndex = ref();
 const taskIndex = ref();
 
 
+const trip_tow_selected = ref(); //trip_tow selected
+
+
 let activityObj;
+let towObj;
 let actionTaskCameraObj;
 let actionTaskScannerObj;
 let actionTaskFormObj;
@@ -751,7 +766,7 @@ const rules = {
 //   name: "Viaje Plaza",
 //   execution_at: $h.nowTimestamp('-').substr(0, 16),
 //   observations: "",
-// });
+//});
 
 
 
@@ -770,7 +785,6 @@ const formData = reactive({
 const validate = useVuelidate(rules, toRefs(formData));
 
 const save = async () => {
-
 
   validate.value.$touch();
   if (validate.value.$invalid) {
@@ -836,6 +850,24 @@ const save = async () => {
       
       console.log({ ...stage.value });
 
+
+
+
+
+      /**
+       * Stage Tow TODOO:.............
+       */
+       if (eleStage.tow_id) {
+
+        towObj = {
+          stage_id: stage.value.id,
+          tow_id: eleStage.tow_id
+        }
+
+        await storeStageTow(towObj);
+        console.log({ ...stageTow.value });
+
+      }
 
 
 
@@ -1027,6 +1059,7 @@ const save = async () => {
 const showStageForm = () => {
   isCreateTrip.value = false;
   isCreateStage.value = true;
+  trip_tow_selected.value = formData.tow_id;
   console.log({ ...arrStages.value });
 }
 

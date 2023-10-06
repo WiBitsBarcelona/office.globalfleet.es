@@ -8,6 +8,8 @@ const requireAuth = async(to, from, next) => {
   try {
       await useAuthentication.currentUser();
 
+      //console.log(useAuthentication.getUser.employee);
+
       //TODO pendiente de implementar:
       //SI ---> useAuthentication.getUser.employee
       //No ---> console.log(useAuthentication.user);
