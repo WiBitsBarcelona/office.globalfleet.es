@@ -545,9 +545,10 @@ onMounted(async () => {
     }
 
 
-    if(props.trip_tow_selected != 0){
+    if(props.trip_tow_selected > 0){
         formDataStage.tow_id = props.trip_tow_selected.toString();
     }
+
 
     
 
