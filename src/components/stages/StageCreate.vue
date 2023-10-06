@@ -485,6 +485,7 @@ const formDataStage = reactive({
 
 
 
+
 const validate = useVuelidate(rulesStage, toRefs(formDataStage));
 
 const saveStage = () => {
@@ -545,8 +546,11 @@ onMounted(async () => {
     }
 
 
+
     if(props.trip_tow_selected > 0){
+
         formDataStage.tow_id = props.trip_tow_selected.toString();
+        
     }
 
 
