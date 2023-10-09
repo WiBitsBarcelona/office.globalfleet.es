@@ -1427,17 +1427,10 @@
     "pseudomap" "^1.0.2"
     "yallist" "^2.1.2"
 
-<<<<<<< HEAD
-"lucide-vue-next@^0.115.0":
-  "integrity" "sha512-mV0xE1M0Fkq0CjjbkkMW09ypswc6QY+j0RfYrG0ZjMATTNgVD/gF8JMATvft0tyl1xeOnloRQAzOEIP7IBUneA=="
-  "resolved" "https://registry.npmjs.org/lucide-vue-next/-/lucide-vue-next-0.115.0.tgz"
-  "version" "0.115.0"
-=======
-lucide-vue-next@^0.265.0:
-  version "0.265.0"
-  resolved "https://registry.yarnpkg.com/lucide-vue-next/-/lucide-vue-next-0.265.0.tgz#fd648472e7eb4676930d338d43b807c67e93167b"
-  integrity sha512-RQtIzKNDjoLYeguLeXLGRxF+rPxiEho48klKnyg1Kn+wRTESb2rRQ3LXrP4gHs25jCz75nfSft19JhcyBLef4A==
->>>>>>> 35e03b3621b79a0a056a6b5d797e489d6e7e0053
+"lucide-vue-next@^0.265.0":
+  "integrity" "sha512-RQtIzKNDjoLYeguLeXLGRxF+rPxiEho48klKnyg1Kn+wRTESb2rRQ3LXrP4gHs25jCz75nfSft19JhcyBLef4A=="
+  "resolved" "https://registry.npmjs.org/lucide-vue-next/-/lucide-vue-next-0.265.0.tgz"
+  "version" "0.265.0"
 
 "lucide@^0.17.3":
   "integrity" "sha512-bB0SdfHIfyUMbD2CyR7WXI3RvLugA839SfJIwqrWiqK9e+HCj4aTwcm0Ft47p9SdI5Q/asYcauQEg9E5Q0iUYA=="

@@ -420,6 +420,13 @@
   "tow_manager":"Gestor del Remolque",
   "select_tow_manager": "Selecciona el Gestor del Remolque...",
   "delete_tow_title":"Eliminar el remolque:",
+  "chat":{
+    "chats": "Chats",
+    "newChat" : "Nuevo Chat",
+    "searchTitle": "Buscar Conversacion",
+    "confirmRead": "Confirmar Lectura",
+    "messageInput": "Escribe el Mensaje...."
+  },
   "help_screen": {
     "menu": {
       "welcome": "Bienvenido",
@@ -498,12 +505,5 @@
         "intro_text_3": "En la parte superior derecha tenemos un botón para acceder a la pantalla de histórico de dispositivos."
       }
     }
-  },
-  "chat":{
-    "chats": "Chats",
-    "newChat" : "Nuevo Chat",
-    "searchTitle": "Buscar Conversacion",
-    "confirmRead": "Confirmar Lectura",
-    "messageInput": "Escribe el Mensaje...."
   }
 }
