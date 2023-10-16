@@ -25,26 +25,31 @@ export const useAuthenticationStore = defineStore("authStore", {
     },
     actions: {
         async login(email, password) {
-            const res = await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}office/auth/login`, {
+            await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}office/auth/login`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({ email, password }),
-            });
-            const response = await res.json();
-            
-            //Remove localStore
-            if(localStorage.getItem('token')){
-                localStorage.removeItem('token');
-            }
+            })
+            .then(res => res.json())
+            .then(data => {
 
-            if (response.success) {
-                this.user = response.user;
-                localStorage.setItem('token', response.token);
-            }else{
-                this.errors = response.errors;
-            }
+              if(localStorage.getItem('token')){
+                localStorage.removeItem('token');
+              }
+
+              if (data.success) {
+                this.user = data.user;
+                localStorage.setItem('token', data.token);
+              }else{
+                  this.errors = data;
+              }
+
+            })
+            .catch((e) => {
+              console.log("pasa");
+            })
           },
         async currentUser(){
             return new Promise((resolve, reject) => {
