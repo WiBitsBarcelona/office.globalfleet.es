@@ -106,6 +106,8 @@ import { Toast } from '@/utils/toast';
 //call
 await Toast(t("message.record_updated"), 'success');
 
+await Toast('Claves de acceso no válidas', 'error');
+
 ```
 
 
