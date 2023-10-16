@@ -123,7 +123,7 @@
 
   <!-- Cuadre de xat -->
   <ChatsV2 :idConversation="propsConversationId" :ChatId="propsChatId" :receiverType="propsChatType"
-    :nameConversation="propsNameConversation" />
+    :nameConversation="propsNameConversation" @dataSend="calltoRecived" />
 </template>
 
 <script>
@@ -183,6 +183,8 @@ onBeforeUnmount(() => {
   CometChat.removeUserListener(chatListenerID);
 
 });
+
+
 
 // Funcion que va a correr al iniciar la pagina
 const initialize = async () => {
@@ -600,6 +602,13 @@ const chatsTitle = (value) => {
   }
 }
 
+// funcion que recive un emit de ChatsV2 para actualizar el conteo de mensajes leidos
+const calltoRecived = async (datos) => {
+  if (datos.mensaje == 'true') {
+    await checkUnreadMessages();
+    await LoadChatsList(); 
+  }
+};
 </script>
 
 <style>
