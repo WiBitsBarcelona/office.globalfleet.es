@@ -32,9 +32,9 @@
     </div>
     <div class="w-full relative mr-auto mt-3 sm:mt-0">
       <SearchIcon class="w-4 h-4 absolute my-auto inset-y-0 ml-3 left-0 z-10 text-slate-500" />
-      <input id="search-conversation" type="text" class="form-control w-full box px-10" :placeholder="$t('chat.searchTitle')"
-        v-on:input="conversationList.length == 0 ? '' : searchConversationByName" 
-        :class="conversationList.length == 0 ? 'opacity-60 cursor-not-allowed' : ''"/>
+      <input id="search-conversation" type="text" class="form-control w-full box px-10"
+        :placeholder="$t('chat.searchTitle')" v-on:input="conversationList.length == 0 ? '' : searchConversationByName"
+        :class="conversationList.length == 0 ? 'opacity-60 cursor-not-allowed' : ''" />
     </div>
 
     <!-- Llista de xats -->
@@ -80,13 +80,31 @@
             </div>
           </div>
           <p :id="'last-' + conversation.conversationId">
-            {{
+            <!-- {{
               conversationList.length > 0 &&
               conversation.lastMessage &&
               conversation.lastMessage.data &&
               conversation.lastMessage.data.text
               ? conversation.lastMessage.data.text.length < 30 ? conversation.lastMessage.data.text :
-                conversation.lastMessage.data.text.substring(0, 30) + "..." : "" }} </p>
+                conversation.lastMessage.data.text.substring(0, 30) + "..." : "" }}</p> -->
+          <div v-if="conversation.conversationType == 'group'">
+            <div v-if="conversation.lastMessage.data.customData">
+              <div v-for="itemGM in conversation.lastMessage.data.customData.groupText">
+                <div v-if="itemGM.Lang == myLang">
+                  {{ itemGM.TextTranslate }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div v-else>
+            <div v-if="conversation.lastMessage.sender == userInfo.uid">
+              {{ conversation.lastMessage.data.text }}
+            </div>
+            <div v-else>
+              {{ conversation.lastMessage.data.customData.translateText }}
+            </div>
+          </div>
+          </p>
         </div>
       </button>
 
@@ -123,7 +141,7 @@
 
   <!-- Cuadre de xat -->
   <ChatsV2 :idConversation="propsConversationId" :ChatId="propsChatId" :receiverType="propsChatType"
-    :nameConversation="propsNameConversation" />
+    :nameConversation="propsNameConversation" @dataSend="calltoRecived" />
 </template>
 
 <script>
@@ -156,7 +174,8 @@ const {
   getUserGroups,
   getGroupMembers,
   checkUnreadMessages,
-  getUserConversation
+  getUserConversation,
+  getLangxuid
 } = useChat();
 
 const loading = ref(false);
@@ -165,6 +184,7 @@ let inChat = ref(false);
 let inNewChat = ref(false);
 let userInfo = ref("");
 let newChatsList = ref("");
+let myLang = ref("");;
 
 const propsConversationId = ref(null)
 const propsChatType = ref(null)
@@ -183,6 +203,8 @@ onBeforeUnmount(() => {
   CometChat.removeUserListener(chatListenerID);
 
 });
+
+
 
 // Funcion que va a correr al iniciar la pagina
 const initialize = async () => {
@@ -204,7 +226,7 @@ const initialize = async () => {
     .build();
 
   // Inicialitzem la App
-  CometChat.init(appID, appSettings).then(() => {
+  CometChat.init(appID, appSettings).then(async () => {
 
     //console.log("Initialization completed successfully");
 
@@ -216,6 +238,8 @@ const initialize = async () => {
     user.setName(name);
 
     userInfo = user;
+
+    myLang = await getLangxuid(userInfo.uid);
 
     CometChat.login(UID, authKey).then(
       (user) => {
@@ -536,8 +560,8 @@ const printTextMessage = async (textMessage) => {
   }
 
   messageBody.innerHTML += `
-    <div class="${senderClass} mensaje" style="display: flex; width: 100%; justify-content: ${senderClass === "missatgePropi" ? "flex-end" : "flex-start"
-    };" date="${textMessage.sentAt}-${textMessage.deliveredAt}-${textMessage.readAt}">
+    <div class="${senderClass} mensaje" style="display: flex; width: 100%; justify-content: ${senderClass === "missatgePropi" ? "flex-end" : "flex-start"};" 
+      date="${textMessage.sentAt}-${textMessage.deliveredAt}-${textMessage.readAt}">
       <div class="flex gap-3 py-2 px-3 ${bgColorClass} rounded-lg max-w-md">
         <p style="margin: 0px; display: flex; word-break: break-word;">${messageText}</p>
         <div style="display: flex; justify-content: flex-end; align-items: center">
@@ -600,6 +624,13 @@ const chatsTitle = (value) => {
   }
 }
 
+// funcion que recive un emit de ChatsV2 para actualizar el conteo de mensajes leidos
+const calltoRecived = async (datos) => {
+  if (datos.mensaje == 'true') {
+    await checkUnreadMessages();
+    await LoadChatsList();
+  }
+};
 </script>
 
 <style>

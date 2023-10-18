@@ -46,7 +46,7 @@
 
 
 
-            <div class="col-span-12 md:col-span-6 lg:col-span-5">
+            <div class="col-span-12 md:col-span-4 lg:col-span-4">
                 <div class="input-form">
                     <label for="activity_type_id" class="form-label w-full">
                         {{ $t("activity") }}
@@ -76,7 +76,7 @@
                 </div>
             </div>
 
-            <div class="col-span-12 md:col-span-6 lg:col-span-5">
+            <div class="col-span-12 md:col-span-4 lg:col-span-3">
                 <div class="input-form">
                     <label for="stage_type_id" class="form-label w-full">
                         {{ $t("stage_type") }}
@@ -103,6 +103,32 @@
                             class="text-danger mt-2">
                             {{ error.$message }}
                         </div>
+                    </template>
+                </div>
+            </div>
+
+
+            <div class="col-span-12 md:col-span-4 lg:col-span-3">
+                <div class="input-form">
+                    <label for="driver_id" class="form-label w-full">
+                    {{ $t("trip_tow") }}
+                    </label>
+
+                    <TomSelect v-model.trim="validate.tow_id.$model" id="tow_id" name="tow_id" :options="{
+                    placeholder: $t('message.select'),
+                    }" class="form-control w-full" :class="{ 'border-danger': validate.tow_id.$error }">
+
+                    <option v-for="item in selectTows" :value="item.id">
+                        {{ item.name }} {{ item.plate }}
+                    </option>
+
+                    </TomSelect>
+
+
+                    <template v-if="validate.tow_id.$error">
+                    <div v-for="(error, index) in validate.tow_id.$errors" :key="index" class="text-danger mt-2">
+                        {{ error.$message }}
+                    </div>
                     </template>
                 </div>
             </div>
@@ -329,6 +355,7 @@
 import { onMounted, reactive, toRefs, ref } from 'vue';
 //import useStage from '@/composables/stages';
 import useStageType from '@/composables/stage_types.js';
+import useTow from '@/composables/tows.js';
 import useActivityType from '@/composables/activity_types.js';
 import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
@@ -340,15 +367,17 @@ import { v4 as uuidv4 } from 'uuid';
 
 const { t } = useI18n();
 const { stageTypes, getStageTypes } = useStageType();
+const { tows, getTows } = useTow();
 const { activityTypes, getActivityTypes } = useActivityType();
 
 
 const emit = defineEmits(['addStageForm', 'cancelStageForm']);
-const props = defineProps(['arrStages']);
+const props = defineProps(['arrStages', 'trip_tow_selected']);
 
 
 const selectStageTypes = ref([]);
 const selectActivityTypes = ref([]);
+const selectTows = ref([]);
 
 
 const rulesStage = {
@@ -357,6 +386,11 @@ const rulesStage = {
     },
     stage_type_id: {
         required: helpers.withMessage(t("form.required"), required),
+    },
+    tow_id: {
+        required: helpers.withMessage(t("form.required"), required),
+    },
+    tow_plate: {
     },
     reference_number: {
         required: helpers.withMessage(t("form.required"), required),
@@ -399,49 +433,57 @@ const rulesStage = {
 };
 
 
-const formDataStage = reactive({
-    uuid: uuidv4(),
-    activity_type_id: "",
-    activity_type_name: "",
-    stage_type_id: "3",
-    stage_type_name: "",
-    reference_number: "1000",
-    name: "Etapa Hannover",
-    order_number: "",
-    client_name: "Pepito",
-    address: "Calle hambrosio 2-4",
-    phone: "890890890",
-    zip_code: "08029",
-    latitude: "67.899978",
-    longitude: "78.90099",
-    route_code: "Route 678678",
-    route_name: "Nombre Route",
-    description: "Descripcion para la Etapa",
-    execution_at: $h.nowTimestamp('-').substr(0,16),
-});
-
-
-
 // const formDataStage = reactive({
 //     uuid: uuidv4(),
 //     activity_type_id: "",
 //     activity_type_name: "",
-//     stage_type_id: "",
+//     tow_id: "",
+//     tow_plate: "",
+//     stage_type_id: "3",
 //     stage_type_name: "",
-//     reference_number: "",
-//     name: "",
+//     reference_number: "1000",
+//     name: "Etapa Hannover",
 //     order_number: "",
-//     client_name: "",
-//     address: "",
-//     phone: "",
-//     zip_code: "",
-//     latitude: "",
-//     longitude: "",
-//     route_code: "",
-//     route_name: "",
-//     description: "",
+//     client_name: "Pepito",
+//     address: "Calle hambrosio 2-4",
+//     phone: "890890890",
+//     zip_code: "08029",
+//     latitude: "67.899978",
+//     longitude: "78.90099",
+//     route_code: "Route 678678",
+//     route_name: "Nombre Route",
+//     description: "Descripcion para la Etapa",
 //     execution_at: $h.nowTimestamp('-').substr(0,16),
 // });
+
+
+
+
+
+
+const formDataStage = reactive({
+    uuid: uuidv4(),
+    activity_type_id: "",
+    activity_type_name: "",
+    tow_id: "",
+    tow_plate: "",
+    stage_type_id: "",
+    stage_type_name: "",
+    reference_number: "",
+    name: "",
+    order_number: "",
+    client_name: "",
+    address: "",
+    phone: "",
+    zip_code: "",
+    latitude: "",
+    longitude: "",
+    route_code: "",
+    route_name: "",
+    description: "",
+    execution_at: $h.nowTimestamp('-').substr(0,16),
+});
+
 
 
 
@@ -450,9 +492,6 @@ const formDataStage = reactive({
 const validate = useVuelidate(rulesStage, toRefs(formDataStage));
 
 const saveStage = () => {
-
-    
-
 
     validate.value.$touch();    
     if (validate.value.$invalid) {
@@ -467,6 +506,13 @@ const saveStage = () => {
 
         const selectedStageType = selectStageTypes.value.find(elem => elem.id === parseInt(formDataStage.stage_type_id));
         formDataStage.stage_type_name = selectedStageType.name;
+
+
+
+
+
+        const selectedStageTow = selectTows.value.find(elem => elem.id === parseInt(formDataStage.tow_id));
+        formDataStage.tow_plate = selectedStageTow.plate;
 
 
         emit('addStageForm', { ...formDataStage });
@@ -490,12 +536,28 @@ onMounted(async () => {
     selectActivityTypes.value = activityTypes.value;
 
 
+    //Load stage types
+    await getTows();
+    selectTows.value = tows.value;
+
+
+
     if(props.arrStages.length === 0){
         formDataStage.order_number = 1;
     }else{
         formDataStage.order_number = props.arrStages.length + 1;
     }
 
+
+
+    if(props.trip_tow_selected > 0){
+
+        formDataStage.tow_id = props.trip_tow_selected.toString();
+        
+    }
+
+
+    
 
 });
 

@@ -121,31 +121,35 @@
                                     </div>
                                     <!-- MENSAJES ENVIADO NORMAL -->
                                     <div v-else>
-                                        <div class="contMensajeEnviado" @click="showModal(true),
+                                        <div @click="showModal(true),
                                             infoTrip(mensaje.sentAt, mensaje.deliveredAt, mensaje.readAt,
                                                 !mensaje.data.metadata ? null : mensaje.data.metadata['confirmetAt'])">
-                                            <p class="txtMensajesEnviado">{{ mensaje.data.text }}</p>
-                                            <p class="txtHoraEnviado">{{ convertStringToDate(mensaje.sentAt) }}</p>
 
-                                            <div style="display: flex; align-items: flex-end; text-align: right;">
+                                            <div class="contMensajeEnviado">
+                                                <p class="txtMensajesEnviado" style="padding-right: 4px;">{{
+                                                    mensaje.data.text }}</p>
+                                                <p class="txtHoraEnviado">{{ convertStringToDate(mensaje.sentAt) }}</p>
 
-                                                <p
-                                                    v-if="mensaje.sentAt > 0 && mensaje.deliveredAt == null && mensaje.readAt == null">
-                                                    <img src="../../assets/images/checkmark.svg" alt="Checkmark"
-                                                        style="width: 15px; height: 15px; margin-left: 5px;" />
-                                                </p>
+                                                <div style="display: flex; align-items: flex-end; text-align: right;">
 
-                                                <p
-                                                    v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt == null">
-                                                    <img src="../../assets/images/allcheckmark.svg" alt="Checkmark"
-                                                        style="width: 15px; height: 15px; margin-left: 5px;" />
-                                                </p>
+                                                    <p
+                                                        v-if="mensaje.sentAt > 0 && mensaje.deliveredAt == null && mensaje.readAt == null">
+                                                        <img src="../../assets/images/checkmark.svg" alt="Checkmark"
+                                                            style="width: 15px; height: 15px; margin-left: 5px;" />
+                                                    </p>
 
-                                                <p
-                                                    v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt > 0">
-                                                    <img src="../../assets/images/checkallmark.svg" alt="Checkmark"
-                                                        style="width: 15px; height: 15px; margin-left: 5px;" />
-                                                </p>
+                                                    <p
+                                                        v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt == null">
+                                                        <img src="../../assets/images/allcheckmark.svg" alt="Checkmark"
+                                                            style="width: 15px; height: 15px; margin-left: 5px;" />
+                                                    </p>
+
+                                                    <p
+                                                        v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt > 0">
+                                                        <img src="../../assets/images/checkallmark.svg" alt="Checkmark"
+                                                            style="width: 15px; height: 15px; margin-left: 5px;" />
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -199,9 +203,64 @@
                                 </div>
                                 <div v-else>
                                     <!-- MENSAJES RECIBIDOS NORMAL -->
-                                    <div class="contMensajeRecibido">
-                                        <p class="txtMensajesRecibido">{{ mensaje.data.text }}</p>
-                                        <p class="txtHoraRecibido">{{ convertStringToDate(mensaje.sentAt) }}</p>
+
+                                    <!-- Cuando el mensaje tiene un texto traducido -->
+                                    <div v-if="mensaje.data.customData">
+                                        <div v-if="mensaje.data.customData.senderLang != myLang">
+
+                                            <!-- Si el chat es typo grupo -->
+                                            <div v-if="receiverType == 'group'">
+                                                <div style="background: #E5E7EB; padding: 8px; border-radius: 2px 8px 8px 8px; 
+                                                    gap: 8px; margin-bottom: 8px;max-width: 253px">
+                                                    <div v-for="itemGM in mensaje.data.customData.groupText">
+                                                        <div v-if="itemGM.Lang == myLang">
+                                                            <div style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; 
+                                                                align-items: end;">
+                                                                <p class="txtMensajes" style="padding-right: 4px;">{{
+                                                                    itemGM.TextTranslate }}</p>
+                                                                <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div v-else>
+                                                <div style="background: #E5E7EB; padding: 8px; border-radius: 2px 8px 8px 8px; 
+                                                    gap: 8px; margin-bottom: 8px;max-width: 253px">
+
+                                                    <div>
+                                                        <p style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px">
+                                                            {{ mensaje.data.customData.titleText }}
+                                                        </p>
+                                                        <p style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px">
+                                                            {{ mensaje.data.text }}
+                                                        </p>
+                                                    </div>
+
+                                                    <div
+                                                        style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; align-items: end;">
+                                                        <p class="txtMensajes" style="padding-right: 4px;">{{
+                                                            mensaje.data.customData.translateText }}</p>
+                                                        <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div v-else>
+                                            <div class="contMensajeRecibido">
+                                                <p class="txtMensajes" style="padding-right: 4px;">{{ mensaje.data.text }}
+                                                </p>
+                                                <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- cuando solo es texto normal sin traducir -->
+                                    <div v-else>
+                                        <div class="contMensajeRecibido">
+                                            <p class="txtMensajes" style="padding-right: 4px;">{{ mensaje.data.text }}</p>
+                                            <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -407,17 +466,20 @@ export default defineComponent({
 </script>
 
 <script setup>
-import { ref, onMounted, defineProps, watch, onBeforeUnmount } from 'vue';
+import { ref, onMounted, defineProps, watch, onBeforeUnmount, defineEmits  } from 'vue';
 import { CometChat } from "@cometchat-pro/chat";
 import useChat from "@/composables/chat";
 import useDriverDocument from "@/composables/driver_documents";
+import translateApi from "@/composables/translate_api"
 import { useAuthenticationStore } from "@/stores/auth/authentications";
 import Swal from "sweetalert2";
 import { useI18n } from 'vue-i18n';
 
-const { cometData, getCometChatCredentials, loadChatMessages, markUserConversationAsRead, sendTextMessage, mark_user_conversation_as_delivered,
-    mark_group_conversation_as_delivered, checkUnreadMessages, getConversationsList } = useChat();
+const { cometData, getCometChatCredentials, loadChatMessages, markUserConversationAsRead, markGroupConversationAsRead, 
+    sendTextMessage, mark_user_conversation_as_delivered,
+    mark_group_conversation_as_delivered, checkUnreadMessages, getConversationsList, getLangxuid, getGroupMembers } = useChat();
 const { storeDriverDocumentV2, downloadDriverDocument, driverDocumentData } = useDriverDocument();
+const { translateText } = translateApi()
 const { t } = useI18n();
 
 const chatContainer = ref(null);
@@ -443,6 +505,11 @@ let countUnreadMessage;
 let isMoving = false;
 // Array de mensajes
 const mensajes = ref([]);
+let myLang;
+
+let membersLang = []
+
+const emit = defineEmits();
 
 const props = defineProps({
     idConversation: String, //idConversation
@@ -458,6 +525,10 @@ watch(
         ChatId.value = newChatId;
         receiverType.value = newReceiverType;
         nameConversation.value = newNameConversation;
+
+        if (receiverType.value == 'group') {
+            getUidxGroup()
+        }
 
         commetInit()
 
@@ -505,7 +576,7 @@ const initialize = async () => {
         .build();
 
     // Inicialitzem la App
-    CometChat.init(appID, appSettings).then(() => {
+    CometChat.init(appID, appSettings).then(async () => {
 
         //console.log("Initialization completed successfully");
 
@@ -519,6 +590,8 @@ const initialize = async () => {
         userInfo = user;
 
         myUid.value = user.uid
+
+        myLang = await getLangxuid(myUid.value);
 
         /*CometChat.login(UID, authKey).then(
             (user) => {
@@ -553,10 +626,17 @@ const initialize = async () => {
                         //markUserConversationAsRead(myUid.value, ChatId.value)
                         if (isMoving == true) {
                             setTimeout(() => {
-                                scrollToLast()
+                                // Obtén el elemento que representa el último mensaje
+                                const chatContainer = document.getElementById('chat');
+                                const lastMessage = chatContainer.lastElementChild;
+
+                                if (lastMessage) {
+                                    // Haz scroll hasta el último mensaje
+                                    lastMessage.scrollIntoView({ behavior: 'smooth' });
+                                }
                             }, 1000)
                         }
-                    } 
+                    }
 
                 },
                 onMediaMessageReceived: (mediaMessage) => {
@@ -636,9 +716,24 @@ const sendMessage = async () => {
 
         // creamos un array con los datos
         let arrayMedia = { url: mediaPath.data.path, name: mediaAttachments.value.file_name, extension: mediaAttachments.value.type }
-        await sendTextMessage(myUid.value, message.value == '' ? 'Documento Adjunto' : message.value, ChatId.value, receiverType.value, isChecked.value, arrayMedia);
-        isChecked.value = false
-        mediaSource.value = null
+
+        if (receiverType.value == 'user') {
+            
+            const chatUserLang = await getLangxuid(ChatId.value)
+            
+            let textTranslateA = '';
+            if (message.value == '') {
+                textTranslateA = await translateText('Documento Adjunto', chatUserLang, myLang)
+            } else {
+                textTranslateA = await translateText( message.value, chatUserLang, myLang)
+            }
+            
+            const chatsLang = { sender: myLang, received: chatUserLang }
+
+            await sendTextMessage(myUid.value, message.value == '' ? 'Documento Adjunto' : message.value, ChatId.value, receiverType.value, isChecked.value, arrayMedia, textTranslateA, chatsLang, '');
+            isChecked.value = false
+            mediaSource.value = null
+        }
 
         setTimeout(() => {
             const chatCont = document.getElementById('chat');
@@ -654,7 +749,7 @@ const sendMessage = async () => {
 
         // Netejem el text
         message.value = "";
-        
+
 
         await loadMessages()
 
@@ -662,9 +757,32 @@ const sendMessage = async () => {
         // Envio de mensjae sin archivos
 
         if (valueText != '') {
-            await sendTextMessage(myUid.value, message.value, ChatId.value, receiverType.value, isChecked.value, '');
-            isChecked.value = false
 
+            // Si el tipo de chat es user
+            if (receiverType.value == 'user') {
+                const chatUserLang = await getLangxuid(ChatId.value)
+                const textTranslate = await translateText(message.value, chatUserLang, myLang)
+
+                const chatsLang = { sender: myLang, received: chatUserLang }
+
+                await sendTextMessage(myUid.value, message.value, ChatId.value, receiverType.value, isChecked.value, '', textTranslate, chatsLang, '');
+                isChecked.value = false
+
+            } else {
+
+                const groupTextTranslate = [];
+                
+                for (let i = 0; i < membersLang.length; i++) {
+                    let element = membersLang[i];
+                    const translatedText = await translateText(message.value, element, myLang);
+                    const arrayText = { Lang: element, TextTranslate: translatedText[0].text, TitleTranslate: translatedText[1].text };
+                    groupTextTranslate.push(arrayText);
+                }
+
+                const chatsLang = { sender: myLang };
+                await sendTextMessage(myUid.value, message.value, ChatId.value, receiverType.value, isChecked.value, '', '', chatsLang, groupTextTranslate);
+                isChecked.value = false;
+            }
 
             setTimeout(() => {
                 const chatCont = document.getElementById('chat');
@@ -793,7 +911,13 @@ const openDriverFile = async (path) => {
 
 // Actualizar mensajes no leidos cuando se pulsa el textarea o el boton de desplazamientos
 const onpresskey = async () => {
-    await markUserConversationAsRead(myUid.value, ChatId.value);
+
+    if (receiverType.value == 'group') {
+      await markGroupConversationAsRead(myUid.value, ChatId.value);
+    } else {
+      await markUserConversationAsRead(myUid.value, ChatId.value);
+    }
+    
     await checkUnreadMessages();
 
     if (ChatId.value != null) {
@@ -802,6 +926,12 @@ const onpresskey = async () => {
 
         // Verifica si se encontró el elemento con el ID
         if (elementSeleccionat) {
+
+            // emitimos un evento para ejecutar en la vista de lista de chats que se ha leido un mensaje
+            emit('dataSend', { mensaje: 'true' })
+            countUnreadMessage = 0
+            
+            /*
             // Obtén todos los divs dentro del elemento seleccionado
             const divs = elementSeleccionat.getElementsByTagName('div');
 
@@ -815,7 +945,7 @@ const onpresskey = async () => {
                 countUnreadMessage = 0
             } else {
                 //console.log("No hay al menos tres divs dentro del elemento seleccionado.");
-            }
+            }*/
         } else {
             //console.log("No se encontró ningún elemento con el ID proporcionado.");
         }
@@ -841,11 +971,10 @@ const scrollToLast = async () => {
 }
 
 // detectar el moviemiento del scroll de los mensajes
-
 const detectScroll = () => {
     const chatContainer = document.getElementById('chat');
     const btnScroll = document.getElementById("btnScroll");
-    
+
     // Calcula la distancia entre la parte inferior del contenedor y la parte inferior del último mensaje
     const distanceToBottom = chatContainer.scrollHeight - (chatContainer.scrollTop + chatContainer.clientHeight);
 
@@ -871,6 +1000,21 @@ const unreadMessageCount = async () => {
     });
 }
 
+// Obtener los uid de los usuarios del grupo
+const getUidxGroup = async () => {
+    const uids = await getGroupMembers(ChatId.value);
+
+    const uniqueMembersLang = new Set();
+
+    for (let i = 0; i < uids.length; i++) {
+        const element = uids[i];
+        const uid_lang = await getLangxuid(element.uid);
+        uniqueMembersLang.add(uid_lang); // Agregar elementos al conjunto
+    }
+
+    // Convertir el conjunto nuevamente a un array si es necesario
+    membersLang = Array.from(uniqueMembersLang);
+}
 </script>
 <style>
 .contMensajeRecibido {
@@ -939,5 +1083,4 @@ const unreadMessageCount = async () => {
     display: flex;
     align-items: flex-end;
     text-align: right;
-}
-</style>
+}</style>

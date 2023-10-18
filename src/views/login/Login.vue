@@ -148,7 +148,8 @@ const handleSubmit = async() => {
   }
 
   if(useAuthentication.errors){
-      if(useAuthentication.errors.e === 'Unauthorized'){
+
+      if(parseInt(useAuthentication.errors.status_code) === 422){
           //console.log('No autorizado')
           useAuthentication.errors = null;
           await Toast('Claves de acceso no válidas', 'error');

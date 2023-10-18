@@ -8,6 +8,8 @@ const requireAuth = async(to, from, next) => {
   try {
       await useAuthentication.currentUser();
 
+      //console.log(useAuthentication.getUser.employee);
+
       //TODO pendiente de implementar:
       //SI ---> useAuthentication.getUser.employee
       //No ---> console.log(useAuthentication.user);
@@ -92,7 +94,6 @@ const routes = [
         path: "trips/create",
         name: "trips-create",
         component: () => import('@/components/trips/TripCreate.vue'),
-        //component: () => import('@/components/trips/TripExample.vue'),
       },
       {
         path: "trips/edit/:id",
