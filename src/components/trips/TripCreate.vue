@@ -99,6 +99,7 @@
                 placeholder: $t('message.select'),
               }" class="form-control w-full" :class="{ 'border-danger': validate.trip_priority_id.$error }">
 
+              <option :value="0"></option>
               <option v-for="item in selectTripPriorities" :value="item.id">
                 {{ item.name }}
               </option>
@@ -124,6 +125,7 @@
               placeholder: $t('message.select'),
             }" class="form-control w-full" :class="{ 'border-danger': validate.vehicle_id.$error }">
 
+              <option :value="0"></option>
               <option v-for="item in selectVehicles" :value="item.id">
                 {{ item.plate }}
               </option>
@@ -150,6 +152,7 @@
               placeholder: $t('message.select'),
             }" class="form-control w-full" :class="{ 'border-danger': validate.driver_id.$error }">
 
+              <option :value="0"></option>
               <option v-for="item in selectDrivers" :value="item.id">
                 {{ item.name }} {{ item.surname }}
               </option>
@@ -176,6 +179,7 @@
               placeholder: $t('message.select'),
             }" class="form-control w-full" :class="{ 'border-danger': validate.tow_id.$error }">
 
+              <option :value="0"></option>
               <option v-for="item in selectTows" :value="item.id">
                 {{ item.name }} {{ item.plate }}
               </option>

@@ -262,7 +262,7 @@ const formData = reactive({
 	action_form_field_id: "",
 	action_form_field_name: "",
 	action_type_name: "",
-	order_number: "1",
+	order_number: "",
 	description: "Descripcion Action Tasks",
 });
 
@@ -341,8 +341,10 @@ onMounted(async () => {
 
 	if(props.arrStages.length === 0){
         stageFake.order_number = 1;
+		formData.order_number = 1;
     }else{
         stageFake.order_number = props.arrStages.length + 1;
+        formData.order_number = props.arrStages.length + 1;
     }
 
 });
