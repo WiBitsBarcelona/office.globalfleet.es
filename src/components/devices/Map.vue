@@ -9,7 +9,7 @@
     <div class="box p-1 intro-x h-[650px] overflow-y-auto">
       <div>
 
-<!--         <div class="inline-flex w-full mb-3" role="group">
+        <!--         <div class="inline-flex w-full mb-3" role="group">
   <button type="button" class="px-4 py-2 text-sm content-center font-medium text-gray-500 bg-transparent hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-600 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
     <span class="text-xl">2</span>
     <span class="flex text-xs">Todos</span>
@@ -30,13 +30,12 @@
             <template v-if="driver.position">
 
               <tr>
-                <td :id="driver.id" class="text-sm leading-6 text-gray-500 !p-1"
-                  @click="zoomDriver(driver.id)">
-                  <span class="font-bold">{{ driver.name }} {{ driver.surname }}</span><br/>
+                <td :id="driver.id" class="text-sm leading-6 text-gray-500 !p-1" @click="zoomDriver(driver.id)">
+                  <span class="font-bold">{{ driver.name }} {{ driver.surname }}</span><br />
                   <span class="text-xs">{{ $h.formatDate(driver.position.captured_at, 'DD/MM/YYYY HH:mm') }}</span>
                 </td>
                 <td class="text-right !p-1">
-                  <Tippy v-if="driver.position.speed >= 5" tag="button" class="tooltip primary ml-4 mr-2"
+                  <Tippy v-if="$h.toKmsHour(driver.position.speed) >= 5" tag="button" class="tooltip primary ml-4 mr-2"
                     :content="$t('driving')" :options="{ theme: 'light' }">
                     <img src="/src/assets/images/markers/driving-status-icon-green.svg" class="w-5 h-5">
                   </Tippy>
@@ -61,7 +60,7 @@
 </template>
 
 <script setup>
-import { watch, computed, ref, toRaw, defineProps, VueElement } from "vue";
+import { watch, computed, ref, toRefs, defineProps, onUnmounted } from "vue";
 import MarkerClusterer from "@googlemaps/markerclustererplus";
 import { useDarkModeStore } from "@/stores/dark-mode";
 import useDriver from "@/composables/drivers"
@@ -69,8 +68,9 @@ import { helper as $h } from "@/utils/helper";
 import { useI18n } from 'vue-i18n';
 import { MarkerWithLabel } from '@googlemaps/markerwithlabel';
 import { useRouter } from "vue-router";
+import { Toast } from '@/utils/toast';
 
-const router= useRouter();
+const router = useRouter();
 const { t } = useI18n();
 const props = defineProps({
   width: {
@@ -81,7 +81,32 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  toggle: {
+    type: Boolean,
+    default: false,
+  }
 });
+
+const { toggle } = toRefs(props);
+let auto_refresh = import.meta.env.VITE_AUTOREFRESHMAPS_VALUE;
+const autoRefresh = ref();
+watch(toggle, () => {
+  console.log(toggle.value);
+  if (toggle.value == true) {
+    Toast(t("auto_refresh_on_toast"), 'info');
+    //TODO - CALL GET DRIVERS TO REFRESH DATA. AN CREATE TIMEOUT 5 mins = 300000ms 
+    autoRefresh.value = setInterval(() => {
+      console.log("Actualizado");
+      refreshData();
+    }, auto_refresh);
+  } else {
+    Toast(t("auto_refresh_off_toast"), 'info');
+    //TODO - CANCEL TIMEOUT
+    clearInterval(autoRefresh);
+    console.log("Cancelado");
+  }
+})
+
 //REFERENCE TO VARIABLE MAP
 let mapa;
 //ARRAY TO SAVE ALL MAKERS ID'S
@@ -118,6 +143,8 @@ const init = async (initializeMap) => {
       markersArr.push(d);
     }
   });
+
+  console.log(markersArr);
 
   const markers = JSON.parse(JSON.stringify(markersArr));
 
@@ -784,14 +811,14 @@ const init = async (initializeMap) => {
       google.maps.event.addListener(marker, "click", function () {
         infoWindow.setContent(infowincontent);
         google.maps.event.addListener(infoWindow, "domready", function () {
-/*           cash(".arrow_box").closest(".gm-style-iw-d").removeAttr("style");
-          cash(".arrow_box")
-            .closest(".gm-style-iw-d")
-            .attr("style", "overflow:visible");
-          cash(".arrow_box")
-            .closest(".gm-style-iw-d")
-            .parent()
-            .removeAttr("style"); */
+          /*           cash(".arrow_box").closest(".gm-style-iw-d").removeAttr("style");
+                    cash(".arrow_box")
+                      .closest(".gm-style-iw-d")
+                      .attr("style", "overflow:visible");
+                    cash(".arrow_box")
+                      .closest(".gm-style-iw-d")
+                      .parent()
+                      .removeAttr("style"); */
         });
         infoWindow.setPosition(marker.getPosition());
         infoWindow.open(map, marker);
@@ -883,12 +910,12 @@ function additionalInfoWindowData(data) {
   data.forEach((trip) => {
     switch (trip.trip_status_id) {
       case 6:
-      if (exist < trip.trip_status_id) {
+        if (exist < trip.trip_status_id) {
           active_trip = trip;
           exist = 5;
           bg_trip = 'bg-green-100';
         }
-        break;        
+        break;
       case 5:
         if (exist < trip.trip_status_id) {
           active_trip = trip;
@@ -967,6 +994,20 @@ function zoomDriver(drv) {
     }
   });
 }
+
+const refreshData = async () => {
+  await getDrivers();
+  markersArr = [];
+  drivers.value.forEach((d) => {
+    if (d.position) {
+      markersArr.push(d);
+    }
+  });
+}
+
+onUnmounted(() => {
+  clearInterval(autoRefresh);
+});
 
 </script>
 

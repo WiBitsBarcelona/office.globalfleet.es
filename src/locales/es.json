@@ -136,6 +136,10 @@
     "email": "Campo correo electrónico"
   },
   "role": "Rol del usuario",
+  "language": "Idioma Usuario",
+  "select_lang":"Selecciona el idioma...",
+  "employee_lang_info":"Idioma para el sistema de mensajería, no se aplica al idioma de la aplicación.",
+  "driver_lang_info":"Idioma para el sistema de mensajería y para la aplicación Driver en caso de estar disponible.",
   "email": "Correo electrónico",
   "password": "Contraseña",
   "roles": "Tipos",
@@ -427,6 +431,9 @@
     "confirmRead": "Confirmar Lectura",
     "messageInput": "Escribe el Mensaje...."
   },
+  "auto_refresh_title": "Refresco automático",
+  "auto_refresh_on_toast": "Refresco automático cada 5 minutos ACTIVADO.",
+  "auto_refresh_off_toast": "Refresco automático DESACTIVADO.",
   "help_screen": {
     "menu": {
       "welcome": "Bienvenido",
