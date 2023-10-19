@@ -79,37 +79,43 @@
               <p class="w-full text-center mt-[1px]">+99</p>
             </div>
           </div>
-          <p :id="'last-' + conversation.conversationId">
-            <!-- {{
+          <div class="flex w-full justify-between">
+            <p :id="'last-' + conversation.conversationId">
+              <!-- {{
               conversationList.length > 0 &&
               conversation.lastMessage &&
               conversation.lastMessage.data &&
               conversation.lastMessage.data.text
               ? conversation.lastMessage.data.text.length < 30 ? conversation.lastMessage.data.text :
                 conversation.lastMessage.data.text.substring(0, 30) + "..." : "" }}</p> -->
-          <div v-if="conversation.conversationType == 'group'">
-            <div v-if="conversation.lastMessage.data.customData">
-              <div v-for="itemGM in conversation.lastMessage.data.customData.groupText">
-                <div v-if="itemGM.Lang == myLang">
-                  {{ itemGM.TextTranslate }}
+            <div v-if="conversation.conversationType == 'group'">
+              <div v-if="conversation.lastMessage.data.customData">
+                <div v-for="itemGM in conversation.lastMessage.data.customData.groupText">
+                  <div v-if="itemGM.Lang == myLang">
+                    {{ itemGM.TextTranslate.length > 30 ? itemGM.TextTranslate.substring(0, 20) + "..." :
+                      itemGM.TextTranslate }} </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div v-else>
-            <div v-if="conversation.lastMessage.sender == userInfo.uid">
-              {{ conversation.lastMessage.data.text }}
-            </div>
             <div v-else>
-              <div v-if="!conversation.lastMessage.data.customData">
-                {{ conversation.lastMessage.data.customData.textTranslate }}
-              </div>
+              <div v-if="conversation.lastMessage.sender == userInfo.uid">
+                {{ conversation.lastMessage.data.text.length > 30 ? conversation.lastMessage.data.text.substring(0, 20)
+                  + "..." : conversation.lastMessage.data.text }} </div>
               <div v-else>
-                {{ conversation.lastMessage.data.text }}
+                <div v-if="!conversation.lastMessage.data.customData">
+                  {{ conversation.lastMessage.data.customData.textTranslate.length > 30 ?
+                    conversation.lastMessage.data.customData.textTranslate.substring(0, 20) + "..." :
+                    conversation.lastMessage.data.customData.textTranslate }} </div>
+                <div v-else>
+                  {{ conversation.lastMessage.data.text.length > 30 ?
+                    conversation.lastMessage.data.text.substring(0, 20) + "..." :
+                    conversation.lastMessage.data.text }} </div>
               </div>
             </div>
+            </p>
+            <!-- Hora del ultimo mensaje -->
+            <p> {{ convertStringToDates(conversation.lastMessage.sentAt) }} </p>
           </div>
-          </p>
         </div>
       </button>
 
@@ -221,7 +227,6 @@ const initialize = async () => {
   let authKey = cometData.value.company.cometchat.auth_key;
   let apiKey = cometData.value.company.cometchat.rest_api_key;
 
-  console.log(appID, apiKey)
   let isLoggued = ref(false);
 
   // Variable amb la configuració de la App
@@ -387,14 +392,26 @@ const isYesterday = (date, currentDate) => {
 // FUNCION UE RECOGE LOS VALORES
 const enviarVariable = async (value, value2, value3, value4) => {
 
-  if (value == undefined || value == null) {
-    // Revisem que no tinguem alguna conversa amb aquest usuari
-    const response = await getUserConversation(userInfo.uid, value2);
+  let hasConversation = false;
 
-    if ('data' in response) {
-      propsConversationId.value = response.data.conversationId // idConversation
-    } else if ('error' in response) {
-      propsConversationId.value = value
+  conversationList.value.map(conversation => {
+    if (conversation.conversationWith.uid == value2) {
+      hasConversation = true;
+    }
+  })
+
+  if (value == undefined || value == null) {
+    // Revisar que no tenga alguna conversacion con el usuario
+    if (hasConversation) {
+      const response = await getUserConversation(userInfo.uid, value2);
+
+      if ('data' in response) {
+        propsConversationId.value = response.data.conversationId // idConversation 
+      } else if ('error' in response) {
+        propsConversationId.value = value
+      }
+    } else {
+      propsConversationId.value = null
     }
 
   } else {
@@ -587,9 +604,13 @@ const printTextMessage = async (textMessage) => {
     // Actualizamos lista de xats
     await getConversationsList(userInfo.uid);
     // Volvemos a pintar el elemento
-
-    document.getElementById(propsChatId.value).classList.add("selected");
     // Volvemos a seleccionar el chat con el color gris
+    console.log(propsChatId.value)
+    if (inNewChat.value == false) {
+      document.getElementById(propsChatId.value).classList.add("selected");
+    }
+
+
     return;
 
 
@@ -682,6 +703,51 @@ const calltoRecived = async (datos) => {
     await LoadChatsList();
   }
 };
+
+const getHour = (timestamp) => {
+  const fecha = new Date(timestamp * 1000);
+  const opciones = {
+    hour: '2-digit',
+    minute: '2-digit'
+  };
+  return fecha.toLocaleTimeString("es-ES", opciones);
+}
+
+const convertStringToDates = (strTime) => {
+  const timestamp = Number(strTime) * 1000;
+  const currentDate = new Date();
+  const date = new Date(timestamp);
+
+  if (isToday(date)) {
+    return getHour(strTime);
+  } else if (isYesterday(date, currentDate)) {
+    return 'Ayer';
+  } else {
+    var day = date.getDate();
+    var month = date.getMonth() + 1;
+    var year = date.getFullYear();
+    return day + "/" + month + "/" + year;
+  }
+}
+
+const isToday = (date) => {
+  const today = new Date();
+  return (
+    date.getDate() === today.getDate() &&
+    date.getMonth() === today.getMonth() &&
+    date.getFullYear() === today.getFullYear()
+  );
+}
+
+const isYesterday = (date, currentDate) => {
+  const yesterday = new Date(currentDate);
+  yesterday.setDate(currentDate.getDate() - 1);
+  return (
+    date.getDate() === yesterday.getDate() &&
+    date.getMonth() === yesterday.getMonth() &&
+    date.getFullYear() === yesterday.getFullYear()
+  );
+}
 </script>
 
 <style>

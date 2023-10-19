@@ -9,45 +9,27 @@
         <ul>
           <!-- BEGIN: First Child -->
           <template v-for="(menu, menuKey) in formattedMenu">
-            <li
-              v-if="menu == 'devider'"
-              :key="menu + menuKey"
-              class="side-nav__devider my-6"
-            ></li>
+            <li v-if="menu == 'devider'" :key="menu + menuKey" class="side-nav__devider my-6"></li>
             <li v-else :key="menu + menuKey" class="text-end">
-              <Tippy
-                tag="a"
-                :content="t(menu.title)"
-                :options="{
-                  placement: 'left',
-                }"
-                :href="
-                  menu.subMenu
-                    ? 'javascript:;'
-                    : router.resolve({ name: menu.pageName }).path
-                "
-                class="side-menu"
-                :class="{
-                  'side-menu--active': menu.active,
-                  'side-menu--open': menu.activeDropdown,
-                }"
-                @click="linkTo(menu, router, $event)"
-              >
+              <Tippy tag="a" :content="t(menu.title)" :options="{
+                placement: 'left',
+              }" :href="menu.subMenu
+  ? 'javascript:;'
+  : router.resolve({ name: menu.pageName }).path
+  " class="side-menu" :class="{
+    'side-menu--active': menu.active,
+    'side-menu--open': menu.activeDropdown,
+  }" @click="linkTo(menu, router, $event)">
                 <div class="side-menu__icon mt-4 mb-4">
-                  <span
-                    v-if="menu.pageName == 'chat' && unreadMessageCount"
-                    class="ml-5 px-2 py-1 text-white rounded-full bg-primary relative z-50"
-                    >{{ unreadMessageCount }}</span
-                  >
+                  <span v-if="menu.pageName == 'chat' && unreadMessageCount"
+                    class="ml-5 px-2 py-1 text-white rounded-full bg-primary relative z-50">{{ unreadMessageCount
+                    }}</span>
                   <component :is="menu.icon" />
                 </div>
                 <div class="side-menu__title">
                   {{ menu.title }}
-                  <div
-                    v-if="menu.subMenu"
-                    class="side-menu__sub-icon"
-                    :class="{ 'transform rotate-180': menu.activeDropdown }"
-                  >
+                  <div v-if="menu.subMenu" class="side-menu__sub-icon"
+                    :class="{ 'transform rotate-180': menu.activeDropdown }">
                     <ChevronDownIcon />
                   </div>
                 </div>
@@ -55,37 +37,21 @@
               <!-- BEGIN: Second Child -->
               <transition @enter="enter" @leave="leave">
                 <ul v-if="menu.subMenu && menu.activeDropdown">
-                  <li
-                    v-for="(subMenu, subMenuKey) in menu.subMenu"
-                    :key="subMenuKey"
-                  >
-                    <Tippy
-                      tag="a"
-                      :content="subMenu.title"
-                      :options="{
-                        placement: 'left',
-                      }"
-                      :href="
-                        subMenu.subMenu
-                          ? 'javascript:;'
-                          : router.resolve({ name: subMenu.pageName }).path
-                      "
-                      class="side-menu"
-                      :class="{ 'side-menu--active': subMenu.active }"
-                      @click="linkTo(subMenu, router, $event)"
-                    >
+                  <li v-for="(subMenu, subMenuKey) in menu.subMenu" :key="subMenuKey">
+                    <Tippy tag="a" :content="subMenu.title" :options="{
+                      placement: 'left',
+                    }" :href="subMenu.subMenu
+  ? 'javascript:;'
+  : router.resolve({ name: subMenu.pageName }).path
+  " class="side-menu" :class="{ 'side-menu--active': subMenu.active }" @click="linkTo(subMenu, router, $event)">
                       <div class="side-menu__icon">
                         <ActivityIcon />
                       </div>
                       <div class="side-menu__title">
                         {{ subMenu.title }}
-                        <div
-                          v-if="subMenu.subMenu"
-                          class="side-menu__sub-icon"
-                          :class="{
-                            'transform rotate-180': subMenu.activeDropdown,
-                          }"
-                        >
+                        <div v-if="subMenu.subMenu" class="side-menu__sub-icon" :class="{
+                          'transform rotate-180': subMenu.activeDropdown,
+                        }">
                           <ChevronDownIcon />
                         </div>
                       </div>
@@ -93,31 +59,19 @@
                     <!-- BEGIN: Third Child -->
                     <transition @enter="enter" @leave="leave">
                       <ul v-if="subMenu.subMenu && subMenu.activeDropdown">
-                        <li
-                          v-for="(
+                        <li v-for="(
                             lastSubMenu, lastSubMenuKey
-                          ) in subMenu.subMenu"
-                          :key="lastSubMenuKey"
-                        >
-                          <Tippy
-                            tag="a"
-                            :content="lastSubMenu.title"
-                            :options="{
-                              placement: 'left',
-                            }"
-                            :href="
-                              lastSubMenu.subMenu
-                                ? 'javascript:;'
-                                : router.resolve({
-                                    name: lastSubMenu.pageName,
-                                  }).path
-                            "
-                            class="side-menu"
-                            :class="{
-                              'side-menu--active': lastSubMenu.active,
-                            }"
-                            @click="linkTo(lastSubMenu, router, $event)"
-                          >
+                          ) in subMenu.subMenu" :key="lastSubMenuKey">
+                          <Tippy tag="a" :content="lastSubMenu.title" :options="{
+                            placement: 'left',
+                          }" :href="lastSubMenu.subMenu
+  ? 'javascript:;'
+  : router.resolve({
+    name: lastSubMenu.pageName,
+  }).path
+  " class="side-menu" :class="{
+    'side-menu--active': lastSubMenu.active,
+  }" @click="linkTo(lastSubMenu, router, $event)">
                             <div class="side-menu__icon">
                               <ZapIcon />
                             </div>
@@ -141,11 +95,11 @@
       <!-- END: Side Menu -->
       <!-- BEGIN: Content -->
       <div class="content">
-        
+
         <router-view />
 
         <!-- BEGIN: Footer Text -->
-        <FleetFooter/>
+        <FleetFooter />
         <!-- END: Footer Text -->
 
       </div>
@@ -193,7 +147,7 @@ provide("forceActiveMenu", (pageName) => {
 
 watch(
   computed(() => route.path),
-  async() => {
+  async () => {
     delete route.forceActiveMenu;
     //formattedMenu.value = $h.toRaw(simpleMenu.value);
     await formattedMenuList();
@@ -204,33 +158,49 @@ onMounted(async () => {
   dom("body").removeClass("error-page").removeClass("login").addClass("main");
   //formattedMenu.value = $h.toRaw(simpleMenu.value);
   await formattedMenuList();
-  
+
   //TODO
   // pendiente por revisar: cuando no tiene cometchat activo igualmente falla 
   // por que un setInterval cada vez que se recarga un menu. ¿El setInterval se reemplaza?
   // No en recomendable haceer esto directamente "useAuthenticationStore().user.employee" crear un objeto antes. Tambien se puede reemplazar por: "useAuthentication.getUser"
-  
+
   const response = await checkUnreadMessages();
 
   if (response != false) {
     if (!localStorage.getItem("token") || useAuthenticationStore().user.employee !== null) {
       await checkUnreadMessages();
-      setInterval(await checkUnreadMessages, 4000);
+
+      await checkUnreadMessages
     }
   }
 
 });
 
+setInterval(async () => {
+  const response = await checkUnreadMessages();
+
+  if (response != false) {
+    if (!localStorage.getItem("token") || useAuthenticationStore().user.employee !== null) {
+      await checkUnreadMessages();
+
+      setTimeout(async () => {
+        await checkUnreadMessages
+      }, 4000);
+    }
+  }
+}, 4000);
 
 
-const formattedMenuList = async() => {
+
+
+const formattedMenuList = async () => {
   //formattedMenu.value = $h.toRaw(simpleMenu.value);
   const menuFormat = $h.toRaw(simpleMenu.value);
-  
+
   let menuNew = [];
-  if(useAuthentication.getUser.roles[0].id === parseInt(enumRoles.MANAGER_ID)){
+  if (useAuthentication.getUser.roles[0].id === parseInt(enumRoles.MANAGER_ID)) {
     menuNew = menuFormat;
-  }else{
+  } else {
     menuNew = menuFormat.filter((m) => m.isManager !== true);
   }
 
