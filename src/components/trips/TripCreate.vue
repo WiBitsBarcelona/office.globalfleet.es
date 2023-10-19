@@ -256,7 +256,7 @@
 
                     <p class="text-md font-normal leading-6 text-gray-500">
                       <span class="text-xs font-light text-gray-400">{{ $t("stage") }}
-                      </span> {{ stage.name }}
+                      </span> {{ stage.name }} - {{ stage.order_number }}
                     </p>
 
                     <div class="text-right">
@@ -501,7 +501,7 @@
 
                       <p class="text-md font-normal leading-6 text-gray-500">
                         <span class="text-xs font-light text-gray-400">{{ $t("action") }}
-                        </span> {{ action_stage.action_type_name }}
+                        </span> {{ action_stage.action_type_name }} - {{ stage.order_number }}
                       </p>
 
                       <div class="text-right">
@@ -799,29 +799,29 @@ const rules = {
 
 
 
-const formData = reactive({
-  vehicle_id: "",
-  trip_priority_id: "",
-  driver_id: "",
-  tow_id: "",
-  reference_number: Math.floor(Math.random() * 100000),
-  name: "Viaje Plaza",
-  execution_at: $h.nowTimestamp('-').substr(0, 16),
-  observations: "",
-});
-
-
-
 // const formData = reactive({
 //   vehicle_id: "",
 //   trip_priority_id: "",
 //   driver_id: "",
 //   tow_id: "",
-//   reference_number: "",
-//   name: "",
+//   reference_number: Math.floor(Math.random() * 100000),
+//   name: "Viaje Plaza",
 //   execution_at: $h.nowTimestamp('-').substr(0, 16),
 //   observations: "",
 // });
+
+
+
+const formData = reactive({
+  vehicle_id: "",
+  trip_priority_id: "",
+  driver_id: "",
+  tow_id: "",
+  reference_number: "",
+  name: "",
+  execution_at: $h.nowTimestamp('-').substr(0, 16),
+  observations: "",
+});
 
 
 const validate = useVuelidate(rules, toRefs(formData));
@@ -1358,6 +1358,7 @@ const arrStageItemDown = (id) => {
   let findIndex = arrStages.value.findIndex(stage => stage.uuid === id);
   let elementTemp = arrStages.value.splice(findIndex, 1)[0];
   arrStages.value.splice((findIndex + 1), 0, elementTemp);
+  fixNumberOrder();
 }
 
 
@@ -1365,6 +1366,15 @@ const arrStageItemUp = (id) => {
   let findIndex = arrStages.value.findIndex(stage => stage.uuid === id);
   let elementTemp = arrStages.value.splice(findIndex, 1)[0];
   arrStages.value.splice((findIndex - 1), 0, elementTemp);
+  fixNumberOrder();
+}
+
+
+
+const fixNumberOrder = () => {
+  arrStages.value.forEach((stage, index) => {
+    stage.order_number = (index + 1);
+  });
 }
 
 
