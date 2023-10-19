@@ -227,7 +227,6 @@ const initialize = async () => {
   let authKey = cometData.value.company.cometchat.auth_key;
   let apiKey = cometData.value.company.cometchat.rest_api_key;
 
-  console.log(apiKey,appID)
   let isLoggued = ref(false);
 
   // Variable amb la configuració de la App
