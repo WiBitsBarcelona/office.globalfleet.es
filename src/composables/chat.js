@@ -451,7 +451,7 @@ export default function useChat() {
       });
 
       const data = await response.json();
-      return data.data.language.name
+      return data.data.language.iso_code
 
     } catch (error) {
       console.log(error)
