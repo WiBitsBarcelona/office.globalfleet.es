@@ -526,6 +526,7 @@ watch(
         receiverType.value = newReceiverType;
         nameConversation.value = newNameConversation;
 
+        console.log(idConversation.value)
         if (receiverType.value == 'group') {
             getUidxGroup()
         }

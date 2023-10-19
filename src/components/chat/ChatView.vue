@@ -227,6 +227,7 @@ const initialize = async () => {
   let authKey = cometData.value.company.cometchat.auth_key;
   let apiKey = cometData.value.company.cometchat.rest_api_key;
 
+  console.log(apiKey,appID)
   let isLoggued = ref(false);
 
   // Variable amb la configuració de la App
@@ -560,7 +561,8 @@ const printTextMessage = async (textMessage) => {
     await getConversationsList(userInfo.uid);
     // Volvemos a pintar el elemento
     // Volvemos a seleccionar el chat con el color gris
-    if (propsChatId.value != null) {
+    console.log(propsChatId.value)
+    if (inNewChat.value == false) {
       document.getElementById(propsChatId.value).classList.add("selected");
     }
 
