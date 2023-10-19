@@ -101,7 +101,12 @@
               {{ conversation.lastMessage.data.text }}
             </div>
             <div v-else>
-              {{ conversation.lastMessage.data.customData.translateText }}
+              <div v-if="!conversation.lastMessage.data.customData">
+                {{ conversation.lastMessage.data.customData.textTranslate }}
+              </div>
+              <div v-else>
+                {{ conversation.lastMessage.data.text }}
+              </div>
             </div>
           </div>
           </p>
@@ -216,6 +221,7 @@ const initialize = async () => {
   let authKey = cometData.value.company.cometchat.auth_key;
   let apiKey = cometData.value.company.cometchat.rest_api_key;
 
+  console.log(appID, apiKey)
   let isLoggued = ref(false);
 
   // Variable amb la configuració de la App
