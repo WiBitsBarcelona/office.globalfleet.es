@@ -79,32 +79,38 @@
               <p class="w-full text-center mt-[1px]">+99</p>
             </div>
           </div>
-          <p :id="'last-' + conversation.conversationId">
-            <!-- {{
-              conversationList.length > 0 &&
-              conversation.lastMessage &&
-              conversation.lastMessage.data &&
-              conversation.lastMessage.data.text
-              ? conversation.lastMessage.data.text.length < 30 ? conversation.lastMessage.data.text :
-                conversation.lastMessage.data.text.substring(0, 30) + "..." : "" }}</p> -->
-          <div v-if="conversation.conversationType == 'group'">
-            <div v-if="conversation.lastMessage.data.customData">
-              <div v-for="itemGM in conversation.lastMessage.data.customData.groupText">
-                <div v-if="itemGM.Lang == myLang">
-                  {{ itemGM.TextTranslate }}
+          <div class="flex items-center justify-between">
+            <!-- Ultimo mensaje -->
+            <p :id="'last-' + conversation.conversationId">
+              <!-- {{
+                conversationList.length > 0 &&
+                conversation.lastMessage &&
+                conversation.lastMessage.data &&
+                conversation.lastMessage.data.text
+                ? conversation.lastMessage.data.text.length < 30 ? conversation.lastMessage.data.text :
+                  conversation.lastMessage.data.text.substring(0, 30) + "..." : "" }} -->
+              <div v-if="conversation.conversationType == 'group'">
+                <div v-if="conversation.lastMessage.data.customData">
+                  <div v-for="itemGM in conversation.lastMessage.data.customData.groupText">
+                    <div v-if="itemGM.Lang == myLang">
+                      {{ itemGM.TextTranslate }}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+              <div v-else>
+                <div v-if="conversation.lastMessage.sender == userInfo.uid">
+                  {{ conversation.lastMessage.data.text }}
+                </div>
+                <div v-else>
+                  {{ conversation.lastMessage.data.customData.translateText }}
+                </div>
+              </div>
+            </p>
+
+            <!-- Hora del ultimo mensaje -->
+            <p> {{ convertStringToDates(conversation.lastMessage.sentAt) }} </p>
           </div>
-          <div v-else>
-            <div v-if="conversation.lastMessage.sender == userInfo.uid">
-              {{ conversation.lastMessage.data.text }}
-            </div>
-            <div v-else>
-              {{ conversation.lastMessage.data.customData.translateText }}
-            </div>
-          </div>
-          </p>
         </div>
       </button>
 
@@ -332,6 +338,51 @@ const initialize = async () => {
   //   return response;
   // };
 };
+
+const getHour = (timestamp) => {
+    const fecha = new Date(timestamp * 1000);
+    const opciones = {
+        hour: '2-digit',
+        minute: '2-digit'
+    };
+    return fecha.toLocaleTimeString("es-ES", opciones);
+}
+
+const convertStringToDates = (strTime) => { 
+    const timestamp = Number(strTime) * 1000; 
+    const currentDate = new Date(); 
+    const date = new Date(timestamp); 
+
+    if (isToday(date)) { 
+        return getHour(strTime); 
+    } else if (isYesterday(date, currentDate)) { 
+        return 'Ayer'; 
+    } else { 
+        var day = date.getDate(); 
+        var month = date.getMonth() + 1; 
+        var year = date.getFullYear(); 
+        return day + "/" + month + "/" + year; 
+    } 
+}
+
+const isToday = (date) => { 
+    const today = new Date(); 
+    return ( 
+        date.getDate() === today.getDate() && 
+        date.getMonth() === today.getMonth() && 
+        date.getFullYear() === today.getFullYear() 
+    ); 
+}
+
+const isYesterday = (date, currentDate) => { 
+    const yesterday = new Date(currentDate); 
+    yesterday.setDate(currentDate.getDate() - 1); 
+    return ( 
+        date.getDate() === yesterday.getDate() && 
+        date.getMonth() === yesterday.getMonth() && 
+        date.getFullYear() === yesterday.getFullYear() 
+    ); 
+}
 
 // FUNCION UE RECOGE LOS VALORES
 const enviarVariable = async (value, value2, value3, value4) => {
