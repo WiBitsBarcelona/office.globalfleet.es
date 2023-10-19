@@ -99,6 +99,7 @@
                 placeholder: $t('message.select'),
               }" class="form-control w-full" :class="{ 'border-danger': validate.trip_priority_id.$error }">
 
+              <option :value="0"></option>
               <option v-for="item in selectTripPriorities" :value="item.id">
                 {{ item.name }}
               </option>
@@ -124,6 +125,7 @@
               placeholder: $t('message.select'),
             }" class="form-control w-full" :class="{ 'border-danger': validate.vehicle_id.$error }">
 
+              <option :value="0"></option>
               <option v-for="item in selectVehicles" :value="item.id">
                 {{ item.plate }}
               </option>
@@ -150,6 +152,7 @@
               placeholder: $t('message.select'),
             }" class="form-control w-full" :class="{ 'border-danger': validate.driver_id.$error }">
 
+              <option :value="0"></option>
               <option v-for="item in selectDrivers" :value="item.id">
                 {{ item.name }} {{ item.surname }}
               </option>
@@ -176,6 +179,7 @@
               placeholder: $t('message.select'),
             }" class="form-control w-full" :class="{ 'border-danger': validate.tow_id.$error }">
 
+              <option :value="0"></option>
               <option v-for="item in selectTows" :value="item.id">
                 {{ item.name }} {{ item.plate }}
               </option>
@@ -232,7 +236,7 @@
 
 
     <!-- Stage Card -->
-    <div v-for="stage in arrStages" :key="stage.id">
+    <div v-for="(stage, index) in arrStages" :key="stage.id">
       <!-- v-if -->
       <div v-if="stage.activity_type_id"> <!-- class="p-4 rounded border border-slate-200 text-slate-500 shadow mb-2" -->
 
@@ -252,10 +256,24 @@
 
                     <p class="text-md font-normal leading-6 text-gray-500">
                       <span class="text-xs font-light text-gray-400">{{ $t("stage") }}
-                      </span> {{ stage.name }}
+                      </span> {{ stage.name }} - {{ stage.order_number }}
                     </p>
 
                     <div class="text-right">
+
+                      <a href="#" @click.prevent="arrStageItemUp(stage.uuid)"
+                        class="btn btn-outline-primary w-1/2 sm:w-auto mr-2"
+                        v-if="arrStages.length > 1 && index != 0"
+                      >
+                        <ArrowUpIcon class="w-4 h-4" />
+                      </a>
+                      <a href="#" @click.prevent="arrStageItemDown(stage.uuid)"
+                        class="btn btn-outline-primary w-1/2 sm:w-auto mr-2"
+                        v-if="arrStages.length > 1 && index != (arrStages.length - 1)"
+                      >
+                        <ArrowDownIcon class="w-4 h-4" />
+                      </a>
+
                       <a href="#" @click.prevent="showTaskForm(stage)"
                         class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
                         <PlusCircleIcon class="w-4 h-4" /> {{ $t("add_task") }}
@@ -341,6 +359,7 @@
                               </p>
 
                               <div class="col-span-12 text-right">
+
                                 <a href="#" @click.prevent="showActionTaskForm(stage, task)"
                                   class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
                                   <PlusCircleIcon class="w-4 h-4" /> {{ t("add_action_task") }}
@@ -372,10 +391,10 @@
 
 
                               <!-- Action Cameras -->
-                              <div v-if="parseInt(action_task.action_type_model) === enumActionTask.CAMERA_ID">
+                              <div class="col-span-2" v-if="parseInt(action_task.action_type_model) === enumActionTask.CAMERA_ID">
                                 <div v-for="camera in action_task.cameras" :key="camera.id">
 
-                                  <div class="col-span-2">
+                                  <div >
                                     <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
                                     <p class="text-xs font-normal leading-6 text-gray-500">
                                       {{ camera.name }}
@@ -389,11 +408,11 @@
 
 
                               <!-- Action Scanner -->
-                              <div v-if="parseInt(action_task.action_type_model) === enumActionTask.SCANNER_ID">
+                              <div class="col-span-3" v-if="parseInt(action_task.action_type_model) === enumActionTask.SCANNER_ID">
                                 <div v-for="scanner in action_task.scanners" :key="scanner.id">
 
 
-                                  <div class="col-span-3">
+                                  <div >
                                     <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
                                     <p class="text-xs font-normal leading-6 text-gray-500">
                                       {{ scanner.name }}
@@ -407,28 +426,30 @@
 
 
 
-                              <!-- Action Scanner -->
-                              <div v-if="parseInt(action_task.action_type_model) === enumActionTask.FORM_ID">
+                              <!-- Action Form -->
+                              <div class="col-span-3" v-if="parseInt(action_task.action_type_model) === enumActionTask.FORM_ID">
                                 <div v-for="form in action_task.forms" :key="form.id">
 
+                                  <div class="grid grid-cols-6 gap-2">
 
-                                  <div class="col-span-3">
-                                    <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
-                                    <p class="text-xs font-normal leading-6 text-gray-500">
-                                      {{ form.name }}
-                                    </p>
+                                    <div class="col-span-3">
+                                      <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
+                                      <p class="text-xs font-normal leading-6 text-gray-500">
+                                        {{ form.name }}
+                                      </p>
+                                    </div>
+
+                                    <div class="col-span-3">
+                                      <h5 class="text-xs font-light text-gray-400">{{ $t("name") }}:</h5>
+                                      <p class="text-xs font-normal leading-6 text-gray-500">
+                                        {{ form.action_form_field_name }}
+                                      </p>
+                                    </div>
+                                    
                                   </div>
-
-                                  <div class="col-span-3">
-                                    <h5 class="text-xs font-light text-gray-400">{{ $t("name") }}:</h5>
-                                    <p class="text-xs font-normal leading-6 text-gray-500">
-                                      {{ form.action_form_field_name }}
-                                    </p>
-                                  </div>
-
                                 </div>
                               </div>
-                              <!-- End of Action Scanner -->
+                              <!-- End of Action Form -->
 
 
                             </div>
@@ -480,14 +501,29 @@
 
                       <p class="text-md font-normal leading-6 text-gray-500">
                         <span class="text-xs font-light text-gray-400">{{ $t("action") }}
-                        </span> {{ action_stage.action_type_name }}
+                        </span> {{ action_stage.action_type_name }} - {{ stage.order_number }}
                       </p>
 
                       <div class="text-right">
+
+                        <a href="#" @click.prevent="arrStageItemUp(stage.uuid)"
+                          class="btn btn-outline-primary w-1/2 sm:w-auto mr-2"
+                          v-if="arrStages.length > 1 && index != 0"
+                        >
+                          <ArrowUpIcon class="w-4 h-4" />
+                        </a>
+                        <a href="#" @click.prevent="arrStageItemDown(stage.uuid)"
+                          class="btn btn-outline-primary w-1/2 sm:w-auto mr-2"
+                          v-if="arrStages.length > 1 && index != (arrStages.length - 1)"
+                        >
+                          <ArrowDownIcon class="w-4 h-4" />
+                        </a>
+
                         <a href="#" @click.prevent="deleteStageForm(stage.uuid)"
                           class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
                           <TrashIcon class="w-4 h-4" />
                         </a>
+
                       </div>
 
                     </div>
@@ -499,10 +535,13 @@
 
 
                   <!-- Action Cameras -->
-                  <div v-if="parseInt(action_stage.action_type_model) === enumActionTask.CAMERA_ID">
+                  <div 
+                    class="col-span-6" 
+                    v-if="parseInt(action_stage.action_type_model) === enumActionTask.CAMERA_ID" 
+                  >
                     <div v-for="camera in action_stage.cameras" :key="camera.id">
 
-                      <div class="col-span-2">
+                      <div >
                         <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
                         <p class="text-xs font-normal leading-6 text-gray-500">
                           {{ camera.name }}
@@ -516,11 +555,11 @@
 
 
                   <!-- Action Scanner -->
-                  <div v-if="parseInt(action_stage.action_type_model) === enumActionTask.SCANNER_ID">
+                  <div class="col-span-6" v-if="parseInt(action_stage.action_type_model) === enumActionTask.SCANNER_ID">
                     <div v-for="scanner in action_stage.scanners" :key="scanner.id">
 
 
-                      <div class="col-span-3">
+                      <div >
                         <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
                         <p class="text-xs font-normal leading-6 text-gray-500">
                           {{ scanner.name }}
@@ -534,28 +573,29 @@
 
 
 
-                  <!-- Action Scanner -->
-                  <div v-if="parseInt(action_stage.action_type_model) === enumActionTask.FORM_ID">
+                  <!-- Action Form -->
+                  <div class="col-span-6" v-if="parseInt(action_stage.action_type_model) === enumActionTask.FORM_ID">
                     <div v-for="form in action_stage.forms" :key="form.id">
 
+                      <div class="grid grid-cols-6 gap-2">
+                        <div class="col-span-3">
+                          <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
+                          <p class="text-xs font-normal leading-6 text-gray-500">
+                            {{ form.name }}
+                          </p>
+                        </div>
 
-                      <div class="col-span-3">
-                        <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
-                        <p class="text-xs font-normal leading-6 text-gray-500">
-                          {{ form.name }}
-                        </p>
-                      </div>
-
-                      <div class="col-span-3">
-                        <h5 class="text-xs font-light text-gray-400">{{ $t("name") }}:</h5>
-                        <p class="text-xs font-normal leading-6 text-gray-500">
-                          {{ form.action_form_field_name }}
-                        </p>
+                        <div class="col-span-3">
+                          <h5 class="text-xs font-light text-gray-400">{{ $t("name") }}:</h5>
+                          <p class="text-xs font-normal leading-6 text-gray-500">
+                            {{ form.action_form_field_name }}
+                          </p>
+                        </div>
                       </div>
 
                     </div>
                   </div>
-                  <!-- End of Action Scanner -->
+                  <!-- End of Action Form -->
 
                 </div>
                 <!-- End <div class="grid grid-cols-6 gap-2 mb-5 pb-2"> -->
@@ -768,7 +808,7 @@ const rules = {
 //   name: "Viaje Plaza",
 //   execution_at: $h.nowTimestamp('-').substr(0, 16),
 //   observations: "",
-//});
+// });
 
 
 
@@ -1309,6 +1349,35 @@ const addActionStageForm = (stage, data) => {
 /**
 * End Action Stage
 */
+
+
+
+
+
+const arrStageItemDown = (id) => {
+  let findIndex = arrStages.value.findIndex(stage => stage.uuid === id);
+  let elementTemp = arrStages.value.splice(findIndex, 1)[0];
+  arrStages.value.splice((findIndex + 1), 0, elementTemp);
+  fixNumberOrder();
+}
+
+
+const arrStageItemUp = (id) => {
+  let findIndex = arrStages.value.findIndex(stage => stage.uuid === id);
+  let elementTemp = arrStages.value.splice(findIndex, 1)[0];
+  arrStages.value.splice((findIndex - 1), 0, elementTemp);
+  fixNumberOrder();
+}
+
+
+
+const fixNumberOrder = () => {
+  arrStages.value.forEach((stage, index) => {
+    stage.order_number = (index + 1);
+  });
+}
+
+
 
 
 

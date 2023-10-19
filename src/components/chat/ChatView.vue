@@ -79,38 +79,37 @@
               <p class="w-full text-center mt-[1px]">+99</p>
             </div>
           </div>
-          <div class="flex items-center justify-between">
-            <!-- Ultimo mensaje -->
-            <p :id="'last-' + conversation.conversationId">
-              <!-- {{
-                conversationList.length > 0 &&
-                conversation.lastMessage &&
-                conversation.lastMessage.data &&
-                conversation.lastMessage.data.text
-                ? conversation.lastMessage.data.text.length < 30 ? conversation.lastMessage.data.text :
-                  conversation.lastMessage.data.text.substring(0, 30) + "..." : "" }} -->
-              <div v-if="conversation.conversationType == 'group'">
-                <div v-if="conversation.lastMessage.data.customData">
-                  <div v-for="itemGM in conversation.lastMessage.data.customData.groupText">
-                    <div v-if="itemGM.Lang == myLang">
-                      {{ itemGM.TextTranslate }}
-                    </div>
-                  </div>
+          <p :id="'last-' + conversation.conversationId">
+            <!-- {{
+              conversationList.length > 0 &&
+              conversation.lastMessage &&
+              conversation.lastMessage.data &&
+              conversation.lastMessage.data.text
+              ? conversation.lastMessage.data.text.length < 30 ? conversation.lastMessage.data.text :
+                conversation.lastMessage.data.text.substring(0, 30) + "..." : "" }}</p> -->
+          <div v-if="conversation.conversationType == 'group'">
+            <div v-if="conversation.lastMessage.data.customData">
+              <div v-for="itemGM in conversation.lastMessage.data.customData.groupText">
+                <div v-if="itemGM.Lang == myLang">
+                  {{ itemGM.TextTranslate }}
                 </div>
+              </div>
+            </div>
+          </div>
+          <div v-else>
+            <div v-if="conversation.lastMessage.sender == userInfo.uid">
+              {{ conversation.lastMessage.data.text }}
+            </div>
+            <div v-else>
+              <div v-if="!conversation.lastMessage.data.customData">
+                {{ conversation.lastMessage.data.customData.textTranslate }}
               </div>
               <div v-else>
-                <div v-if="conversation.lastMessage.sender == userInfo.uid">
-                  {{ conversation.lastMessage.data.text }}
-                </div>
-                <div v-else>
-                  {{ conversation.lastMessage.data.customData.translateText }}
-                </div>
+                {{ conversation.lastMessage.data.text }}
               </div>
-            </p>
-
-            <!-- Hora del ultimo mensaje -->
-            <p> {{ convertStringToDates(conversation.lastMessage.sentAt) }} </p>
+            </div>
           </div>
+          </p>
         </div>
       </button>
 
@@ -222,6 +221,7 @@ const initialize = async () => {
   let authKey = cometData.value.company.cometchat.auth_key;
   let apiKey = cometData.value.company.cometchat.rest_api_key;
 
+  console.log(appID, apiKey)
   let isLoggued = ref(false);
 
   // Variable amb la configuració de la App
