@@ -256,7 +256,7 @@
 
                     <p class="text-md font-normal leading-6 text-gray-500">
                       <span class="text-xs font-light text-gray-400">{{ $t("stage") }}
-                      </span> {{ stage.name }} - {{ stage.order_number }}
+                      </span> {{ stage.name }}
                     </p>
 
                     <div class="text-right">
@@ -501,7 +501,7 @@
 
                       <p class="text-md font-normal leading-6 text-gray-500">
                         <span class="text-xs font-light text-gray-400">{{ $t("action") }}
-                        </span> {{ action_stage.action_type_name }} - {{ stage.order_number }}
+                        </span> {{ action_stage.action_type_name }} 
                       </p>
 
                       <div class="text-right">
