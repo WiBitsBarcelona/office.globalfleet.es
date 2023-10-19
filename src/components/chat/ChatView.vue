@@ -344,51 +344,6 @@ const initialize = async () => {
   // };
 };
 
-const getHour = (timestamp) => {
-    const fecha = new Date(timestamp * 1000);
-    const opciones = {
-        hour: '2-digit',
-        minute: '2-digit'
-    };
-    return fecha.toLocaleTimeString("es-ES", opciones);
-}
-
-const convertStringToDates = (strTime) => { 
-    const timestamp = Number(strTime) * 1000; 
-    const currentDate = new Date(); 
-    const date = new Date(timestamp); 
-
-    if (isToday(date)) { 
-        return getHour(strTime); 
-    } else if (isYesterday(date, currentDate)) { 
-        return 'Ayer'; 
-    } else { 
-        var day = date.getDate(); 
-        var month = date.getMonth() + 1; 
-        var year = date.getFullYear(); 
-        return day + "/" + month + "/" + year; 
-    } 
-}
-
-const isToday = (date) => { 
-    const today = new Date(); 
-    return ( 
-        date.getDate() === today.getDate() && 
-        date.getMonth() === today.getMonth() && 
-        date.getFullYear() === today.getFullYear() 
-    ); 
-}
-
-const isYesterday = (date, currentDate) => { 
-    const yesterday = new Date(currentDate); 
-    yesterday.setDate(currentDate.getDate() - 1); 
-    return ( 
-        date.getDate() === yesterday.getDate() && 
-        date.getMonth() === yesterday.getMonth() && 
-        date.getFullYear() === yesterday.getFullYear() 
-    ); 
-}
-
 // FUNCION UE RECOGE LOS VALORES
 const enviarVariable = async (value, value2, value3, value4) => {
 
