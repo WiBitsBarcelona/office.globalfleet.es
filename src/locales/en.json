@@ -50,7 +50,11 @@
       "devices": "Devices",
       "documents": "Documents",
       "incidents": "Incidents",
-      "chat": "Chat"
+      "chat": "Chat",
+      "employees": "Office Users",
+      "drivers": "Drivers",
+      "plates": "Tractors",
+      "tows": "Trailers"
   },
   "dashboard": {
       "title": "Overview of ",
@@ -128,6 +132,9 @@
       "email": "Email field"
   },
   "role": "User role",
+  "language": "User language",
+  "employee_lang_info":"Language for the messaging system, does not apply to the language of the application.",
+  "driver_lang_info":"Language for the messaging system and for the Driver application if available.",
   "email": "Email",
   "password": "Password",
   "roles": "Types",
@@ -406,6 +413,9 @@
     "confirmRead": "Confirm reading",
     "messageInput": "Write the message..."
   },
+  "auto_refresh_title": "Automatic Refresh",
+  "auto_refresh_on_toast": "Automatic Refresh every 5 minutes ACTIVATED.",
+  "auto_refresh_off_toast": "Automatic Refresh DESACTIVATED.",
   "help_screen": {
       "menu": {
           "welcome": "Welcome",
