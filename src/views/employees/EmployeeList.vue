@@ -181,6 +181,17 @@
                         return cell.getData().user.roles[0].description;
                     }
                 },
+				{
+                    title: t("language"),
+                    minWidth: 200,
+                    responsive: 0,
+                    field: "",
+                    vertAlign: "middle",
+                    headerHozAlign:"left",
+                    formatter(cell) {
+                        return cell.getData().language.name;
+                    }
+                },
                 {
                     title: "",
 					minWidth: 80,

@@ -115,9 +115,7 @@ export default function useChat() {
       });
     const data = await response.json();
 
-    if (data.error) {
-      console.log('No se puede ejecutar la funcion')
-    } else {
+    if (!data.error) {
       conversationList.value = data.data;
       return data.data;
     }
@@ -167,7 +165,6 @@ export default function useChat() {
       })
       .catch((err) => {
         // console.error(err);
-        return err;
       });
 
     return response;
@@ -394,7 +391,7 @@ export default function useChat() {
     const response = await getConversationsList(user_uid);
 
     if (response == undefined) {
-      console.log('No se puede ejecutar la funcion')
+      //console.log('No se puede ejecutar la funcion')
       return false;
     } else {
       const values = response.reduce((total, conversation) => {
@@ -402,6 +399,7 @@ export default function useChat() {
       }, 0);
 
       unreadMessageCount.value = values;
+
       return values;
     }
   };

@@ -116,6 +116,7 @@
 
 	const findData = async() => {
 		await getDrivers();
+		console.log(drivers.value);
 		return toRaw(drivers.value);
 	}
 
@@ -182,6 +183,17 @@
 						return cell.getData().employee[0].name + ' ' + cell.getData().employee[0].surname;
 					},
 				},
+				{
+                    title: t("language"),
+                    minWidth: 200,
+                    responsive: 0,
+                    field: "",
+                    vertAlign: "middle",
+                    headerHozAlign:"left",
+                    formatter(cell) {
+                        return cell.getData().language.name;
+                    }
+                },
 				{
 					title: t("token"),
 					minWidth: 100,
