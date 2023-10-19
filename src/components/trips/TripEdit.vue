@@ -283,10 +283,17 @@
 												class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
 												<PlusCircleIcon class="w-4 h-4" /> {{ $t("add_task") }}
 											</a>
+											
+											<a href="#" @click.prevent="editStageForm(stage.id)"
+												class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
+												<EditIcon class="w-4 h-4" />
+											</a>
+
 											<a href="#" @click.prevent="deleteStageForm(stage.id)"
 												class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
 												<TrashIcon class="w-4 h-4" />
 											</a>
+
 										</div>
 
 									</div>
@@ -640,8 +647,7 @@
 
 
 	<div class="intro-y box p-5 mt-5" v-if="isCreateStage">
-		<StageCreate @cancelStageForm="cancelStageForm" @addStageForm="addStageForm" :arrStages="arrStages"
-			:trip_tow_selected="trip_tow_selected" />
+		<StageCreate @cancelStageForm="cancelStageForm" @addStageForm="addStageForm" :arrStages="arrStages" :trip_tow_selected="trip_tow_selected" />
 	</div>
 
 
@@ -659,12 +665,15 @@
 	</div>
 
 
-
-
 	<div class="intro-y box p-5 mt-5" v-if="isCreateActionStage">
 		<ActionStageCreate @cancelActionStageForm="cancelActionStageForm" @addActionStageForm="addActionStageForm"
 			:arrStages="arrStages" />
 	</div>
+
+
+
+	
+	
 </template>
   
   
@@ -708,11 +717,15 @@ import useStageTow from '@/composables/stage_tows.js';
 
 
 
-//TODO cambiar a edit
-import StageCreate from '@/components/stages/StageCreate.vue';
+// By Add - create
+import StageCreate from '@/components/stages/StageEditByAdd.vue';
 import TaskCreate from '@/components/tasks/TaskCreate.vue';
 import ActionTaskCreate from '@/components/action_tasks/ActionTaskCreate.vue';
 import ActionStageCreate from '@/components/action_stages/ActionStageCreate.vue';
+
+
+
+
 
 
 import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
@@ -1127,7 +1140,8 @@ const showStageForm = () => {
 	isCreateTrip.value = false;
 	isCreateStage.value = true;
 	trip_tow_selected.value = formData.tow_id;
-	console.log({ ...arrStages.value });
+
+	//console.log({ ...arrStages.value });
 }
 
 const cancelStageForm = () => {
@@ -1137,7 +1151,12 @@ const cancelStageForm = () => {
 
 const addStageForm = async (stage) => {
 
-	arrStages.value.push(stage);
+	//arrStages.value.push(stage);
+
+	stage.trip_id = trip.value.id;
+	await storeStage(eleStage);
+
+	console.log({ ...stage.value });
 
 	isCreateTrip.value = true;
 	isCreateStage.value = false;
@@ -1426,14 +1445,17 @@ onMounted(async () => {
   selectDrivers.value = drivers.value;
 
 
+
+
+
+
   await getTrip(route.params.id);
 
   
 
   arrStages.value = trip.value.stages;
 
-  console.log(arrStages.value);
-
+  
 
   
 
@@ -1448,61 +1470,6 @@ onMounted(async () => {
   formData.observations = trip.value.observations;
 
 
-
 }); 
 
-
-
-
 </script>
-  
-
-
-
-
-
-
-
-
-
-  <!-- onMounted(async () => {
-  
-	// Vehicles
-	await getVehicles();
-	selectVehicles.value = vehicles.value;
-  
-  
-	//Priorities
-	await getTripPriorities();
-	selectTripPriorities.value = tripPriorities.value;
-  
-  
-	//Driver
-	await getDrivers();
-	selectDrivers.value = drivers.value;
-
-
-	await getTrip(route.params.id);
-
-	
-
-	arrStages.value = trip.value.stages;
-
-	console.log(arrStages.value);
-
-
-	
-
-	formData.trip_priority_id = trip.value.trip_priority_id.toString();
-	formData.driver_id = trip.value.driver_id.toString();
-	formData.vehicle_id = trip.value.vehicle_id.toString();
-	formData.reference_number = trip.value.reference_number;
-	formData.name = trip.value.name;
-	formData.execution_at = trip.value.execution_at;
-	formData.started_at = trip.value.started_at;
-	formData.finished_at = trip.value.finished_at;
-	formData.observations = trip.value.observations;
-
-  
-  
-  }); -->
