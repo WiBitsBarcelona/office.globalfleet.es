@@ -525,6 +525,7 @@ watch(
         ChatId.value = newChatId;
         receiverType.value = newReceiverType;
         nameConversation.value = newNameConversation;
+        console.log(ChatId.value)
 
         if (receiverType.value == 'group') {
             getUidxGroup()
