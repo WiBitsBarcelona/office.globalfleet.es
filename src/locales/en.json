@@ -50,7 +50,11 @@
       "devices": "Devices",
       "documents": "Documents",
       "incidents": "Incidents",
-      "chat": "Chat"
+      "chat": "Chat",
+      "employees": "Office Users",
+      "drivers": "Drivers",
+      "plates": "Tractors",
+      "tows": "Trailers"
   },
   "dashboard": {
       "title": "Overview of ",
@@ -128,6 +132,9 @@
       "email": "Email field"
   },
   "role": "User role",
+  "language": "User language",
+  "employee_lang_info":"Language for the messaging system, does not apply to the language of the application.",
+  "driver_lang_info":"Language for the messaging system and for the Driver application if available.",
   "email": "Email",
   "password": "Password",
   "roles": "Types",

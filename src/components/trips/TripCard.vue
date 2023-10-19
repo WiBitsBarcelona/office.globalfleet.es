@@ -4,8 +4,9 @@
   <div class="box p-1 mb-2 intro-x hover:cursor-pointer hover:ring-2 hover:ring-primary">
     <div class="grid gap-y-8">
       <div
-        class="grid grid-cols-2 gap-x-1 gap-y-1 text-left sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12">
-        
+        class="grid grid-cols-2 grid-rows-2 gap-x-1 gap-y-1 text-left sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12">
+
+
         <div
           class="rounded-md bg-gray-100 p-2 pb-2 text-gray-500 dark:bg-gray-800 dark:text-gray-400">
           

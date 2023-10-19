@@ -102,7 +102,7 @@
 			</div>
 
 
-			<div class="col-span-12 md:col-span-6 lg:col-span-6">
+			<div class="col-span-12 md:col-span-6 lg:col-span-5">
 				<div class="input-form">
 					<label for="email" class="form-label w-full">
 						{{ $t("email") }}
@@ -124,7 +124,7 @@
 			</div>
 
 
-			<div class="col-span-12 md:col-span-6 lg:col-span-3">
+			<div class="col-span-12 md:col-span-6 lg:col-span-2">
 				<div class="input-form">
 					<label for="password" class="form-label w-full">
 						{{ $t("password") }}
@@ -150,6 +150,36 @@
 				</div>
 			</div>
 
+			<div class="col-span-12 md:col-span-12 lg:col-span-2">
+				<div class="input-form">
+					<label for="language_id" class="form-label w-full">
+						{{ $t("language") }}<InfoIcon class="inline-flex ml-1 -mt-2 w-4 h-4 text-primary"></InfoIcon>
+					</label>
+					<TomSelect v-model.trim="validate.language_id.$model" id="language_id" name="language_id" :options="{
+						placeholder: $t('select_lang'),
+					}" class="form-control w-full"
+						:class="{ 'border-danger': validate.language_id.$error }">
+
+						<option v-for="lang in selectLangs" :value="lang.id">
+							{{ lang.name }}
+						</option>
+					</TomSelect>
+					<template v-if="validate.language_id.$error">
+						<div v-for="(error, index) in validate.language_id.$errors" :key="index" class="text-danger mt-2">
+							{{ error.$message }}
+						</div>
+					</template>
+				</div>
+			</div>
+
+			<div class="col-span-12 flex p-5 bg-primary text-white self-stretch rounded-md">
+            <div class="col-span-1 mr-2">
+              <InfoIcon></InfoIcon>
+            </div>
+            <div class="col-span-11 text-left">
+              {{ $t("employee_lang_info") }} 
+            </div>
+          </div>
 
 			<!-- BEGIN: Buttons -->
 			<div class="col-span-12 md:col-span-12 lg:col-span-12">
@@ -181,8 +211,10 @@
 	import { helpers } from '@vuelidate/validators';
 	import { useI18n } from 'vue-i18n';
 	import enumRoles from '@/enums/enum_roles.js';
+	import useLanguage from '@/composables/languages';
 
 	const { employee, getEmployee } = useEmployees();
+	const { languages, getLanguages } = useLanguage();
 	const { roles, getRoles } = useRoles();
 	const { t } = useI18n();
 	const props = defineProps(['employeeId']);
@@ -191,7 +223,7 @@
 
 
 	const selectRoles = ref();
-
+	const selectLangs = ref();
 
 	const passwordFieldType = ref("password");
 	const switchVisibility = () => {
@@ -220,6 +252,9 @@
 		password: {
 			minLength: helpers.withMessage(t("form.minLength"), minLength(2)),
 		},
+		language_id: {
+			required: helpers.withMessage(t("form.required"), required),
+		},
 	};
 
 	const formData = reactive({
@@ -229,6 +264,7 @@
 		fiscal_identification: "",
 		email: "",
 		password: "",
+		language_id: "1",
 	});
 
 	const validate = useVuelidate(rules, toRefs(formData));
@@ -248,7 +284,7 @@
 	onMounted(async () => {
 		await getEmployee(props.employeeId);
 		await getRoles();
-
+		await getLanguages();
 		//Select Roles
 		const newRoles = roles.value.filter((role) => {
 			return parseInt(role.id) === enumRoles.MANAGER_ID || 
@@ -264,8 +300,11 @@
 		formData.fiscal_identification = employee.value.fiscal_identification;
 		formData.email = employee.value.user.email;
 		formData.password = '';
+		formData.language_id = employee.value.language_id.toString();
 
 		//select.value = employee.value.user.roles[0].id.toString();
+		//Select Languages
+		selectLangs.value = languages.value;
 
 	});
 

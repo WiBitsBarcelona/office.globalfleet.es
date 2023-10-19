@@ -103,7 +103,7 @@
 			</div>
 
 
-			<div class="col-span-12 md:col-span-6 lg:col-span-8">
+			<div class="col-span-12 md:col-span-6 lg:col-span-5">
 				<div class="input-form">
 					<label for="email" class="form-label w-full">
 						{{ $t("email") }}
@@ -123,7 +123,36 @@
 					</template>
 				</div>
 			</div>
+			<div class="col-span-12 md:col-span-12 lg:col-span-2">
+				<div class="input-form">
+					<label for="language_id" class="form-label w-full">
+						{{ $t("language") }}<InfoIcon class="inline-flex ml-1 -mt-2 w-4 h-4 text-primary"></InfoIcon>
+					</label>
+					<TomSelect v-model.trim="validate.language_id.$model" id="language_id" name="language_id" :options="{
+						placeholder: $t('select_lang'),
+					}" class="form-control w-full"
+						:class="{ 'border-danger': validate.language_id.$error }">
 
+						<option v-for="lang in selectLangs" :value="lang.id">
+							{{ lang.name }}
+						</option>
+					</TomSelect>
+					<template v-if="validate.language_id.$error">
+						<div v-for="(error, index) in validate.language_id.$errors" :key="index" class="text-danger mt-2">
+							{{ error.$message }}
+						</div>
+					</template>
+				</div>
+			</div>
+
+			<div class="col-span-12 flex p-5 bg-primary text-white self-stretch rounded-md">
+            <div class="col-span-1 mr-2">
+              <InfoIcon></InfoIcon>
+            </div>
+            <div class="col-span-11 text-left">
+              {{ $t("driver_lang_info") }} 
+            </div>
+			</div>
 			
 			<!-- BEGIN: Buttons -->
 			<div class="col-span-12 md:col-span-12 lg:col-span-12">
@@ -156,16 +185,18 @@
 	import { useVuelidate } from '@vuelidate/core';
 	import { helpers } from '@vuelidate/validators';
 	import { useI18n } from 'vue-i18n';
+	import useLanguage from '@/composables/languages';
 
 	const { driver, getDriver } = useDrivers();
 	const { employees, getEmployees } = useEmployees();
 	const { t } = useI18n();
 	const props = defineProps(['driverId']);
 	const emit = defineEmits(['cancelEdit', 'updateDriverForm']);
-
+	const { languages, getLanguages } = useLanguage();
 	
 	const selectEmployees = ref();
 	const passwordFieldType = ref("password");
+	const selectLangs = ref();
 
 
 	const switchVisibility = () => {
@@ -189,6 +220,9 @@
 			required: helpers.withMessage(t("form.required"), required),
 			email: helpers.withMessage(t("form.email"), email),
 		},
+		language_id: {
+			required: helpers.withMessage(t("form.required"), required),
+		},
 	};
 
 	const formData = reactive({
@@ -196,7 +230,8 @@
 		name: "",
 		surname: "",
 		fiscal_identification: "",
-		email: ""
+		email: "",
+		language_id: "1",
 	});
 
 	const validate = useVuelidate(rules, toRefs(formData));
@@ -214,6 +249,7 @@
 	onMounted(async () => {
 		await getDriver(props.driverId);
 		await getEmployees();
+		await getLanguages();
 
 		selectEmployees.value = employees.value;
 
@@ -223,8 +259,10 @@
 		formData.surname = driver.value.surname;
 		formData.fiscal_identification = driver.value.fiscal_identification;
 		formData.email = driver.value.user.email;
+		formData.language_id = driver.value.language_id.toString();
 		
-		//select.value = driver.value.employee[0].id.toString();
+		//Select Languages
+		selectLangs.value = languages.value;
 
 	});
 
