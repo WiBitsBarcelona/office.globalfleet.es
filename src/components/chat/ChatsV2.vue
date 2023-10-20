@@ -300,7 +300,7 @@
                 </div>
 
                 <div class="pt-4 sm:py-4 flex items-center border-t-8 border-slate-200/60 dark:border-darkmode-400 w-full">
-                    <textarea v-on:keyup.enter="sendMessage" id="message" @click="onpresskey" class="overflow-y-scroll scrollbar-hidden chat__box__input form-control dark:bg-darkmode-600 h-11 resize-none border-transparent 
+                    <textarea @keydown="handleKeyDown" id="message" @click="onpresskey" class="overflow-y-scroll scrollbar-hidden chat__box__input form-control dark:bg-darkmode-600 h-11 resize-none border-transparent 
                         px-5 py-3 shadow-none focus:border-transparent focus:ring-0"
                         :placeholder="$t('chat.messageInput')"></textarea>
 
@@ -418,7 +418,7 @@ export default defineComponent({
         onFileChange(event) {
             var fileData = event.target.files[0];
             this.fileName = fileData.name;
-            console.log(console.log(event.target.files[0]))
+            //console.log(console.log(event.target.files[0]))
         },
         convertirAFecha(timestamp) {
             const fecha = new Date(timestamp * 1000);
@@ -525,7 +525,6 @@ watch(
         ChatId.value = newChatId;
         receiverType.value = newReceiverType;
         nameConversation.value = newNameConversation;
-        console.log(ChatId.value)
 
         if (receiverType.value == 'group') {
             getUidxGroup()
@@ -656,9 +655,9 @@ const initialize = async () => {
         );
 
     },
-        (error) => {
+        /*(error) => {
             console.log("Initialization failed with error:", error);
-        }
+        }*/
     );
 };
 
@@ -697,10 +696,25 @@ const convertStringToDate = (strTime) => {
 // funcion para saber si esta o no activado el checkbox
 const handleCheckboxChange = async () => {
     if (isChecked.value) {
-        console.log('El checkbox está activado.');
+        //console.log('El checkbox está activado.');
     } else {
-        console.log('El checkbox está desactivado.');
+        //console.log('El checkbox está desactivado.');
     }
+}
+
+const handleKeyDown = async (event) => {
+    if (event.key === 'Enter') {
+        if (!event.shiftKey) {
+          event.preventDefault(); // Evita el salto de línea y envía el mensaje
+          if (message.value.trim() !== '') {
+            // Enviar el mensaje aquí
+            await sendMessage()
+          }
+        } else {
+          // Realiza un salto de línea en el textarea
+          message.value += '\n';
+        }
+      }
 }
 
 // Funció per a enviar missatges
@@ -741,11 +755,11 @@ const sendMessage = async () => {
             chatCont.scrollTop = chatCont.scrollHeight;
         }, 800);
 
-        if (receiverType.value == 'user') {
+        /*if (receiverType.value == 'user') {
             await mark_user_conversation_as_delivered(myUid.value, ChatId.value)
         } else {
             await mark_group_conversation_as_delivered(myUid.value, ChatId.value)
-        }
+        }*/
 
 
         // Netejem el text
@@ -790,11 +804,11 @@ const sendMessage = async () => {
                 chatCont.scrollTop = chatCont.scrollHeight;
             }, 800);
 
-            if (receiverType.value == 'user') {
+            /*if (receiverType.value == 'user') {
                 await mark_user_conversation_as_delivered(myUid.value, ChatId.value)
             } else {
                 await mark_group_conversation_as_delivered(myUid.value, ChatId.value)
-            }
+            }*/
 
             // Netejem el text
             message.value = "";
@@ -913,10 +927,12 @@ const openDriverFile = async (path) => {
 // Actualizar mensajes no leidos cuando se pulsa el textarea o el boton de desplazamientos
 const onpresskey = async () => {
 
-    if (receiverType.value == 'group') {
-      await markGroupConversationAsRead(myUid.value, ChatId.value);
-    } else {
-      await markUserConversationAsRead(myUid.value, ChatId.value);
+    if (mensajes.value.length > 0) {
+        if (receiverType.value == 'group') {
+        await markGroupConversationAsRead(myUid.value, ChatId.value);
+        } else {
+        await markUserConversationAsRead(myUid.value, ChatId.value);
+        }
     }
     
     await checkUnreadMessages();
