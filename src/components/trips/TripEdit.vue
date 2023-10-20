@@ -650,6 +650,11 @@
 		<StageCreate @cancelStageForm="cancelStageForm" @addStageForm="addStageForm" :arrStages="arrStages" :trip_tow_selected="trip_tow_selected" />
 	</div>
 
+	<div class="intro-y box p-5 mt-5" v-if="isCreateActionStage">
+		<ActionStageCreate @cancelActionStageForm="cancelActionStageForm" @addActionStageForm="addActionStageForm"
+			:arrStages="arrStages" />
+	</div>
+
 
 
 	<div class="intro-y box p-5 mt-5" v-if="isCreateTask">
@@ -665,10 +670,7 @@
 	</div>
 
 
-	<div class="intro-y box p-5 mt-5" v-if="isCreateActionStage">
-		<ActionStageCreate @cancelActionStageForm="cancelActionStageForm" @addActionStageForm="addActionStageForm"
-			:arrStages="arrStages" />
-	</div>
+	
 
 
 
@@ -719,9 +721,10 @@ import useStageTow from '@/composables/stage_tows.js';
 
 // By Add - create
 import StageCreate from '@/components/stages/StageEditByAdd.vue';
+import ActionStageCreate from '@/components/action_stages/ActionStageEditByAdd.vue';
+
 import TaskCreate from '@/components/tasks/TaskCreate.vue';
 import ActionTaskCreate from '@/components/action_tasks/ActionTaskCreate.vue';
-import ActionStageCreate from '@/components/action_stages/ActionStageCreate.vue';
 
 
 
@@ -921,13 +924,9 @@ const save = async () => {
 			//arrStages.value.forEach(async (eleStage) => {
 
 			console.log(eleStage.name);
-
 			stage.value = [];
-
 			eleStage.trip_id = trip.value.id;
-
 			await storeStage(eleStage);
-
 			console.log({ ...stage.value });
 
 
@@ -1407,15 +1406,76 @@ const cancelActionStageForm = () => {
 	isCreateActionStage.value = false;
 }
 
-const addActionStageForm = (stage, data) => {
+const addActionStageForm = async(stageNew, actionStageNew) => {
 
-	let dataNew = addActionTaskModel(data);
+	// let dataNew = addActionTaskModel(data);
+	// stage.action_stages = [];
+	// stage.action_stages.push(dataNew);
+	// arrStages.value.push(stage);
 
-	stage.action_stages = [];
-	stage.action_stages.push(dataNew);
+
+	/**
+	 * Stage
+	 */
+	stageNew.trip_id = trip.value.id;
+	await storeStage(stageNew);
+
+	console.log({ ...stage.value });
 
 
-	arrStages.value.push(stage);
+	actionStageNew.stage_id = stage.value.id;
+	await storeActionStage(actionStageNew);
+	console.log({ ...actionStage.value });
+
+
+	/**
+	 *  Action stage cameras
+	 */
+	if (actionStageNew.cameras) {
+
+		const actionStageCameraObj = {
+			action_stage_id: actionStage.value.id
+		}
+
+		await storeActionStageCamera(actionStageCameraObj);
+		console.log({ ...actionStageCamera.value });
+
+	}
+
+
+	/**
+	 * Action stage scanners
+	 */
+	if (actionStageNew.scanners) {
+
+		const actionStageScannerObj = {
+			action_stage_id: actionStage.value.id
+		}
+
+		await storeActionStageScanner(actionStageScannerObj);
+		console.log({ ...actionStageScanner.value });
+
+	}
+
+
+	/**
+	 * Action stage forms
+	 */
+	if (actionStageNew.forms) {
+
+		actionStageFormObj = {
+			action_stage_id: actionStage.value.id,
+			action_form_field_id: actionStageNew.action_form_field_id,
+		}
+
+		await storeActionStageForm(actionStageFormObj);
+		console.log({ ...actionStageForm.value });
+
+	}
+	
+	findData();
+
+
 
 	isCreateTrip.value = true;
 	isCreateActionStage.value = false;
