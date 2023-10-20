@@ -1,6 +1,6 @@
 <template>
     <div class="w-full">
-        <div v-if="nameConversation">
+        <div v-if="nameConversation && receiverType">
 
             <div class="flex flex-col h-[80vh] justify-between items-center box overflow-hidden">
                 <!-- Header -->
@@ -622,7 +622,8 @@ const initialize = async () => {
                     }
 
                     // Si mi usuario recibe los mensajes y esta en el ultimo mensaje
-                    if (textMessage.receiverId == myUid.value) {
+                    console.log(textMessage.conversationId)
+                    if (textMessage.conversationId == idConversation.value) {
                         //markUserConversationAsRead(myUid.value, ChatId.value)
                         if (isMoving == true) {
                             setTimeout(() => {
@@ -708,7 +709,7 @@ const handleKeyDown = async (event) => {
           event.preventDefault(); // Evita el salto de línea y envía el mensaje
           if (message.value.trim() !== '') {
             // Enviar el mensaje aquí
-            console.log(message.value)
+            //console.log(message.value)
             await sendMessage()
           }
         } else {

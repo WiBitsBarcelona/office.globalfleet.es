@@ -97,7 +97,7 @@
                 <div v-if="!conversation.lastMessage.data.customData">
                   {{ $h.cutText(conversation.lastMessage.data.customData.textTranslate,30)}} </div>
                 <div v-else>
-                  {{ $h.cutText(conversation.lastMessage.data.text.length,30)}} </div>
+                  {{ $h.cutText(conversation.lastMessage.data.text,30)}} </div>
               </div>
             </div>
             </p>
@@ -246,7 +246,7 @@ const initialize = async () => {
         LoadChatsList();
       },
       (error) => {
-        console.log("Login failed with exception:", { error });
+        //console.log("Login failed with exception:", { error });
         loading.value = false;
 
         Swal.fire({
@@ -311,9 +311,9 @@ const initialize = async () => {
     })
     );
   },
-    (error) => {
+    /*(error) => {
       console.log("Initialization failed with error:", error);
-    }
+    }*/
   );
 
   // Funció per loguejar un usuari
@@ -548,7 +548,7 @@ const printTextMessage = async (textMessage) => {
     await getConversationsList(userInfo.uid);
     // Volvemos a pintar el elemento
     // Volvemos a seleccionar el chat con el color gris
-    console.log(propsChatId.value)
+    //console.log(propsChatId.value)
     if (inNewChat.value == false) {
       document.getElementById(propsChatId.value).classList.add("selected");
     }
@@ -566,7 +566,7 @@ const printTextMessage = async (textMessage) => {
 
   // Marcamos el nuevo mensaje como leido
   if (sender != userInfo.uid) {
-    console.log(userInfo.uid)
+    //console.log(userInfo.uid)
     if (textMessage.receiverType === "group") {
       markGroupConversationAsRead(userInfo.uid, receiver);
     } else {
