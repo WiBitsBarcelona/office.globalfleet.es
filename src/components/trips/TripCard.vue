@@ -10,7 +10,7 @@
               <div class="col-span-2 gap-1">
                 <div class="flex items-center justify-center">
                   <router-link :to="`trips/edit/${trip.id}`">
-                    <Tippy tag="button" class="tooltip primary ml-4 mr-4" :content="edit_trip_tooltip" :options="{ theme: 'light' }">
+                    <Tippy tag="button" class="tooltip primary ml-4 mr-4" :content="edit_trip_tooltip" :options="{ theme: 'dark' }">
                       <CheckSquareIcon class="w-5 h-5 text-primary" />
                     </Tippy>
                   </router-link>
@@ -19,7 +19,7 @@
               <!-- view -->
               <div class="col-span-2 gap-1">
                 <div class="flex items-center justify-center">
-                  <Tippy tag="button" class="tooltip primary ml-4 mr-4" :content="view_trip_tooltip" :options="{ theme: 'light' }">
+                  <Tippy tag="button" class="tooltip primary ml-4 mr-4" :content="view_trip_tooltip" :options="{ theme: 'dark' }">
                     <EyeIcon class="w-5 h-5 text-primary" @click="openTrip(trip.id)" />
                   </Tippy>
                 </div>
@@ -27,7 +27,7 @@
               <!-- delete -->
               <div class="col-span-2 gap-1">
                 <div class="flex items-center justify-center">
-                  <Tippy tag="button" class="tooltip primary ml-4 mr-4" :content="delete_trip_tooltip" :options="{ theme: 'light' }">
+                  <Tippy tag="button" class="tooltip primary ml-4 mr-4" :content="delete_trip_tooltip" :options="{ theme: 'dark' }">
                     <TrashIcon class="w-5 h-5 text-danger" @click="deleteTrip(trip.id)" /> 
                   </Tippy>
                 </div>
@@ -94,7 +94,7 @@
           <div class="grid grid-cols-2 justify-items-stretch gap-1">
             <div class="rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400">
               <h5 class="text-xs font-light text-gray-400">Telem.</h5>
-              <Tippy tag="button" class="tooltip primary ml-4 mr-2" :content="telematic_name" :options="{ theme: 'light' }">
+              <Tippy tag="button" class="tooltip primary ml-4 mr-2" :content="telematic_name" :options="{ theme: 'dark' }">
                 <p class="text-md font-normal leading-6 text-gray-500">M</p>
               </Tippy>
             </div>
@@ -114,7 +114,7 @@
           <div class="grid grid-cols-2 justify-items-stretch gap-1">
             <div class="rounded-md bg-gray-100 p-2 pb-1 dark:bg-gray-800 dark:text-gray-400">
               <h5 class="text-xs font-light text-gray-400">{{ $t("status") }}</h5>
-              <Tippy tag="button" class="tooltip primary ml-4 mr-2" :content="speed_name" :options="{ theme: 'light' }">
+              <Tippy tag="button" class="tooltip primary ml-4 mr-2" :content="speed_name" :options="{ theme: 'dark' }">
                 <p class="text-md font-normal leading-6 text-gray-500">{{ speed_status }}</p>
               </Tippy>
             </div>
@@ -211,11 +211,10 @@ const current_stage_started_at = ref('--');
 
 
 
-const telematic_name = ref('Movil');
-const edit_trip_tooltip = ref('Editar Viaje');
-const view_trip_tooltip = ref('Ver Viaje');
-const delete_trip_tooltip = ref('Eliminar Viaje');
-
+const telematic_name = ref(t('tooltips.mobile'));
+const edit_trip_tooltip = ref(t('tooltips.edit'));
+const view_trip_tooltip = ref(t('tooltips.view'));
+const delete_trip_tooltip = ref(t('tooltips.delete'));
 
 const execution_at = ref('');
 const captured_at = ref('');
@@ -374,10 +373,10 @@ watchEffect(() => {
     speed.value = sp;
     if (sp >= 5) {
       speed_status.value = 'C';
-      speed_name.value = t('driving');
+      speed_name.value = t('tooltips.driving');
     } else {
       speed_status.value = 'P';
-      speed_name.value = t('stopped');
+      speed_name.value = t('tooltips.stopped');
     }
     gps_positioning.value = trip.value.driver.position.gps_positioning;
     captured_at.value = $h.formatDate(trip.value.driver.position.captured_at, 'DD/MM/YYYY HH:mm');

@@ -230,8 +230,6 @@
   "devices_history_of": "Histórico de Dispositivos de ",
   "devices_history": "Histórico de Dispositivos",
   "filter_by_driver": "Filtrar por Conductor",
-  "driving": "Circulando",
-  "stopped": "Parado",
   "no_display_data": "No hay datos que mostrar", 
   "action_camera": "Camara",
   "action_scanner": "Escaner",
@@ -434,7 +432,7 @@
   "auto_refresh_title": "Refresco automático",
   "auto_refresh_on_toast": "Refresco automático cada 5 minutos ACTIVADO.",
   "auto_refresh_off_toast": "Refresco automático DESACTIVADO.",
-  "btn_create_trip": "Crear Viaje",
+  "btn_create": "Nuevo",
   "languages":{
     "ES": "Español",
     "EN": "Inglés",
@@ -465,6 +463,15 @@
     "TR": "Turco",
     "UK": "Ucraniano",
     "ZH": "Chino"
+  },
+  "tooltips": {
+    "edit": "Editar",
+    "view": "Ver",
+    "delete": "Eliminar",
+    "download": "Descargar",
+    "mobile": "Móvil",
+    "driving": "Circulando",
+    "stopped": "Parado"
   },
   "help_screen": {
     "menu": {

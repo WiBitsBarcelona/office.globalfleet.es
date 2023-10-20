@@ -39,8 +39,8 @@
                     :content="$t('driving')" :options="{ theme: 'light' }">
                     <img src="/src/assets/images/markers/driving-status-icon-green.svg" class="w-5 h-5">
                   </Tippy>
-                  <Tippy v-else tag="button" class="tooltip primary ml-4 mr-2" :content="$t('stopped')"
-                    :options="{ theme: 'light' }">
+                  <Tippy v-else tag="button" class="tooltip primary ml-4 mr-2" :content="$t('tooltips.stopped')"
+                    :options="{ theme: 'dark' }">
                     <img src="/src/assets/images/markers/driving-status-icon-red.svg" class="w-5 h-5">
                   </Tippy>
                 </td>

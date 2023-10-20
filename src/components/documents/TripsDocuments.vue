@@ -756,7 +756,7 @@ const initTripDocumentsTabulator = async () => {
         width: 50,
         hozAlign: "center",
         headerSort: false,
-        tooltip: t("Tabulator.ToolTips.View"),
+        tooltip: t("tooltips.view"),
         cellClick: function (e, cell) {
           openTripFile(cell.getData().path);
         }
@@ -767,7 +767,7 @@ const initTripDocumentsTabulator = async () => {
         width: 50,
         hozAlign: "center",
         headerSort: false,
-        tooltip: t("Tabulator.ToolTips.Download"),
+        tooltip: t("tooltips.download"),
         cellClick: function (e, cell) {
           downloadTripFile(cell.getData().path, cell.getData().file_name);
         }
@@ -778,7 +778,7 @@ const initTripDocumentsTabulator = async () => {
         width: 50,
         hozAlign: "center",
         headerSort: false,
-        tooltip: t("Tabulator.ToolTips.Delete"),
+        tooltip: t("tooltips.delete"),
         cellClick: function (e, cell) {
           deleteTripDoc(cell.getData().id, cell.getData().file_name, trip_selected.value);
         }
@@ -1170,7 +1170,7 @@ const initStageDocumentsTabulator = async () => {
         width: 50,
         hozAlign: "center",
         headerSort: false,
-        tooltip: t("Tabulator.ToolTips.View"),
+        tooltip: t("tooltips.view"),
         cellClick: function (e, cell) {
           openStageFile(cell.getData().path);
         }
@@ -1180,7 +1180,7 @@ const initStageDocumentsTabulator = async () => {
         width: 50,
         hozAlign: "center",
         headerSort: false,
-        tooltip: t("Tabulator.ToolTips.Download"),
+        tooltip: t("tooltips.download"),
         cellClick: function (e, cell) {
           downloadStageFile(cell.getData().path, cell.getData().file_name);
         }
@@ -1190,7 +1190,7 @@ const initStageDocumentsTabulator = async () => {
         width: 50,
         hozAlign: "center",
         headerSort: false,
-        tooltip: t("Tabulator.ToolTips.Delete"),
+        tooltip: t("tooltips.delete"),
         cellClick: function (e, cell) {
           deleteStageDoc(cell.getData().id, cell.getData().file_name, stage_selected.value);
         }

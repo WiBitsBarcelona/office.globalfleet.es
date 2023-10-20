@@ -223,8 +223,6 @@
   "devices_history_of": "History of Devices of ",
   "devices_history": "History of Devices",
   "filter_by_driver": "Filter by Driver",
-  "driving": "Driving",
-  "stopped": "Stationary",
   "no_display_data": "There is no data to show",
   "action_camera": "Camera",
   "action_scanner": "Scanner",
@@ -416,7 +414,7 @@
   "auto_refresh_title": "Automatic Refresh",
   "auto_refresh_on_toast": "Automatic Refresh every 5 minutes ACTIVATED.",
   "auto_refresh_off_toast": "Automatic Refresh DESACTIVATED.",
-  "btn_create_trip": "Create Trip",
+  "btn_create": "New",
   "languages":{
     "ES": "Spanish",
     "EN": "English",
@@ -447,6 +445,15 @@
     "TR": "Turkish",
     "UK": "Ukranian",
     "ZH": "Chinese"
+  },
+  "tooltips": {
+    "edit": "Edit",
+    "view": "View",
+    "delete": "Delete",
+    "download":"Download",
+    "mobile": "Mobile",
+    "driving": "Driving",
+    "stopped": "Stationary"
   },
   "help_screen": {
       "menu": {

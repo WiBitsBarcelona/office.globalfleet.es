@@ -21,7 +21,7 @@
 					class="btn btn-primary w-1/2 sm:w-auto mr-2"
 					@click="createEmployee"
 				>
-					<PlusCircleIcon class="w-6 h-6 mr-2" />{{ $t("btn_create_user") }}
+					<PlusCircleIcon class="w-6 h-6 mr-2" />{{ $t("btn_create") }}
 				</button>
 				<Dropdown class="w-1/2 sm:w-auto">
 					<DropdownToggle class="btn btn-outline-secondary w-full sm:w-auto">
@@ -203,6 +203,7 @@
                     hozAlign: "center",
                     vertAlign: "middle",
                     headerSort: false,
+					tooltip: t("tooltips.edit"),
                     download: false,
                     formatter: function(cell, formatterParams){
                         return `<i data-lucide="check-square" class="w-6 h-6 mr-1 text-primary"></i>`;
@@ -222,6 +223,7 @@
                     hozAlign: "center",
                     vertAlign: "middle",
                     headerSort: false,
+					tooltip: t("tooltips.delete"),
                     download: false,
                     formatter: function(cell, formatterParams){
                         return `<i data-lucide="trash-2" class="w-6 h-6 mr-1 text-danger"></i>`;
