@@ -189,7 +189,8 @@
                     vertAlign: "middle",
                     headerHozAlign:"left",
                     formatter(cell) {
-                        return cell.getData().language.name;
+						let currentLang = 'languages.' + cell.getData().language.iso_code;
+                        return t(currentLang);
                     }
                 },
                 {
