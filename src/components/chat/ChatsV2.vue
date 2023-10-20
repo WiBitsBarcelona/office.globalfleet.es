@@ -126,8 +126,8 @@
                                                 !mensaje.data.metadata ? null : mensaje.data.metadata['confirmetAt'])">
 
                                             <div class="contMensajeEnviado">
-                                                <p class="txtMensajesEnviado" style="padding-right: 4px;">{{
-                                                    mensaje.data.text }}</p>
+                                                <p class="txtMensajesEnviado" style="padding-right: 4px; white-space: pre-line;">
+                                                {{ mensaje.data.text }}</p>
                                                 <p class="txtHoraEnviado">{{ convertStringToDate(mensaje.sentAt) }}</p>
 
                                                 <div style="display: flex; align-items: flex-end; text-align: right;">
@@ -195,7 +195,7 @@
                                             </div>
                                         </div>
                                         <div style="display: flex; margin-top: 8px;">
-                                            <p class="txtMensajesRecibido" style="margin: 0px;">{{ mensaje.data.text }}</p>
+                                            <p class="txtMensajesRecibido" style="margin: 0px; white-space: pre-line;">{{ mensaje.data.text }}</p>
                                             <p class="txtHoraRecibido" style="margin: 0px; margin-left: 5px;">{{
                                                 convertStringToDate(mensaje.sentAt) }}</p>
                                         </div>
@@ -216,7 +216,7 @@
                                                         <div v-if="itemGM.Lang == myLang">
                                                             <div style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; 
                                                                 align-items: end;">
-                                                                <p class="txtMensajes" style="padding-right: 4px;">{{
+                                                                <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">{{
                                                                     itemGM.TextTranslate }}</p>
                                                                 <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}
                                                                 </p>
@@ -233,14 +233,14 @@
                                                         <p style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px">
                                                             {{ mensaje.data.customData.titleText }}
                                                         </p>
-                                                        <p style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px">
+                                                        <p style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px; white-space: pre-line;">
                                                             {{ mensaje.data.text }}
                                                         </p>
                                                     </div>
 
                                                     <div
                                                         style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; align-items: end;">
-                                                        <p class="txtMensajes" style="padding-right: 4px;">{{
+                                                        <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">{{
                                                             mensaje.data.customData.translateText }}</p>
                                                         <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
                                                     </div>
@@ -249,7 +249,7 @@
                                         </div>
                                         <div v-else>
                                             <div class="contMensajeRecibido">
-                                                <p class="txtMensajes" style="padding-right: 4px;">{{ mensaje.data.text }}
+                                                <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">{{ mensaje.data.text }}
                                                 </p>
                                                 <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
                                             </div>
@@ -258,7 +258,7 @@
                                     <!-- cuando solo es texto normal sin traducir -->
                                     <div v-else>
                                         <div class="contMensajeRecibido">
-                                            <p class="txtMensajes" style="padding-right: 4px;">{{ mensaje.data.text }}</p>
+                                            <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">{{ mensaje.data.text }}</p>
                                             <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
                                         </div>
                                     </div>
@@ -708,6 +708,7 @@ const handleKeyDown = async (event) => {
           event.preventDefault(); // Evita el salto de línea y envía el mensaje
           if (message.value.trim() !== '') {
             // Enviar el mensaje aquí
+            console.log(message.value)
             await sendMessage()
           }
         } else {

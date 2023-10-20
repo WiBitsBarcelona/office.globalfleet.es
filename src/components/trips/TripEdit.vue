@@ -1149,15 +1149,47 @@ const cancelStageForm = () => {
 	isCreateStage.value = false;
 }
 
-const addStageForm = async (stage) => {
+const addStageForm = async (stageNew) => {
 
 	//arrStages.value.push(stage);
 
-	stage.trip_id = trip.value.id;
-	await storeStage(eleStage);
+	/**
+	 * Stage
+	 */
+	stageNew.trip_id = trip.value.id;
+	await storeStage(stageNew);
 
 	console.log({ ...stage.value });
 
+
+	/**
+	* Activity
+	*/
+	const activityNew = {
+		stage_id: stage.value.id,
+		activity_type_id: stageNew.activity_type_id
+	}
+
+	await storeActivity(activityNew);
+	console.log({ ...activity.value });
+
+
+	/**
+	 * Tow stage
+	 */
+	const towNew = {
+		stage_id: stage.value.id,
+		tow_id: stageNew.tow_id
+	}
+
+	await storeStageTow(towNew);
+	console.log({ ...stageTow.value });
+
+
+	findData();
+
+
+	//Load view
 	isCreateTrip.value = true;
 	isCreateStage.value = false;
 }
@@ -1428,6 +1460,26 @@ const fixNumberOrder = () => {
 
 
 
+const findData = async() => {
+
+	await getTrip(route.params.id);
+
+	arrStages.value = trip.value.stages;
+
+	formData.trip_priority_id = trip.value.trip_priority_id.toString();
+	formData.driver_id = trip.value.driver_id.toString();
+	formData.vehicle_id = trip.value.vehicle_id.toString();
+	formData.tow_id = trip.value.tows[0].tow.id.toString();
+	formData.reference_number = trip.value.reference_number;
+	formData.name = trip.value.name;
+	formData.execution_at = trip.value.execution_at;
+	formData.started_at = trip.value.started_at;
+	formData.finished_at = trip.value.finished_at;
+	formData.observations = trip.value.observations;
+
+}
+
+
 onMounted(async () => {
   
   // Vehicles
@@ -1445,34 +1497,22 @@ onMounted(async () => {
   selectDrivers.value = drivers.value;
 
 
-  //Tows trip
+  //TODO Tows trip
 
-  //Tow 
+  await getTows();
 
+  console.log({...tows.value})
 
-
-
-  await getTrip(route.params.id);
-
-  
-
-  arrStages.value = trip.value.stages;
+  selectTows.value = tows.value;
 
 
-
-  
-
-  formData.trip_priority_id = trip.value.trip_priority_id.toString();
-  formData.driver_id = trip.value.driver_id.toString();
-  formData.vehicle_id = trip.value.vehicle_id.toString();
-  formData.reference_number = trip.value.reference_number;
-  formData.name = trip.value.name;
-  formData.execution_at = trip.value.execution_at;
-  formData.started_at = trip.value.started_at;
-  formData.finished_at = trip.value.finished_at;
-  formData.observations = trip.value.observations;
+  await findData();
 
 
 }); 
+
+
+
+
 
 </script>
