@@ -36,7 +36,7 @@
                 </td>
                 <td class="text-right !p-1">
                   <Tippy v-if="$h.toKmsHour(driver.position.speed) >= 5" tag="button" class="tooltip primary ml-4 mr-2"
-                    :content="$t('driving')" :options="{ theme: 'light' }">
+                    :content="$t('tooltips.driving')" :options="{ theme: 'dark' }">
                     <img src="/src/assets/images/markers/driving-status-icon-green.svg" class="w-5 h-5">
                   </Tippy>
                   <Tippy v-else tag="button" class="tooltip primary ml-4 mr-2" :content="$t('tooltips.stopped')"
