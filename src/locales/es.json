@@ -434,6 +434,7 @@
   "auto_refresh_title": "Refresco automático",
   "auto_refresh_on_toast": "Refresco automático cada 5 minutos ACTIVADO.",
   "auto_refresh_off_toast": "Refresco automático DESACTIVADO.",
+  "btn_create_trip": "Crear Viaje",
   "help_screen": {
     "menu": {
       "welcome": "Bienvenido",

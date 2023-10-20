@@ -81,35 +81,23 @@
           </div>
           <div class="flex w-full justify-between">
             <p :id="'last-' + conversation.conversationId">
-              <!-- {{
-              conversationList.length > 0 &&
-              conversation.lastMessage &&
-              conversation.lastMessage.data &&
-              conversation.lastMessage.data.text
-              ? conversation.lastMessage.data.text.length < 30 ? conversation.lastMessage.data.text :
-                conversation.lastMessage.data.text.substring(0, 30) + "..." : "" }}</p> -->
+
             <div v-if="conversation.conversationType == 'group'">
               <div v-if="conversation.lastMessage.data.customData">
                 <div v-for="itemGM in conversation.lastMessage.data.customData.groupText">
                   <div v-if="itemGM.Lang == myLang">
-                    {{ itemGM.TextTranslate.length > 30 ? itemGM.TextTranslate.substring(0, 20) + "..." :
-                      itemGM.TextTranslate }} </div>
+                    {{ $h.cutText(itemGM.TextTranslate,30) }} </div>
                 </div>
               </div>
             </div>
             <div v-else>
               <div v-if="conversation.lastMessage.sender == userInfo.uid">
-                {{ conversation.lastMessage.data.text.length > 30 ? conversation.lastMessage.data.text.substring(0, 20)
-                  + "..." : conversation.lastMessage.data.text }} </div>
+                {{ $h.cutText(conversation.lastMessage.data.text,30) }} </div>
               <div v-else>
                 <div v-if="!conversation.lastMessage.data.customData">
-                  {{ conversation.lastMessage.data.customData.textTranslate.length > 30 ?
-                    conversation.lastMessage.data.customData.textTranslate.substring(0, 20) + "..." :
-                    conversation.lastMessage.data.customData.textTranslate }} </div>
+                  {{ $h.cutText(conversation.lastMessage.data.customData.textTranslate,30)}} </div>
                 <div v-else>
-                  {{ conversation.lastMessage.data.text.length > 30 ?
-                    conversation.lastMessage.data.text.substring(0, 20) + "..." :
-                    conversation.lastMessage.data.text }} </div>
+                  {{ $h.cutText(conversation.lastMessage.data.text.length,30)}} </div>
               </div>
             </div>
             </p>
@@ -168,7 +156,7 @@ export default {
 import { CometChat } from "@cometchat-pro/chat";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import Preloader from '@/components/preloader/Preloader.vue';
-
+import { helper as $h } from "@/utils/helper";
 // Hooks
 import { useAuthenticationStore } from "@/stores/auth/authentications";
 import useChat from "@/composables/chat";
