@@ -160,3 +160,15 @@ Example to implement:
 
 
 ```
+
+### Tootilps
+
+El componente "Tippy" para mostrar los tooltips se importa de manera global así que no es necesario realizar la importación para usarlo.
+
+Ejemplo de uso:
+
+<Tippy tag="button" class="tooltip primary ml-4 mr-2" content="Tippy Content" :options="{ theme: 'dark' }">
+    <p class="text-md font-normal leading-6 text-gray-500">Ejemplo Tippy</p>
+</Tippy>
+
+El contenido puede ser estático o dinámico, simplemente añadiendo los dos puntos ":" delante del parámetro content. En nuestro template siempre usaremos el theme en "dark" pero hay la opción de asignarle "light"

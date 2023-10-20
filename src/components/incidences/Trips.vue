@@ -295,7 +295,7 @@ const initTripTabulator = () => {
         responsive: 0,
         hozAlign: "left",
         headerSort: false,
-        tooltip: t("incidences.Tabulator.view_tooltip"),
+        tooltip: t("tooltips.view"),
         cellClick: function (e, cell) {
           showTripIncidenceModal(cell.getData().id);
         }
