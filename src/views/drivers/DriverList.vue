@@ -21,7 +21,7 @@
 					class="btn btn-primary w-1/2 sm:w-auto mr-2"
 					@click="createDriver"
 				>
-					<PlusCircleIcon class="w-6 h-6 mr-2" /> {{ $t("btn_create_driver") }}
+					<PlusCircleIcon class="w-6 h-6 mr-2" /> {{ $t("btn_create") }}
 				</button>
 				<Dropdown class="w-1/2 sm:w-auto">
 					<DropdownToggle class="btn btn-outline-secondary w-full sm:w-auto">
@@ -116,7 +116,6 @@
 
 	const findData = async() => {
 		await getDrivers();
-		console.log(drivers.value);
 		return toRaw(drivers.value);
 	}
 
@@ -191,7 +190,8 @@
                     vertAlign: "middle",
                     headerHozAlign:"left",
                     formatter(cell) {
-                        return cell.getData().language.name;
+						let currentLang = 'languages.' + cell.getData().language.iso_code;
+                        return t(currentLang);
                     }
                 },
 				{
@@ -212,6 +212,7 @@
 					hozAlign: "center",
 					vertAlign: "middle",
 					headerSort: false,
+					tooltip: t("tooltips.edit"),
 					download: false,
 					formatter: (cell, formatterParams) => {
 						return `<i data-lucide="check-square" class="w-6 h-6 mr-1 text-primary"></i>`;
@@ -231,6 +232,7 @@
 					hozAlign: "center",
 					vertAlign: "middle",
 					headerSort: false,
+					tooltip: t("tooltips.delete"),
 					download: false,
 					formatter: (cell, formatterParams) => {
 						return `<i data-lucide="trash-2" class="w-6 h-6 mr-1 text-danger"></i>`;
