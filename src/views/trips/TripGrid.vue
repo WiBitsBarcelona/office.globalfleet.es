@@ -12,7 +12,8 @@
           
           <div class="col-span-2 intro-y mb-5 text-end">
             <router-link :to="`/trips/create`" class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
-              <PlusCircleIcon class="w-4 h-4" />
+              <PlusCircleIcon class="w-5 h-5 mr-2" />
+              {{ $t("btn_create_trip") }}
             </router-link>
           </div>
 
