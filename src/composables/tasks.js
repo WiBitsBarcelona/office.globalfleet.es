@@ -110,20 +110,31 @@ export default function useTask() {
 
 	const destroyTask = async (id) => {
 		taskErrors.value = [];
-		try {
-			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}tasks/delete/${id}`, config);
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				errors.value.push(t("errors.error_internal"));
-			}
+		
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}tasks/delete/${id}`,{
+			method: 'DELETE',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
 			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					taskErrors.value = key
-				}
+
+			//console.log(res);
+			if (!res.success) {
+				taskErrors.value = res.errors;
+			}else{
+				task.value = res.data;
 			}
-		}
+			
+		})
+		.catch((e) => {
+			// Errors 500
+
+			// if (e.response.status >= 500) {
+			// 	taskErrors.value.push(t("errors.error_internal"));
+			// }
+		});
+
 	}
 
 
