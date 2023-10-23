@@ -331,7 +331,7 @@
 								<div class="col-span-1">
 									<h5 class="text-xs font-light text-gray-400">{{ $t("tow") }}:</h5>
 									<p class="text-md font-normal leading-6 text-gray-500">
-										{{ stage.tows[0].tow.plate }}
+										{{ (stage.tows.length > 0) ? stage.tows[0].tow.plate : '' }}
 									</p>
 								</div>
 
@@ -1498,6 +1498,7 @@ const findData = async() => {
 
 	if(trip.value.tows.length > 0){
 		formData.tow_id = trip.value.tows[0].tow.id.toString();
+
 	}
 
 }
