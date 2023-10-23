@@ -380,7 +380,7 @@
 																		t("add_action_task") }}
 																</a>
 																<a href="#"
-																	@click.prevent="deleteTaskForm(stage.id, task.id)"
+																	@click.prevent="deleteTaskForm(task.id)"
 																	class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
 																	<TrashIcon class="w-4 h-4" />
 																</a>
@@ -393,7 +393,7 @@
 
 
 													<!-- Action Tasks -->
-													<div v-for="action_task in task.action_tasks" :key="action_task.id">
+													<div v-for="action_task in task.actions" :key="action_task.id">
 
 														<div class="grid grid-cols-6 gap-2">
 
@@ -401,15 +401,14 @@
 																<h5 class="text-xs font-light text-gray-400">{{ $t("action")
 																}}:</h5>
 																<p class="text-xs font-normal leading-6 text-gray-500">
-																	{{ action_task.action_type_name }}
+																	{{ action_task.type.name }}
 																</p>
 															</div>
 
 
 
 															<!-- Action Cameras -->
-															<div class="col-span-2"
-																v-if="parseInt(action_task.action_type_model) === enumActionTask.CAMERA_ID">
+															<div class="col-span-2">
 																<div v-for="camera in action_task.cameras" :key="camera.id">
 
 																	<div>
@@ -417,7 +416,7 @@
 																			$t("type") }}:</h5>
 																		<p
 																			class="text-xs font-normal leading-6 text-gray-500">
-																			{{ camera.name }}
+																			{{ action_task.type.name }}
 																		</p>
 																	</div>
 
@@ -428,8 +427,7 @@
 
 
 															<!-- Action Scanner -->
-															<div class="col-span-3"
-																v-if="parseInt(action_task.action_type_model) === enumActionTask.SCANNER_ID">
+															<div class="col-span-3">
 																<div v-for="scanner in action_task.scanners"
 																	:key="scanner.id">
 
@@ -439,7 +437,7 @@
 																			$t("type") }}:</h5>
 																		<p
 																			class="text-xs font-normal leading-6 text-gray-500">
-																			{{ scanner.name }}
+																			{{ action_task.type.name }}
 																		</p>
 																	</div>
 
@@ -451,8 +449,7 @@
 
 
 															<!-- Action Form -->
-															<div class="col-span-3"
-																v-if="parseInt(action_task.action_type_model) === enumActionTask.FORM_ID">
+															<div class="col-span-3">
 																<div v-for="form in action_task.forms" :key="form.id">
 
 																	<div class="grid grid-cols-6 gap-2">
@@ -471,7 +468,7 @@
 																				$t("name") }}:</h5>
 																			<p
 																				class="text-xs font-normal leading-6 text-gray-500">
-																				{{ form.action_form_field_name }}
+																				{{ form.form_field.field_label  }}
 																			</p>
 																		</div>
 
@@ -716,9 +713,9 @@ import useStageTow from '@/composables/stage_tows.js';
 // By Add - create
 import StageCreate from '@/components/stages/StageEditByAdd.vue';
 import ActionStageCreate from '@/components/action_stages/ActionStageEditByAdd.vue';
+import TaskCreate from '@/components/tasks/TaskEditByAdd.vue';
 
-import TaskCreate from '@/components/tasks/TaskCreate.vue';
-import ActionTaskCreate from '@/components/action_tasks/ActionTaskCreate.vue';
+import ActionTaskCreate from '@/components/action_tasks/ActionTaskEditByAdd.vue';
 
 
 
@@ -747,9 +744,9 @@ const { tows, getTows } = useTow();
 
 
 const { trip, tripErrors, updateTrip, getTrip } = useTrips();
-const { stage, stageErrors, storeStage } = useStage();
+const { stage, stageErrors, storeStage, destroyStage } = useStage();
 const { activity, activityErrors, storeActivity } = useActivity();
-const { task, taskErrors, storeTask } = useTask();
+const { task, taskErrors, storeTask, destroyTask } = useTask();
 const { actionTask, actionTaskErrors, storeActionTask } = useActionTask();
 const { actionTaskCamera, actionTaskCameraErrors, storeActionTaskCamera } = useActionTaskCamera();
 const { actionTaskScanner, actionTaskScannerErrors, storeActionTaskScanner } = useActionTaskScanner();
@@ -1034,7 +1031,6 @@ const save = async () => {
 			if (eleStage.tasks) {
 				for (const eleTask of eleStage.tasks) {
 
-
 					eleTask.stage_id = stage.value.id;
 
 					await storeTask(eleTask);
@@ -1187,17 +1183,21 @@ const addStageForm = async (stageNew) => {
 	isCreateStage.value = false;
 }
 
-const deleteStageForm = (uuid) => {
-	arrStages.value.forEach((ele, index) => {
-		if (ele.uuid === uuid) {
-			arrStages.value.splice(index, 1);
-		}
-	});
+const deleteStageForm = async (id) => {
+	
+	// await destroyStage(id);
+	// await findData();
+
+	console.log("Delete Stage", id);
+
 }
 
 /**
  * End Stage
  */
+
+
+
 
 
 
@@ -1213,47 +1213,37 @@ const showTaskForm = (stage) => {
 }
 
 
-
 const cancelTaskForm = () => {
 	isCreateTrip.value = true;
 	isCreateTask.value = false;
 }
 
 
+const addTaskForm = async(stageNew, taskNew) => {
+	// arrStages.value.forEach(el => {
+	// 	if (el.uuid === stage.uuid) {
+	// 		if (el.tasks === undefined) {
+	// 			el.tasks = [];
+	// 			el.tasks.push(data);
+	// 		} else {
+	// 			el.tasks.push(data);
+	// 		}
+	// 	}
+	// });
 
-const addTaskForm = (stage, data) => {
-	arrStages.value.forEach(el => {
-		if (el.uuid === stage.uuid) {
-			if (el.tasks === undefined) {
-				el.tasks = [];
-				el.tasks.push(data);
-			} else {
-				el.tasks.push(data);
-			}
-		}
-	});
+	taskNew.stage_id = stageNew.id;
+	await storeTask(taskNew);
+	console.log({ ...task.value });
 
+	await findData();
+	
 	isCreateTrip.value = true;
 	isCreateTask.value = false;
 }
 
-const deleteTaskForm = (stageUuid, taskUuid) => {
-
-	arrStages.value.forEach((stage) => {
-
-		if (stage.uuid === stageUuid) {
-
-			stage.tasks.forEach((task, index) => {
-
-				if (task.uuid === taskUuid) {
-					stage.tasks.splice(index, 1);
-				}
-
-			});
-		}
-
-	});
-
+const deleteTaskForm = async(taskId) => {
+	await destroyTask(taskId);
+	await findData();
 }
 
 /**
@@ -1284,30 +1274,19 @@ const cancelActionTaskForm = () => {
 
 
 
-const addActionTaskForm = (stage, task, data) => {
+const addActionTaskForm = async (stage, taskNew, actionTaskNew) => {
 
-	arrStages.value.forEach(st => {
-		if (st.uuid === stage.uuid) {
-			st.tasks.forEach(t => {
+	actionTaskNew.task_id = taskNew.id;
 
-				if (t.uuid === task.uuid) {
-					if (t.action_tasks === undefined) {
-
-						let dataNew = addActionTaskModel(data);
-
-						t.action_tasks = [];
-						t.action_tasks.push(dataNew);
+	await storeActionTask(actionTaskNew);
+	console.log({ ...actionTask.value });
 
 
-					} else {
-						let dataNew = addActionTaskModel(data);
-						t.action_tasks.push(dataNew);
-					}
 
-				}
-			});
-		}
-	});
+
+
+
+	await findData();
 
 	isCreateTrip.value = true;
 	isCreateActionTask.value = false;
@@ -1319,62 +1298,62 @@ const addActionTaskForm = (stage, task, data) => {
 
 
 
-const addActionTaskModel = (data) => {
+// const addActionTaskModel = (data) => {
 
-	if (parseInt(data.action_type_model) === enumActionTask.CAMERA_ID) {
-		let action = {};
-		action.uuid = uuidv4();
-		action.name = t("action_camera");
+// 	if (parseInt(data.action_type_model) === enumActionTask.CAMERA_ID) {
+// 		let action = {};
+// 		action.uuid = uuidv4();
+// 		action.name = t("action_camera");
 
-		if (data.cameras === undefined) {
-			data.cameras = [];
-			data.cameras.push(action);
-		} else {
-			data.cameras.push(action);
-		}
+// 		if (data.cameras === undefined) {
+// 			data.cameras = [];
+// 			data.cameras.push(action);
+// 		} else {
+// 			data.cameras.push(action);
+// 		}
 
-		return data;
-	}
-
-
-	if (parseInt(data.action_type_model) === enumActionTask.SCANNER_ID) {
-
-		let action = {};
-		action.uuid = uuidv4();
-		action.name = t("action_scanner");
-
-		if (data.scanners === undefined) {
-			data.scanners = [];
-			data.scanners.push(action);
-		} else {
-			data.scanners.push(action);
-		}
+// 		return data;
+// 	}
 
 
-		return data;
-	}
+// 	if (parseInt(data.action_type_model) === enumActionTask.SCANNER_ID) {
 
-	if (parseInt(data.action_type_model) === enumActionTask.FORM_ID) {
+// 		let action = {};
+// 		action.uuid = uuidv4();
+// 		action.name = t("action_scanner");
 
-		let action = {};
-		action.uuid = uuidv4();
-		action.name = t("action_form");
-		action.action_form_field_id = data.action_form_field_id;
-		action.action_form_field_name = data.action_form_field_name;
+// 		if (data.scanners === undefined) {
+// 			data.scanners = [];
+// 			data.scanners.push(action);
+// 		} else {
+// 			data.scanners.push(action);
+// 		}
 
-		if (data.forms === undefined) {
-			data.forms = [];
-			data.forms.push(action);
-		} else {
-			data.forms.push(action);
-		}
 
-		return data;
-	}
+// 		return data;
+// 	}
 
-	return;
+// 	if (parseInt(data.action_type_model) === enumActionTask.FORM_ID) {
 
-}
+// 		let action = {};
+// 		action.uuid = uuidv4();
+// 		action.name = t("action_form");
+// 		action.action_form_field_id = data.action_form_field_id;
+// 		action.action_form_field_name = data.action_form_field_name;
+
+// 		if (data.forms === undefined) {
+// 			data.forms = [];
+// 			data.forms.push(action);
+// 		} else {
+// 			data.forms.push(action);
+// 		}
+
+// 		return data;
+// 	}
+
+// 	return;
+
+// }
 
 /**
  * End Action Task
@@ -1462,7 +1441,7 @@ const addActionStageForm = async(stageNew, actionStageNew) => {
 	}
 
 	
-	findData();
+	await findData();
 
 
 
