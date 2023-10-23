@@ -1282,57 +1282,11 @@ const addActionTaskForm = async (stage, taskNew, actionTaskNew) => {
 	console.log({ ...actionTask.value });
 
 
-	// /**
-	//  *  Action stage cameras
-	//  */
-	// if (eleActionStage.cameras) {
-
-	// 	actionStageCameraObj = {
-	// 		action_stage_id: actionStage.value.id
-	// 	}
-
-	// 	await storeActionStageCamera(actionStageCameraObj);
-	// 	console.log({ ...actionStageCamera.value });
-
-	// }
-
-
-	// /**
-	//  * Action stage scanners
-	//  */
-	// if (eleActionStage.scanners) {
-
-	// 	actionStageScannerObj = {
-	// 		action_stage_id: actionStage.value.id
-	// 	}
-
-	// 	await storeActionStageScanner(actionStageScannerObj);
-	// 	console.log({ ...actionStageScanner.value });
-
-	// }
-
-
-	// /**
-	//  * Action stage forms
-	//  */
-	// if (eleActionStage.forms) {
-
-	// 	actionStageFormObj = {
-	// 		action_stage_id: actionStage.value.id,
-	// 		action_form_field_id: eleActionStage.action_form_field_id,
-	// 	}
-
-	// 	await storeActionStageForm(actionStageFormObj);
-	// 	console.log({ ...actionStageForm.value });
-
-	// }
 
 
 
 
-
-
-	findData();
+	await findData();
 
 	isCreateTrip.value = true;
 	isCreateActionTask.value = false;
