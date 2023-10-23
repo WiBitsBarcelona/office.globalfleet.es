@@ -28,6 +28,11 @@ export default {
       // const footer = document.getElementById('footer');
       // footer.classList.add("hidden")
 
+
+
+      console.log("OK", useAuthenticationStore().user.employee);
+
+
       // Comprobamos si el usuario tiene permisos de chat
       if (localStorage.getItem("token") && useAuthenticationStore().user.employee) {
         // Simulación de un retraso en la carga de la vista
