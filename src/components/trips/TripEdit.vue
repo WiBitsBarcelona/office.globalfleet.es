@@ -716,8 +716,8 @@ import useStageTow from '@/composables/stage_tows.js';
 // By Add - create
 import StageCreate from '@/components/stages/StageEditByAdd.vue';
 import ActionStageCreate from '@/components/action_stages/ActionStageEditByAdd.vue';
+import TaskCreate from '@/components/tasks/TaskEditByAdd.vue';
 
-import TaskCreate from '@/components/tasks/TaskCreate.vue';
 import ActionTaskCreate from '@/components/action_tasks/ActionTaskCreate.vue';
 
 
@@ -1034,7 +1034,6 @@ const save = async () => {
 			if (eleStage.tasks) {
 				for (const eleTask of eleStage.tasks) {
 
-
 					eleTask.stage_id = stage.value.id;
 
 					await storeTask(eleTask);
@@ -1202,6 +1201,9 @@ const deleteStageForm = (uuid) => {
 
 
 
+
+
+
 /**
  * Task
  */
@@ -1213,26 +1215,28 @@ const showTaskForm = (stage) => {
 }
 
 
-
 const cancelTaskForm = () => {
 	isCreateTrip.value = true;
 	isCreateTask.value = false;
 }
 
 
+const addTaskForm = async(stageNew, taskNew) => {
+	// arrStages.value.forEach(el => {
+	// 	if (el.uuid === stage.uuid) {
+	// 		if (el.tasks === undefined) {
+	// 			el.tasks = [];
+	// 			el.tasks.push(data);
+	// 		} else {
+	// 			el.tasks.push(data);
+	// 		}
+	// 	}
+	// });
 
-const addTaskForm = (stage, data) => {
-	arrStages.value.forEach(el => {
-		if (el.uuid === stage.uuid) {
-			if (el.tasks === undefined) {
-				el.tasks = [];
-				el.tasks.push(data);
-			} else {
-				el.tasks.push(data);
-			}
-		}
-	});
-
+	taskNew.stage_id = stageNew.id;
+	await storeTask(taskNew);
+	console.log({ ...task.value });
+	
 	isCreateTrip.value = true;
 	isCreateTask.value = false;
 }
@@ -1515,7 +1519,7 @@ const findData = async() => {
 
 	arrStages.value = trip.value.stages;
 
-	console.log({...trip.value.stages});
+	//console.log({...trip.value.stages});
 
 	formData.trip_priority_id = trip.value.trip_priority_id.toString();
 	formData.driver_id = trip.value.driver_id.toString();
