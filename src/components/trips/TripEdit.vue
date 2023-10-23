@@ -747,7 +747,7 @@ const { tows, getTows } = useTow();
 
 
 const { trip, tripErrors, updateTrip, getTrip } = useTrips();
-const { stage, stageErrors, storeStage } = useStage();
+const { stage, stageErrors, storeStage, destroyStage } = useStage();
 const { activity, activityErrors, storeActivity } = useActivity();
 const { task, taskErrors, storeTask } = useTask();
 const { actionTask, actionTaskErrors, storeActionTask } = useActionTask();
@@ -1186,12 +1186,13 @@ const addStageForm = async (stageNew) => {
 	isCreateStage.value = false;
 }
 
-const deleteStageForm = (uuid) => {
-	arrStages.value.forEach((ele, index) => {
-		if (ele.uuid === uuid) {
-			arrStages.value.splice(index, 1);
-		}
-	});
+const deleteStageForm = async (id) => {
+	
+	// await destroyStage(id);
+	// await findData();
+
+	console.log("Delete Stage", id);
+
 }
 
 /**
@@ -1236,6 +1237,8 @@ const addTaskForm = async(stageNew, taskNew) => {
 	taskNew.stage_id = stageNew.id;
 	await storeTask(taskNew);
 	console.log({ ...task.value });
+
+	await findData();
 	
 	isCreateTrip.value = true;
 	isCreateTask.value = false;
@@ -1243,20 +1246,20 @@ const addTaskForm = async(stageNew, taskNew) => {
 
 const deleteTaskForm = (stageUuid, taskUuid) => {
 
-	arrStages.value.forEach((stage) => {
+	// arrStages.value.forEach((stage) => {
 
-		if (stage.uuid === stageUuid) {
+	// 	if (stage.uuid === stageUuid) {
 
-			stage.tasks.forEach((task, index) => {
+	// 		stage.tasks.forEach((task, index) => {
 
-				if (task.uuid === taskUuid) {
-					stage.tasks.splice(index, 1);
-				}
+	// 			if (task.uuid === taskUuid) {
+	// 				stage.tasks.splice(index, 1);
+	// 			}
 
-			});
-		}
+	// 		});
+	// 	}
 
-	});
+	// });
 
 }
 
@@ -1312,6 +1315,8 @@ const addActionTaskForm = (stage, task, data) => {
 			});
 		}
 	});
+
+	findData();
 
 	isCreateTrip.value = true;
 	isCreateActionTask.value = false;
@@ -1466,7 +1471,7 @@ const addActionStageForm = async(stageNew, actionStageNew) => {
 	}
 
 	
-	findData();
+	await findData();
 
 
 
