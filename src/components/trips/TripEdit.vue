@@ -714,7 +714,6 @@ import useStageTow from '@/composables/stage_tows.js';
 import StageCreate from '@/components/stages/StageEditByAdd.vue';
 import ActionStageCreate from '@/components/action_stages/ActionStageEditByAdd.vue';
 import TaskCreate from '@/components/tasks/TaskEditByAdd.vue';
-
 import ActionTaskCreate from '@/components/action_tasks/ActionTaskEditByAdd.vue';
 
 
@@ -1181,13 +1180,15 @@ const addStageForm = async (stageNew) => {
 	isCreateStage.value = false;
 }
 
+
 const deleteStageForm = async (id) => {
+
+	await destroyStage(id);
+	if(stageErrors.value.length > 0){
+		await Toast(t('message.error_deleting_record'), 'error');
+	}
+	await findData();
 	
-	// await destroyStage(id);
-	// await findData();
-
-	console.log("Delete Stage", id);
-
 }
 
 /**
