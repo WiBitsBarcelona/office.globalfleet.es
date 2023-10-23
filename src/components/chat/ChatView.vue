@@ -86,18 +86,22 @@
               <div v-if="conversation.lastMessage.data.customData">
                 <div v-for="itemGM in conversation.lastMessage.data.customData.groupText">
                   <div v-if="itemGM.Lang == myLang">
-                    {{ $h.cutText(itemGM.TextTranslate,30) }} </div>
+                    {{ $h.cutText(itemGM.TextTranslate,30) }} 
+                  </div>
                 </div>
               </div>
             </div>
             <div v-else>
               <div v-if="conversation.lastMessage.sender == userInfo.uid">
-                {{ $h.cutText(conversation.lastMessage.data.text,30) }} </div>
+                {{ $h.cutText(conversation.lastMessage.data.text,30) }} 
+              </div>
               <div v-else>
-                <div v-if="!conversation.lastMessage.data.customData">
-                  {{ $h.cutText(conversation.lastMessage.data.customData.textTranslate,30)}} </div>
+                <div v-if="conversation.lastMessage.data.customData">
+                  {{ $h.cutText(conversation.lastMessage.data.customData.translateText,30)}} 
+                </div>
                 <div v-else>
-                  {{ $h.cutText(conversation.lastMessage.data.text,30)}} </div>
+                  {{ $h.cutText(conversation.lastMessage.data.text,30)}} 
+                </div>
               </div>
             </div>
             </p>
