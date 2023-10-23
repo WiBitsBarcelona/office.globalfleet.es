@@ -286,7 +286,7 @@ const initTabulator = () => {
         responsive: 0,
         hozAlign: "center",
         headerSort: false,
-        tooltip: t("Tabulator.ToolTips.View"),
+        tooltip: t("tooltips.view"),
         cellClick: function (e, cell) {
           openFile(cell.getData().path);
         }
@@ -297,7 +297,7 @@ const initTabulator = () => {
         responsive: 0,
         hozAlign: "center",
         headerSort: false,
-        tooltip: t("Tabulator.ToolTips.Download"),
+        tooltip: t("tooltips.download"),
         cellClick: function (e, cell) {
           downloadFile(cell.getData().path, cell.getData().file_name);
         }
@@ -309,7 +309,7 @@ const initTabulator = () => {
         width: 50,
         hozAlign: "center",
         headerSort: false,
-        tooltip: t("Tabulator.ToolTips.Delete"),
+        tooltip: t("tooltips.delete"),
         cellClick: function (e, cell) {
           deleteDoc(cell.getData().id, cell.getData().file_name);
         }

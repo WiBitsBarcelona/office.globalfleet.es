@@ -156,35 +156,44 @@
 				},
 			},
 			{
-				title: t("actions"),
-				minWidth: 200,
-				field: "actions",
-				responsive: 1,
-				hozAlign: "center",
-				vertAlign: "middle",
-				download: false,
-				formatter(cell) {
-					const a = dom(`<div class="flex lg:justify-center items-center">
-						<button class="flex items-center mr-3" id="btn_edit">
-							<i data-lucide="check-square" class="w-4 h-4 mr-1"></i> ${t("edit")}
-						</button>
-						<button class="flex items-center text-danger" id="btn_delete">
-							<i data-lucide="trash-2" class="w-4 h-4 mr-1"></i> ${t("delete")}
-						</button>
-					</div>`);
-
-					dom(a).on("click", function (event) {
-
-						if(event.target.id === 'btn_edit'){
-							editVehicle(cell.getData().id);
-						}
-
-						if(event.target.id === 'btn_delete'){
-							deleteVehicle(cell.getData().id, cell.getData().plate); // TODO check name
-						}
-
-						});
-						return a[0];
+					title: "",
+					minWidth: 80,
+					width: 10,
+					field: "actions",
+					responsive: 0,
+					headerHozAlign: "center",
+					hozAlign: "center",
+					vertAlign: "middle",
+					headerSort: false,
+					tooltip: t("tooltips.edit"),
+					download: false,
+					formatter: (cell, formatterParams) => {
+						return `<i data-lucide="check-square" class="w-6 h-6 mr-1 text-primary"></i>`;
+					},
+					cellClick: (e, cell) => {
+						editVehicle(cell.getData().id);
+						e.preventDefault();
+					},
+				},
+				{
+					title: "",
+					minWidth: 80,
+					width: 10,
+					field: "actions",
+					responsive: 0,
+					headerHozAlign: "center",
+					hozAlign: "center",
+					vertAlign: "middle",
+					headerSort: false,
+					tooltip: t("tooltips.delete"),
+					download: false,
+					formatter: (cell, formatterParams) => {
+						return `<i data-lucide="trash-2" class="w-6 h-6 mr-1 text-danger"></i>`;
+					},
+					cellClick: (e, cell) => {
+						//deleteDriver(cell.getData().id, cell.getData().name);
+						deleteVehicle(cell.getData().id, cell.getData().plate);
+						e.preventDefault();
 					},
 				},
 			],
