@@ -1140,8 +1140,6 @@ const cancelStageForm = () => {
 
 const addStageForm = async (stageNew) => {
 
-	//arrStages.value.push(stage);
-
 	/**
 	 * Stage
 	 */
@@ -1220,16 +1218,7 @@ const cancelTaskForm = () => {
 
 
 const addTaskForm = async(stageNew, taskNew) => {
-	// arrStages.value.forEach(el => {
-	// 	if (el.uuid === stage.uuid) {
-	// 		if (el.tasks === undefined) {
-	// 			el.tasks = [];
-	// 			el.tasks.push(data);
-	// 		} else {
-	// 			el.tasks.push(data);
-	// 		}
-	// 	}
-	// });
+	
 
 	taskNew.stage_id = stageNew.id;
 	await storeTask(taskNew);
@@ -1242,7 +1231,18 @@ const addTaskForm = async(stageNew, taskNew) => {
 }
 
 const deleteTaskForm = async(taskId) => {
+
+	console.log("pasaaaaa", taskId);
+
 	await destroyTask(taskId);
+
+	//console.log({...taskErrors.value});
+
+	taskErrors.value.forEach((elem) => {
+		console.log(elem.e);
+	})
+
+
 	await findData();
 }
 
@@ -1282,6 +1282,51 @@ const addActionTaskForm = async (stage, taskNew, actionTaskNew) => {
 	console.log({ ...actionTask.value });
 
 
+	/**
+	 *  Action task cameras
+	 */
+	if (parseInt(actionTaskNew.action_type_model) === enumActionTask.CAMERA_ID) {
+
+		const actionTaskCameraObj = {
+			action_task_id: actionTask.value.id
+		}
+
+		await storeActionTaskCamera(actionTaskCameraObj);
+		console.log({ ...actionTaskCamera.value });
+
+	}
+
+
+	/**
+	* Action task scanners
+	*/
+	if (parseInt(actionTaskNew.action_type_model) === enumActionTask.SCANNER_ID) {
+
+		const actionTaskScannerObj = {
+			action_task_id: actionTask.value.id
+		}
+
+		await storeActionTaskScanner(actionTaskScannerObj);
+		console.log({ ...actionTaskScanner.value });
+
+	}
+
+
+	/**
+	* Action task forms
+	*/
+	if (parseInt(actionTaskNew.action_type_model) === enumActionTask.FORM_ID) {
+
+		const actionTaskFormObj = {
+			action_task_id: actionTask.value.id,
+			action_form_field_id: actionTaskNew.action_form_field_id,
+		}
+
+		await storeActionTaskForm(actionTaskFormObj);
+		console.log({ ...actionTaskForm.value });
+
+	}
+
 
 
 
@@ -1293,71 +1338,11 @@ const addActionTaskForm = async (stage, taskNew, actionTaskNew) => {
 }
 
 
-
-
-
-
-
-// const addActionTaskModel = (data) => {
-
-// 	if (parseInt(data.action_type_model) === enumActionTask.CAMERA_ID) {
-// 		let action = {};
-// 		action.uuid = uuidv4();
-// 		action.name = t("action_camera");
-
-// 		if (data.cameras === undefined) {
-// 			data.cameras = [];
-// 			data.cameras.push(action);
-// 		} else {
-// 			data.cameras.push(action);
-// 		}
-
-// 		return data;
-// 	}
-
-
-// 	if (parseInt(data.action_type_model) === enumActionTask.SCANNER_ID) {
-
-// 		let action = {};
-// 		action.uuid = uuidv4();
-// 		action.name = t("action_scanner");
-
-// 		if (data.scanners === undefined) {
-// 			data.scanners = [];
-// 			data.scanners.push(action);
-// 		} else {
-// 			data.scanners.push(action);
-// 		}
-
-
-// 		return data;
-// 	}
-
-// 	if (parseInt(data.action_type_model) === enumActionTask.FORM_ID) {
-
-// 		let action = {};
-// 		action.uuid = uuidv4();
-// 		action.name = t("action_form");
-// 		action.action_form_field_id = data.action_form_field_id;
-// 		action.action_form_field_name = data.action_form_field_name;
-
-// 		if (data.forms === undefined) {
-// 			data.forms = [];
-// 			data.forms.push(action);
-// 		} else {
-// 			data.forms.push(action);
-// 		}
-
-// 		return data;
-// 	}
-
-// 	return;
-
-// }
-
 /**
  * End Action Task
  */
+
+
 
 
 
@@ -1458,6 +1443,9 @@ const addActionStageForm = async(stageNew, actionStageNew) => {
 
 
 
+
+
+
 const arrStageItemDown = (id) => {
 	let findIndex = arrStages.value.findIndex(stage => stage.id === id);
 	let elementTemp = arrStages.value.splice(findIndex, 1)[0];
@@ -1494,18 +1482,23 @@ const findData = async() => {
 
 	arrStages.value = trip.value.stages;
 
-	console.log({...trip.value.stages});
+	//console.log({...trip.value.stages});
 
 	formData.trip_priority_id = trip.value.trip_priority_id.toString();
 	formData.driver_id = trip.value.driver_id.toString();
 	formData.vehicle_id = trip.value.vehicle_id.toString();
-	formData.tow_id = trip.value.tows[0].tow.id.toString();
+	
 	formData.reference_number = trip.value.reference_number;
 	formData.name = trip.value.name;
 	formData.execution_at = trip.value.execution_at;
 	formData.started_at = trip.value.started_at;
 	formData.finished_at = trip.value.finished_at;
 	formData.observations = trip.value.observations;
+
+
+	if(trip.value.tows.length > 0){
+		formData.tow_id = trip.value.tows[0].tow.id.toString();
+	}
 
 }
 
@@ -1538,9 +1531,6 @@ onMounted(async () => {
 
 
 }); 
-
-
-
 
 
 </script>
