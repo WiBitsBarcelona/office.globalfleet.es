@@ -438,7 +438,7 @@
         activity_type_id: "",
         activity_id: "",
         tow_id: "",
-        stage_tow_id: "",
+        stage_tow_id: null,
         stage_type_id: "",
         reference_number: "",
         name: "",

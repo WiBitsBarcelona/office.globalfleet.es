@@ -1051,16 +1051,23 @@ const updateStageForm = async(id, stageUpdate) => {
 
 
 	/**
-	 * Tow stage
-	 */
+	* Tow stage
+	*/
+
 	const towUpdate = {
 		stage_id: stage.value.id,
 		tow_id: stageUpdate.tow_id
 	}
 
+	if(stageUpdate.stage_tow_id){
+		await updateStageTow(stageUpdate.stage_tow_id, towUpdate);
+		console.log({ ...stageTow.value });
+	}else{
+		await storeStageTow(towUpdate);
+		console.log({ ...stageTow.value });
+	}
 
-	await updateStageTow(stageUpdate.stage_tow_id, towUpdate);
-	console.log({ ...stageTow.value });
+	
 
 
 	
