@@ -639,7 +639,12 @@
 	<!-- CREATE - ADD -->
 
 	<div class="intro-y box p-5 mt-5" v-if="isCreateStage">
-		<StageCreate @cancelStageForm="cancelStageForm" @addStageForm="addStageForm" :arrStages="arrStages" :trip_tow_selected="trip_tow_selected" />
+		<StageCreate 
+			@cancelStageForm="cancelStageForm" 
+			@addStageForm="addStageForm" 
+			:arrStages="arrStages" 
+			:trip_tow_selected="trip_tow_selected"
+		/>
 	</div>
 
 	<div class="intro-y box p-5 mt-5" v-if="isCreateActionStage">
@@ -657,7 +662,10 @@
 
 
 	<div class="intro-y box p-5 mt-5" v-if="isCreateActionTask">
-		<ActionTaskCreate :stageIndex="stageIndex" :taskIndex="taskIndex" @cancelActionTaskForm="cancelActionTaskForm"
+		<ActionTaskCreate 
+			:stageIndex="stageIndex" 
+			:taskIndex="taskIndex" 
+			@cancelActionTaskForm="cancelActionTaskForm"
 			@addActionTaskForm="addActionTaskForm" />
 	</div>
 
@@ -667,7 +675,11 @@
 	<!-- EDIT -->
 
 	<div class="intro-y box p-5 mt-5" v-if="isEditStage">
-		<StageEdit @cancelStageEditForm="cancelStageEditForm" @showStageEditForm="showStageEditForm"  />
+		<StageEdit 
+			@cancelStageEditForm="cancelStageEditForm" 
+			@updateStageForm="updateStageForm"
+			:stageId="stageId"
+		/>
 	</div>
 
 
@@ -751,7 +763,9 @@ const { tows, getTows } = useTow();
 
 
 const { trip, tripErrors, updateTrip, getTrip } = useTrips();
-const { stage, stageErrors, storeStage, destroyStage } = useStage();
+
+const { stage, stageErrors, storeStage, updateStage, destroyStage } = useStage();
+
 const { activity, activityErrors, storeActivity } = useActivity();
 const { task, taskErrors, storeTask, destroyTask } = useTask();
 const { actionTask, actionTaskErrors, storeActionTask } = useActionTask();
@@ -797,6 +811,8 @@ const isEditStage = ref(false);
 
 const stageIndex = ref();
 const taskIndex = ref();
+
+const stageId = ref();
 
 
 const trip_tow_selected = ref(); //trip_tow selected
@@ -1004,15 +1020,29 @@ const deleteStageForm = async (id) => {
 
 // Edit
 
-const showStageEditForm = () => {
+const showStageEditForm = (id) => {
 	isCreateTrip.value = false;
 	isEditStage.value = true;
+	stageId.value = id;
 }
 
 
 const cancelStageEditForm = () => {
 	isCreateTrip.value = true;
 	isEditStage.value = false;
+}
+
+const updateStageForm = async(id, data) => {
+
+	await updateStage(id, data);
+
+	await findData();
+
+	isCreateTrip.value = true;
+	isEditStage.value = false;
+
+	await Toast(t("message.record_updated"), 'success');
+
 }
 
 
@@ -1048,7 +1078,6 @@ const cancelTaskForm = () => {
 
 const addTaskForm = async(stageNew, taskNew) => {
 	
-
 	taskNew.stage_id = stageNew.id;
 	await storeTask(taskNew);
 	console.log({ ...task.value });
