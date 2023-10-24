@@ -126,8 +126,9 @@
                                                 !mensaje.data.metadata ? null : mensaje.data.metadata['confirmetAt'])">
 
                                             <div class="contMensajeEnviado">
-                                                <p class="txtMensajesEnviado" style="padding-right: 4px; white-space: pre-line;">
-                                                {{ mensaje.data.text }}</p>
+                                                <p class="txtMensajesEnviado"
+                                                    style="padding-right: 4px; white-space: pre-line;">
+                                                    {{ mensaje.data.text }}</p>
                                                 <p class="txtHoraEnviado">{{ convertStringToDate(mensaje.sentAt) }}</p>
 
                                                 <div style="display: flex; align-items: flex-end; text-align: right;">
@@ -194,10 +195,58 @@
                                                 </button>
                                             </div>
                                         </div>
-                                        <div style="display: flex; margin-top: 8px;">
-                                            <p class="txtMensajesRecibido" style="margin: 0px; white-space: pre-line;">{{ mensaje.data.text }}</p>
-                                            <p class="txtHoraRecibido" style="margin: 0px; margin-left: 5px;">{{
-                                                convertStringToDate(mensaje.sentAt) }}</p>
+                                        <!-- Cuando el mensaje tiene un texto traducido -->
+                                        <div v-if="mensaje.data.customData">
+                                            <div v-if="mensaje.data.customData.senderLang != myLang">
+
+                                                <!-- Si el chat es typo grupo -->
+                                                <div v-if="receiverType == 'group'">
+                                                    <div style="background: #E5E7EB; padding: 8px; border-radius: 2px 8px 8px 8px; 
+                                                        gap: 8px; max-width: 253px">
+                                                        <div v-for="itemGM in mensaje.data.customData.groupText">
+                                                            <div v-if="itemGM.Lang == myLang">
+                                                                <div style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; 
+                                                                align-items: end;">
+                                                                    <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">
+                                                                        {{ itemGM.TextTranslate }}</p>
+                                                                    <p class="txtHora">
+                                                                        {{ convertStringToDate(mensaje.sentAt) }}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div v-else>
+                                                    <div style="background: #E5E7EB; padding: 8px; border-radius: 2px 8px 8px 8px; 
+                                                        gap: 8px;max-width: 253px">
+
+                                                        <div>
+                                                            <p style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px; font-style: italic;">
+                                                                {{ mensaje.data.customData.titleText }}
+                                                            </p>
+                                                            <p style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px; white-space: pre-line;">
+                                                                {{ mensaje.data.text }}
+                                                            </p>
+                                                        </div>
+
+                                                        <div style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; align-items: end;">
+                                                            <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">
+                                                                {{ mensaje.data.customData.translateText }}
+                                                            </p>
+                                                            <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div v-else>
+                                                <div class="contMensajeRecibido">
+                                                    <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">
+                                                        {{ mensaje.data.text }}
+                                                    </p>
+                                                    <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -216,8 +265,9 @@
                                                         <div v-if="itemGM.Lang == myLang">
                                                             <div style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; 
                                                                 align-items: end;">
-                                                                <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">{{
-                                                                    itemGM.TextTranslate }}</p>
+                                                                <p class="txtMensajes"
+                                                                    style="padding-right: 4px; white-space: pre-line;">{{
+                                                                        itemGM.TextTranslate }}</p>
                                                                 <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}
                                                                 </p>
                                                             </div>
@@ -230,18 +280,21 @@
                                                     gap: 8px; margin-bottom: 8px;max-width: 253px">
 
                                                     <div>
-                                                        <p style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px">
+                                                        <p
+                                                            style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px; font-style: italic;">
                                                             {{ mensaje.data.customData.titleText }}
                                                         </p>
-                                                        <p style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px; white-space: pre-line;">
+                                                        <p
+                                                            style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px; white-space: pre-line;">
                                                             {{ mensaje.data.text }}
                                                         </p>
                                                     </div>
 
                                                     <div
                                                         style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; align-items: end;">
-                                                        <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">{{
-                                                            mensaje.data.customData.translateText }}</p>
+                                                        <p class="txtMensajes"
+                                                            style="padding-right: 4px; white-space: pre-line;">{{
+                                                                mensaje.data.customData.translateText }}</p>
                                                         <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
                                                     </div>
                                                 </div>
@@ -249,7 +302,8 @@
                                         </div>
                                         <div v-else>
                                             <div class="contMensajeRecibido">
-                                                <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">{{ mensaje.data.text }}
+                                                <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">{{
+                                                    mensaje.data.text }}
                                                 </p>
                                                 <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
                                             </div>
@@ -258,7 +312,8 @@
                                     <!-- cuando solo es texto normal sin traducir -->
                                     <div v-else>
                                         <div class="contMensajeRecibido">
-                                            <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">{{ mensaje.data.text }}</p>
+                                            <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">{{
+                                                mensaje.data.text }}</p>
                                             <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
                                         </div>
                                     </div>
@@ -466,7 +521,7 @@ export default defineComponent({
 </script>
 
 <script setup>
-import { ref, onMounted, defineProps, watch, onBeforeUnmount, defineEmits  } from 'vue';
+import { ref, onMounted, defineProps, watch, onBeforeUnmount, defineEmits } from 'vue';
 import { CometChat } from "@cometchat-pro/chat";
 import useChat from "@/composables/chat";
 import useDriverDocument from "@/composables/driver_documents";
@@ -475,7 +530,7 @@ import { useAuthenticationStore } from "@/stores/auth/authentications";
 import Swal from "sweetalert2";
 import { useI18n } from 'vue-i18n';
 
-const { cometData, getCometChatCredentials, loadChatMessages, markUserConversationAsRead, markGroupConversationAsRead, 
+const { cometData, getCometChatCredentials, loadChatMessages, markUserConversationAsRead, markGroupConversationAsRead,
     sendTextMessage, mark_user_conversation_as_delivered,
     mark_group_conversation_as_delivered, checkUnreadMessages, getConversationsList, getLangxuid, getGroupMembers } = useChat();
 const { storeDriverDocumentV2, downloadDriverDocument, driverDocumentData } = useDriverDocument();
@@ -706,17 +761,17 @@ const handleCheckboxChange = async () => {
 const handleKeyDown = async (event) => {
     if (event.key === 'Enter') {
         if (!event.shiftKey) {
-          event.preventDefault(); // Evita el salto de línea y envía el mensaje
-          if (message.value.trim() !== '') {
-            // Enviar el mensaje aquí
-            //console.log(message.value)
-            await sendMessage()
-          }
+            event.preventDefault(); // Evita el salto de línea y envía el mensaje
+            if (message.value.trim() !== '') {
+                // Enviar el mensaje aquí
+                //console.log(message.value)
+                await sendMessage()
+            }
         } else {
-          // Realiza un salto de línea en el textarea
-          message.value += '\n';
+            // Realiza un salto de línea en el textarea
+            message.value += '\n';
         }
-      }
+    }
 }
 
 // Funció per a enviar missatges
@@ -735,16 +790,16 @@ const sendMessage = async () => {
         let arrayMedia = { url: mediaPath.data.path, name: mediaAttachments.value.file_name, extension: mediaAttachments.value.type }
 
         if (receiverType.value == 'user') {
-            
+
             const chatUserLang = await getLangxuid(ChatId.value)
-            
+
             let textTranslateA = '';
             if (message.value == '') {
                 textTranslateA = await translateText('Documento Adjunto', chatUserLang, myLang)
             } else {
-                textTranslateA = await translateText( message.value, chatUserLang, myLang)
+                textTranslateA = await translateText(message.value, chatUserLang, myLang)
             }
-            
+
             const chatsLang = { sender: myLang, received: chatUserLang }
 
             await sendTextMessage(myUid.value, message.value == '' ? 'Documento Adjunto' : message.value, ChatId.value, receiverType.value, isChecked.value, arrayMedia, textTranslateA, chatsLang, '');
@@ -788,7 +843,7 @@ const sendMessage = async () => {
             } else {
 
                 const groupTextTranslate = [];
-                
+
                 for (let i = 0; i < membersLang.length; i++) {
                     let element = membersLang[i];
                     const translatedText = await translateText(message.value, element, myLang);
@@ -931,12 +986,12 @@ const onpresskey = async () => {
 
     if (mensajes.value.length > 0) {
         if (receiverType.value == 'group') {
-        await markGroupConversationAsRead(myUid.value, ChatId.value);
+            await markGroupConversationAsRead(myUid.value, ChatId.value);
         } else {
-        await markUserConversationAsRead(myUid.value, ChatId.value);
+            await markUserConversationAsRead(myUid.value, ChatId.value);
         }
     }
-    
+
     await checkUnreadMessages();
 
     if (ChatId.value != null) {
@@ -949,7 +1004,7 @@ const onpresskey = async () => {
             // emitimos un evento para ejecutar en la vista de lista de chats que se ha leido un mensaje
             emit('dataSend', { mensaje: 'true' })
             countUnreadMessage = 0
-            
+
             /*
             // Obtén todos los divs dentro del elemento seleccionado
             const divs = elementSeleccionat.getElementsByTagName('div');
