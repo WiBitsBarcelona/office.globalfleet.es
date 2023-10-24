@@ -765,8 +765,8 @@ const { tows, getTows } = useTow();
 const { trip, tripErrors, updateTrip, getTrip } = useTrips();
 
 const { stage, stageErrors, storeStage, updateStage, destroyStage } = useStage();
+const { activity, activityErrors, storeActivity, updateActivity } = useActivity();
 
-const { activity, activityErrors, storeActivity } = useActivity();
 const { task, taskErrors, storeTask, destroyTask } = useTask();
 const { actionTask, actionTaskErrors, storeActionTask } = useActionTask();
 const { actionTaskCamera, actionTaskCameraErrors, storeActionTaskCamera } = useActionTaskCamera();
@@ -780,7 +780,7 @@ const { actionStageScanner, actionStageScannerErrors, storeActionStageScanner } 
 const { actionStageForm, actionStageFormErrors, storeActionStageForm } = useActionStageForm();
 
 const { tripTow, errorTripTow, storeTripTow } = useTripTow();
-const { stageTow, errorStageTow, storeStageTow } = useStageTow();
+const { stageTow, errorStageTow, storeStageTow, updateStageTow } = useStageTow();
 
 
 
@@ -996,7 +996,7 @@ const addStageForm = async (stageNew) => {
 	console.log({ ...stageTow.value });
 
 
-	findData();
+	await findData();
 
 
 	//Load view
@@ -1032,9 +1032,38 @@ const cancelStageEditForm = () => {
 	isEditStage.value = false;
 }
 
-const updateStageForm = async(id, data) => {
+const updateStageForm = async(id, stageUpdate) => {
 
-	await updateStage(id, data);
+	await updateStage(id, stageUpdate);
+	console.log({ ...stage.value });
+
+
+	/**
+	* Activity
+	*/
+	const activityUpdate = {
+		stage_id: stage.value.id,
+		activity_type_id: stageUpdate.activity_type_id
+	}
+
+	await updateActivity(stageUpdate.activity_id, activityUpdate);
+	console.log({ ...activity.value });
+
+
+	/**
+	 * Tow stage
+	 */
+	const towUpdate = {
+		stage_id: stage.value.id,
+		tow_id: stageUpdate.tow_id
+	}
+
+
+	await updateStageTow(stageUpdate.stage_tow_id, towUpdate);
+	console.log({ ...stageTow.value });
+
+
+	
 
 	await findData();
 

@@ -436,11 +436,10 @@
 
     const formData = reactive({
         activity_type_id: "",
-        activity_type_name: "",
+        activity_id: "",
         tow_id: "",
-        tow_plate: "",
+        stage_tow_id: "",
         stage_type_id: "",
-        stage_type_name: "",
         reference_number: "",
         name: "",
         order_number: "",
@@ -463,7 +462,11 @@
 		if (validate.value.$invalid) {
 			//TODO
 		} else {
-			emit('updateStageForm', stage.value.id, formData);
+
+            formData.activity_id = stage.value.activity.id;
+            
+			
+            emit('updateStageForm', stage.value.id, formData);
 		}
 	};
 
@@ -487,16 +490,11 @@
 
 		await getStage(props.stageId);
 
-        console.log({...stage.value});
+        //console.log({...stage.value});
 
 
-
-
-
-		formData.trip_id = stage.value.trip_id;
-		formData.stage_status_id = stage.value.stage_status_id;
-		formData.stage_type_id = stage.value.stage_type_id;
-		formData.activity_type_id = stage.value.activity.type.id.toString();
+        formData.activity_type_id = stage.value.activity.type.id.toString();
+        formData.stage_type_id = stage.value.type.id.toString();
 		
 		formData.reference_number = stage.value.reference_number;
 		formData.name = stage.value.name;
@@ -511,15 +509,12 @@
 		formData.route_name = stage.value.route_name;
 		formData.description = stage.value.description;
 		formData.execution_at = stage.value.execution_at;
-		formData.started_at = stage.value.started_at;
-		formData.arrived_at = stage.value.arrived_at;
-		formData.departure_at = stage.value.departure_at;
-		formData.finished_at = stage.value.finished_at;
 
 
 
         if(stage.value.tows.length > 0){
             formData.tow_id = stage.value.tows[0].tow.id.toString();
+            formData.stage_tow_id = stage.value.tows[0].id;
         }
 
 
