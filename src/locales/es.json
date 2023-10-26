@@ -126,7 +126,8 @@
       "export_excel": "Archivo XLSX",
       "export_csv": "Archivo CSV",
       "no_matching_records_found": "No se encuentran registros",
-      "it_must_have_action_stage": "Debe de tener al menos una Acción y una etapa"
+      "it_must_have_action_stage": "Debe de tener al menos una Acción y una etapa",
+      "error_deleting_record":"Error al eliminar registro. Por favor contacte con el administrador del sistema"
   },
 
   "form": {

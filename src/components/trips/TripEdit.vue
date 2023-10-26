@@ -284,7 +284,7 @@
 												<PlusCircleIcon class="w-4 h-4" /> {{ $t("add_task") }}
 											</a>
 											
-											<a href="#" @click.prevent="editStageForm(stage.id)"
+											<a href="#" @click.prevent="showStageEditForm(stage.id)"
 												class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
 												<EditIcon class="w-4 h-4" />
 											</a>
@@ -636,6 +636,7 @@
 
 
 
+	<!-- CREATE - ADD -->
 
 	<div class="intro-y box p-5 mt-5" v-if="isCreateStage">
 		<StageCreate @cancelStageForm="cancelStageForm" @addStageForm="addStageForm" :arrStages="arrStages" :trip_tow_selected="trip_tow_selected" />
@@ -662,6 +663,12 @@
 
 
 	
+
+	<!-- EDIT -->
+
+	<div class="intro-y box p-5 mt-5" v-if="isEditStage">
+		<StageEdit @cancelStageEditForm="cancelStageEditForm" @showStageEditForm="showStageEditForm"  />
+	</div>
 
 
 
@@ -714,10 +721,10 @@ import useStageTow from '@/composables/stage_tows.js';
 import StageCreate from '@/components/stages/StageEditByAdd.vue';
 import ActionStageCreate from '@/components/action_stages/ActionStageEditByAdd.vue';
 import TaskCreate from '@/components/tasks/TaskEditByAdd.vue';
-
 import ActionTaskCreate from '@/components/action_tasks/ActionTaskEditByAdd.vue';
 
-
+// By Edit
+import StageEdit from '@/components/stages/StageEdit.vue';
 
 
 
@@ -776,11 +783,16 @@ const selectTows = ref([]);
 const arrStages = ref([]);
 
 
+//Create - Add
 const isCreateTrip = ref(true);
 const isCreateStage = ref(false);
 const isCreateTask = ref(false);
 const isCreateActionTask = ref(false);
 const isCreateActionStage = ref(false);
+
+
+//Edit
+const isEditStage = ref(false);
 
 
 const stageIndex = ref();
@@ -789,16 +801,6 @@ const taskIndex = ref();
 
 const trip_tow_selected = ref(); //trip_tow selected
 
-
-let activityObj;
-let towObj;
-let actionTaskCameraObj;
-let actionTaskScannerObj;
-let actionTaskFormObj;
-
-let actionStageCameraObj;
-let actionStageScannerObj;
-let actionStageFormObj;
 
 
 
@@ -907,203 +909,6 @@ const save = async () => {
 
 
 
-
-		/**
-		 * Stages
-		 */
-		for (const eleStage of arrStages.value) {
-			//arrStages.value.forEach(async (eleStage) => {
-
-			console.log(eleStage.name);
-			stage.value = [];
-			eleStage.trip_id = trip.value.id;
-			await storeStage(eleStage);
-			console.log({ ...stage.value });
-
-
-
-
-
-			/**
-			 * Stage Tow TODOO:.............
-			 */
-			if (eleStage.tow_id) {
-
-				towObj = {
-					stage_id: stage.value.id,
-					tow_id: eleStage.tow_id
-				}
-
-				await storeStageTow(towObj);
-				console.log({ ...stageTow.value });
-
-			}
-
-
-
-
-
-			/**
-			 * Activity
-			 */
-			if (eleStage.activity_type_id) {
-
-				activityObj = {
-					stage_id: stage.value.id,
-					activity_type_id: eleStage.activity_type_id
-				}
-
-				await storeActivity(activityObj);
-				console.log({ ...activity.value });
-
-			}
-
-
-
-
-			/**
-			* Action Stages
-			*/
-			if (eleStage.action_stages) {
-				for (const eleActionStage of eleStage.action_stages) {
-
-					eleActionStage.stage_id = stage.value.id;
-
-					await storeActionStage(eleActionStage);
-					console.log({ ...actionStage.value });
-
-
-					/**
-					 *  Action stage cameras
-					 */
-					if (eleActionStage.cameras) {
-
-						actionStageCameraObj = {
-							action_stage_id: actionStage.value.id
-						}
-
-						await storeActionStageCamera(actionStageCameraObj);
-						console.log({ ...actionStageCamera.value });
-
-					}
-
-
-					/**
-					 * Action stage scanners
-					 */
-					if (eleActionStage.scanners) {
-
-						actionStageScannerObj = {
-							action_stage_id: actionStage.value.id
-						}
-
-						await storeActionStageScanner(actionStageScannerObj);
-						console.log({ ...actionStageScanner.value });
-
-					}
-
-
-					/**
-					 * Action stage forms
-					 */
-					if (eleActionStage.forms) {
-
-						actionStageFormObj = {
-							action_stage_id: actionStage.value.id,
-							action_form_field_id: eleActionStage.action_form_field_id,
-						}
-
-						await storeActionStageForm(actionStageFormObj);
-						console.log({ ...actionStageForm.value });
-
-					}
-
-
-				};
-			}
-
-
-
-
-			/**
-			 * Tasks
-			 */
-			if (eleStage.tasks) {
-				for (const eleTask of eleStage.tasks) {
-
-					eleTask.stage_id = stage.value.id;
-
-					await storeTask(eleTask);
-					console.log({ ...task.value });
-
-
-
-					/**
-					 * Action Tasks
-					 */
-					if (eleTask.action_tasks) {
-						for (const eleActionTask of eleTask.action_tasks) {
-
-							eleActionTask.task_id = task.value.id;
-							await storeActionTask(eleActionTask);
-							console.log({ ...actionTask.value });
-
-
-							/**
-							 *  Action task cameras
-							 */
-							if (eleActionTask.cameras) {
-
-								actionTaskCameraObj = {
-									action_task_id: actionTask.value.id
-								}
-
-								await storeActionTaskCamera(actionTaskCameraObj);
-								console.log({ ...actionTaskCamera.value });
-
-							}
-
-
-							/**
-							 * Action task scanners
-							 */
-							if (eleActionTask.scanners) {
-
-								actionTaskScannerObj = {
-									action_task_id: actionTask.value.id
-								}
-
-								await storeActionTaskScanner(actionTaskScannerObj);
-								console.log({ ...actionTaskScanner.value });
-
-							}
-
-
-							/**
-							 * Action task forms
-							 */
-							if (eleActionTask.forms) {
-
-								actionTaskFormObj = {
-									action_task_id: actionTask.value.id,
-									action_form_field_id: eleActionTask.action_form_field_id,
-								}
-
-								await storeActionTaskForm(actionTaskFormObj);
-								console.log({ ...actionTaskForm.value });
-
-							}
-
-						};
-
-					}
-				};
-			}
-
-
-
-		};
-
 		loading.value = false;
 		await Toast(t("message.record_saved"), 'success');
 		setTimeout(() => location.reload(), 3000);
@@ -1122,9 +927,11 @@ const save = async () => {
 
 
 
-/**
+/******************
  * Stage
- */
+ *****************/
+
+ //Create - add
 const showStageForm = () => {
 	isCreateTrip.value = false;
 	isCreateStage.value = true;
@@ -1181,18 +988,40 @@ const addStageForm = async (stageNew) => {
 	isCreateStage.value = false;
 }
 
-const deleteStageForm = async (id) => {
-	
-	// await destroyStage(id);
-	// await findData();
 
-	console.log("Delete Stage", id);
+const deleteStageForm = async (id) => {
+
+	await destroyStage(id);
+	if(stageErrors.value.length > 0){
+		await Toast(t('message.error_deleting_record'), 'error');
+	}
+	await findData();
 
 }
 
-/**
+
+
+
+// Edit
+
+const showStageEditForm = () => {
+	isCreateTrip.value = false;
+	isEditStage.value = true;
+}
+
+
+const cancelStageEditForm = () => {
+	isCreateTrip.value = true;
+	isEditStage.value = false;
+}
+
+
+
+
+
+/******************
  * End Stage
- */
+ *****************/
 
 
 
@@ -1415,7 +1244,7 @@ const addActionStageForm = async(stageNew, actionStageNew) => {
 	 */
 	if (parseInt(actionStageNew.action_type_model) === enumActionTask.FORM_ID) {
 
-		actionStageFormObj = {
+		const actionStageFormObj = {
 			action_stage_id: actionStage.value.id,
 			action_form_field_id: actionStageNew.action_form_field_id,
 		}

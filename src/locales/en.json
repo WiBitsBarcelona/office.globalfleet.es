@@ -123,7 +123,9 @@
       "no_results_found": "No results were found",
       "export_excel": "XLSX file",
       "export_csv": "CSV file",
-      "no_matching_records_found": "No logs found"
+      "no_matching_records_found": "No logs found",
+      "it_must_have_action_stage": "It must have at least one Action and one stage",
+      "error_deleting_record":"Error deleting record. Please contact your system administrator"
   },
   "form": {
       "name": "Form",
