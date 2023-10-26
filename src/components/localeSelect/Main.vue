@@ -14,7 +14,7 @@
       </DropdownContent>
     </DropdownMenu>
   </Dropdown> -->
-  <div class="z-50 mr-2">
+  <div class="intro-x z-50 mr-2">
     <select class="uppercase bg-primary text-white rounded border-none form-select" v-model="$i18n.locale" id="locale" @change="changeLocale($i18n.locale)">
     <option v-for="locale in $i18n.availableLocales" :value="locale">{{ locale }}</option>
   </select>
