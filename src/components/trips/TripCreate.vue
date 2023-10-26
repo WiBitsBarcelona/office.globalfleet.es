@@ -379,9 +379,9 @@
                           <!-- Action Tasks -->
                           <div v-for="action_task in task.action_tasks" :key="action_task.id">
 
-                            <div class="grid grid-cols-6 gap-2">
+                            
 
-                              <div class="col-span-3">
+                              <div class="col-span-4">
                                 <h5 class="text-xs font-light text-gray-400">{{ $t("action") }}:</h5>
                                 <p class="text-xs font-normal leading-6 text-gray-500">
                                   {{ action_task.action_type_name }}
@@ -391,7 +391,7 @@
 
 
                               <!-- Action Cameras -->
-                              <div class="col-span-2" v-if="parseInt(action_task.action_type_model) === enumActionTask.CAMERA_ID">
+                              <div class="col-span-4" v-if="parseInt(action_task.action_type_model) === enumActionTask.CAMERA_ID">
                                 <div v-for="camera in action_task.cameras" :key="camera.id">
 
                                   <div >
@@ -408,7 +408,7 @@
 
 
                               <!-- Action Scanner -->
-                              <div class="col-span-3" v-if="parseInt(action_task.action_type_model) === enumActionTask.SCANNER_ID">
+                              <div class="col-span-4" v-if="parseInt(action_task.action_type_model) === enumActionTask.SCANNER_ID">
                                 <div v-for="scanner in action_task.scanners" :key="scanner.id">
 
 
@@ -427,13 +427,13 @@
 
 
                               <!-- Action Form -->
-                              <div class="col-span-3" v-if="parseInt(action_task.action_type_model) === enumActionTask.FORM_ID">
+                              <div class="col-span-4" v-if="parseInt(action_task.action_type_model) === enumActionTask.FORM_ID">
                                 <div v-for="form in action_task.forms" :key="form.id">
 
                                   <div class="grid grid-cols-6 gap-2">
 
                                     <div class="col-span-3">
-                                      <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
+                                      <h5 class="text-xs font-light text-gray-400">{{ $t("action") }}:</h5>
                                       <p class="text-xs font-normal leading-6 text-gray-500">
                                         {{ form.name }}
                                       </p>
@@ -453,7 +453,7 @@
 
 
                             </div>
-                          </div>
+                         
 
                         </div>
                         <!-- End Action Tasks -->

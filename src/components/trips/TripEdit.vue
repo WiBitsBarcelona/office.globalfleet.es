@@ -379,6 +379,10 @@
 																	<PlusCircleIcon class="w-4 h-4" /> {{
 																		t("add_action_task") }}
 																</a>
+																<a href="#" @click.prevent="showTaskEditForm(task.id)"
+																	class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
+																	<EditIcon class="w-4 h-4" />
+																</a>
 																<a href="#"
 																	@click.prevent="deleteTaskForm(task.id)"
 																	class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
@@ -395,9 +399,9 @@
 													<!-- Action Tasks -->
 													<div v-for="action_task in task.actions" :key="action_task.id">
 
-														<div class="grid grid-cols-6 gap-2">
+														
 
-															<div class="col-span-3">
+															<div class="col-span-4">
 																<h5 class="text-xs font-light text-gray-400">{{ $t("action")
 																}}:</h5>
 																<p class="text-xs font-normal leading-6 text-gray-500">
@@ -408,7 +412,7 @@
 
 
 															<!-- Action Cameras -->
-															<div class="col-span-2">
+															<div class="col-span-4">
 																<div v-for="camera in action_task.cameras" :key="camera.id">
 
 																	<div>
@@ -427,7 +431,7 @@
 
 
 															<!-- Action Scanner -->
-															<div class="col-span-3">
+															<div class="col-span-4">
 																<div v-for="scanner in action_task.scanners"
 																	:key="scanner.id">
 
@@ -449,14 +453,14 @@
 
 
 															<!-- Action Form -->
-															<div class="col-span-3">
+															<div class="col-span-4">
 																<div v-for="form in action_task.forms" :key="form.id">
 
 																	<div class="grid grid-cols-6 gap-2">
 
 																		<div class="col-span-3">
 																			<h5 class="text-xs font-light text-gray-400">{{
-																				$t("type") }}:</h5>
+																				$t("action") }}:</h5>
 																			<p
 																				class="text-xs font-normal leading-6 text-gray-500">
 																				{{ form.name }}
@@ -479,7 +483,7 @@
 
 
 														</div>
-													</div>
+													
 
 												</div>
 												<!-- End Action Tasks -->
@@ -683,6 +687,17 @@
 	</div>
 
 
+	
+
+	<div class="intro-y box p-5 mt-5" v-if="isEditTask">
+		<TaskEdit 
+			@cancelTaskEditForm="cancelTaskEditForm" 
+			@updateTaskForm="updateTaskForm"
+			:taskId="taskId"
+		/>
+	</div>
+
+
 
 	
 	
@@ -737,6 +752,7 @@ import ActionTaskCreate from '@/components/action_tasks/ActionTaskEditByAdd.vue'
 
 // By Edit
 import StageEdit from '@/components/stages/StageEdit.vue';
+import TaskEdit from '@/components/tasks/TaskEdit.vue';
 
 
 
@@ -767,7 +783,7 @@ const { trip, tripErrors, updateTrip, getTrip } = useTrips();
 const { stage, stageErrors, storeStage, updateStage, destroyStage } = useStage();
 const { activity, activityErrors, storeActivity, updateActivity } = useActivity();
 
-const { task, taskErrors, storeTask, destroyTask } = useTask();
+const { task, taskErrors, storeTask, updateTask, destroyTask } = useTask();
 const { actionTask, actionTaskErrors, storeActionTask } = useActionTask();
 const { actionTaskCamera, actionTaskCameraErrors, storeActionTaskCamera } = useActionTaskCamera();
 const { actionTaskScanner, actionTaskScannerErrors, storeActionTaskScanner } = useActionTaskScanner();
@@ -807,12 +823,14 @@ const isCreateActionStage = ref(false);
 
 //Edit
 const isEditStage = ref(false);
+const isEditTask = ref(false);
 
 
 const stageIndex = ref();
 const taskIndex = ref();
 
 const stageId = ref();
+const taskId = ref();
 
 
 const trip_tow_selected = ref(); //trip_tow selected
@@ -897,37 +915,40 @@ const save = async () => {
 
 		//Validacion sobre los stage
 
-
-		loading.value = true;
-
-		console.log("envia a guardar");
+		//loading.value = true;
 
 
 		/**
 		 * Trip
 		 */
-		await storeTrip(formData);
-		console.log({ ...trip.value });
-		console.log(tripErrors);
+		
+		await updateTrip(trip.value.id, formData);
 
 
+		//console.log({ ...trip.value });
+		
+		console.log({ ...tripErrors.value });
 
 
 		/**
 		 * Trip tows
 		 */
-		const dataTripTow = {
+		const dataTripTowUpdate = {
 			trip_id: trip.value.id,
 			tow_id: formData.tow_id
 		}
-		await storeTripTow(dataTripTow);
+		await updateTripTow(dataTripTowUpdate);
 		console.log({ ...tripTow });
 
 
 
-		loading.value = false;
+		//loading.value = false;
+
+
+		await findData();
+
 		await Toast(t("message.record_saved"), 'success');
-		setTimeout(() => location.reload(), 3000);
+		
 
 	}
 };
@@ -1067,17 +1088,15 @@ const updateStageForm = async(id, stageUpdate) => {
 		console.log({ ...stageTow.value });
 	}
 
-	
-
-
-	
 
 	await findData();
 
 	isCreateTrip.value = true;
 	isEditStage.value = false;
 
-	await Toast(t("message.record_updated"), 'success');
+
+	//TODO implement
+//	await Toast(t("message.record_updated"), 'success');
 
 }
 
@@ -1095,9 +1114,11 @@ const updateStageForm = async(id, stageUpdate) => {
 
 
 
-/**
+/******************
  * Task
- */
+ *****************/
+
+// Create - Add
 
 const showTaskForm = (stage) => {
 	isCreateTrip.value = false;
@@ -1139,6 +1160,44 @@ const deleteTaskForm = async(taskId) => {
 
 	await findData();
 }
+
+
+//Edit 
+
+
+const showTaskEditForm = (id) => {
+	isCreateTrip.value = false;
+	isEditTask.value = true;
+	taskId.value = id;
+}
+
+
+
+const cancelTaskEditForm = () => {
+	isCreateTrip.value = true;
+	isEditTask.value = false;
+}
+
+
+const updateTaskForm = async(taskId, taskUpdate) => {
+
+	await updateTask(taskId, taskUpdate);
+	console.log({ ...task.value });
+
+	await findData();
+
+	isCreateTrip.value = true;
+	isEditTask.value = false;
+
+
+}
+
+
+
+
+
+
+
 
 /**
  * End Task
