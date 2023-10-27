@@ -1461,7 +1461,8 @@ const findData = async() => {
 
 	arrStages.value = trip.value.stages;
 
-	console.log({...trip.value.stages});
+	//console.log({...trip.value.stages});
+	console.log("Cantidad de stages: " , trip.value.stages.length);
 
 	formData.trip_priority_id = trip.value.trip_priority_id.toString();
 	formData.driver_id = trip.value.driver_id.toString();
