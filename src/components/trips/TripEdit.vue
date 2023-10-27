@@ -263,12 +263,12 @@
 
 										<p class="text-md font-normal leading-6 text-gray-500">
 											<span class="text-xs font-light text-gray-400">{{ $t("stage") }}
-											</span> {{ stage.name }}
+											</span> {{ stage.name }}  ({{ stage.order_number }})
 										</p>
 
 										<div class="text-right">
 
-											<a href="#" @click.prevent="arrStageItemUp(stage.id)"
+											<!-- <a href="#" @click.prevent="arrStageItemUp(stage.id)"
 												class="btn btn-outline-primary w-1/2 sm:w-auto mr-2"
 												v-if="arrStages.length > 1 && index != 0">
 												<ArrowUpIcon class="w-4 h-4" />
@@ -277,7 +277,7 @@
 												class="btn btn-outline-primary w-1/2 sm:w-auto mr-2"
 												v-if="arrStages.length > 1 && index != (arrStages.length - 1)">
 												<ArrowDownIcon class="w-4 h-4" />
-											</a>
+											</a> -->
 
 											<a href="#" @click.prevent="showTaskForm(stage)"
 												class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
@@ -379,6 +379,10 @@
 																	<PlusCircleIcon class="w-4 h-4" /> {{
 																		t("add_action_task") }}
 																</a>
+																<a href="#" @click.prevent="showTaskEditForm(task.id)"
+																	class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
+																	<EditIcon class="w-4 h-4" />
+																</a>
 																<a href="#"
 																	@click.prevent="deleteTaskForm(task.id)"
 																	class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
@@ -395,9 +399,9 @@
 													<!-- Action Tasks -->
 													<div v-for="action_task in task.actions" :key="action_task.id">
 
-														<div class="grid grid-cols-6 gap-2">
+														
 
-															<div class="col-span-3">
+															<div class="col-span-4">
 																<h5 class="text-xs font-light text-gray-400">{{ $t("action")
 																}}:</h5>
 																<p class="text-xs font-normal leading-6 text-gray-500">
@@ -408,7 +412,7 @@
 
 
 															<!-- Action Cameras -->
-															<div class="col-span-2">
+															<div class="col-span-4">
 																<div v-for="camera in action_task.cameras" :key="camera.id">
 
 																	<div>
@@ -427,7 +431,7 @@
 
 
 															<!-- Action Scanner -->
-															<div class="col-span-3">
+															<div class="col-span-4">
 																<div v-for="scanner in action_task.scanners"
 																	:key="scanner.id">
 
@@ -449,14 +453,14 @@
 
 
 															<!-- Action Form -->
-															<div class="col-span-3">
+															<div class="col-span-4">
 																<div v-for="form in action_task.forms" :key="form.id">
 
 																	<div class="grid grid-cols-6 gap-2">
 
 																		<div class="col-span-3">
 																			<h5 class="text-xs font-light text-gray-400">{{
-																				$t("type") }}:</h5>
+																				$t("action") }}:</h5>
 																			<p
 																				class="text-xs font-normal leading-6 text-gray-500">
 																				{{ form.name }}
@@ -479,7 +483,7 @@
 
 
 														</div>
-													</div>
+													
 
 												</div>
 												<!-- End Action Tasks -->
@@ -524,12 +528,12 @@
 
 											<p class="text-md font-normal leading-6 text-gray-500">
 												<span class="text-xs font-light text-gray-400">{{ $t("action") }}
-												</span> {{ stage.name }}
+												</span> {{ stage.name }} ({{ stage.order_number }})
 											</p>
 
 											<div class="text-right">
 
-												<a href="#" @click.prevent="arrStageItemUp(stage.id)"
+												<!-- <a href="#" @click.prevent="arrStageItemUp(stage.id)"
 													class="btn btn-outline-primary w-1/2 sm:w-auto mr-2"
 													v-if="arrStages.length > 1 && index != 0">
 													<ArrowUpIcon class="w-4 h-4" />
@@ -538,7 +542,7 @@
 													class="btn btn-outline-primary w-1/2 sm:w-auto mr-2"
 													v-if="arrStages.length > 1 && index != (arrStages.length - 1)">
 													<ArrowDownIcon class="w-4 h-4" />
-												</a>
+												</a> -->
 
 												<a href="#" @click.prevent="deleteStageForm(stage.id)"
 													class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
@@ -639,7 +643,12 @@
 	<!-- CREATE - ADD -->
 
 	<div class="intro-y box p-5 mt-5" v-if="isCreateStage">
-		<StageCreate @cancelStageForm="cancelStageForm" @addStageForm="addStageForm" :arrStages="arrStages" :trip_tow_selected="trip_tow_selected" />
+		<StageCreate 
+			@cancelStageForm="cancelStageForm" 
+			@addStageForm="addStageForm" 
+			:arrStages="arrStages" 
+			:trip_tow_selected="trip_tow_selected"
+		/>
 	</div>
 
 	<div class="intro-y box p-5 mt-5" v-if="isCreateActionStage">
@@ -657,7 +666,10 @@
 
 
 	<div class="intro-y box p-5 mt-5" v-if="isCreateActionTask">
-		<ActionTaskCreate :stageIndex="stageIndex" :taskIndex="taskIndex" @cancelActionTaskForm="cancelActionTaskForm"
+		<ActionTaskCreate 
+			:stageIndex="stageIndex" 
+			:taskIndex="taskIndex" 
+			@cancelActionTaskForm="cancelActionTaskForm"
 			@addActionTaskForm="addActionTaskForm" />
 	</div>
 
@@ -667,7 +679,22 @@
 	<!-- EDIT -->
 
 	<div class="intro-y box p-5 mt-5" v-if="isEditStage">
-		<StageEdit @cancelStageEditForm="cancelStageEditForm" @showStageEditForm="showStageEditForm"  />
+		<StageEdit 
+			@cancelStageEditForm="cancelStageEditForm" 
+			@updateStageForm="updateStageForm"
+			:stageId="stageId"
+		/>
+	</div>
+
+
+	
+
+	<div class="intro-y box p-5 mt-5" v-if="isEditTask">
+		<TaskEdit 
+			@cancelTaskEditForm="cancelTaskEditForm" 
+			@updateTaskForm="updateTaskForm"
+			:taskId="taskId"
+		/>
 	</div>
 
 
@@ -725,6 +752,7 @@ import ActionTaskCreate from '@/components/action_tasks/ActionTaskEditByAdd.vue'
 
 // By Edit
 import StageEdit from '@/components/stages/StageEdit.vue';
+import TaskEdit from '@/components/tasks/TaskEdit.vue';
 
 
 
@@ -751,9 +779,11 @@ const { tows, getTows } = useTow();
 
 
 const { trip, tripErrors, updateTrip, getTrip } = useTrips();
-const { stage, stageErrors, storeStage, destroyStage } = useStage();
-const { activity, activityErrors, storeActivity } = useActivity();
-const { task, taskErrors, storeTask, destroyTask } = useTask();
+
+const { stage, stageErrors, storeStage, updateStage, destroyStage } = useStage();
+const { activity, activityErrors, storeActivity, updateActivity } = useActivity();
+
+const { task, taskErrors, storeTask, updateTask, destroyTask } = useTask();
 const { actionTask, actionTaskErrors, storeActionTask } = useActionTask();
 const { actionTaskCamera, actionTaskCameraErrors, storeActionTaskCamera } = useActionTaskCamera();
 const { actionTaskScanner, actionTaskScannerErrors, storeActionTaskScanner } = useActionTaskScanner();
@@ -766,7 +796,7 @@ const { actionStageScanner, actionStageScannerErrors, storeActionStageScanner } 
 const { actionStageForm, actionStageFormErrors, storeActionStageForm } = useActionStageForm();
 
 const { tripTow, errorTripTow, storeTripTow } = useTripTow();
-const { stageTow, errorStageTow, storeStageTow } = useStageTow();
+const { stageTow, errorStageTow, storeStageTow, updateStageTow } = useStageTow();
 
 
 
@@ -793,10 +823,14 @@ const isCreateActionStage = ref(false);
 
 //Edit
 const isEditStage = ref(false);
+const isEditTask = ref(false);
 
 
 const stageIndex = ref();
 const taskIndex = ref();
+
+const stageId = ref();
+const taskId = ref();
 
 
 const trip_tow_selected = ref(); //trip_tow selected
@@ -881,37 +915,40 @@ const save = async () => {
 
 		//Validacion sobre los stage
 
-
-		loading.value = true;
-
-		console.log("envia a guardar");
+		//loading.value = true;
 
 
 		/**
 		 * Trip
 		 */
-		await storeTrip(formData);
-		console.log({ ...trip.value });
-		console.log(tripErrors);
+		
+		await updateTrip(trip.value.id, formData);
 
 
+		//console.log({ ...trip.value });
+		
+		console.log({ ...tripErrors.value });
 
 
 		/**
 		 * Trip tows
 		 */
-		const dataTripTow = {
+		const dataTripTowUpdate = {
 			trip_id: trip.value.id,
 			tow_id: formData.tow_id
 		}
-		await storeTripTow(dataTripTow);
+		await updateTripTow(dataTripTowUpdate);
 		console.log({ ...tripTow });
 
 
 
-		loading.value = false;
+		//loading.value = false;
+
+
+		await findData();
+
 		await Toast(t("message.record_saved"), 'success');
-		setTimeout(() => location.reload(), 3000);
+		
 
 	}
 };
@@ -980,7 +1017,7 @@ const addStageForm = async (stageNew) => {
 	console.log({ ...stageTow.value });
 
 
-	findData();
+	await findData();
 
 
 	//Load view
@@ -991,11 +1028,37 @@ const addStageForm = async (stageNew) => {
 
 const deleteStageForm = async (id) => {
 
-	await destroyStage(id);
-	if(stageErrors.value.length > 0){
-		await Toast(t('message.error_deleting_record'), 'error');
-	}
-	await findData();
+
+	Swal.fire({
+			icon: 'warning',
+			title: t("message.record_will_be_deleted"),
+			showCancelButton: true,
+			confirmButtonText: t("message.yes"),
+			cancelButtonText: t("message.no"),
+			confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
+		}).then(async(result) => {
+			if (result.isConfirmed) {
+
+				await destroyStage(id);
+				
+				if(stageErrors.value.length > 0){
+					console.log({...stageErrors.value});
+					await Toast(t('message.error_deleting_record'), 'error');
+					return;
+				}
+
+				await findData();
+
+				await Toast(t('message.record_deleted'), 'success');
+
+			}
+
+		});
+
+
+
+
+	
 
 }
 
@@ -1004,15 +1067,63 @@ const deleteStageForm = async (id) => {
 
 // Edit
 
-const showStageEditForm = () => {
+const showStageEditForm = (id) => {
 	isCreateTrip.value = false;
 	isEditStage.value = true;
+	stageId.value = id;
 }
 
 
 const cancelStageEditForm = () => {
 	isCreateTrip.value = true;
 	isEditStage.value = false;
+}
+
+const updateStageForm = async(id, stageUpdate) => {
+
+	await updateStage(id, stageUpdate);
+	console.log({ ...stage.value });
+
+
+	/**
+	* Activity
+	*/
+	const activityUpdate = {
+		stage_id: stage.value.id,
+		activity_type_id: stageUpdate.activity_type_id
+	}
+
+	await updateActivity(stageUpdate.activity_id, activityUpdate);
+	console.log({ ...activity.value });
+
+
+	/**
+	* Tow stage
+	*/
+
+	const towUpdate = {
+		stage_id: stage.value.id,
+		tow_id: stageUpdate.tow_id
+	}
+
+	if(stageUpdate.stage_tow_id){
+		await updateStageTow(stageUpdate.stage_tow_id, towUpdate);
+		console.log({ ...stageTow.value });
+	}else{
+		await storeStageTow(towUpdate);
+		console.log({ ...stageTow.value });
+	}
+
+
+	await findData();
+
+	isCreateTrip.value = true;
+	isEditStage.value = false;
+
+
+	//TODO implement
+//	await Toast(t("message.record_updated"), 'success');
+
 }
 
 
@@ -1029,9 +1140,11 @@ const cancelStageEditForm = () => {
 
 
 
-/**
+/******************
  * Task
- */
+ *****************/
+
+// Create - Add
 
 const showTaskForm = (stage) => {
 	isCreateTrip.value = false;
@@ -1048,7 +1161,6 @@ const cancelTaskForm = () => {
 
 const addTaskForm = async(stageNew, taskNew) => {
 	
-
 	taskNew.stage_id = stageNew.id;
 	await storeTask(taskNew);
 	console.log({ ...task.value });
@@ -1074,6 +1186,44 @@ const deleteTaskForm = async(taskId) => {
 
 	await findData();
 }
+
+
+//Edit 
+
+
+const showTaskEditForm = (id) => {
+	isCreateTrip.value = false;
+	isEditTask.value = true;
+	taskId.value = id;
+}
+
+
+
+const cancelTaskEditForm = () => {
+	isCreateTrip.value = true;
+	isEditTask.value = false;
+}
+
+
+const updateTaskForm = async(taskId, taskUpdate) => {
+
+	await updateTask(taskId, taskUpdate);
+	console.log({ ...task.value });
+
+	await findData();
+
+	isCreateTrip.value = true;
+	isEditTask.value = false;
+
+
+}
+
+
+
+
+
+
+
 
 /**
  * End Task
@@ -1312,6 +1462,7 @@ const findData = async() => {
 	arrStages.value = trip.value.stages;
 
 	//console.log({...trip.value.stages});
+	console.log("Cantidad de stages: " , trip.value.stages.length);
 
 	formData.trip_priority_id = trip.value.trip_priority_id.toString();
 	formData.driver_id = trip.value.driver_id.toString();
