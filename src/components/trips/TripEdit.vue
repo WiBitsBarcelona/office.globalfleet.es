@@ -544,6 +544,11 @@
 													<ArrowDownIcon class="w-4 h-4" />
 												</a> -->
 
+												<a href="#" @click.prevent="showActionStageEditForm(stage.id)"
+													class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
+													<EditIcon class="w-4 h-4" />
+												</a>
+
 												<a href="#" @click.prevent="deleteStageForm(stage.id)"
 													class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
 													<TrashIcon class="w-4 h-4" />
@@ -689,6 +694,18 @@
 
 	
 
+
+	<div class="intro-y box p-5 mt-5" v-if="isEditActionStage">
+		<ActionStageEdit @cancelActionStageEditForm="cancelActionStageEditForm" @addActionStageEditForm="addActionStageEditForm"
+			:arrStages="arrStages" />
+	</div>
+
+
+	
+
+
+	
+
 	<div class="intro-y box p-5 mt-5" v-if="isEditTask">
 		<TaskEdit 
 			@cancelTaskEditForm="cancelTaskEditForm" 
@@ -752,6 +769,7 @@ import ActionTaskCreate from '@/components/action_tasks/ActionTaskEditByAdd.vue'
 
 // By Edit
 import StageEdit from '@/components/stages/StageEdit.vue';
+import ActionStageEdit from '@/components/action_stages/ActionStageEdit.vue';
 import TaskEdit from '@/components/tasks/TaskEdit.vue';
 
 
@@ -823,7 +841,11 @@ const isCreateActionStage = ref(false);
 
 //Edit
 const isEditStage = ref(false);
+const isEditActionStage = ref(false);
+
 const isEditTask = ref(false);
+
+
 
 
 const stageIndex = ref();
@@ -1055,13 +1077,7 @@ const deleteStageForm = async (id) => {
 
 		});
 
-
-
-
-	
-
 }
-
 
 
 
@@ -1218,16 +1234,13 @@ const updateTaskForm = async(taskId, taskUpdate) => {
 
 }
 
-
-
-
-
-
-
-
-/**
+/******************
  * End Task
- */
+ *****************/
+
+
+
+
 
 
 
@@ -1326,16 +1339,19 @@ const addActionTaskForm = async (stage, taskNew, actionTaskNew) => {
 
 
 
-/**
+
+
+
+
+
+ /******************
  * Action Stage
- */
+ *****************/
 
+ // Store
 const showActionStageForm = () => {
-
 	isCreateTrip.value = false;
 	isCreateActionStage.value = true;
-	//console.log({ ...arrStages.value });
-
 }
 
 const cancelActionStageForm = () => {
@@ -1414,9 +1430,30 @@ const addActionStageForm = async(stageNew, actionStageNew) => {
 
 }
 
-/**
+
+
+//Edit
+
+
+const showActionStageEditForm = () => {
+	isCreateTrip.value = false;
+	isEditActionStage.value = true;
+}
+
+
+const cancelActionStageEditForm = () => {
+	isCreateTrip.value = true;
+	isEditActionStage.value = false;
+}
+
+const addActionStageEditForm = () => {
+
+}
+
+
+/******************
 * End Action Stage
-*/
+*****************/
 
 
 
@@ -1425,28 +1462,31 @@ const addActionStageForm = async(stageNew, actionStageNew) => {
 
 
 
-const arrStageItemDown = (id) => {
-	let findIndex = arrStages.value.findIndex(stage => stage.id === id);
-	let elementTemp = arrStages.value.splice(findIndex, 1)[0];
-	arrStages.value.splice((findIndex + 1), 0, elementTemp);
-	fixNumberOrder();
-}
-
-
-const arrStageItemUp = (id) => {
-	let findIndex = arrStages.value.findIndex(stage => stage.id === id);
-	let elementTemp = arrStages.value.splice(findIndex, 1)[0];
-	arrStages.value.splice((findIndex - 1), 0, elementTemp);
-	fixNumberOrder();
-}
 
 
 
-const fixNumberOrder = () => {
-	arrStages.value.forEach((stage, index) => {
-		stage.order_number = (index + 1);
-	});
-}
+// const arrStageItemDown = (id) => {
+// 	let findIndex = arrStages.value.findIndex(stage => stage.id === id);
+// 	let elementTemp = arrStages.value.splice(findIndex, 1)[0];
+// 	arrStages.value.splice((findIndex + 1), 0, elementTemp);
+// 	fixNumberOrder();
+// }
+
+
+// const arrStageItemUp = (id) => {
+// 	let findIndex = arrStages.value.findIndex(stage => stage.id === id);
+// 	let elementTemp = arrStages.value.splice(findIndex, 1)[0];
+// 	arrStages.value.splice((findIndex - 1), 0, elementTemp);
+// 	fixNumberOrder();
+// }
+
+
+
+// const fixNumberOrder = () => {
+// 	arrStages.value.forEach((stage, index) => {
+// 		stage.order_number = (index + 1);
+// 	});
+// }
 
 
 
