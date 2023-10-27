@@ -304,6 +304,7 @@ const save = () => {
 		}
 
 		stageFake.name = selectedAction.name;
+		stageFake.order_number = formData.order_number; 
 
 		emit('addActionStageForm', stageFake, { ...formData });
 	}

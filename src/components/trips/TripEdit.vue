@@ -263,12 +263,12 @@
 
 										<p class="text-md font-normal leading-6 text-gray-500">
 											<span class="text-xs font-light text-gray-400">{{ $t("stage") }}
-											</span> {{ stage.name }}
+											</span> {{ stage.name }}  ({{ stage.order_number }})
 										</p>
 
 										<div class="text-right">
 
-											<a href="#" @click.prevent="arrStageItemUp(stage.id)"
+											<!-- <a href="#" @click.prevent="arrStageItemUp(stage.id)"
 												class="btn btn-outline-primary w-1/2 sm:w-auto mr-2"
 												v-if="arrStages.length > 1 && index != 0">
 												<ArrowUpIcon class="w-4 h-4" />
@@ -277,7 +277,7 @@
 												class="btn btn-outline-primary w-1/2 sm:w-auto mr-2"
 												v-if="arrStages.length > 1 && index != (arrStages.length - 1)">
 												<ArrowDownIcon class="w-4 h-4" />
-											</a>
+											</a> -->
 
 											<a href="#" @click.prevent="showTaskForm(stage)"
 												class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
@@ -528,12 +528,12 @@
 
 											<p class="text-md font-normal leading-6 text-gray-500">
 												<span class="text-xs font-light text-gray-400">{{ $t("action") }}
-												</span> {{ stage.name }}
+												</span> {{ stage.name }} ({{ stage.order_number }})
 											</p>
 
 											<div class="text-right">
 
-												<a href="#" @click.prevent="arrStageItemUp(stage.id)"
+												<!-- <a href="#" @click.prevent="arrStageItemUp(stage.id)"
 													class="btn btn-outline-primary w-1/2 sm:w-auto mr-2"
 													v-if="arrStages.length > 1 && index != 0">
 													<ArrowUpIcon class="w-4 h-4" />
@@ -542,7 +542,7 @@
 													class="btn btn-outline-primary w-1/2 sm:w-auto mr-2"
 													v-if="arrStages.length > 1 && index != (arrStages.length - 1)">
 													<ArrowDownIcon class="w-4 h-4" />
-												</a>
+												</a> -->
 
 												<a href="#" @click.prevent="deleteStageForm(stage.id)"
 													class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
@@ -1028,11 +1028,37 @@ const addStageForm = async (stageNew) => {
 
 const deleteStageForm = async (id) => {
 
-	await destroyStage(id);
-	if(stageErrors.value.length > 0){
-		await Toast(t('message.error_deleting_record'), 'error');
-	}
-	await findData();
+
+	Swal.fire({
+			icon: 'warning',
+			title: t("message.record_will_be_deleted"),
+			showCancelButton: true,
+			confirmButtonText: t("message.yes"),
+			cancelButtonText: t("message.no"),
+			confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
+		}).then(async(result) => {
+			if (result.isConfirmed) {
+
+				await destroyStage(id);
+				
+				if(stageErrors.value.length > 0){
+					console.log({...stageErrors.value});
+					await Toast(t('message.error_deleting_record'), 'error');
+					return;
+				}
+
+				await findData();
+
+				await Toast(t('message.record_deleted'), 'success');
+
+			}
+
+		});
+
+
+
+
+	
 
 }
 
@@ -1435,7 +1461,7 @@ const findData = async() => {
 
 	arrStages.value = trip.value.stages;
 
-	//console.log({...trip.value.stages});
+	console.log({...trip.value.stages});
 
 	formData.trip_priority_id = trip.value.trip_priority_id.toString();
 	formData.driver_id = trip.value.driver_id.toString();
