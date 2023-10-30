@@ -544,7 +544,7 @@
 													<ArrowDownIcon class="w-4 h-4" />
 												</a> -->
 
-												<a href="#" @click.prevent="showActionStageEditForm(stage.id)"
+												<a href="#" @click.prevent="showActionStageEditForm(stage.id, action_stage.id)"
 													class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
 													<EditIcon class="w-4 h-4" />
 												</a>
@@ -692,19 +692,15 @@
 	</div>
 
 
-	
-
-
 	<div class="intro-y box p-5 mt-5" v-if="isEditActionStage">
-		<ActionStageEdit @cancelActionStageEditForm="cancelActionStageEditForm" @addActionStageEditForm="addActionStageEditForm"
-			:arrStages="arrStages" />
+		<ActionStageEdit 
+			@cancelActionStageEditForm="cancelActionStageEditForm" 
+			@updateActionStageForm="updateActionStageForm"
+			:actionStageId="actionStageId" 
+		/>
 	</div>
 
 
-	
-
-
-	
 
 	<div class="intro-y box p-5 mt-5" v-if="isEditTask">
 		<TaskEdit 
@@ -852,6 +848,7 @@ const stageIndex = ref();
 const taskIndex = ref();
 
 const stageId = ref();
+const actionStageId = ref(0);
 const taskId = ref();
 
 
@@ -1434,10 +1431,10 @@ const addActionStageForm = async(stageNew, actionStageNew) => {
 
 //Edit
 
-
-const showActionStageEditForm = () => {
+const showActionStageEditForm = (stageEditId, actionStageEditId) => {
 	isCreateTrip.value = false;
 	isEditActionStage.value = true;
+	actionStageId.value = actionStageEditId;
 }
 
 
@@ -1446,7 +1443,10 @@ const cancelActionStageEditForm = () => {
 	isEditActionStage.value = false;
 }
 
-const addActionStageEditForm = () => {
+const updateActionStageForm = (stageFake, actionStageUpdate) => {
+
+	//TODO update stage
+	// update action stage
 
 }
 
@@ -1502,7 +1502,7 @@ const findData = async() => {
 	arrStages.value = trip.value.stages;
 
 	//console.log({...trip.value.stages});
-	console.log("Cantidad de stages: " , trip.value.stages.length);
+	//console.log("Cantidad de stages: " , trip.value.stages.length);
 
 	formData.trip_priority_id = trip.value.trip_priority_id.toString();
 	formData.driver_id = trip.value.driver_id.toString();
