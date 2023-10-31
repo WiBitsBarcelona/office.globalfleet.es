@@ -341,7 +341,6 @@ onMounted(async () => {
 
 	// Cargar con:   actionStageId
 
-
 	console.log(props.actionStageId);
 
 	await getActionStage(props.actionStageId);
