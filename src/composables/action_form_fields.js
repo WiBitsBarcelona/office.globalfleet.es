@@ -1,5 +1,4 @@
 import { ref } from 'vue';
-import axios from 'axios';
 import { useI18n } from 'vue-i18n';
 
 
@@ -7,8 +6,9 @@ export default function useActionFormField() {
 
 	const actionFormField = ref([]);
 	const actionFormFields = ref([]);
-	const errors = ref([]);
+	const actionFormFieldErrors = ref([]);
 	const { t } = useI18n();
+
 	let config = {
 		headers: {
 			"Content-Type": "application/json",
@@ -17,104 +17,109 @@ export default function useActionFormField() {
 	}
 
 	const getActionFormFields = async () => {
-		errors.value = [];
-		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-form-fields/list`, config);
-			actionFormFields.value = response.data.data;
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				errors.value.push(t("errors.error_internal"));
+		actionFormFieldErrors.value = [];
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-form-fields/list`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionFormFieldErrors.value = res.errors;
+			}else{
+				actionFormFields.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-			     for (const key in e.response.data.errors) {
-			         errors.value = key
-			     }
-			}
-		}
+		})
+		.catch((e) => {
+			actionFormFieldErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	const getActionFormField = async (id) => {
-		errors.value = [];
-		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-form-fields/show/${id}`, config);
-			actionFormField.value = response.data.data;
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				errors.value.push(t("errors.error_internal"));
+		actionFormFieldErrors.value = [];
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-form-fields/show/${id}`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionFormFieldErrors.value = res.errors;
+			}else{
+				actionFormField.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-			     for (const key in e.response.data.errors) {
-			         errors.value = key
-			     }
-			}
-		}
+		})
+		.catch((e) => {
+			actionFormFieldErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	const storeActionFormField = async (data) => {
-		errors.value = [];
-		try {
-			await axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-form-fields/store`, data, config);
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				errors.value.push(t("errors.error_internal"));
+		actionFormFieldErrors.value = [];
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-form-fields/store`,{
+			method: 'POST',
+			headers: config.headers,
+			body: JSON.stringify(data),
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionFormFieldErrors.value = res.errors;
+			}else{
+				actionFormField.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-			     for (const key in e.response.data.errors) {
-			         errors.value = key
-			     }
-			}
-		}
+		})
+		.catch((e) => {
+			actionFormFieldErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	const updateActionFormField = async (id, data) => {
-		errors.value = [];
-		try {
-			await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-form-fields/update/${id}`, data, config);
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				errors.value.push(t("errors.error_internal"));
+		actionFormFieldErrors.value = [];
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-form-fields/update/${id}`,{
+			method: 'PUT',
+			headers: config.headers,
+			body: JSON.stringify(data),
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionFormFieldErrors.value = res.errors;
+			}else{
+				actionFormField.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-			     for (const key in e.response.data.errors) {
-			         errors.value = key
-			     }
-			}
-		}
+		})
+		.catch((e) => {
+			actionFormFieldErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	const destroyActionFormField = async (id) => {
-		errors.value = [];
-		try {
-			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-form-fields/delete/${id}`, config);
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				errors.value.push(t("errors.error_internal"));
+		actionFormFieldErrors.value = [];
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-form-fields/delete/${id}`,{
+			method: 'DELETE',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionFormFieldErrors.value = res.errors;
+			}else{
+				actionFormField.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-			     for (const key in e.response.data.errors) {
-			         errors.value = key
-			     }
-			}
-		}
+		})
+		.catch((e) => {
+			actionFormFieldErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	return {
-		errors,
+		actionFormFieldErrors,
 		actionFormField,
 		actionFormFields,
 		getActionFormField,

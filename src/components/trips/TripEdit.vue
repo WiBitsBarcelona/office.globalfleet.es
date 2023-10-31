@@ -695,7 +695,7 @@
 	<div class="intro-y box p-5 mt-5" v-if="isEditActionStage">
 		<ActionStageEdit 
 			@cancelActionStageEditForm="cancelActionStageEditForm" 
-			@updateActionStageForm="updateActionStageForm"
+			@updateActionStageEditForm="updateActionStageEditForm"
 			:actionStageId="actionStageId" 
 		/>
 	</div>
@@ -804,10 +804,10 @@ const { actionTaskScanner, actionTaskScannerErrors, storeActionTaskScanner } = u
 const { actionTaskForm, actionTaskFormErrors, storeActionTaskForm } = useActionTaskForm();
 
 
-const { actionStage, actionStageErrors, storeActionStage } = useActionStage();
-const { actionStageCamera, actionStageCameraErrors, storeActionStageCamera } = useActionStageCamera();
-const { actionStageScanner, actionStageScannerErrors, storeActionStageScanner } = useActionStageScanner();
-const { actionStageForm, actionStageFormErrors, storeActionStageForm } = useActionStageForm();
+const { actionStage, actionStageErrors, storeActionStage, updateActionStage } = useActionStage();
+const { actionStageCamera, actionStageCameraErrors, storeActionStageCamera, updateActionStageCamera } = useActionStageCamera();
+const { actionStageScanner, actionStageScannerErrors, storeActionStageScanner, updateActionStageScanner } = useActionStageScanner();
+const { actionStageForm, actionStageFormErrors, storeActionStageForm, updateActionStageForm } = useActionStageForm();
 
 const { tripTow, errorTripTow, storeTripTow } = useTripTow();
 const { stageTow, errorStageTow, storeStageTow, updateStageTow } = useStageTow();
@@ -1443,10 +1443,24 @@ const cancelActionStageEditForm = () => {
 	isEditActionStage.value = false;
 }
 
-const updateActionStageForm = (stageFake, actionStageUpdate) => {
+const updateActionStageEditForm = async (actionStageId, stageFake, actionStageUpdate) => {
 
 	//TODO update stage
 	// update action stage
+
+	//enviar solo el order en el fake
+	// await updateStage(id, stageUpdate);
+	// console.log({ ...stage.value });
+
+
+	await updateActionStage(actionStageId, actionStageUpdate);
+	console.log({ ...actionStage.value });
+
+
+
+
+
+
 
 }
 

@@ -1,5 +1,4 @@
 import { ref } from 'vue';
-import axios from 'axios';
 import { useI18n } from 'vue-i18n';
 
 
@@ -19,41 +18,41 @@ export default function useActionTaskForm() {
 
 	const getActionTaskForms = async () => {
 		actionTaskFormErrors.value = [];
-		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-task-forms/list`, config);
-			actionTaskForms.value = response.data.data;
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				actionTaskFormErrors.value.push(t("errors.error_internal"));
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-task-forms/list`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionTaskFormErrors.value = res.errors;
+			}else{
+				actionTaskForms.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionTaskFormErrors.value = key
-				}
-			}
-		}
+		})
+		.catch((e) => {
+			actionTaskFormErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	const getActionTaskForm = async (id) => {
 		actionTaskFormErrors.value = [];
-		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-task-forms/show/${id}`, config);
-			actionTaskForm.value = response.data.data;
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				actionTaskFormErrors.value.push(t("errors.error_internal"));
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-task-forms/show/${id}`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionTaskFormErrors.value = res.errors;
+			}else{
+				actionTaskForm.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionTaskFormErrors.value = key
-				}
-			}
-		}
+		})
+		.catch((e) => {
+			actionTaskFormErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
@@ -66,19 +65,14 @@ export default function useActionTaskForm() {
 		})
 		.then(res => res.json())
 		.then((res) => {
-			actionTaskForm.value = res.data;
+			if (!res.success) {
+				actionTaskFormErrors.value = res.errors;
+			}else{
+				actionTaskForm.value = res.data;
+			}
 		})
 		.catch((e) => {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				actionTaskFormErrors.value.push(t("errors.error_internal"));
-			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionTaskFormErrors.value = key
-				}
-			}
+			actionTaskFormErrors.value.push(t("errors.error_internal"));
 		});
 	}
 
@@ -92,39 +86,35 @@ export default function useActionTaskForm() {
 		})
 		.then(res => res.json())
 		.then((res) => {
-			actionTaskForm.value = res.data;
+			if (!res.success) {
+				actionTaskFormErrors.value = res.errors;
+			}else{
+				actionTaskForm.value = res.data;
+			}
 		})
 		.catch((e) => {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				actionTaskFormErrors.value.push(t("errors.error_internal"));
-			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionTaskFormErrors.value = key
-				}
-			}
+			actionTaskFormErrors.value.push(t("errors.error_internal"));
 		});
 	}
 
 
 	const destroyActionTaskForm = async (id) => {
 		actionTaskFormErrors.value = [];
-		try {
-			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-task-forms/delete/${id}`, config);
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				errors.value.push(t("errors.error_internal"));
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-task-forms/delete/${id}`,{
+			method: 'DELETE',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionTaskFormErrors.value = res.errors;
+			}else{
+				actionTaskForm.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionTaskFormErrors.value = key
-				}
-			}
-		}
+		})
+		.catch((e) => {
+			actionTaskFormErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 

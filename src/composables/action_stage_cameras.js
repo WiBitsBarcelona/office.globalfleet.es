@@ -1,5 +1,4 @@
 import { ref } from 'vue';
-import axios from 'axios';
 import { useI18n } from 'vue-i18n';
 
 
@@ -19,41 +18,41 @@ export default function useActionStageCamera() {
 
 	const getActionStageCameras = async () => {
 		actionStageCameraErrors.value = [];
-		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-stage-cameras/list`, config);
-			actionStageCameras.value = response.data.data;
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				actionStageCameraErrors.value.push(t("errors.error_internal"));
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-stage-cameras/list`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionStageCameraErrors.value = res.errors;
+			}else{
+				actionStageCameras.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionStageCameraErrors.value = key
-				}
-			}
-		}
+		})
+		.catch((e) => {
+			actionStageCameraErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	const getActionStageCamera = async (id) => {
 		actionStageCameraErrors.value = [];
-		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-stage-cameras/show/${id}`, config);
-			actionStageCamera.value = response.data.data;
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				actionStageCameraErrors.value.push(t("errors.error_internal"));
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-stage-cameras/show/${id}`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionStageCameraErrors.value = res.errors;
+			}else{
+				actionStageCamera.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionStageCameraErrors.value = key
-				}
-			}
-		}
+		})
+		.catch((e) => {
+			actionStageCameraErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
@@ -66,19 +65,14 @@ export default function useActionStageCamera() {
 		})
 		.then(res => res.json())
 		.then((res) => {
-			actionStageCamera.value = res.data;
+			if (!res.success) {
+				actionStageCameraErrors.value = res.errors;
+			}else{
+				actionStageCamera.value = res.data;
+			}
 		})
 		.catch((e) => {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				actionStageCameraErrors.value.push(t("errors.error_internal"));
-			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionStageCameraErrors.value = key
-				}
-			}
+			actionStageCameraErrors.value.push(t("errors.error_internal"));
 		});
 	}
 
@@ -92,39 +86,35 @@ export default function useActionStageCamera() {
 		})
 		.then(res => res.json())
 		.then((res) => {
-			actionStageCamera.value = res.data;
+			if (!res.success) {
+				actionStageCameraErrors.value = res.errors;
+			}else{
+				actionStageCamera.value = res.data;
+			}
 		})
 		.catch((e) => {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				actionStageCameraErrors.value.push(t("errors.error_internal"));
-			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionStageCameraErrors.value = key
-				}
-			}
+			actionStageCameraErrors.value.push(t("errors.error_internal"));
 		});
 	}
 
 
 	const destroyActionStageCamera = async (id) => {
 		actionStageCameraErrors.value = [];
-		try {
-			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-stage-cameras/delete/${id}`, config);
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				errors.value.push(t("errors.error_internal"));
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-stage-cameras/delete/${id}`,{
+			method: 'DELETE',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionStageCameraErrors.value = res.errors;
+			}else{
+				actionStageCamera.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionStageCameraErrors.value = key
-				}
-			}
-		}
+		})
+		.catch((e) => {
+			actionStageCameraErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 

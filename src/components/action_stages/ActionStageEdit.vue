@@ -237,7 +237,7 @@ const rules = {
 
 
 let stageFake = {
-    stage_type_id: "1",
+    stage_type_id: "",
     reference_number: "-",
     name: "",
     order_number: "",
@@ -309,7 +309,7 @@ const save = () => {
 		stageFake.name = selectedAction.name;
 		stageFake.order_number = formData.order_number; 
 
-		emit('updateActionStageForm', stageFake, { ...formData });
+		emit('updateActionStageEditForm', actionStage.value.id, stageFake, { ...formData });
 	}
 };
 
@@ -335,21 +335,23 @@ onMounted(async () => {
 
 	await getActionTypes();
 	selectActionTypes.value = actionTypes.value;
+	//console.log({...selectActionTypes.value});
+
 
 	await getActionFormFields();
 	selectActionFormFields.value = actionFormFields.value;
+	console.log({...actionFormFields.value});
 
-	// Cargar con:   actionStageId
 
-	console.log(props.actionStageId);
-
+	
 	await getActionStage(props.actionStageId);
-
 	console.log({...actionStage.value});
+
 
 
 	if(actionStage.value.action_cameras.length > 0){
 		formData.action_type_model = enumActionTask.CAMERA_ID.toString();
+
 	}
 
 	if(actionStage.value.action_scanners.length > 0){
@@ -358,10 +360,8 @@ onMounted(async () => {
 
 	if(actionStage.value.action_forms.length > 0){
 		formData.action_type_model = enumActionTask.FORM_ID.toString();
+		formData.action_form_field_id = actionStage.value.action_forms[0].form_field.id.toString();
 	}
-
-	
-
 
 	formData.stage_id = actionStage.value.stage_id;
 	formData.action_type_id = actionStage.value.type.id.toString();

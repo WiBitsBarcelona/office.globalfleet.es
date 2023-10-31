@@ -1,5 +1,4 @@
 import { ref } from 'vue';
-import axios from 'axios';
 import { useI18n } from 'vue-i18n';
 
 
@@ -19,41 +18,41 @@ export default function useActivity() {
 
 	const getActivities = async () => {
 		activityErrors.value = [];
-		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}activities/list`, config);
-			activities.value = response.data.data;
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				activityErrors.value.push(t("errors.error_internal"));
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}activities/list`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				activityErrors.value = res.errors;
+			}else{
+				activities.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					activityErrors.value = key
-				}
-			}
-		}
+		})
+		.catch((e) => {
+			activityErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	const getActivity = async (id) => {
 		activityErrors.value = [];
-		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}activities/show/${id}`, config);
-			activity.value = response.data.data;
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				activityErrors.value.push(t("errors.error_internal"));
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}activities/show/${id}`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				activityErrors.value = res.errors;
+			}else{
+				activity.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					activityErrors.value = key
-				}
-			}
-		}
+		})
+		.catch((e) => {
+			activityErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
@@ -66,19 +65,14 @@ export default function useActivity() {
 		})
 		.then(res => res.json())
 		.then((res) => {
-			activity.value = res.data;
+			if (!res.success) {
+				activityErrors.value = res.errors;
+			}else{
+				activity.value = res.data;
+			}
 		})
 		.catch((e) => {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				activityErrors.value.push(t("errors.error_internal"));
-			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					activityErrors.value = key
-				}
-			}
+			activityErrors.value.push(t("errors.error_internal"));
 		});
 	}
 
@@ -92,39 +86,35 @@ export default function useActivity() {
 		})
 		.then(res => res.json())
 		.then((res) => {
-			activity.value = res.data;
+			if (!res.success) {
+				activityErrors.value = res.errors;
+			}else{
+				activity.value = res.data;
+			}
 		})
 		.catch((e) => {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				activityErrors.value.push(t("errors.error_internal"));
-			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					activityErrors.value = key
-				}
-			}
+			activityErrors.value.push(t("errors.error_internal"));
 		});
 	}
 
 
 	const destroyActivity = async (id) => {
 		activityErrors.value = [];
-		try {
-			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}activities/delete/${id}`, config);
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				errors.value.push(t("errors.error_internal"));
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}activities/delete/${id}`,{
+			method: 'DELETE',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				activityErrors.value = res.errors;
+			}else{
+				activity.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					activityErrors.value = key
-				}
-			}
-		}
+		})
+		.catch((e) => {
+			activityErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
