@@ -801,29 +801,29 @@ const rules = {
 
 
 
-// const formData = reactive({
-//   vehicle_id: "",
-//   trip_priority_id: "",
-//   driver_id: "",
-//   tow_id: "",
-//   reference_number: Math.floor(Math.random() * 100000),
-//   name: "Viaje Plaza",
-//   execution_at: $h.nowTimestamp('-').substr(0, 16),
-//   observations: "",
-// });
-
-
-
 const formData = reactive({
   vehicle_id: "",
   trip_priority_id: "",
   driver_id: "",
   tow_id: "",
-  reference_number: "",
-  name: "",
+  reference_number: Math.floor(Math.random() * 100000),
+  name: "Viaje Plaza",
   execution_at: $h.nowTimestamp('-').substr(0, 16),
   observations: "",
 });
+
+
+
+// const formData = reactive({
+//   vehicle_id: "",
+//   trip_priority_id: "",
+//   driver_id: "",
+//   tow_id: "",
+//   reference_number: "",
+//   name: "",
+//   execution_at: $h.nowTimestamp('-').substr(0, 16),
+//   observations: "",
+// });
 
 
 const validate = useVuelidate(rules, toRefs(formData));
@@ -1081,6 +1081,7 @@ const save = async () => {
 
     loading.value = false;
     await Toast(t("message.record_saved"), 'success');
+    
     setTimeout(() => location.reload(), 3000);
 
   }

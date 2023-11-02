@@ -241,6 +241,11 @@
 
 
 
+		<div class="flex justify-end">
+			Total Accion y Etapas: {{ arrStages.length }}
+		</div>
+
+
 		<!-- Stage Card -->
 		<div v-for="(stage, index) in arrStages" :key="stage.id">
 			<!-- v-if -->
@@ -1048,7 +1053,6 @@ const addStageForm = async (stageNew) => {
 
 
 const deleteStageForm = async (id) => {
-
 
 	Swal.fire({
 			icon: 'warning',
