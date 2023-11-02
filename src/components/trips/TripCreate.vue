@@ -255,7 +255,8 @@
                   <div class="flex flex-row justify-between">
 
                     <p class="text-md font-normal leading-6 text-gray-500">
-                      <span class="text-xs font-light text-gray-400">{{ $t("stage") }}
+                      <span class="text-xs font-light text-gray-400">
+                        ({{ stage.order_number }}) {{ $t("stage") }}
                       </span> {{ stage.name }}
                     </p>
 
@@ -500,7 +501,8 @@
                     <div class="flex flex-row justify-between">
 
                       <p class="text-md font-normal leading-6 text-gray-500">
-                        <span class="text-xs font-light text-gray-400">{{ $t("action") }}
+                        <span class="text-xs font-light text-gray-400">
+                          ({{ stage.order_number }}) {{ $t("action") }}
                         </span> {{ action_stage.action_type_name }} 
                       </p>
 
@@ -1119,11 +1121,27 @@ const addStageForm = async (stage) => {
 }
 
 const deleteStageForm = (uuid) => {
-  arrStages.value.forEach((ele, index) => {
-    if (ele.uuid === uuid) {
-      arrStages.value.splice(index, 1);
+
+  Swal.fire({
+    icon: 'warning',
+    title: t("message.record_will_be_deleted"),
+    showCancelButton: true,
+    confirmButtonText: t("message.yes"),
+    cancelButtonText: t("message.no"),
+    confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+
+      arrStages.value.forEach((ele, index) => {
+        if (ele.uuid === uuid) {
+          arrStages.value.splice(index, 1);
+        }
+      });
+
     }
+
   });
+  
 }
 
 /**
@@ -1170,20 +1188,35 @@ const addTaskForm = (stage, data) => {
 
 const deleteTaskForm = (stageUuid, taskUuid) => {
 
-  arrStages.value.forEach((stage) => {
+  Swal.fire({
+    icon: 'warning',
+    title: t("message.record_will_be_deleted"),
+    showCancelButton: true,
+    confirmButtonText: t("message.yes"),
+    cancelButtonText: t("message.no"),
+    confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
+  }).then(async (result) => {
+    if (result.isConfirmed) {
 
-    if (stage.uuid === stageUuid) {
+      arrStages.value.forEach((stage) => {
 
-      stage.tasks.forEach((task, index) => {
+        if (stage.uuid === stageUuid) {
 
-        if (task.uuid === taskUuid) {
-          stage.tasks.splice(index, 1);
+          stage.tasks.forEach((task, index) => {
+
+            if (task.uuid === taskUuid) {
+              stage.tasks.splice(index, 1);
+            }
+
+          });
         }
 
       });
+
     }
 
   });
+  
 
 }
 

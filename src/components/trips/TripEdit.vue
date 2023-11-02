@@ -262,7 +262,8 @@
 									<div class="flex flex-row justify-between">
 
 										<p class="text-md font-normal leading-6 text-gray-500">
-											<span class="text-xs font-light text-gray-400">{{ $t("stage") }} ({{ stage.order_number }})
+											<span class="text-xs font-light text-gray-400">
+												({{ stage.order_number }}) {{ $t("stage") }} 
 											</span> {{ stage.name }}
 										</p>
 
@@ -527,7 +528,8 @@
 										<div class="flex flex-row justify-between">
 
 											<p class="text-md font-normal leading-6 text-gray-500">
-												<span class="text-xs font-light text-gray-400">{{ $t("action") }} ({{ stage.order_number }})
+												<span class="text-xs font-light text-gray-400">
+													({{ stage.order_number }}) {{ $t("action") }}
 												</span> {{ stage.name }}
 											</p>
 
