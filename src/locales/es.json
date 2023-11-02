@@ -13,7 +13,9 @@
     "drivers": "Conductores",
     "help": "Ayuda",
     "vehicles": "Tractoras",
-    "tows": "Remolques"
+    "tows": "Remolques",
+    "trips-create": "Crear Viaje",
+    "trips-edit": "Editar Viaje"
   },
   "auth_footer":{
     "all_rights": "Todos los derechos reservados.",
@@ -127,7 +129,9 @@
       "export_csv": "Archivo CSV",
       "no_matching_records_found": "No se encuentran registros",
       "it_must_have_action_stage": "Debe de tener al menos una Acción y una etapa",
-      "error_deleting_record":"Error al eliminar registro. Por favor contacte con el administrador del sistema"
+      "error_deleting_record":"Error al eliminar registro. Por favor contacte con el administrador del sistema",
+      "total_action_stage": "Total Accion y Etapas",
+      "back": "Volver"
   },
 
   "form": {

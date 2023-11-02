@@ -1,14 +1,13 @@
 import { ref } from 'vue';
-import axios from 'axios';
-//import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 
 
 export default function useTripStatus() {
 
-	const tripStatus = ref([])
-	const tripStatuses = ref([])
-	const errors = ref('')
-	//const router = useRouter()
+	const tripStatus = ref([]);
+	const tripStatuses = ref([]);
+	const tripStatusErrors = ref([]);
+	const { t } = useI18n();
 
 	let config = {
 		headers: {
@@ -18,86 +17,109 @@ export default function useTripStatus() {
 	}
 
 	const getTripStatuses = async () => {
-		errors.value = ''
-		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-statuses/list`, config);
-			
-            tripStatuses.value = response.data.data;
-		} catch (e) {
-			console.log(e);
-			// if (e.response.status_code === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
-		}
+		tripStatusErrors.value = [];
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-statuses/list`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				tripStatusErrors.value = res.errors;
+			}else{
+				tripStatuses.value = res.data;
+			}
+		})
+		.catch((e) => {
+			tripStatusErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	const getTripStatus = async (id) => {
-		errors.value = ''
-		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-statuses/show/${id}`, config);
-			tripStatus.value = response.data.data;
-		} catch (e) {
-			console.log(e);
-			// if (e.response.status_code === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
-		}
+		tripStatusErrors.value = [];
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-statuses/show/${id}`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				tripStatusErrors.value = res.errors;
+			}else{
+				tripStatus.value = res.data;
+			}
+		})
+		.catch((e) => {
+			tripStatusErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	const storeTripStatus = async (data) => {
-		errors.value = ''
-		try {
-			await axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-statuses/store`, data, config);
-			//await router.push({ name: 'tripStatus.index' });
-		} catch (e) {
-			console.log(e);
-			// if (e.response.status_code === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
-		}
+		tripStatusErrors.value = [];
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-statuses/store`,{
+			method: 'POST',
+			headers: config.headers,
+			body: JSON.stringify(data),
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				tripStatusErrors.value = res.errors;
+			}else{
+				tripStatus.value = res.data;
+			}
+		})
+		.catch((e) => {
+			tripStatusErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	const updateTripStatus = async (id, data) => {
-		errors.value = ''
-		try {
-			await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-statuses/update/${id}`, data, config);
-			//await router.push({ name: 'tripStatus.index' });
-		} catch (e) {
-			console.log(e)
-			// if (e.response.status === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
-		}
+		tripStatusErrors.value = [];
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-statuses/update/${id}`,{
+			method: 'PUT',
+			headers: config.headers,
+			body: JSON.stringify(data),
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				tripStatusErrors.value = res.errors;
+			}else{
+				tripStatus.value = res.data;
+			}
+		})
+		.catch((e) => {
+			tripStatusErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	const destroyTripStatus = async (id) => {
-		try {
-			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-statuses/destroy/${id}`, config);
-		} catch (e) {
-			console.log(e)
-			// if (e.response.status === 422) {
-			//     for (const key in e.response.data.errors) {
-			//         errors.value = e.response.data.errors
-			//     }
-			// }
-		}
+		tripStatusErrors.value = [];
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-statuses/delete/${id}`,{
+			method: 'DELETE',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				tripStatusErrors.value = res.errors;
+			}else{
+				tripStatus.value = res.data;
+			}
+		})
+		.catch((e) => {
+			tripStatusErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	return {
-		errors,
+		tripStatusErrors,
 		tripStatus,
 		tripStatuses,
 		getTripStatus,

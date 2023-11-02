@@ -23,10 +23,25 @@
 				<!-- BEGIN: Buttons -->
 
 				<div class="col-span-4 text-right">
-					<button type="submit" class="btn btn-primary mr-2">
-						{{ $t("save") }}
-					</button>
-					<router-link :to="`/trips`" class="btn btn-danger">{{ $t("cancel") }}</router-link>
+
+
+					<div class="flex justify-end">
+
+						<router-link :to="`/trips`" class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
+							<CornerUpLeftIcon class="w-4 h-4" /> {{ $t("message.back") }}
+						</router-link>
+
+						<button type="submit" class="btn btn-primary mr-2">
+							{{ $t("save") }}
+						</button>
+
+						<a href="#" @click.prevent="deleteTripForm(trip.id)" class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
+							<TrashIcon class="w-4 h-4" />
+						</a>
+
+					</div>
+
+
 				</div>
 
 				<!-- END: Buttons -->
@@ -147,7 +162,7 @@
 
 
 
-				<div class="col-span-12 md:col-span-6 lg:col-span-6">
+				<div class="col-span-12 md:col-span-4 lg:col-span-4">
 					<div class="input-form">
 						<label for="driver_id" class="form-label w-full">
 							{{ $t("driver") }}
@@ -174,7 +189,7 @@
 				</div>
 
 
-				<div class="col-span-12 md:col-span-6 lg:col-span-6">
+				<div class="col-span-12 md:col-span-4 lg:col-span-4">
 					<div class="input-form">
 						<label for="driver_id" class="form-label w-full">
 							{{ $t("trip_tow") }}
@@ -201,6 +216,33 @@
 				</div>
 
 
+				<div class="col-span-12 md:col-span-4 lg:col-span-4">
+					<div class="input-form">
+						<label for="trip_status_id" class="form-label w-full">
+							{{ $t("trip_status") }}
+						</label>
+
+						<TomSelect v-model.trim="validate.trip_status_id.$model" id="trip_status_id" name="trip_status_id" :options="{
+							placeholder: $t('message.select'),
+						}" class="form-control w-full" :class="{ 'border-danger': validate.tow_id.$error }">
+
+							<option v-for="item in selectTripStatuses" :value="item.id">
+								{{ item.name }}
+							</option>
+
+						</TomSelect>
+
+
+						<template v-if="validate.trip_status_id.$error">
+							<div v-for="(error, index) in validate.trip_status_id.$errors" :key="index" class="text-danger mt-2">
+								{{ error.$message }}
+							</div>
+						</template>
+					</div>
+				</div>
+
+
+
 
 
 				<div class="col-span-12 md:col-span-12 lg:col-span-12">
@@ -211,7 +253,7 @@
 
 						<textarea v-model.trim="validate.observations.$model" id="observations" name="observations"
 							class="form-control">
-			  </textarea>
+			  			</textarea>
 
 					</div>
 				</div>
@@ -241,10 +283,14 @@
 
 
 
-		<div class="flex justify-end">
-			Total Accion y Etapas: {{ arrStages.length }}
+		<div class="flex justify-end mb-2">
+			<p class="text-md font-normal leading-6 text-gray-500">
+				<span class="font-light text-gray-400">
+					 {{ $t("message.total_action_stage") }}: {{ arrStages.length }}
+				</span>
+			</p>
 		</div>
-
+		
 
 		<!-- Stage Card -->
 		<div v-for="(stage, index) in arrStages" :key="stage.id">
@@ -735,32 +781,31 @@ import { helper as $h } from "@/utils/helper";
 import Swal from "sweetalert2";
 import { useRoute } from 'vue-router';
 
+
 import useTrips from '@/composables/trips.js';
+import useTripPriority from '@/composables/trip_priorities.js';
+import useTripTow from '@/composables/trip_tows.js';
+import useTripStatus from '@/composables/trip_statuses.js';
+import useTow from '@/composables/tows.js';
+import useVehicles from '@/composables/vehicles.js';
+import useDrivers from '@/composables/drivers.js';
+
+
+
 import useStage from '@/composables/stages.js';
-import useActivity from '@/composables/activities.js';
-import useTask from '@/composables/tasks.js';
-import useActionTask from '@/composables/action_tasks.js';
-
-import useActionTaskCamera from '@/composables/action_task_cameras.js';
-import useActionTaskScanner from '@/composables/action_task_scanners.js';
-import useActionTaskForm from '@/composables/action_task_forms.js';
-
-
 import useActionStage from '@/composables/action_stages.js';
 import useActionStageCamera from '@/composables/action_stage_cameras.js';
 import useActionStageScanner from '@/composables/action_stage_scanners.js';
 import useActionStageForm from '@/composables/action_stage_forms.js';
-
-
-
-
-import useVehicles from '@/composables/vehicles.js';
-import useTripPriority from '@/composables/trip_priorities.js';
-import useDrivers from '@/composables/drivers.js';
-import useTow from '@/composables/tows.js';
-import useTripTow from '@/composables/trip_tows.js';
 import useStageTow from '@/composables/stage_tows.js';
 
+import useActivity from '@/composables/activities.js';
+
+import useTask from '@/composables/tasks.js';
+import useActionTask from '@/composables/action_tasks.js';
+import useActionTaskCamera from '@/composables/action_task_cameras.js';
+import useActionTaskScanner from '@/composables/action_task_scanners.js';
+import useActionTaskForm from '@/composables/action_task_forms.js';
 
 
 
@@ -800,6 +845,7 @@ const { tows, getTows } = useTow();
 
 
 const { trip, tripErrors, updateTrip, getTrip } = useTrips();
+const { tripStatuses, tripStatusErrors, getTripStatuses } = useTripStatus();
 
 const { stage, stageErrors, storeStage, updateStage, destroyStage } = useStage();
 const { activity, activityErrors, storeActivity, updateActivity } = useActivity();
@@ -816,7 +862,7 @@ const { actionStageCamera, actionStageCameraErrors, storeActionStageCamera, upda
 const { actionStageScanner, actionStageScannerErrors, storeActionStageScanner, updateActionStageScanner } = useActionStageScanner();
 const { actionStageForm, actionStageFormErrors, storeActionStageForm, updateActionStageForm } = useActionStageForm();
 
-const { tripTow, errorTripTow, storeTripTow } = useTripTow();
+const { tripTow, errorTripTow, storeTripTow, updateTripTow } = useTripTow();
 const { stageTow, errorStageTow, storeStageTow, updateStageTow } = useStageTow();
 
 
@@ -829,6 +875,7 @@ const selectVehicles = ref([]);
 const selectTripPriorities = ref([]);
 const selectDrivers = ref([]);
 const selectTows = ref([]);
+const selectTripStatuses = ref([]);
 
 
 const arrStages = ref([]);
@@ -869,6 +916,9 @@ const rules = {
 	vehicle_id: {
 		required: helpers.withMessage(t("form.required"), required),
 	},
+	trip_status_id: {
+		required: helpers.withMessage(t("form.required"), required),
+	},
 	trip_priority_id: {
 		required: helpers.withMessage(t("form.required"), required),
 	},
@@ -895,6 +945,7 @@ const rules = {
 
 // const formData = reactive({
 //   vehicle_id: "",
+//   trip_status_id: "",
 //   trip_priority_id: "",
 //   driver_id: "",
 //   tow_id: "",
@@ -908,6 +959,7 @@ const rules = {
 
 const formData = reactive({
 	vehicle_id: "",
+	trip_status_id: "",
 	trip_priority_id: "",
 	driver_id: "",
 	tow_id: "",
@@ -919,6 +971,12 @@ const formData = reactive({
 
 
 const validate = useVuelidate(rules, toRefs(formData));
+
+
+
+/******************
+ * Trip
+ *****************/
 
 const save = async () => {
 
@@ -949,11 +1007,10 @@ const save = async () => {
 		 */
 		
 		await updateTrip(trip.value.id, formData);
-
-
-		//console.log({ ...trip.value });
+		console.log({ ...trip.value });
 		
-		console.log({ ...tripErrors.value });
+		//console.log({ ...tripErrors.value });
+
 
 
 		/**
@@ -963,8 +1020,13 @@ const save = async () => {
 			trip_id: trip.value.id,
 			tow_id: formData.tow_id
 		}
-		await updateTripTow(dataTripTowUpdate);
+
+
+		await updateTripTow(trip.value.tows[0].id, dataTripTowUpdate);
 		console.log({ ...tripTow });
+
+
+		
 
 
 
@@ -980,8 +1042,35 @@ const save = async () => {
 };
 
 
+const deleteTripForm = async(id) => {
+
+	Swal.fire({
+			icon: 'warning',
+			title: t("message.record_will_be_deleted"),
+			showCancelButton: true,
+			confirmButtonText: t("message.yes"),
+			cancelButtonText: t("message.no"),
+			confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
+		}).then(async(result) => {
+			if (result.isConfirmed) {
+
+				///TODO hacer algo
+
+				//await Toast(t('message.record_deleted'), 'success');
+
+			}
+
+		});
 
 
+
+
+}
+
+
+/******************
+ * End Trip
+ *****************/
 
 
 
@@ -1533,6 +1622,7 @@ const findData = async() => {
 	formData.trip_priority_id = trip.value.trip_priority_id.toString();
 	formData.driver_id = trip.value.driver_id.toString();
 	formData.vehicle_id = trip.value.vehicle_id.toString();
+	formData.trip_status_id = trip.value.trip_status_id.toString();
 	
 	formData.reference_number = trip.value.reference_number;
 	formData.name = trip.value.name;
@@ -1566,11 +1656,13 @@ onMounted(async () => {
   await getDrivers();
   selectDrivers.value = drivers.value;
 
+  //Trip Statuses
+  await getTripStatuses();
+  selectTripStatuses.value = tripStatuses.value;
 
-  //TODO Tows trip
 
+  //Tows trip
   await getTows();
-
   selectTows.value = tows.value;
 
 

@@ -77,6 +77,41 @@
                 </div>
             </div>
 
+
+
+            <div class="col-span-12 md:col-span-4 lg:col-span-4">
+                <div class="input-form">
+                    <label for="stage_status_id" class="form-label w-full">
+                        {{ $t("activity") }}
+                    </label>
+
+                    <TomSelect 
+                        v-model.trim="validate.stage_status_id.$model" 
+                        id="activity_type_id" 
+                        name="activity_type_id" 
+                        :options="{ placeholder: $t('message.select'),}" 
+                        class="form-control w-full" 
+                        :class="{ 'border-danger': validate.stage_status_id.$error }"
+                    >
+
+                        <option v-for="item in selectStageStatuses" :value="item.id">
+                            {{ item.name }}
+                        </option>
+
+					</TomSelect>
+
+                    <template v-if="validate.stage_status_id.$error">
+                        <div v-for="(error, index) in validate.stage_status_id.$errors" :key="index"
+                            class="text-danger mt-2">
+                            {{ error.$message }}
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+
+
+
             <div class="col-span-12 md:col-span-4 lg:col-span-3">
                 <div class="input-form">
                     <label for="stage_type_id" class="form-label w-full">
@@ -356,6 +391,7 @@
 	import { onMounted, reactive, toRefs, ref } from 'vue';
 	import useStages from '@/composables/stages';
     import useStageType from '@/composables/stage_types.js';
+    import useStageStatus from '@/composables/stage_statuses.js';
     import useTow from '@/composables/tows.js';
     import useActivityType from '@/composables/activity_types.js';
 	import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
@@ -372,6 +408,7 @@
 	const { t } = useI18n();
 	
     const { stageTypes, getStageTypes } = useStageType();
+    const { stageStatuses, getStageStatuses } = useStageStatus();
     const { tows, getTows } = useTow();
     const { activityTypes, getActivityTypes } = useActivityType();
 
@@ -379,10 +416,14 @@
     const selectStageTypes = ref([]);
     const selectActivityTypes = ref([]);
     const selectTows = ref([]);
+    const selectStageStatuses = ref([]);
 
 
 	const rules = {
         activity_type_id: {
+            required: helpers.withMessage(t("form.required"), required),
+        },
+        stage_status_id: {
             required: helpers.withMessage(t("form.required"), required),
         },
         stage_type_id: {
@@ -485,6 +526,11 @@
         //Load stage types
         await getTows();
         selectTows.value = tows.value;
+        
+        
+        // Stage Statuses
+        await getStageStatuses();
+        selectStageStatuses.value = stageStatuses.value;
 
         
 
@@ -495,6 +541,7 @@
 
         formData.activity_type_id = stage.value.activity.type.id.toString();
         formData.stage_type_id = stage.value.type.id.toString();
+        formData.stage_status_id = stage.value.stage_status_id.toString();
 		
 		formData.reference_number = stage.value.reference_number;
 		formData.name = stage.value.name;
