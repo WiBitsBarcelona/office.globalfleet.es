@@ -1281,18 +1281,32 @@ const addTaskForm = async(stageNew, taskNew) => {
 
 const deleteTaskForm = async(taskId) => {
 
-	console.log("pasaaaaa", taskId);
+	Swal.fire({
+			icon: 'warning',
+			title: t("message.record_will_be_deleted"),
+			showCancelButton: true,
+			confirmButtonText: t("message.yes"),
+			cancelButtonText: t("message.no"),
+			confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
+		}).then(async(result) => {
+			if (result.isConfirmed) {
 
-	await destroyTask(taskId);
+				await destroyTask(taskId);
 
-	//console.log({...taskErrors.value});
+				//console.log({...taskErrors.value});
 
-	taskErrors.value.forEach((elem) => {
-		console.log(elem.e);
-	})
+				taskErrors.value.forEach((elem) => {
+					console.log(elem.e);
+				})
 
+				await findData();
 
-	await findData();
+				await Toast(t('message.record_deleted'), 'success');
+
+			}
+
+		});
+	
 }
 
 
