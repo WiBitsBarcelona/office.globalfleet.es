@@ -110,9 +110,25 @@
             </div>
 
 
+            <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                <div class="input-form">
+                    <label for="order_number" class="form-label w-full">
+                        {{ $t("order_number") }}
+                    </label>
+                    <input v-model.trim="validate.order_number.$model" id="order_number" type="number"
+                        name="order_number" class="form-control"
+                        :class="{ 'border-danger': validate.order_number.$error }" />
+                    <template v-if="validate.order_number.$error">
+                        <div v-for="(error, index) in validate.order_number.$errors" :key="index"
+                            class="text-danger mt-2">
+                            {{ error.$message }}
+                        </div>
+                    </template>
+                </div>
+            </div>
 
 
-            <div class="col-span-12 md:col-span-4 lg:col-span-3">
+            <div class="col-span-12 md:col-span-4 lg:col-span-4">
                 <div class="input-form">
                     <label for="stage_type_id" class="form-label w-full">
                         {{ $t("stage_type") }}
@@ -144,7 +160,7 @@
             </div>
 
 
-            <div class="col-span-12 md:col-span-4 lg:col-span-3">
+            <div class="col-span-12 md:col-span-4 lg:col-span-4">
                 <div class="input-form">
                     <label for="driver_id" class="form-label w-full">
                     {{ $t("trip_tow") }}
@@ -171,22 +187,7 @@
             
 
 
-            <div class="col-span-12 md:col-span-6 lg:col-span-2">
-                <div class="input-form">
-                    <label for="order_number" class="form-label w-full">
-                        {{ $t("order_number") }}
-                    </label>
-                    <input v-model.trim="validate.order_number.$model" id="order_number" type="number"
-                        name="order_number" class="form-control"
-                        :class="{ 'border-danger': validate.order_number.$error }" />
-                    <template v-if="validate.order_number.$error">
-                        <div v-for="(error, index) in validate.order_number.$errors" :key="index"
-                            class="text-danger mt-2">
-                            {{ error.$message }}
-                        </div>
-                    </template>
-                </div>
-            </div>
+            
 
 
 
@@ -223,7 +224,7 @@
             </div>
 
 
-            <div class="col-span-12 md:col-span-6 lg:col-span-3">
+            <div class="col-span-12 md:col-span-6 lg:col-span-4">
                 <div class="input-form">
                     <label for="phone" class="form-label w-full">
                         {{ $t("phone") }}
@@ -305,7 +306,7 @@
             </div>
 
 
-            <div class="col-span-12 md:col-span-6 lg:col-span-6">
+            <div class="col-span-12 md:col-span-6 lg:col-span-8">
                 <div class="input-form">
                     <label for="route_name" class="form-label w-full">
                         {{ $t("route_name") }}
@@ -325,7 +326,7 @@
            
 
 
-            <div class="col-span-12 md:col-span-6 lg:col-span-3">
+            <div class="col-span-12 md:col-span-6 lg:col-span-4">
                 <div class="input-form">
                     <label for="execution_at" class="form-label w-full">
                         {{ $t("execution_at") }}
