@@ -82,7 +82,7 @@
             <div class="col-span-12 md:col-span-4 lg:col-span-4">
                 <div class="input-form">
                     <label for="stage_status_id" class="form-label w-full">
-                        {{ $t("activity") }}
+                        {{ $t("stage_status") }}
                     </label>
 
                     <TomSelect 
@@ -477,6 +477,7 @@
 
     const formData = reactive({
         activity_type_id: "",
+        stage_status_id: "",
         activity_id: "",
         tow_id: "",
         stage_tow_id: null,
@@ -536,7 +537,7 @@
 
 		await getStage(props.stageId);
 
-        //console.log({...stage.value});
+        console.log({...stage.value});
 
 
         formData.activity_type_id = stage.value.activity.type.id.toString();
