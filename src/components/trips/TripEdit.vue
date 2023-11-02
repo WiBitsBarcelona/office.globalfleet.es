@@ -262,8 +262,8 @@
 									<div class="flex flex-row justify-between">
 
 										<p class="text-md font-normal leading-6 text-gray-500">
-											<span class="text-xs font-light text-gray-400">{{ $t("stage") }}
-											</span> {{ stage.name }}  ({{ stage.order_number }})
+											<span class="text-xs font-light text-gray-400">{{ $t("stage") }} ({{ stage.order_number }})
+											</span> {{ stage.name }}
 										</p>
 
 										<div class="text-right">
@@ -527,8 +527,8 @@
 										<div class="flex flex-row justify-between">
 
 											<p class="text-md font-normal leading-6 text-gray-500">
-												<span class="text-xs font-light text-gray-400">{{ $t("action") }}
-												</span> {{ stage.name }} ({{ stage.order_number }})
+												<span class="text-xs font-light text-gray-400">{{ $t("action") }} ({{ stage.order_number }})
+												</span> {{ stage.name }}
 											</p>
 
 											<div class="text-right">
@@ -1449,8 +1449,13 @@ const updateActionStageEditForm = async (actionStageId, stageFake, actionStageUp
 	// update action stage
 
 	//enviar solo el order en el fake
-	// await updateStage(id, stageUpdate);
-	// console.log({ ...stage.value });
+
+	const stageFakeUpdate = {
+		name: stageFake.name,
+		order_number: stageFake.order_number,
+	}
+	await updateStage(stageFake.id, stageFakeUpdate);
+	console.log({ ...stage.value });
 
 
 	await updateActionStage(actionStageId, actionStageUpdate);
@@ -1458,9 +1463,10 @@ const updateActionStageEditForm = async (actionStageId, stageFake, actionStageUp
 
 
 
+	await findData();
 
-
-
+	isCreateTrip.value = true;
+	isEditActionStage.value = false;
 
 }
 

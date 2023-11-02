@@ -238,19 +238,19 @@ const rules = {
 
 let stageFake = {
     stage_type_id: "",
-    reference_number: "-",
+    reference_number: "",
     name: "",
     order_number: "",
-    client_name: "-",
-    address: "-",
-    phone: "-",
-    zip_code: "-",
-    latitude: "-",
-    longitude: "-",
-    route_code: "-",
-    route_name: "-",
+    client_name: "",
+    address: "",
+    phone: "",
+    zip_code: "",
+    latitude: "",
+    longitude: "",
+    route_code: "",
+    route_name: "",
     description: "",
-    execution_at: $h.nowTimestamp('-').substr(0,16),
+    execution_at: "",
 }
 
 
@@ -306,6 +306,7 @@ const save = () => {
 			formData.action_form_field_name = selectedForm.name;
 		}
 
+		stageFake.id = actionStage.value.stage_id;
 		stageFake.name = selectedAction.name;
 		stageFake.order_number = formData.order_number; 
 
