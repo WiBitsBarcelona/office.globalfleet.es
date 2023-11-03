@@ -10,7 +10,7 @@
           <!-- BEGIN: First Child -->
           <template v-for="(menu, menuKey) in formattedMenu">
             <li v-if="menu == 'devider'" :key="menu + menuKey" class="side-nav__devider my-6"></li>
-            <li v-else :key="menu + menuKey" class="text-end">
+            <li v-else :key="[menu + menuKey]" class="text-end">
               <Tippy tag="a" :content="t(menu.title)" :options="{
                 placement: 'left',
               }" :href="menu.subMenu
