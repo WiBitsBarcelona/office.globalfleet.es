@@ -1,101 +1,132 @@
-import { ref } from 'vue'; 
-import axios from 'axios';
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 
-export default function useTrips(){
+export default function useTrip() {
 
-    const trip = ref([]);
-    const trips = ref([]);
-    const errors = ref('');
-    const tripErrors = ref('');
+	const trip = ref([]);
+	const trips = ref([]);
+	const tripErrors = ref([]);
+	const { t } = useI18n();
 
+	let config = {
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": `Bearer ${localStorage.getItem('token')}`
+		}
+	}
 
-    // By Axios
-    let config = {
-        headers: {
-            "Accept": "application/json", //
-            "Content-Type": "application/json",
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-    }
-
-
-    const getTrips = async () => {
-        let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/list`, config);
-        trips.value = response.data.data;
-    }
-
-    const getTrip = async (id) => {
-        let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/show/${id}`, config)
-        trip.value = response.data.data
-    }
-
-
-    const storeTrip = async (data) => {
-        tripErrors.value = '';
-        
-        await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/store`,{
-            method: 'POST',
-            headers: config.headers,
-            body: JSON.stringify(data)
-        })
-            .then(res => res.json())
-            .then((res) => {
-
-                // Errors 400
-                if (res.data.status_code === 422) {
-                    for (const key in e.response.data.errors) {
-                        tripErrors.value = key
-                    }
-                }else{
-                    trip.value = res.data;
-                }
-
-            })
-            .catch((e) => {
-
-                // Errors 500
-                if (e.response.status >= 500 &&  e.response.status <= 599) {
-                    tripErrors.value.push(t("errors.error_internal"));
-                }
-                
-            });
-
-    }
-
-    const updateTrip = async (id, data) => {
-        errors.value = '';
-        try {
-            await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/update/${id}`, data, config)
-            //await router.push({ name: 'note.index' })
-        } catch (e) {
-            // Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				errors.value.push(t("errors.error_internal"));
+	const getTrips = async () => {
+		tripErrors.value = [];
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/list`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				tripErrors.value = res.errors;
+			}else{
+				trips.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-			     for (const key in e.response.data.errors) {
-			         errors.value = key
-			     }
+		})
+		.catch((e) => {
+			tripErrors.value.push(t("errors.error_internal"));
+		});
+	}
+
+
+	const getTrip = async (id) => {
+		tripErrors.value = [];
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/show/${id}`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				tripErrors.value = res.errors;
+			}else{
+				trip.value = res.data;
 			}
-        }
-    }
+		})
+		.catch((e) => {
+			tripErrors.value.push(t("errors.error_internal"));
+		});
+	}
 
 
-    const destroyTrip = async (id) => {
-        await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/delete/${id}`, config)
-    }
+	const storeTrip = async (data) => {
+		tripErrors.value = [];
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/store`,{
+			method: 'POST',
+			headers: config.headers,
+			body: JSON.stringify(data),
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				tripErrors.value = res.errors;
+			}else{
+				trip.value = res.data;
+			}
+		})
+		.catch((e) => {
+			tripErrors.value.push(t("errors.error_internal"));
+		});
+	}
 
-    return {
-        errors,
-        trip,
-        trips,
-        getTrip,
-        getTrips,
-        storeTrip,
-        updateTrip,
-        destroyTrip,
-    }
+
+	const updateTrip = async (id, data) => {
+		tripErrors.value = [];
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/update/${id}`,{
+			method: 'PUT',
+			headers: config.headers,
+			body: JSON.stringify(data),
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				tripErrors.value = res.errors;
+			}else{
+				trip.value = res.data;
+			}
+		})
+		.catch((e) => {
+			tripErrors.value.push(t("errors.error_internal"));
+		});
+	}
+
+
+	const destroyTrip = async (id) => {
+		tripErrors.value = [];
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trips/delete/${id}`,{
+			method: 'DELETE',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				tripErrors.value = res.errors;
+			}else{
+				trip.value = res.data;
+			}
+		})
+		.catch((e) => {
+			tripErrors.value.push(t("errors.error_internal"));
+		});
+	}
+
+
+	return {
+		tripErrors,
+		trip,
+		trips,
+		getTrip,
+		getTrips,
+		storeTrip,
+		updateTrip,
+		destroyTrip,
+	}
 
 }

@@ -844,7 +844,7 @@ const { drivers, getDrivers } = useDrivers();
 const { tows, getTows } = useTow();
 
 
-const { trip, tripErrors, updateTrip, getTrip } = useTrips();
+const { trip, tripErrors, updateTrip, getTrip, destroyTrip } = useTrips();
 const { tripStatuses, tripStatusErrors, getTripStatuses } = useTripStatus();
 
 const { stage, stageErrors, storeStage, updateStage, destroyStage } = useStage();
@@ -1056,7 +1056,22 @@ const deleteTripForm = async(id) => {
 
 				///TODO hacer algo
 
-				//await Toast(t('message.record_deleted'), 'success');
+				await destroyTrip(id);
+
+				console.log({...tripErrors.value});
+
+				if(tripErrors.value){
+
+					await Toast(t('message.error'), 'error');
+
+
+				}else{
+					
+					await Toast(t('message.record_deleted'), 'success');
+				}
+
+				
+
 
 			}
 
