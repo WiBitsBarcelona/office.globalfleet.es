@@ -776,6 +776,7 @@ import { onMounted, reactive, toRefs, ref } from 'vue';
 import Preloader from '@/components/preloader/Preloader.vue';
 
 
+
 import { Toast } from '@/utils/toast';
 import { helper as $h } from "@/utils/helper";
 import Swal from "sweetalert2";
@@ -831,6 +832,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 import enumActionTask from '@/enums/enum_action_task.js';
+
+
+
 
 
 
@@ -1054,21 +1058,28 @@ const deleteTripForm = async(id) => {
 		}).then(async(result) => {
 			if (result.isConfirmed) {
 
+
+
+
+				await Toast(t('message.error'), 'error');
+
+
+
 				///TODO hacer algo
 
-				await destroyTrip(id);
+				// await destroyTrip(id);
 
-				console.log({...tripErrors.value});
+				// console.log({...tripErrors.value});
 
-				if(tripErrors.value){
+				// if(tripErrors.value){
 
-					await Toast(t('message.error'), 'error');
+				// 	await Toast(t('message.error'), 'error');
 
 
-				}else{
-					
-					await Toast(t('message.record_deleted'), 'success');
-				}
+				// }else{
+
+				// 	await Toast(t('message.record_deleted'), 'success');
+				// }
 
 				
 

@@ -159,6 +159,7 @@ onMounted(async () => {
   //formattedMenu.value = $h.toRaw(simpleMenu.value);
   await formattedMenuList();
 
+
   //TODO
   // pendiente por revisar: cuando no tiene cometchat activo igualmente falla 
   // por que un setInterval cada vez que se recarga un menu. ¿El setInterval se reemplaza?
@@ -169,8 +170,6 @@ onMounted(async () => {
   if (response != false) {
     if (!localStorage.getItem("token") || useAuthenticationStore().user.employee !== null) {
       await checkUnreadMessages();
-
-      await checkUnreadMessages
     }
   }
 
@@ -181,10 +180,8 @@ setInterval(async () => {
 
   if (response != false) {
     if (!localStorage.getItem("token") || useAuthenticationStore().user.employee !== null) {
-      await checkUnreadMessages();
-
       setTimeout(async () => {
-        await checkUnreadMessages
+        await checkUnreadMessages();
       }, 4000);
     }
   }
