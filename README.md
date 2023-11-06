@@ -145,7 +145,7 @@ Example to implement:
 					});
 
 
-					Swal.fire(t("message.error"), e, 'error');
+					Swal.fire(t("message.error"), e + ' error');
 					
 				}else{
 					tableData.value = await findData();
@@ -160,6 +160,35 @@ Example to implement:
 
 
 ```
+
+
+
+## Message LocalStorage:
+
+```sh 
+
+With redirection:
+
+...
+
+//Success
+localStorage.setItem('message_success', t('message.record_saved'));
+await router.push('/trips');
+
+
+//Error
+localStorage.setItem('message_error', t('message.error'));
+await router.push('/trips');
+
+...
+
+
+
+```
+
+
+
+
 
 ### Tootilps
 

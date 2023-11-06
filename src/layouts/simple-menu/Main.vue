@@ -1,5 +1,6 @@
 <template>
   <div class="py-5 md:py-0">
+
     <!-- <FleetModeSwitcher /> -->
     <MobileMenu />
     <TopBar class="top-bar-boxed--simple-menu" />
@@ -10,7 +11,7 @@
           <!-- BEGIN: First Child -->
           <template v-for="(menu, menuKey) in formattedMenu">
             <li v-if="menu == 'devider'" :key="menu + menuKey" class="side-nav__devider my-6"></li>
-            <li v-else :key="[menu + menuKey]" class="text-end">
+            <li v-else :key="menu + menuKey" class="text-end">
               <Tippy tag="a" :content="t(menu.title)" :options="{
                 placement: 'left',
               }" :href="menu.subMenu
@@ -110,6 +111,7 @@
 </template>
 
 <script setup>
+
 import { computed, onMounted, provide, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useSimpleMenuStore } from "@/stores/simple-menu";
@@ -127,6 +129,8 @@ import useChat from "@/composables/chat";
 import enumRoles from '@/enums/enum_roles.js';
 import FleetFooter from "@/components/fleet-footer/Main.vue";
 import { useI18n } from "vue-i18n";
+import { Toast } from '@/utils/toast';
+
 
 const { unreadMessageCount, checkUnreadMessages, getCometChatCredentials } = useChat();
 
@@ -190,7 +194,14 @@ setInterval(async () => {
 
 
 
+/**
+ * Formatted menu && LocalStorage Messages
+ */
 const formattedMenuList = async () => {
+  
+  /************************
+   * formattedMenu
+   ************************/
   //formattedMenu.value = $h.toRaw(simpleMenu.value);
   const menuFormat = $h.toRaw(simpleMenu.value);
 
@@ -202,6 +213,24 @@ const formattedMenuList = async () => {
   }
 
   formattedMenu.value = menuNew;
+
+
+
+  
+
+  /************************
+   * LocalStorage Messages
+   ************************/
+  if(localStorage.getItem('message_success')){
+    await Toast(localStorage.getItem('message_success'), 'success');
+    localStorage.removeItem('message_success');
+  }
+
+  if(localStorage.getItem('message_error')){
+    //await Toast(t('message.error'), 'error');
+    await Toast(localStorage.getItem('message_error'), 'error');
+    localStorage.removeItem('message_error');
+  }
 
 }
 

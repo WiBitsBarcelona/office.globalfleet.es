@@ -1,5 +1,4 @@
 import { ref } from 'vue';
-import axios from 'axios';
 import { useI18n } from 'vue-i18n';
 
 
@@ -19,41 +18,41 @@ export default function useTripTow() {
 
 	const getTripTows = async () => {
 		tripTowErrors.value = [];
-		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-tows/list`, config);
-			// Errors 400
-			if (parseInt(response.data.status_code) === 422) {
-				for (const key in response.data.errors) {
-					tripTowErrors.value = key
-				}
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-tows/list`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				tripTowErrors.value = res.errors;
+			}else{
+				tripTows.value = res.data;
 			}
-			tripTows.value = response.data.data;
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500) {
-				tripTowErrors.value.push(t("errors.error_internal"));
-			}
-		}
+		})
+		.catch((e) => {
+			tripTowErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	const getTripTow = async (id) => {
 		tripTowErrors.value = [];
-		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-tows/show/${id}`, config);
-			// Errors 400
-			if (parseInt(response.data.status_code) === 422) {
-				for (const key in response.data.errors) {
-					tripTowErrors.value = key
-				}
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-tows/show/${id}`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				tripTowErrors.value = res.errors;
+			}else{
+				tripTow.value = res.data;
 			}
-			tripTow.value = response.data.data;
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500) {
-				tripTowErrors.value.push(t("errors.error_internal"));
-			}
-		}
+		})
+		.catch((e) => {
+			tripTowErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
@@ -66,19 +65,14 @@ export default function useTripTow() {
 		})
 		.then(res => res.json())
 		.then((res) => {
-			// Errors 400
-			if (parseInt(res.data.status_code) === 422) {
-				for (const key in res.data.errors) {
-					tripTowErrors.value = key
-				}
+			if (!res.success) {
+				tripTowErrors.value = res.errors;
+			}else{
+				tripTow.value = res.data;
 			}
-			tripTow.value = res.data;
 		})
 		.catch((e) => {
-			// Errors 500
-			if (e.response.status >= 500) {
-				tripTowErrors.value.push(t("errors.error_internal"));
-			}
+			tripTowErrors.value.push(t("errors.error_internal"));
 		});
 	}
 
@@ -92,19 +86,14 @@ export default function useTripTow() {
 		})
 		.then(res => res.json())
 		.then((res) => {
-			// Errors 400
-			if (parseInt(res.data.status_code) === 422) {
-				for (const key in res.data.errors) {
-					tripTowErrors.value = key
-				}
+			if (!res.success) {
+				tripTowErrors.value = res.errors;
+			}else{
+				tripTow.value = res.data;
 			}
-			tripTow.value = res.data;
 		})
 		.catch((e) => {
-			// Errors 500
-			if (e.response.status >= 500) {
-				tripTowErrors.value.push(t("errors.error_internal"));
-			}
+			tripTowErrors.value.push(t("errors.error_internal"));
 		});
 	}
 
@@ -117,19 +106,14 @@ export default function useTripTow() {
 		})
 		.then(res => res.json())
 		.then((res) => {
-			// Errors 400
-			if (parseInt(res.data.status_code) === 422) {
-				for (const key in res.data.errors) {
-					tripTowErrors.value = key
-				}
+			if (!res.success) {
+				tripTowErrors.value = res.errors;
+			}else{
+				tripTow.value = res.data;
 			}
-			tripTow.value = res.data;
 		})
 		.catch((e) => {
-			// Errors 500
-			if (e.response.status >= 500) {
-				tripTowErrors.value.push(t("errors.error_internal"));
-			}
+			tripTowErrors.value.push(t("errors.error_internal"));
 		});
 	}
 

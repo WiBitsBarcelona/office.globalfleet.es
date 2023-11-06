@@ -189,31 +189,34 @@
 				</div>
 
 
+
+
 				<div class="col-span-12 md:col-span-4 lg:col-span-4">
 					<div class="input-form">
-						<label for="driver_id" class="form-label w-full">
+						<label for="trip_tow" class="form-label w-full">
 							{{ $t("trip_tow") }}
 						</label>
 
-						<TomSelect v-model.trim="validate.tow_id.$model" id="tow_id" name="tow_id" :options="{
+						<TomSelect v-model.trim="validate.trip_tow_id.$model" id="trip_tow_id" name="trip_tow_id" :options="{
 							placeholder: $t('message.select'),
-						}" class="form-control w-full" :class="{ 'border-danger': validate.tow_id.$error }">
+						}" class="form-control w-full" :class="{ 'border-danger': validate.trip_tow_id.$error }">
 
-							<option :value="0"></option>
-							<option v-for="item in selectTows" :value="item.id">
-								{{ item.name }} {{ item.plate }}
+							<option v-for="item in selectTripTows" :value="item.id">
+								{{ item.plate }}
 							</option>
 
 						</TomSelect>
 
 
-						<template v-if="validate.tow_id.$error">
-							<div v-for="(error, index) in validate.tow_id.$errors" :key="index" class="text-danger mt-2">
+						<template v-if="validate.trip_tow_id.$error">
+							<div v-for="(error, index) in validate.trip_tow_id.$errors" :key="index" class="text-danger mt-2">
 								{{ error.$message }}
 							</div>
 						</template>
 					</div>
 				</div>
+
+
 
 
 				<div class="col-span-12 md:col-span-4 lg:col-span-4">
@@ -224,7 +227,7 @@
 
 						<TomSelect v-model.trim="validate.trip_status_id.$model" id="trip_status_id" name="trip_status_id" :options="{
 							placeholder: $t('message.select'),
-						}" class="form-control w-full" :class="{ 'border-danger': validate.tow_id.$error }">
+						}" class="form-control w-full" :class="{ 'border-danger': validate.trip_status_id.$error }">
 
 							<option v-for="item in selectTripStatuses" :value="item.id">
 								{{ item.name }}
@@ -265,9 +268,10 @@
 		</form>
 		<!-- END: Form -->
 
-
-
-		<div class="grid grid-cols-12 gap-1 mt-10 mb-10">
+		<div 
+			class="grid grid-cols-12 gap-1 mt-10 mb-10" 
+			v-if="checkStatusId()"
+		>
 			<div class="col-span-12 md:col-span-12 lg:col-span-12 text-end">
 
 				<a href="#" class="btn btn-outline border-slate-200 w-1/2 sm:w-auto mr-2" @click="showActionStageForm">
@@ -418,8 +422,8 @@
 														<div class="flex flex-row justify-between">
 
 															<p class="text-md font-normal leading-6 text-gray-500 mt-2">
-																<span class="text-xs font-light text-gray-400">{{ $t("task")
-																}}:
+																<span class="text-xs font-light text-gray-400">
+																	({{ task.order_number }}) {{ $t("task") }}:
 																</span>
 																{{ task.name }}
 															</p>
@@ -774,6 +778,7 @@
 
 import { onMounted, reactive, toRefs, ref } from 'vue';
 import Preloader from '@/components/preloader/Preloader.vue';
+import { useRouter } from 'vue-router';
 
 
 
@@ -832,6 +837,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 import enumActionTask from '@/enums/enum_action_task.js';
+import enumTrip from '@/enums/enum_trip.js';
+
 
 
 
@@ -873,12 +880,13 @@ const { stageTow, errorStageTow, storeStageTow, updateStageTow } = useStageTow()
 
 const { t } = useI18n();
 const route = useRoute();
+const router = useRouter();
 
 
 const selectVehicles = ref([]);
 const selectTripPriorities = ref([]);
 const selectDrivers = ref([]);
-const selectTows = ref([]);
+const selectTripTows = ref([]);
 const selectTripStatuses = ref([]);
 
 
@@ -929,7 +937,7 @@ const rules = {
 	driver_id: {
 		required: helpers.withMessage(t("form.required"), required),
 	},
-	tow_id: {
+	trip_tow_id: {
 		required: helpers.withMessage(t("form.required"), required),
 	},
 	reference_number: {
@@ -952,7 +960,7 @@ const rules = {
 //   trip_status_id: "",
 //   trip_priority_id: "",
 //   driver_id: "",
-//   tow_id: "",
+//   trip_tow_id: "",
 //   reference_number: Math.floor(Math.random() * 100000),
 //   name: "Viaje Plaza",
 //   execution_at: $h.nowTimestamp('-').substr(0, 16),
@@ -966,7 +974,7 @@ const formData = reactive({
 	trip_status_id: "",
 	trip_priority_id: "",
 	driver_id: "",
-	tow_id: "",
+	trip_tow_id: "",
 	reference_number: "",
 	name: "",
 	execution_at: $h.nowTimestamp('-').substr(0, 16),
@@ -1006,6 +1014,21 @@ const save = async () => {
 		//loading.value = true;
 
 
+
+		/**
+		 * Trip tows
+		 */
+		 const dataTripTowUpdate = {
+			trip_id: trip.value.id,
+			tow_id: formData.trip_tow_id
+		}
+
+		await updateTripTow(trip.value.tows[0].id, dataTripTowUpdate);
+		console.log("TRIPTOW: ", { ...tripTow });
+
+
+
+
 		/**
 		 * Trip
 		 */
@@ -1016,28 +1039,11 @@ const save = async () => {
 		//console.log({ ...tripErrors.value });
 
 
-
-		/**
-		 * Trip tows
-		 */
-		const dataTripTowUpdate = {
-			trip_id: trip.value.id,
-			tow_id: formData.tow_id
-		}
-
-
-		await updateTripTow(trip.value.tows[0].id, dataTripTowUpdate);
-		console.log({ ...tripTow });
-
-
-		
-
+		await findData();
 
 
 		//loading.value = false;
 
-
-		await findData();
 
 		await Toast(t("message.record_saved"), 'success');
 		
@@ -1047,6 +1053,7 @@ const save = async () => {
 
 
 const deleteTripForm = async(id) => {
+
 
 	Swal.fire({
 			icon: 'warning',
@@ -1058,38 +1065,26 @@ const deleteTripForm = async(id) => {
 		}).then(async(result) => {
 			if (result.isConfirmed) {
 
-
-
-
-				await Toast(t('message.error'), 'error');
-
-
-
-				///TODO hacer algo
-
-				// await destroyTrip(id);
-
-				// console.log({...tripErrors.value});
-
-				// if(tripErrors.value){
-
-				// 	await Toast(t('message.error'), 'error');
-
-
-				// }else{
-
-				// 	await Toast(t('message.record_deleted'), 'success');
-				// }
-
+				await destroyTrip(id);
 				
+				console.log({...tripErrors.value});
 
 
+				if(tripErrors.value && tripErrors.value.length > 0){
+					
+					await Toast(t('message.error'), 'error');
+					
+				}else{
+
+					localStorage.setItem('message_success', t('message.record_saved'));
+					await router.push('/trips');
+
+				}
+
+			
 			}
 
 		});
-
-
-
 
 }
 
@@ -1113,7 +1108,7 @@ const deleteTripForm = async(id) => {
 const showStageForm = () => {
 	isCreateTrip.value = false;
 	isCreateStage.value = true;
-	trip_tow_selected.value = formData.tow_id;
+	trip_tow_selected.value = formData.trip_tow_id;
 
 	//console.log({ ...arrStages.value });
 }
@@ -1615,6 +1610,28 @@ const updateActionStageEditForm = async (actionStageId, stageFake, actionStageUp
 
 
 
+/**
+ * Check
+ */
+
+ const checkStatusId = () => {
+
+	if(trip.value.trip_status_id === enumTrip.TRIP_CREATED_ID 
+		|| trip.value.trip_status_id === enumTrip.TRIP_ASSIGNED_ID 
+		|| trip.value.trip_status_id === enumTrip.TRIP_PENDING_CONFIRMATION_ID 
+		|| trip.value.trip_status_id === enumTrip.TRIP_PENDING_TO_DO_ID
+		|| trip.value.trip_status_id === enumTrip.TRIP_PROGRESS_ID
+	)
+	{
+		return true;
+	}
+
+	return false;
+	
+ }
+
+
+
 
 
 
@@ -1656,7 +1673,7 @@ const findData = async() => {
 
 	arrStages.value = trip.value.stages;
 
-	//console.log({...trip.value.stages});
+	//console.log({...trip.value});
 	//console.log("Cantidad de stages: " , trip.value.stages.length);
 
 	formData.trip_priority_id = trip.value.trip_priority_id.toString();
@@ -1673,8 +1690,7 @@ const findData = async() => {
 
 
 	if(trip.value.tows.length > 0){
-		formData.tow_id = trip.value.tows[0].tow.id.toString();
-
+		formData.trip_tow_id = trip.value.tows[0].tow.id.toString();
 	}
 
 }
@@ -1696,6 +1712,7 @@ onMounted(async () => {
   await getDrivers();
   selectDrivers.value = drivers.value;
 
+
   //Trip Statuses
   await getTripStatuses();
   selectTripStatuses.value = tripStatuses.value;
@@ -1703,8 +1720,8 @@ onMounted(async () => {
 
   //Tows trip
   await getTows();
-  selectTows.value = tows.value;
-
+  selectTripTows.value = tows.value;
+  
 
   await findData();
 
