@@ -263,7 +263,7 @@ const formData = reactive({
 	action_form_field_name: "",
 	action_type_name: "",
 	order_number: "",
-	description: "Descripcion Action Tasks",
+	description: "",
 });
 
 const validate = useVuelidate(rules, toRefs(formData));

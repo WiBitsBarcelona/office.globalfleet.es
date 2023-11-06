@@ -347,20 +347,19 @@
                         </div>
                       </div>
                       <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow ml-14 md:ml-44">
-                        <div class="grid grid-cols-4 gap-2 mb-5pb-2">
+                        <div class="grid grid-cols-6 gap-2 mb-5">
 
-                          <div class="col-span-4">
+                          <div class="col-span-6">
 
                             <div class="flex flex-row justify-between">
 
                               <p class="text-md font-normal leading-6 text-gray-500 mt-2"><span
                                   class="text-xs font-light text-gray-400">{{ $t("task") }}:
                                 </span>
-                                {{ task.name }}
+                                {{ task.name }} 
                               </p>
 
-                              <div class="col-span-12 text-right">
-
+                              <div class="text-right">
                                 <a href="#" @click.prevent="showActionTaskForm(stage, task)"
                                   class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
                                   <PlusCircleIcon class="w-4 h-4" /> {{ t("add_action_task") }}
@@ -376,23 +375,22 @@
                           </div>
 
 
-
                           <!-- Action Tasks -->
-                          <div v-for="action_task in task.action_tasks" :key="action_task.id">
+                          <div class="col-span-6" v-for="action_task in task.action_tasks" :key="action_task.id">
 
-                            
+                              <div class="grid grid-cols-6">
 
-                              <div class="col-span-4">
-                                <h5 class="text-xs font-light text-gray-400">{{ $t("action") }}:</h5>
-                                <p class="text-xs font-normal leading-6 text-gray-500">
-                                  {{ action_task.action_type_name }}
-                                </p>
-                              </div>
+                                <div class="col-span-2">
+                                  <h5 class="text-xs font-light text-gray-400">{{ $t("action") }}:</h5>
+                                  <p class="text-xs font-normal leading-6 text-gray-500">
+                                    {{ action_task.action_type_name }}
+                                  </p>
+                                </div>
 
+                               
 
-
-                              <!-- Action Cameras -->
-                              <div class="col-span-4" v-if="parseInt(action_task.action_type_model) === enumActionTask.CAMERA_ID">
+                                <!-- Action Cameras -->
+                              <div class="col-span-2" v-if="parseInt(action_task.action_type_model) === enumActionTask.CAMERA_ID">
                                 <div v-for="camera in action_task.cameras" :key="camera.id">
 
                                   <div >
@@ -409,7 +407,7 @@
 
 
                               <!-- Action Scanner -->
-                              <div class="col-span-4" v-if="parseInt(action_task.action_type_model) === enumActionTask.SCANNER_ID">
+                              <div class="col-span-2" v-if="parseInt(action_task.action_type_model) === enumActionTask.SCANNER_ID">
                                 <div v-for="scanner in action_task.scanners" :key="scanner.id">
 
 
@@ -431,16 +429,16 @@
                               <div class="col-span-4" v-if="parseInt(action_task.action_type_model) === enumActionTask.FORM_ID">
                                 <div v-for="form in action_task.forms" :key="form.id">
 
-                                  <div class="grid grid-cols-6 gap-2">
+                                  <div class="grid grid-cols-2 gap-2">
 
-                                    <div class="col-span-3">
+                                    <div class="col-span-1">
                                       <h5 class="text-xs font-light text-gray-400">{{ $t("action") }}:</h5>
                                       <p class="text-xs font-normal leading-6 text-gray-500">
                                         {{ form.name }}
                                       </p>
                                     </div>
 
-                                    <div class="col-span-3">
+                                    <div class="col-span-1">
                                       <h5 class="text-xs font-light text-gray-400">{{ $t("name") }}:</h5>
                                       <p class="text-xs font-normal leading-6 text-gray-500">
                                         {{ form.action_form_field_name }}
@@ -453,7 +451,16 @@
                               <!-- End of Action Form -->
 
 
-                            </div>
+                              </div>
+
+
+
+
+
+                              
+
+
+                          </div>
                          
 
                         </div>
@@ -800,30 +807,30 @@ const rules = {
 };
 
 
+// Only test
+// const formData = reactive({
+//   vehicle_id: "",
+//   trip_priority_id: "",
+//   driver_id: "",
+//   tow_id: "",
+//   reference_number: Math.floor(Math.random() * 100000),
+//   name: "Viaje Plaza",
+//   execution_at: $h.nowTimestamp('-').substr(0, 16),
+//   observations: "",
+// });
+
+
 
 const formData = reactive({
   vehicle_id: "",
   trip_priority_id: "",
   driver_id: "",
   tow_id: "",
-  reference_number: Math.floor(Math.random() * 100000),
-  name: "Viaje Plaza",
+  reference_number: "",
+  name: "",
   execution_at: $h.nowTimestamp('-').substr(0, 16),
   observations: "",
 });
-
-
-
-// const formData = reactive({
-//   vehicle_id: "",
-//   trip_priority_id: "",
-//   driver_id: "",
-//   tow_id: "",
-//   reference_number: "",
-//   name: "",
-//   execution_at: $h.nowTimestamp('-').substr(0, 16),
-//   observations: "",
-// });
 
 
 const validate = useVuelidate(rules, toRefs(formData));

@@ -428,7 +428,7 @@
 																{{ task.name }}
 															</p>
 
-															<div class="col-span-12 text-right">
+															<div class="text-right">
 
 																<a href="#" @click.prevent="showActionTaskForm(stage, task)"
 																	class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
