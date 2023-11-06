@@ -36,7 +36,7 @@
 					<input
 						v-model.trim="validate.order_number.$model"
 						id="order_number"
-						type="text"
+						type="number"
 						name="order_number"
 						class="form-control"
 						:class="{ 'border-danger': validate.order_number.$error }"
@@ -48,6 +48,36 @@
 					</template>
 				</div>
 			</div>
+
+
+
+			<div class="col-span-12 md:col-span-4 lg:col-span-4">
+					<div class="input-form">
+						<label for="task_status_id" class="form-label w-full">
+							{{ $t("task_status") }}
+						</label>
+
+						<TomSelect v-model.trim="validate.task_status_id.$model" id="task_status_id" name="task_status_id" :options="{
+							placeholder: $t('message.select'),
+						}" class="form-control w-full" :class="{ 'border-danger': validate.task_status_id.$error }">
+
+							<option v-for="item in selectTaskStatuses" :value="item.id">
+								{{ item.name }}
+							</option>
+
+						</TomSelect>
+
+
+						<template v-if="validate.task_status_id.$error">
+							<div v-for="(error, index) in validate.task_status_id.$errors" :key="index" class="text-danger mt-2">
+								{{ error.$message }}
+							</div>
+						</template>
+					</div>
+				</div>
+
+
+
 
 
 
@@ -73,23 +103,33 @@
 </template>
 <script setup>
 
-	import { onMounted, reactive, toRefs } from 'vue';
+	import { onMounted, reactive, toRefs, ref } from 'vue';
 	import useTasks from '@/composables/tasks';
+	import useTaskStatus from '@/composables/task_statuses';
 	import { required, minLength, maxLength, email, url, integer } from '@vuelidate/validators';
 	import { useVuelidate } from '@vuelidate/core';
 	import { helpers } from '@vuelidate/validators';
 	import { useI18n } from 'vue-i18n';
 
 	const { task, getTask } = useTasks();
+	const { taskStatuses, getTaskStatuses } = useTaskStatus();
+
+
 	const { t } = useI18n();
 	const props = defineProps(['taskId']);
 	const emit = defineEmits(['cancelTaskEditForm', 'updateTaskForm']);
+
+	const selectTaskStatuses = ref([]);
+
 
 	const rules = {
 		name: {
 			required: helpers.withMessage(t("form.required"), required),
 		},
 		order_number: {
+			required: helpers.withMessage(t("form.required"), required),
+		},
+		task_status_id: {
 			required: helpers.withMessage(t("form.required"), required),
 		},
 	};
@@ -112,12 +152,18 @@
 	};
 
 	onMounted(async () => {
-		await getTask(props.taskId);
 
+		await getTaskStatuses();
+
+		selectTaskStatuses.value = taskStatuses.value;
+
+
+		await getTask(props.taskId);
 		console.log({...task.value});
 
 		formData.name = task.value.name;
 		formData.order_number = task.value.order_number;
+		formData.task_status_id = task.value.task_status_id.toString();
 
 	});
 
