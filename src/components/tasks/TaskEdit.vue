@@ -6,7 +6,7 @@
 		<!-- BEGIN: container -->
 		<div class="grid grid-cols-12 gap-6">
 
-			<div class="col-span-12 md:col-span-6 lg:col-span-4">
+			<div class="col-span-12 md:col-span-6 lg:col-span-6">
 				<div class="input-form">
 					<label for="name" class="form-label w-full">
 						{{ $t("name") }}
@@ -28,7 +28,7 @@
 			</div>
 
 
-			<div class="col-span-12 md:col-span-6 lg:col-span-4">
+			<div class="col-span-12 md:col-span-6 lg:col-span-2">
 				<div class="input-form">
 					<label for="order_number" class="form-label w-full">
 						{{ $t("order_number") }}
@@ -51,10 +51,10 @@
 
 
 
-			<div class="col-span-12 md:col-span-4 lg:col-span-4">
+			<div class="col-span-12 md:col-span-6 lg:col-span-4">
 					<div class="input-form">
 						<label for="task_status_id" class="form-label w-full">
-							{{ $t("task_status") }}
+							{{ $t("status") }}
 						</label>
 
 						<TomSelect v-model.trim="validate.task_status_id.$model" id="task_status_id" name="task_status_id" :options="{
@@ -137,6 +137,7 @@
 	const formData = reactive({
 		name: "",
 		order_number: "",
+		task_status_id: ""
 	});
 
 	const validate = useVuelidate(rules, toRefs(formData));
@@ -154,7 +155,6 @@
 	onMounted(async () => {
 
 		await getTaskStatuses();
-
 		selectTaskStatuses.value = taskStatuses.value;
 
 
@@ -164,6 +164,8 @@
 		formData.name = task.value.name;
 		formData.order_number = task.value.order_number;
 		formData.task_status_id = task.value.task_status_id.toString();
+
+		console.log(task.value.task_status_id);
 
 	});
 
