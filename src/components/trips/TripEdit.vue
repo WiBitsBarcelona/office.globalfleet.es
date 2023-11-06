@@ -1669,6 +1669,9 @@ const updateActionStageEditForm = async (actionStageId, stageFake, actionStageUp
 
 const findData = async() => {
 
+
+	
+
 	await getTrip(route.params.id);
 
 	arrStages.value = trip.value.stages;
@@ -1698,6 +1701,8 @@ const findData = async() => {
 
 onMounted(async () => {
   
+	loading.value = true;
+
   // Vehicles
   await getVehicles();
   selectVehicles.value = vehicles.value;
@@ -1722,9 +1727,10 @@ onMounted(async () => {
   await getTows();
   selectTripTows.value = tows.value;
   
-
+  
   await findData();
 
+  loading.value = false;
 
 }); 
 
