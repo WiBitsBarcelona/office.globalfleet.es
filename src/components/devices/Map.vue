@@ -102,7 +102,7 @@ watch(toggle, () => {
   } else {
     Toast(t("auto_refresh_off_toast"), 'info');
     //TODO - CANCEL TIMEOUT
-    clearInterval(autoRefresh);
+    clearInterval(autoRefresh.value);
     console.log("Cancelado");
   }
 })
@@ -133,10 +133,11 @@ let trip_status;
 let trip_origin;
 let trip_destination;
 let cluster;
-
+let refreshData = ref();
 const init = async (initializeMap) => {
 
   await getDrivers();
+  markersArr = [];
   drivers.value.forEach((d) => {
     if (d.position) {
       totalDevices.value++;
@@ -144,7 +145,6 @@ const init = async (initializeMap) => {
     }
   });
 
-  console.log(markersArr);
 
   const markers = JSON.parse(JSON.stringify(markersArr));
 
@@ -862,6 +862,10 @@ const init = async (initializeMap) => {
     init(initializeMap);
     stop();
   });
+
+  refreshData = async () => {
+    init(initializeMap);
+  }
 };
 
 //FUNCTION FOR CREATE A BUTTON ELEMENT TO RESET MAP TO DEFAULT BOUNDS.
@@ -995,18 +999,8 @@ function zoomDriver(drv) {
   });
 }
 
-const refreshData = async () => {
-  await getDrivers();
-  markersArr = [];
-  drivers.value.forEach((d) => {
-    if (d.position) {
-      markersArr.push(d);
-    }
-  });
-}
-
 onUnmounted(() => {
-  clearInterval(autoRefresh);
+  clearInterval(autoRefresh.value);
 });
 
 </script>
