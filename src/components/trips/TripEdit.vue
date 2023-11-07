@@ -270,7 +270,7 @@
 
 		<div 
 			class="grid grid-cols-12 gap-1 mt-10 mb-10" 
-			v-if="checkStatusId()"
+			v-if="idTripEnabled()"
 		>
 			<div class="col-span-12 md:col-span-12 lg:col-span-12 text-end">
 
@@ -322,7 +322,7 @@
 											</span> {{ stage.name }}
 										</p>
 
-										<div class="text-right">
+										<div class="text-right" v-show="idTripEnabled()">
 
 											<!-- <a href="#" @click.prevent="arrStageItemUp(stage.id)"
 												class="btn btn-outline-primary w-1/2 sm:w-auto mr-2"
@@ -428,7 +428,7 @@
 																{{ task.name }}
 															</p>
 
-															<div class="col-span-12 text-right">
+															<div class="text-right" v-show="idTripEnabled()">
 
 																<a href="#" @click.prevent="showActionTaskForm(stage, task)"
 																	class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
@@ -1614,7 +1614,7 @@ const updateActionStageEditForm = async (actionStageId, stageFake, actionStageUp
  * Check
  */
 
- const checkStatusId = () => {
+ const idTripEnabled = () => {
 
 	if(trip.value.trip_status_id === enumTrip.TRIP_CREATED_ID 
 		|| trip.value.trip_status_id === enumTrip.TRIP_ASSIGNED_ID 
@@ -1669,6 +1669,9 @@ const updateActionStageEditForm = async (actionStageId, stageFake, actionStageUp
 
 const findData = async() => {
 
+
+	
+
 	await getTrip(route.params.id);
 
 	arrStages.value = trip.value.stages;
@@ -1698,6 +1701,8 @@ const findData = async() => {
 
 onMounted(async () => {
   
+	loading.value = true;
+
   // Vehicles
   await getVehicles();
   selectVehicles.value = vehicles.value;
@@ -1722,9 +1727,10 @@ onMounted(async () => {
   await getTows();
   selectTripTows.value = tows.value;
   
-
+  
   await findData();
 
+  loading.value = false;
 
 }); 
 
