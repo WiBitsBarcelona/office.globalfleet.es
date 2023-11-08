@@ -634,10 +634,24 @@ const initTripDocumentsTabulator = async () => {
 			}
 		},
     rowFormatter:function(row){
-      if(row.getData().readed_at == null){
-        row.getElement().style.color = "rgba(0,150,178, 1)";
-        row.getElement().style.fontWeight = "bold";
-      }
+        if(row.getData().readed_at == null){
+          row.getElement().style.backgroundColor = "rgba(245,158,11, 0.25)";
+          row.getElement().style.borderRadius = "5px";
+          row.getElement().style.marginTop = "3px";
+          row.getElement().style.marginBottom = "3px";
+        }
+        if(row.getData().confirmed_at == null && row.getData().readed_at != null){
+          row.getElement().style.backgroundColor = "rgba(0,150,178, 0.25)";
+          row.getElement().style.borderRadius = "5px";
+          row.getElement().style.marginTop = "3px";
+          row.getElement().style.marginBottom = "3px";
+        }
+        if(row.getData().confirmed_at != null && row.getData().readed_at != null){
+          row.getElement().style.backgroundColor = "rgba(34,197,94, 0.25)";
+          row.getElement().style.borderRadius = "5px";
+          row.getElement().style.marginTop = "3px";
+          row.getElement().style.marginBottom = "3px";
+        }
     },
     initialSort: [
       { column: "id", dir: "desc" }
@@ -1052,10 +1066,24 @@ const initStageDocumentsTabulator = async () => {
 			}
 		},
     rowFormatter:function(row){
-      if(row.getData().readed_at == null){
-        row.getElement().style.color = "rgba(0,150,178, 1)";
-        row.getElement().style.fontWeight = "bold";
-      }
+        if(row.getData().readed_at == null){
+          row.getElement().style.backgroundColor = "rgba(245,158,11, 0.25)";
+          row.getElement().style.borderRadius = "5px";
+          row.getElement().style.marginTop = "3px";
+          row.getElement().style.marginBottom = "3px";
+        }
+        if(row.getData().confirmed_at == null && row.getData().readed_at != null){
+          row.getElement().style.backgroundColor = "rgba(0,150,178, 0.25)";
+          row.getElement().style.borderRadius = "5px";
+          row.getElement().style.marginTop = "3px";
+          row.getElement().style.marginBottom = "3px";
+        }
+        if(row.getData().confirmed_at != null && row.getData().readed_at != null){
+          row.getElement().style.backgroundColor = "rgba(34,197,94, 0.25)";
+          row.getElement().style.borderRadius = "5px";
+          row.getElement().style.marginTop = "3px";
+          row.getElement().style.marginBottom = "3px";
+        }
     },
     initialSort: [
       { column: "id", dir: "desc" }
