@@ -872,15 +872,15 @@ const save = async () => {
 
 
 
-    /**
-     * Trip tows
-     */
-    const dataTripTow = {
-      trip_id: trip.value.id,
-      tow_id: formData.tow_id
-    }
-    await storeTripTow(dataTripTow);
-    console.log({...tripTow});
+    // /**
+    //  * Trip tows
+    //  */
+    // const dataTripTow = {
+    //   trip_id: trip.value.id,
+    //   tow_id: formData.tow_id
+    // }
+    // await storeTripTow(dataTripTow);
+    // console.log({...tripTow});
 
 
 
