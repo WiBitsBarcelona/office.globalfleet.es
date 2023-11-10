@@ -1,5 +1,4 @@
 import { ref } from 'vue';
-import axios from 'axios';
 import { useI18n } from 'vue-i18n';
 
 
@@ -7,8 +6,9 @@ export default function useActionType() {
 
 	const actionType = ref([]);
 	const actionTypes = ref([]);
-	const errors = ref([]);
+	const actionTypeErrors = ref([]);
 	const { t } = useI18n();
+
 	let config = {
 		headers: {
 			"Content-Type": "application/json",
@@ -17,104 +17,109 @@ export default function useActionType() {
 	}
 
 	const getActionTypes = async () => {
-		errors.value = [];
-		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-types/list`, config);
-			actionTypes.value = response.data.data;
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				errors.value.push(t("errors.error_internal"));
+		actionTypeErrors.value = [];
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-types/list`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionTypeErrors.value = res.errors;
+			}else{
+				actionTypes.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-			     for (const key in e.response.data.errors) {
-			         errors.value = key
-			     }
-			}
-		}
+		})
+		.catch((e) => {
+			actionTypeErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	const getActionType = async (id) => {
-		errors.value = [];
-		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-types/show/${id}`, config);
-			actionType.value = response.data.data;
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				errors.value.push(t("errors.error_internal"));
+		actionTypeErrors.value = [];
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-types/show/${id}`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionTypeErrors.value = res.errors;
+			}else{
+				actionType.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-			     for (const key in e.response.data.errors) {
-			         errors.value = key
-			     }
-			}
-		}
+		})
+		.catch((e) => {
+			actionTypeErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	const storeActionType = async (data) => {
-		errors.value = [];
-		try {
-			await axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-types/store`, data, config);
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				errors.value.push(t("errors.error_internal"));
+		actionTypeErrors.value = [];
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-types/store`,{
+			method: 'POST',
+			headers: config.headers,
+			body: JSON.stringify(data),
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionTypeErrors.value = res.errors;
+			}else{
+				actionType.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-			     for (const key in e.response.data.errors) {
-			         errors.value = key
-			     }
-			}
-		}
+		})
+		.catch((e) => {
+			actionTypeErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	const updateActionType = async (id, data) => {
-		errors.value = [];
-		try {
-			await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-types/update/${id}`, data, config);
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				errors.value.push(t("errors.error_internal"));
+		actionTypeErrors.value = [];
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-types/update/${id}`,{
+			method: 'PUT',
+			headers: config.headers,
+			body: JSON.stringify(data),
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionTypeErrors.value = res.errors;
+			}else{
+				actionType.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-			     for (const key in e.response.data.errors) {
-			         errors.value = key
-			     }
-			}
-		}
+		})
+		.catch((e) => {
+			actionTypeErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	const destroyActionType = async (id) => {
-		errors.value = [];
-		try {
-			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-types/delete/${id}`, config);
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				errors.value.push(t("errors.error_internal"));
+		actionTypeErrors.value = [];
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-types/delete/${id}`,{
+			method: 'DELETE',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionTypeErrors.value = res.errors;
+			}else{
+				actionType.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-			     for (const key in e.response.data.errors) {
-			         errors.value = key
-			     }
-			}
-		}
+		})
+		.catch((e) => {
+			actionTypeErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	return {
-		errors,
+		actionTypeErrors,
 		actionType,
 		actionTypes,
 		getActionType,

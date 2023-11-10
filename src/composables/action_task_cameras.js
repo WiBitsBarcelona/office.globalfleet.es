@@ -1,5 +1,4 @@
 import { ref } from 'vue';
-import axios from 'axios';
 import { useI18n } from 'vue-i18n';
 
 
@@ -9,7 +8,7 @@ export default function useActionTaskCamera() {
 	const actionTaskCameras = ref([]);
 	const actionTaskCameraErrors = ref([]);
 	const { t } = useI18n();
-    
+
 	let config = {
 		headers: {
 			"Content-Type": "application/json",
@@ -19,41 +18,41 @@ export default function useActionTaskCamera() {
 
 	const getActionTaskCameras = async () => {
 		actionTaskCameraErrors.value = [];
-		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-task-cameras/list`, config);
-			actionTaskCameras.value = response.data.data;
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				actionTaskCameraErrors.value.push(t("errors.error_internal"));
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-task-cameras/list`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionTaskCameraErrors.value = res.errors;
+			}else{
+				actionTaskCameras.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionTaskCameraErrors.value = key
-				}
-			}
-		}
+		})
+		.catch((e) => {
+			actionTaskCameraErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	const getActionTaskCamera = async (id) => {
 		actionTaskCameraErrors.value = [];
-		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-task-cameras/show/${id}`, config);
-			actionTaskCamera.value = response.data.data;
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				actionTaskCameraErrors.value.push(t("errors.error_internal"));
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-task-cameras/show/${id}`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionTaskCameraErrors.value = res.errors;
+			}else{
+				actionTaskCamera.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionTaskCameraErrors.value = key
-				}
-			}
-		}
+		})
+		.catch((e) => {
+			actionTaskCameraErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
@@ -66,19 +65,14 @@ export default function useActionTaskCamera() {
 		})
 		.then(res => res.json())
 		.then((res) => {
-			actionTaskCamera.value = res.data;
+			if (!res.success) {
+				actionTaskCameraErrors.value = res.errors;
+			}else{
+				actionTaskCamera.value = res.data;
+			}
 		})
 		.catch((e) => {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				actionTaskCameraErrors.value.push(t("errors.error_internal"));
-			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionTaskCameraErrors.value = key
-				}
-			}
+			actionTaskCameraErrors.value.push(t("errors.error_internal"));
 		});
 	}
 
@@ -92,39 +86,35 @@ export default function useActionTaskCamera() {
 		})
 		.then(res => res.json())
 		.then((res) => {
-			actionTaskCamera.value = res.data;
+			if (!res.success) {
+				actionTaskCameraErrors.value = res.errors;
+			}else{
+				actionTaskCamera.value = res.data;
+			}
 		})
 		.catch((e) => {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				actionTaskCameraErrors.value.push(t("errors.error_internal"));
-			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionTaskCameraErrors.value = key
-				}
-			}
+			actionTaskCameraErrors.value.push(t("errors.error_internal"));
 		});
 	}
 
 
 	const destroyActionTaskCamera = async (id) => {
 		actionTaskCameraErrors.value = [];
-		try {
-			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-task-cameras/delete/${id}`, config);
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				errors.value.push(t("errors.error_internal"));
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-task-cameras/delete/${id}`,{
+			method: 'DELETE',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionTaskCameraErrors.value = res.errors;
+			}else{
+				actionTaskCamera.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionTaskCameraErrors.value = key
-				}
-			}
-		}
+		})
+		.catch((e) => {
+			actionTaskCameraErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 

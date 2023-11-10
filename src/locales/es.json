@@ -13,7 +13,9 @@
     "drivers": "Conductores",
     "help": "Ayuda",
     "vehicles": "Tractoras",
-    "tows": "Remolques"
+    "tows": "Remolques",
+    "trips-create": "Crear Viaje",
+    "trips-edit": "Editar Viaje"
   },
   "auth_footer":{
     "all_rights": "Todos los derechos reservados.",
@@ -126,7 +128,10 @@
       "export_excel": "Archivo XLSX",
       "export_csv": "Archivo CSV",
       "no_matching_records_found": "No se encuentran registros",
-      "it_must_have_action_stage": "Debe de tener al menos una Acción y una etapa"
+      "it_must_have_action_stage": "Debe de tener al menos una Acción y una etapa",
+      "error_deleting_record":"Error al eliminar registro. Por favor contacte con el administrador del sistema",
+      "total_action_stage": "Total Accion y Etapas",
+      "back": "Volver"
   },
 
   "form": {
@@ -243,7 +248,7 @@
     "documents": "Documentos",
     "title": "Gestor de Documentos",
     "current_folder_lbl": "Mostrando el contenido de la carpeta:",
-    "general_files": "Documentos Generales ",
+    "general_files": "Documentos Empresa ",
     "driver_files": "Documentos de Conductores ",
     "chat_files": "Documentos del Chat ",
     "trip_files": "Documentos de Viajes ",
@@ -431,6 +436,7 @@
   },
   "auto_refresh_title": "Refresco automático",
   "auto_refresh_on_toast": "Refresco automático cada 5 minutos ACTIVADO.",
+  "auto_refresh_on_3_toast": "Refresco automático cada 3 minutos ACTIVADO.",
   "auto_refresh_off_toast": "Refresco automático DESACTIVADO.",
   "btn_create": "Nuevo",
   "languages":{

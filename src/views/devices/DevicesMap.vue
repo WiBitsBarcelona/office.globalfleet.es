@@ -36,18 +36,7 @@
     import DevicesMap from "@/components/devices/Map.vue";
     import { useRoute } from "vue-router";
     import { useAuthenticationStore } from '@/stores/auth/authentications';
-    import { Toast } from '@/utils/toast';
-    import { useI18n } from 'vue-i18n';
     const route = useRoute();
     const useAuthentication = useAuthenticationStore();
     const toggle = ref(false);
-    const { t } = useI18n();
-
-/*     const checkRefresh = async () => {
-        if(toggle.value == true){
-            await Toast(t("auto_refresh_on_toast"), 'info');     
-        }else{
-            await Toast(t("auto_refresh_off_toast"), 'info');
-        }
-    } */
 </script>

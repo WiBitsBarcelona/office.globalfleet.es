@@ -1,5 +1,4 @@
 import { ref } from 'vue';
-import axios from 'axios';
 import { useI18n } from 'vue-i18n';
 
 
@@ -19,41 +18,41 @@ export default function useActionStageForm() {
 
 	const getActionStageForms = async () => {
 		actionStageFormErrors.value = [];
-		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-stage-forms/list`, config);
-			actionStageForms.value = response.data.data;
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				actionStageFormErrors.value.push(t("errors.error_internal"));
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-stage-forms/list`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionStageFormErrors.value = res.errors;
+			}else{
+				actionStageForms.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionStageFormErrors.value = key
-				}
-			}
-		}
+		})
+		.catch((e) => {
+			actionStageFormErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	const getActionStageForm = async (id) => {
 		actionStageFormErrors.value = [];
-		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-stage-forms/show/${id}`, config);
-			actionStageForm.value = response.data.data;
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				actionStageFormErrors.value.push(t("errors.error_internal"));
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-stage-forms/show/${id}`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionStageFormErrors.value = res.errors;
+			}else{
+				actionStageForm.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionStageFormErrors.value = key
-				}
-			}
-		}
+		})
+		.catch((e) => {
+			actionStageFormErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
@@ -66,19 +65,14 @@ export default function useActionStageForm() {
 		})
 		.then(res => res.json())
 		.then((res) => {
-			actionStageForm.value = res.data;
+			if (!res.success) {
+				actionStageFormErrors.value = res.errors;
+			}else{
+				actionStageForm.value = res.data;
+			}
 		})
 		.catch((e) => {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				actionStageFormErrors.value.push(t("errors.error_internal"));
-			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionStageFormErrors.value = key
-				}
-			}
+			actionStageFormErrors.value.push(t("errors.error_internal"));
 		});
 	}
 
@@ -92,39 +86,35 @@ export default function useActionStageForm() {
 		})
 		.then(res => res.json())
 		.then((res) => {
-			actionStageForm.value = res.data;
+			if (!res.success) {
+				actionStageFormErrors.value = res.errors;
+			}else{
+				actionStageForm.value = res.data;
+			}
 		})
 		.catch((e) => {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				actionStageFormErrors.value.push(t("errors.error_internal"));
-			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionStageFormErrors.value = key
-				}
-			}
+			actionStageFormErrors.value.push(t("errors.error_internal"));
 		});
 	}
 
 
 	const destroyActionStageForm = async (id) => {
 		actionStageFormErrors.value = [];
-		try {
-			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-stage-forms/delete/${id}`, config);
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				errors.value.push(t("errors.error_internal"));
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-stage-forms/delete/${id}`,{
+			method: 'DELETE',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionStageFormErrors.value = res.errors;
+			}else{
+				actionStageForm.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionStageFormErrors.value = key
-				}
-			}
-		}
+		})
+		.catch((e) => {
+			actionStageFormErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 

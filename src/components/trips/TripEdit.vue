@@ -23,10 +23,25 @@
 				<!-- BEGIN: Buttons -->
 
 				<div class="col-span-4 text-right">
-					<button type="submit" class="btn btn-primary mr-2">
-						{{ $t("save") }}
-					</button>
-					<router-link :to="`/trips`" class="btn btn-danger">{{ $t("cancel") }}</router-link>
+
+
+					<div class="flex justify-end">
+
+						<router-link :to="`/trips`" class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
+							<CornerUpLeftIcon class="w-4 h-4" /> {{ $t("message.back") }}
+						</router-link>
+
+						<button type="submit" class="btn btn-primary mr-2">
+							{{ $t("save") }}
+						</button>
+
+						<a href="#" @click.prevent="deleteTripForm(trip.id)" class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
+							<TrashIcon class="w-4 h-4" />
+						</a>
+
+					</div>
+
+
 				</div>
 
 				<!-- END: Buttons -->
@@ -147,7 +162,7 @@
 
 
 
-				<div class="col-span-12 md:col-span-6 lg:col-span-6">
+				<div class="col-span-12 md:col-span-4 lg:col-span-4">
 					<div class="input-form">
 						<label for="driver_id" class="form-label w-full">
 							{{ $t("driver") }}
@@ -174,31 +189,61 @@
 				</div>
 
 
-				<div class="col-span-12 md:col-span-6 lg:col-span-6">
+
+
+				<div class="col-span-12 md:col-span-4 lg:col-span-4">
 					<div class="input-form">
-						<label for="driver_id" class="form-label w-full">
+						<label for="trip_tow" class="form-label w-full">
 							{{ $t("trip_tow") }}
 						</label>
 
-						<TomSelect v-model.trim="validate.tow_id.$model" id="tow_id" name="tow_id" :options="{
+						<TomSelect v-model.trim="validate.trip_tow_id.$model" id="trip_tow_id" name="trip_tow_id" :options="{
 							placeholder: $t('message.select'),
-						}" class="form-control w-full" :class="{ 'border-danger': validate.tow_id.$error }">
+						}" class="form-control w-full" :class="{ 'border-danger': validate.trip_tow_id.$error }">
 
-							<option :value="0"></option>
-							<option v-for="item in selectTows" :value="item.id">
-								{{ item.name }} {{ item.plate }}
+							<option v-for="item in selectTripTows" :value="item.id">
+								{{ item.plate }}
 							</option>
 
 						</TomSelect>
 
 
-						<template v-if="validate.tow_id.$error">
-							<div v-for="(error, index) in validate.tow_id.$errors" :key="index" class="text-danger mt-2">
+						<template v-if="validate.trip_tow_id.$error">
+							<div v-for="(error, index) in validate.trip_tow_id.$errors" :key="index" class="text-danger mt-2">
 								{{ error.$message }}
 							</div>
 						</template>
 					</div>
 				</div>
+
+
+
+
+				<div class="col-span-12 md:col-span-4 lg:col-span-4">
+					<div class="input-form">
+						<label for="trip_status_id" class="form-label w-full">
+							{{ $t("trip_status") }}
+						</label>
+
+						<TomSelect v-model.trim="validate.trip_status_id.$model" id="trip_status_id" name="trip_status_id" :options="{
+							placeholder: $t('message.select'),
+						}" class="form-control w-full" :class="{ 'border-danger': validate.trip_status_id.$error }">
+
+							<option v-for="item in selectTripStatuses" :value="item.id">
+								{{ item.name }}
+							</option>
+
+						</TomSelect>
+
+
+						<template v-if="validate.trip_status_id.$error">
+							<div v-for="(error, index) in validate.trip_status_id.$errors" :key="index" class="text-danger mt-2">
+								{{ error.$message }}
+							</div>
+						</template>
+					</div>
+				</div>
+
 
 
 
@@ -211,7 +256,7 @@
 
 						<textarea v-model.trim="validate.observations.$model" id="observations" name="observations"
 							class="form-control">
-			  </textarea>
+			  			</textarea>
 
 					</div>
 				</div>
@@ -223,9 +268,10 @@
 		</form>
 		<!-- END: Form -->
 
-
-
-		<div class="grid grid-cols-12 gap-1 mt-10 mb-10">
+		<div 
+			class="grid grid-cols-12 gap-1 mt-10 mb-10" 
+			v-if="idTripEnabled()"
+		>
 			<div class="col-span-12 md:col-span-12 lg:col-span-12 text-end">
 
 				<a href="#" class="btn btn-outline border-slate-200 w-1/2 sm:w-auto mr-2" @click="showActionStageForm">
@@ -240,6 +286,15 @@
 		</div>
 
 
+
+		<div class="flex justify-end mb-2">
+			<p class="text-md font-normal leading-6 text-gray-500">
+				<span class="font-light text-gray-400">
+					 {{ $t("message.total_action_stage") }}: {{ arrStages.length }}
+				</span>
+			</p>
+		</div>
+		
 
 		<!-- Stage Card -->
 		<div v-for="(stage, index) in arrStages" :key="stage.id">
@@ -262,13 +317,14 @@
 									<div class="flex flex-row justify-between">
 
 										<p class="text-md font-normal leading-6 text-gray-500">
-											<span class="text-xs font-light text-gray-400">{{ $t("stage") }}
+											<span class="text-xs font-light text-gray-400">
+												({{ stage.order_number }}) {{ $t("stage") }} 
 											</span> {{ stage.name }}
 										</p>
 
-										<div class="text-right">
+										<div class="text-right" v-show="idTripEnabled()">
 
-											<a href="#" @click.prevent="arrStageItemUp(stage.id)"
+											<!-- <a href="#" @click.prevent="arrStageItemUp(stage.id)"
 												class="btn btn-outline-primary w-1/2 sm:w-auto mr-2"
 												v-if="arrStages.length > 1 && index != 0">
 												<ArrowUpIcon class="w-4 h-4" />
@@ -277,14 +333,14 @@
 												class="btn btn-outline-primary w-1/2 sm:w-auto mr-2"
 												v-if="arrStages.length > 1 && index != (arrStages.length - 1)">
 												<ArrowDownIcon class="w-4 h-4" />
-											</a>
+											</a> -->
 
 											<a href="#" @click.prevent="showTaskForm(stage)"
 												class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
 												<PlusCircleIcon class="w-4 h-4" /> {{ $t("add_task") }}
 											</a>
 											
-											<a href="#" @click.prevent="editStageForm(stage.id)"
+											<a href="#" @click.prevent="showStageEditForm(stage.id)"
 												class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
 												<EditIcon class="w-4 h-4" />
 											</a>
@@ -331,7 +387,7 @@
 								<div class="col-span-1">
 									<h5 class="text-xs font-light text-gray-400">{{ $t("tow") }}:</h5>
 									<p class="text-md font-normal leading-6 text-gray-500">
-										{{ stage.tows[0].tow.plate }}
+										{{ (stage.tows.length > 0) ? stage.tows[0].tow.plate : '' }}
 									</p>
 								</div>
 
@@ -366,21 +422,25 @@
 														<div class="flex flex-row justify-between">
 
 															<p class="text-md font-normal leading-6 text-gray-500 mt-2">
-																<span class="text-xs font-light text-gray-400">{{ $t("task")
-																}}:
+																<span class="text-xs font-light text-gray-400">
+																	({{ task.order_number }}) {{ $t("task") }}:
 																</span>
 																{{ task.name }}
 															</p>
 
-															<div class="col-span-12 text-right">
+															<div class="text-right" v-show="idTripEnabled()">
 
 																<a href="#" @click.prevent="showActionTaskForm(stage, task)"
 																	class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
 																	<PlusCircleIcon class="w-4 h-4" /> {{
 																		t("add_action_task") }}
 																</a>
+																<a href="#" @click.prevent="showTaskEditForm(task.id)"
+																	class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
+																	<EditIcon class="w-4 h-4" />
+																</a>
 																<a href="#"
-																	@click.prevent="deleteTaskForm(stage.id, task.id)"
+																	@click.prevent="deleteTaskForm(task.id)"
 																	class="btn btn-outline-danger w-1/2 sm:w-auto mr-2">
 																	<TrashIcon class="w-4 h-4" />
 																</a>
@@ -393,23 +453,22 @@
 
 
 													<!-- Action Tasks -->
-													<div v-for="action_task in task.action_tasks" :key="action_task.id">
+													<div v-for="action_task in task.actions" :key="action_task.id">
 
-														<div class="grid grid-cols-6 gap-2">
+														
 
-															<div class="col-span-3">
+															<div class="col-span-4">
 																<h5 class="text-xs font-light text-gray-400">{{ $t("action")
 																}}:</h5>
 																<p class="text-xs font-normal leading-6 text-gray-500">
-																	{{ action_task.action_type_name }}
+																	{{ action_task.type.name }}
 																</p>
 															</div>
 
 
 
 															<!-- Action Cameras -->
-															<div class="col-span-2"
-																v-if="parseInt(action_task.action_type_model) === enumActionTask.CAMERA_ID">
+															<div class="col-span-4">
 																<div v-for="camera in action_task.cameras" :key="camera.id">
 
 																	<div>
@@ -417,7 +476,7 @@
 																			$t("type") }}:</h5>
 																		<p
 																			class="text-xs font-normal leading-6 text-gray-500">
-																			{{ camera.name }}
+																			{{ action_task.type.name }}
 																		</p>
 																	</div>
 
@@ -428,8 +487,7 @@
 
 
 															<!-- Action Scanner -->
-															<div class="col-span-3"
-																v-if="parseInt(action_task.action_type_model) === enumActionTask.SCANNER_ID">
+															<div class="col-span-4">
 																<div v-for="scanner in action_task.scanners"
 																	:key="scanner.id">
 
@@ -439,7 +497,7 @@
 																			$t("type") }}:</h5>
 																		<p
 																			class="text-xs font-normal leading-6 text-gray-500">
-																			{{ scanner.name }}
+																			{{ action_task.type.name }}
 																		</p>
 																	</div>
 
@@ -451,15 +509,14 @@
 
 
 															<!-- Action Form -->
-															<div class="col-span-3"
-																v-if="parseInt(action_task.action_type_model) === enumActionTask.FORM_ID">
+															<div class="col-span-4">
 																<div v-for="form in action_task.forms" :key="form.id">
 
 																	<div class="grid grid-cols-6 gap-2">
 
 																		<div class="col-span-3">
 																			<h5 class="text-xs font-light text-gray-400">{{
-																				$t("type") }}:</h5>
+																				$t("action") }}:</h5>
 																			<p
 																				class="text-xs font-normal leading-6 text-gray-500">
 																				{{ form.name }}
@@ -471,7 +528,7 @@
 																				$t("name") }}:</h5>
 																			<p
 																				class="text-xs font-normal leading-6 text-gray-500">
-																				{{ form.action_form_field_name }}
+																				{{ form.form_field.field_label  }}
 																			</p>
 																		</div>
 
@@ -482,7 +539,7 @@
 
 
 														</div>
-													</div>
+													
 
 												</div>
 												<!-- End Action Tasks -->
@@ -526,13 +583,14 @@
 										<div class="flex flex-row justify-between">
 
 											<p class="text-md font-normal leading-6 text-gray-500">
-												<span class="text-xs font-light text-gray-400">{{ $t("action") }}
+												<span class="text-xs font-light text-gray-400">
+													({{ stage.order_number }}) {{ $t("action") }}
 												</span> {{ stage.name }}
 											</p>
 
 											<div class="text-right">
 
-												<a href="#" @click.prevent="arrStageItemUp(stage.id)"
+												<!-- <a href="#" @click.prevent="arrStageItemUp(stage.id)"
 													class="btn btn-outline-primary w-1/2 sm:w-auto mr-2"
 													v-if="arrStages.length > 1 && index != 0">
 													<ArrowUpIcon class="w-4 h-4" />
@@ -541,6 +599,11 @@
 													class="btn btn-outline-primary w-1/2 sm:w-auto mr-2"
 													v-if="arrStages.length > 1 && index != (arrStages.length - 1)">
 													<ArrowDownIcon class="w-4 h-4" />
+												</a> -->
+
+												<a href="#" @click.prevent="showActionStageEditForm(stage.id, action_stage.id)"
+													class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
+													<EditIcon class="w-4 h-4" />
 												</a>
 
 												<a href="#" @click.prevent="deleteStageForm(stage.id)"
@@ -639,9 +702,15 @@
 
 
 
+	<!-- CREATE - ADD -->
 
 	<div class="intro-y box p-5 mt-5" v-if="isCreateStage">
-		<StageCreate @cancelStageForm="cancelStageForm" @addStageForm="addStageForm" :arrStages="arrStages" :trip_tow_selected="trip_tow_selected" />
+		<StageCreate 
+			@cancelStageForm="cancelStageForm" 
+			@addStageForm="addStageForm" 
+			:arrStages="arrStages" 
+			:trip_tow_selected="trip_tow_selected"
+		/>
 	</div>
 
 	<div class="intro-y box p-5 mt-5" v-if="isCreateActionStage">
@@ -659,12 +728,44 @@
 
 
 	<div class="intro-y box p-5 mt-5" v-if="isCreateActionTask">
-		<ActionTaskCreate :stageIndex="stageIndex" :taskIndex="taskIndex" @cancelActionTaskForm="cancelActionTaskForm"
+		<ActionTaskCreate 
+			:stageIndex="stageIndex" 
+			:taskIndex="taskIndex" 
+			@cancelActionTaskForm="cancelActionTaskForm"
 			@addActionTaskForm="addActionTaskForm" />
 	</div>
 
 
 	
+
+	<!-- EDIT -->
+
+	<div class="intro-y box p-5 mt-5" v-if="isEditStage">
+		<StageEdit 
+			@cancelStageEditForm="cancelStageEditForm" 
+			@updateStageForm="updateStageForm"
+			:stageId="stageId"
+		/>
+	</div>
+
+
+	<div class="intro-y box p-5 mt-5" v-if="isEditActionStage">
+		<ActionStageEdit 
+			@cancelActionStageEditForm="cancelActionStageEditForm" 
+			@updateActionStageEditForm="updateActionStageEditForm"
+			:actionStageId="actionStageId" 
+		/>
+	</div>
+
+
+
+	<div class="intro-y box p-5 mt-5" v-if="isEditTask">
+		<TaskEdit 
+			@cancelTaskEditForm="cancelTaskEditForm" 
+			@updateTaskForm="updateTaskForm"
+			:taskId="taskId"
+		/>
+	</div>
 
 
 
@@ -677,6 +778,8 @@
 
 import { onMounted, reactive, toRefs, ref } from 'vue';
 import Preloader from '@/components/preloader/Preloader.vue';
+import { useRouter } from 'vue-router';
+
 
 
 import { Toast } from '@/utils/toast';
@@ -684,43 +787,44 @@ import { helper as $h } from "@/utils/helper";
 import Swal from "sweetalert2";
 import { useRoute } from 'vue-router';
 
+
 import useTrips from '@/composables/trips.js';
+import useTripPriority from '@/composables/trip_priorities.js';
+import useTripTow from '@/composables/trip_tows.js';
+import useTripStatus from '@/composables/trip_statuses.js';
+import useTow from '@/composables/tows.js';
+import useVehicles from '@/composables/vehicles.js';
+import useDrivers from '@/composables/drivers.js';
+
+
+
 import useStage from '@/composables/stages.js';
-import useActivity from '@/composables/activities.js';
-import useTask from '@/composables/tasks.js';
-import useActionTask from '@/composables/action_tasks.js';
-
-import useActionTaskCamera from '@/composables/action_task_cameras.js';
-import useActionTaskScanner from '@/composables/action_task_scanners.js';
-import useActionTaskForm from '@/composables/action_task_forms.js';
-
-
 import useActionStage from '@/composables/action_stages.js';
 import useActionStageCamera from '@/composables/action_stage_cameras.js';
 import useActionStageScanner from '@/composables/action_stage_scanners.js';
 import useActionStageForm from '@/composables/action_stage_forms.js';
-
-
-
-
-import useVehicles from '@/composables/vehicles.js';
-import useTripPriority from '@/composables/trip_priorities.js';
-import useDrivers from '@/composables/drivers.js';
-import useTow from '@/composables/tows.js';
-import useTripTow from '@/composables/trip_tows.js';
 import useStageTow from '@/composables/stage_tows.js';
 
+import useActivity from '@/composables/activities.js';
+
+import useTask from '@/composables/tasks.js';
+import useActionTask from '@/composables/action_tasks.js';
+import useActionTaskCamera from '@/composables/action_task_cameras.js';
+import useActionTaskScanner from '@/composables/action_task_scanners.js';
+import useActionTaskForm from '@/composables/action_task_forms.js';
 
 
 
 // By Add - create
 import StageCreate from '@/components/stages/StageEditByAdd.vue';
 import ActionStageCreate from '@/components/action_stages/ActionStageEditByAdd.vue';
+import TaskCreate from '@/components/tasks/TaskEditByAdd.vue';
+import ActionTaskCreate from '@/components/action_tasks/ActionTaskEditByAdd.vue';
 
-import TaskCreate from '@/components/tasks/TaskCreate.vue';
-import ActionTaskCreate from '@/components/action_tasks/ActionTaskCreate.vue';
-
-
+// By Edit
+import StageEdit from '@/components/stages/StageEdit.vue';
+import ActionStageEdit from '@/components/action_stages/ActionStageEdit.vue';
+import TaskEdit from '@/components/tasks/TaskEdit.vue';
 
 
 
@@ -733,6 +837,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 import enumActionTask from '@/enums/enum_action_task.js';
+import enumTrip from '@/enums/enum_trip.js';
+
+
+
+
 
 
 
@@ -746,39 +855,45 @@ const { drivers, getDrivers } = useDrivers();
 const { tows, getTows } = useTow();
 
 
-const { trip, tripErrors, updateTrip, getTrip } = useTrips();
-const { stage, stageErrors, storeStage } = useStage();
-const { activity, activityErrors, storeActivity } = useActivity();
-const { task, taskErrors, storeTask } = useTask();
+const { trip, tripErrors, updateTrip, getTrip, destroyTrip } = useTrips();
+const { tripStatuses, tripStatusErrors, getTripStatuses } = useTripStatus();
+
+const { stage, stageErrors, storeStage, updateStage, destroyStage } = useStage();
+const { activity, activityErrors, storeActivity, updateActivity } = useActivity();
+
+const { task, taskErrors, storeTask, updateTask, destroyTask } = useTask();
 const { actionTask, actionTaskErrors, storeActionTask } = useActionTask();
 const { actionTaskCamera, actionTaskCameraErrors, storeActionTaskCamera } = useActionTaskCamera();
 const { actionTaskScanner, actionTaskScannerErrors, storeActionTaskScanner } = useActionTaskScanner();
 const { actionTaskForm, actionTaskFormErrors, storeActionTaskForm } = useActionTaskForm();
 
 
-const { actionStage, actionStageErrors, storeActionStage } = useActionStage();
-const { actionStageCamera, actionStageCameraErrors, storeActionStageCamera } = useActionStageCamera();
-const { actionStageScanner, actionStageScannerErrors, storeActionStageScanner } = useActionStageScanner();
-const { actionStageForm, actionStageFormErrors, storeActionStageForm } = useActionStageForm();
+const { actionStage, actionStageErrors, storeActionStage, updateActionStage } = useActionStage();
+const { actionStageCamera, actionStageCameraErrors, storeActionStageCamera, updateActionStageCamera } = useActionStageCamera();
+const { actionStageScanner, actionStageScannerErrors, storeActionStageScanner, updateActionStageScanner } = useActionStageScanner();
+const { actionStageForm, actionStageFormErrors, storeActionStageForm, updateActionStageForm } = useActionStageForm();
 
-const { tripTow, errorTripTow, storeTripTow } = useTripTow();
-const { stageTow, errorStageTow, storeStageTow } = useStageTow();
+const { tripTow, errorTripTow, storeTripTow, updateTripTow } = useTripTow();
+const { stageTow, errorStageTow, storeStageTow, updateStageTow } = useStageTow();
 
 
 
 const { t } = useI18n();
 const route = useRoute();
+const router = useRouter();
 
 
 const selectVehicles = ref([]);
 const selectTripPriorities = ref([]);
 const selectDrivers = ref([]);
-const selectTows = ref([]);
+const selectTripTows = ref([]);
+const selectTripStatuses = ref([]);
 
 
 const arrStages = ref([]);
 
 
+//Create - Add
 const isCreateTrip = ref(true);
 const isCreateStage = ref(false);
 const isCreateTask = ref(false);
@@ -786,22 +901,25 @@ const isCreateActionTask = ref(false);
 const isCreateActionStage = ref(false);
 
 
+//Edit
+const isEditStage = ref(false);
+const isEditActionStage = ref(false);
+
+const isEditTask = ref(false);
+
+
+
+
 const stageIndex = ref();
 const taskIndex = ref();
+
+const stageId = ref();
+const actionStageId = ref(0);
+const taskId = ref();
 
 
 const trip_tow_selected = ref(); //trip_tow selected
 
-
-let activityObj;
-let towObj;
-let actionTaskCameraObj;
-let actionTaskScannerObj;
-let actionTaskFormObj;
-
-let actionStageCameraObj;
-let actionStageScannerObj;
-let actionStageFormObj;
 
 
 
@@ -810,13 +928,16 @@ const rules = {
 	vehicle_id: {
 		required: helpers.withMessage(t("form.required"), required),
 	},
+	trip_status_id: {
+		required: helpers.withMessage(t("form.required"), required),
+	},
 	trip_priority_id: {
 		required: helpers.withMessage(t("form.required"), required),
 	},
 	driver_id: {
 		required: helpers.withMessage(t("form.required"), required),
 	},
-	tow_id: {
+	trip_tow_id: {
 		required: helpers.withMessage(t("form.required"), required),
 	},
 	reference_number: {
@@ -836,9 +957,10 @@ const rules = {
 
 // const formData = reactive({
 //   vehicle_id: "",
+//   trip_status_id: "",
 //   trip_priority_id: "",
 //   driver_id: "",
-//   tow_id: "",
+//   trip_tow_id: "",
 //   reference_number: Math.floor(Math.random() * 100000),
 //   name: "Viaje Plaza",
 //   execution_at: $h.nowTimestamp('-').substr(0, 16),
@@ -849,9 +971,10 @@ const rules = {
 
 const formData = reactive({
 	vehicle_id: "",
+	trip_status_id: "",
 	trip_priority_id: "",
 	driver_id: "",
-	tow_id: "",
+	trip_tow_id: "",
 	reference_number: "",
 	name: "",
 	execution_at: $h.nowTimestamp('-').substr(0, 16),
@@ -860,6 +983,12 @@ const formData = reactive({
 
 
 const validate = useVuelidate(rules, toRefs(formData));
+
+
+
+/******************
+ * Trip
+ *****************/
 
 const save = async () => {
 
@@ -882,240 +1011,87 @@ const save = async () => {
 
 		//Validacion sobre los stage
 
-
-		loading.value = true;
-
-		console.log("envia a guardar");
-
-
-		/**
-		 * Trip
-		 */
-		await storeTrip(formData);
-		console.log({ ...trip.value });
-		console.log(tripErrors);
-
+		//loading.value = true;
 
 
 
 		/**
 		 * Trip tows
 		 */
-		const dataTripTow = {
+		 const dataTripTowUpdate = {
 			trip_id: trip.value.id,
-			tow_id: formData.tow_id
+			tow_id: formData.trip_tow_id
 		}
-		await storeTripTow(dataTripTow);
-		console.log({ ...tripTow });
+
+		await updateTripTow(trip.value.tows[0].id, dataTripTowUpdate);
+		console.log("TRIPTOW: ", { ...tripTow });
 
 
 
 
 		/**
-		 * Stages
+		 * Trip
 		 */
-		for (const eleStage of arrStages.value) {
-			//arrStages.value.forEach(async (eleStage) => {
+		
+		await updateTrip(trip.value.id, formData);
+		console.log({ ...trip.value });
+		
+		//console.log({ ...tripErrors.value });
 
-			console.log(eleStage.name);
-			stage.value = [];
-			eleStage.trip_id = trip.value.id;
-			await storeStage(eleStage);
-			console.log({ ...stage.value });
 
+		await findData();
 
 
+		//loading.value = false;
 
 
-			/**
-			 * Stage Tow TODOO:.............
-			 */
-			if (eleStage.tow_id) {
-
-				towObj = {
-					stage_id: stage.value.id,
-					tow_id: eleStage.tow_id
-				}
-
-				await storeStageTow(towObj);
-				console.log({ ...stageTow.value });
-
-			}
-
-
-
-
-
-			/**
-			 * Activity
-			 */
-			if (eleStage.activity_type_id) {
-
-				activityObj = {
-					stage_id: stage.value.id,
-					activity_type_id: eleStage.activity_type_id
-				}
-
-				await storeActivity(activityObj);
-				console.log({ ...activity.value });
-
-			}
-
-
-
-
-			/**
-			* Action Stages
-			*/
-			if (eleStage.action_stages) {
-				for (const eleActionStage of eleStage.action_stages) {
-
-					eleActionStage.stage_id = stage.value.id;
-
-					await storeActionStage(eleActionStage);
-					console.log({ ...actionStage.value });
-
-
-					/**
-					 *  Action stage cameras
-					 */
-					if (eleActionStage.cameras) {
-
-						actionStageCameraObj = {
-							action_stage_id: actionStage.value.id
-						}
-
-						await storeActionStageCamera(actionStageCameraObj);
-						console.log({ ...actionStageCamera.value });
-
-					}
-
-
-					/**
-					 * Action stage scanners
-					 */
-					if (eleActionStage.scanners) {
-
-						actionStageScannerObj = {
-							action_stage_id: actionStage.value.id
-						}
-
-						await storeActionStageScanner(actionStageScannerObj);
-						console.log({ ...actionStageScanner.value });
-
-					}
-
-
-					/**
-					 * Action stage forms
-					 */
-					if (eleActionStage.forms) {
-
-						actionStageFormObj = {
-							action_stage_id: actionStage.value.id,
-							action_form_field_id: eleActionStage.action_form_field_id,
-						}
-
-						await storeActionStageForm(actionStageFormObj);
-						console.log({ ...actionStageForm.value });
-
-					}
-
-
-				};
-			}
-
-
-
-
-			/**
-			 * Tasks
-			 */
-			if (eleStage.tasks) {
-				for (const eleTask of eleStage.tasks) {
-
-
-					eleTask.stage_id = stage.value.id;
-
-					await storeTask(eleTask);
-					console.log({ ...task.value });
-
-
-
-					/**
-					 * Action Tasks
-					 */
-					if (eleTask.action_tasks) {
-						for (const eleActionTask of eleTask.action_tasks) {
-
-							eleActionTask.task_id = task.value.id;
-							await storeActionTask(eleActionTask);
-							console.log({ ...actionTask.value });
-
-
-							/**
-							 *  Action task cameras
-							 */
-							if (eleActionTask.cameras) {
-
-								actionTaskCameraObj = {
-									action_task_id: actionTask.value.id
-								}
-
-								await storeActionTaskCamera(actionTaskCameraObj);
-								console.log({ ...actionTaskCamera.value });
-
-							}
-
-
-							/**
-							 * Action task scanners
-							 */
-							if (eleActionTask.scanners) {
-
-								actionTaskScannerObj = {
-									action_task_id: actionTask.value.id
-								}
-
-								await storeActionTaskScanner(actionTaskScannerObj);
-								console.log({ ...actionTaskScanner.value });
-
-							}
-
-
-							/**
-							 * Action task forms
-							 */
-							if (eleActionTask.forms) {
-
-								actionTaskFormObj = {
-									action_task_id: actionTask.value.id,
-									action_form_field_id: eleActionTask.action_form_field_id,
-								}
-
-								await storeActionTaskForm(actionTaskFormObj);
-								console.log({ ...actionTaskForm.value });
-
-							}
-
-						};
-
-					}
-				};
-			}
-
-
-
-		};
-
-		loading.value = false;
 		await Toast(t("message.record_saved"), 'success');
-		setTimeout(() => location.reload(), 3000);
+		
 
 	}
 };
 
 
+const deleteTripForm = async(id) => {
+
+
+	Swal.fire({
+			icon: 'warning',
+			title: t("message.record_will_be_deleted"),
+			showCancelButton: true,
+			confirmButtonText: t("message.yes"),
+			cancelButtonText: t("message.no"),
+			confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
+		}).then(async(result) => {
+			if (result.isConfirmed) {
+
+				await destroyTrip(id);
+				
+				console.log({...tripErrors.value});
+
+
+				if(tripErrors.value && tripErrors.value.length > 0){
+					
+					await Toast(t('message.error'), 'error');
+					
+				}else{
+
+					localStorage.setItem('message_success', t('message.record_saved'));
+					await router.push('/trips');
+
+				}
+
+			
+			}
+
+		});
+
+}
+
+
+/******************
+ * End Trip
+ *****************/
 
 
 
@@ -1124,15 +1100,15 @@ const save = async () => {
 
 
 
-
-
-/**
+/******************
  * Stage
- */
+ *****************/
+
+ //Create - add
 const showStageForm = () => {
 	isCreateTrip.value = false;
 	isCreateStage.value = true;
-	trip_tow_selected.value = formData.tow_id;
+	trip_tow_selected.value = formData.trip_tow_id;
 
 	//console.log({ ...arrStages.value });
 }
@@ -1143,8 +1119,6 @@ const cancelStageForm = () => {
 }
 
 const addStageForm = async (stageNew) => {
-
-	//arrStages.value.push(stage);
 
 	/**
 	 * Stage
@@ -1179,7 +1153,7 @@ const addStageForm = async (stageNew) => {
 	console.log({ ...stageTow.value });
 
 
-	findData();
+	await findData();
 
 
 	//Load view
@@ -1187,24 +1161,119 @@ const addStageForm = async (stageNew) => {
 	isCreateStage.value = false;
 }
 
-const deleteStageForm = (uuid) => {
-	arrStages.value.forEach((ele, index) => {
-		if (ele.uuid === uuid) {
-			arrStages.value.splice(index, 1);
-		}
-	});
+
+const deleteStageForm = async (id) => {
+
+	Swal.fire({
+			icon: 'warning',
+			title: t("message.record_will_be_deleted"),
+			showCancelButton: true,
+			confirmButtonText: t("message.yes"),
+			cancelButtonText: t("message.no"),
+			confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
+		}).then(async(result) => {
+			if (result.isConfirmed) {
+
+				await destroyStage(id);
+				
+				if(stageErrors.value.length > 0){
+					console.log({...stageErrors.value});
+					await Toast(t('message.error_deleting_record'), 'error');
+					return;
+				}
+
+				await findData();
+
+				await Toast(t('message.record_deleted'), 'success');
+
+			}
+
+		});
+
 }
 
-/**
+
+
+// Edit
+
+const showStageEditForm = (id) => {
+	isCreateTrip.value = false;
+	isEditStage.value = true;
+	stageId.value = id;
+}
+
+
+const cancelStageEditForm = () => {
+	isCreateTrip.value = true;
+	isEditStage.value = false;
+}
+
+const updateStageForm = async(id, stageUpdate) => {
+
+	await updateStage(id, stageUpdate);
+	console.log({ ...stage.value });
+
+
+	/**
+	* Activity
+	*/
+	const activityUpdate = {
+		stage_id: stage.value.id,
+		activity_type_id: stageUpdate.activity_type_id
+	}
+
+	await updateActivity(stageUpdate.activity_id, activityUpdate);
+	console.log({ ...activity.value });
+
+
+	/**
+	* Tow stage
+	*/
+
+	const towUpdate = {
+		stage_id: stage.value.id,
+		tow_id: stageUpdate.tow_id
+	}
+
+	if(stageUpdate.stage_tow_id){
+		await updateStageTow(stageUpdate.stage_tow_id, towUpdate);
+		console.log({ ...stageTow.value });
+	}else{
+		await storeStageTow(towUpdate);
+		console.log({ ...stageTow.value });
+	}
+
+
+	await findData();
+
+	isCreateTrip.value = true;
+	isEditStage.value = false;
+
+
+	//TODO implement
+//	await Toast(t("message.record_updated"), 'success');
+
+}
+
+
+
+
+
+/******************
  * End Stage
- */
+ *****************/
 
 
 
 
-/**
+
+
+
+/******************
  * Task
- */
+ *****************/
+
+// Create - Add
 
 const showTaskForm = (stage) => {
 	isCreateTrip.value = false;
@@ -1213,52 +1282,92 @@ const showTaskForm = (stage) => {
 }
 
 
-
 const cancelTaskForm = () => {
 	isCreateTrip.value = true;
 	isCreateTask.value = false;
 }
 
 
+const addTaskForm = async(stageNew, taskNew) => {
+	
+	taskNew.stage_id = stageNew.id;
+	await storeTask(taskNew);
+	console.log({ ...task.value });
 
-const addTaskForm = (stage, data) => {
-	arrStages.value.forEach(el => {
-		if (el.uuid === stage.uuid) {
-			if (el.tasks === undefined) {
-				el.tasks = [];
-				el.tasks.push(data);
-			} else {
-				el.tasks.push(data);
-			}
-		}
-	});
-
+	await findData();
+	
 	isCreateTrip.value = true;
 	isCreateTask.value = false;
 }
 
-const deleteTaskForm = (stageUuid, taskUuid) => {
+const deleteTaskForm = async(taskId) => {
 
-	arrStages.value.forEach((stage) => {
+	Swal.fire({
+			icon: 'warning',
+			title: t("message.record_will_be_deleted"),
+			showCancelButton: true,
+			confirmButtonText: t("message.yes"),
+			cancelButtonText: t("message.no"),
+			confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
+		}).then(async(result) => {
+			if (result.isConfirmed) {
 
-		if (stage.uuid === stageUuid) {
+				await destroyTask(taskId);
 
-			stage.tasks.forEach((task, index) => {
+				//console.log({...taskErrors.value});
 
-				if (task.uuid === taskUuid) {
-					stage.tasks.splice(index, 1);
-				}
+				taskErrors.value.forEach((elem) => {
+					console.log(elem.e);
+				})
 
-			});
-		}
+				await findData();
 
-	});
+				await Toast(t('message.record_deleted'), 'success');
+
+			}
+
+		});
+	
+}
+
+
+//Edit 
+
+
+const showTaskEditForm = (id) => {
+	isCreateTrip.value = false;
+	isEditTask.value = true;
+	taskId.value = id;
+}
+
+
+
+const cancelTaskEditForm = () => {
+	isCreateTrip.value = true;
+	isEditTask.value = false;
+}
+
+
+const updateTaskForm = async(taskId, taskUpdate) => {
+
+	await updateTask(taskId, taskUpdate);
+	console.log({ ...task.value });
+
+	await findData();
+
+	isCreateTrip.value = true;
+	isEditTask.value = false;
+
 
 }
 
-/**
+/******************
  * End Task
- */
+ *****************/
+
+
+
+
 
 
 
@@ -1284,97 +1393,69 @@ const cancelActionTaskForm = () => {
 
 
 
-const addActionTaskForm = (stage, task, data) => {
+const addActionTaskForm = async (stage, taskNew, actionTaskNew) => {
 
-	arrStages.value.forEach(st => {
-		if (st.uuid === stage.uuid) {
-			st.tasks.forEach(t => {
+	actionTaskNew.task_id = taskNew.id;
 
-				if (t.uuid === task.uuid) {
-					if (t.action_tasks === undefined) {
-
-						let dataNew = addActionTaskModel(data);
-
-						t.action_tasks = [];
-						t.action_tasks.push(dataNew);
+	await storeActionTask(actionTaskNew);
+	console.log({ ...actionTask.value });
 
 
-					} else {
-						let dataNew = addActionTaskModel(data);
-						t.action_tasks.push(dataNew);
-					}
+	/**
+	 *  Action task cameras
+	 */
+	if (parseInt(actionTaskNew.action_type_model) === enumActionTask.CAMERA_ID) {
 
-				}
-			});
+		const actionTaskCameraObj = {
+			action_task_id: actionTask.value.id
 		}
-	});
+
+		await storeActionTaskCamera(actionTaskCameraObj);
+		console.log({ ...actionTaskCamera.value });
+
+	}
+
+
+	/**
+	* Action task scanners
+	*/
+	if (parseInt(actionTaskNew.action_type_model) === enumActionTask.SCANNER_ID) {
+
+		const actionTaskScannerObj = {
+			action_task_id: actionTask.value.id
+		}
+
+		await storeActionTaskScanner(actionTaskScannerObj);
+		console.log({ ...actionTaskScanner.value });
+
+	}
+
+
+	/**
+	* Action task forms
+	*/
+	if (parseInt(actionTaskNew.action_type_model) === enumActionTask.FORM_ID) {
+
+		const actionTaskFormObj = {
+			action_task_id: actionTask.value.id,
+			action_form_field_id: actionTaskNew.action_form_field_id,
+		}
+
+		await storeActionTaskForm(actionTaskFormObj);
+		console.log({ ...actionTaskForm.value });
+
+	}
+
+
+
+
+
+	await findData();
 
 	isCreateTrip.value = true;
 	isCreateActionTask.value = false;
 }
 
-
-
-
-
-
-
-const addActionTaskModel = (data) => {
-
-	if (parseInt(data.action_type_model) === enumActionTask.CAMERA_ID) {
-		let action = {};
-		action.uuid = uuidv4();
-		action.name = t("action_camera");
-
-		if (data.cameras === undefined) {
-			data.cameras = [];
-			data.cameras.push(action);
-		} else {
-			data.cameras.push(action);
-		}
-
-		return data;
-	}
-
-
-	if (parseInt(data.action_type_model) === enumActionTask.SCANNER_ID) {
-
-		let action = {};
-		action.uuid = uuidv4();
-		action.name = t("action_scanner");
-
-		if (data.scanners === undefined) {
-			data.scanners = [];
-			data.scanners.push(action);
-		} else {
-			data.scanners.push(action);
-		}
-
-
-		return data;
-	}
-
-	if (parseInt(data.action_type_model) === enumActionTask.FORM_ID) {
-
-		let action = {};
-		action.uuid = uuidv4();
-		action.name = t("action_form");
-		action.action_form_field_id = data.action_form_field_id;
-		action.action_form_field_name = data.action_form_field_name;
-
-		if (data.forms === undefined) {
-			data.forms = [];
-			data.forms.push(action);
-		} else {
-			data.forms.push(action);
-		}
-
-		return data;
-	}
-
-	return;
-
-}
 
 /**
  * End Action Task
@@ -1383,16 +1464,21 @@ const addActionTaskModel = (data) => {
 
 
 
-/**
+
+
+
+
+
+
+
+ /******************
  * Action Stage
- */
+ *****************/
 
+ // Store
 const showActionStageForm = () => {
-
 	isCreateTrip.value = false;
 	isCreateActionStage.value = true;
-	//console.log({ ...arrStages.value });
-
 }
 
 const cancelActionStageForm = () => {
@@ -1451,7 +1537,7 @@ const addActionStageForm = async(stageNew, actionStageNew) => {
 	 */
 	if (parseInt(actionStageNew.action_type_model) === enumActionTask.FORM_ID) {
 
-		actionStageFormObj = {
+		const actionStageFormObj = {
 			action_stage_id: actionStage.value.id,
 			action_form_field_id: actionStageNew.action_form_field_id,
 		}
@@ -1462,7 +1548,7 @@ const addActionStageForm = async(stageNew, actionStageNew) => {
 	}
 
 	
-	findData();
+	await findData();
 
 
 
@@ -1471,36 +1557,108 @@ const addActionStageForm = async(stageNew, actionStageNew) => {
 
 }
 
-/**
+
+
+//Edit
+
+const showActionStageEditForm = (stageEditId, actionStageEditId) => {
+	isCreateTrip.value = false;
+	isEditActionStage.value = true;
+	actionStageId.value = actionStageEditId;
+}
+
+
+const cancelActionStageEditForm = () => {
+	isCreateTrip.value = true;
+	isEditActionStage.value = false;
+}
+
+const updateActionStageEditForm = async (actionStageId, stageFake, actionStageUpdate) => {
+
+	//TODO update stage
+	// update action stage
+
+	//enviar solo el order en el fake
+
+	const stageFakeUpdate = {
+		name: stageFake.name,
+		order_number: stageFake.order_number,
+	}
+	await updateStage(stageFake.id, stageFakeUpdate);
+	console.log({ ...stage.value });
+
+
+	await updateActionStage(actionStageId, actionStageUpdate);
+	console.log({ ...actionStage.value });
+
+
+
+	await findData();
+
+	isCreateTrip.value = true;
+	isEditActionStage.value = false;
+
+}
+
+
+/******************
 * End Action Stage
-*/
+*****************/
 
 
 
 
 
-const arrStageItemDown = (id) => {
-	let findIndex = arrStages.value.findIndex(stage => stage.id === id);
-	let elementTemp = arrStages.value.splice(findIndex, 1)[0];
-	arrStages.value.splice((findIndex + 1), 0, elementTemp);
-	fixNumberOrder();
-}
+
+/**
+ * Check
+ */
+
+ const idTripEnabled = () => {
+
+	if(trip.value.trip_status_id === enumTrip.TRIP_CREATED_ID 
+		|| trip.value.trip_status_id === enumTrip.TRIP_ASSIGNED_ID 
+		|| trip.value.trip_status_id === enumTrip.TRIP_PENDING_CONFIRMATION_ID 
+		|| trip.value.trip_status_id === enumTrip.TRIP_PENDING_TO_DO_ID
+		|| trip.value.trip_status_id === enumTrip.TRIP_PROGRESS_ID
+	)
+	{
+		return true;
+	}
+
+	return false;
+	
+ }
 
 
-const arrStageItemUp = (id) => {
-	let findIndex = arrStages.value.findIndex(stage => stage.id === id);
-	let elementTemp = arrStages.value.splice(findIndex, 1)[0];
-	arrStages.value.splice((findIndex - 1), 0, elementTemp);
-	fixNumberOrder();
-}
 
 
 
-const fixNumberOrder = () => {
-	arrStages.value.forEach((stage, index) => {
-		stage.order_number = (index + 1);
-	});
-}
+
+
+
+// const arrStageItemDown = (id) => {
+// 	let findIndex = arrStages.value.findIndex(stage => stage.id === id);
+// 	let elementTemp = arrStages.value.splice(findIndex, 1)[0];
+// 	arrStages.value.splice((findIndex + 1), 0, elementTemp);
+// 	fixNumberOrder();
+// }
+
+
+// const arrStageItemUp = (id) => {
+// 	let findIndex = arrStages.value.findIndex(stage => stage.id === id);
+// 	let elementTemp = arrStages.value.splice(findIndex, 1)[0];
+// 	arrStages.value.splice((findIndex - 1), 0, elementTemp);
+// 	fixNumberOrder();
+// }
+
+
+
+// const fixNumberOrder = () => {
+// 	arrStages.value.forEach((stage, index) => {
+// 		stage.order_number = (index + 1);
+// 	});
+// }
 
 
 
@@ -1511,16 +1669,21 @@ const fixNumberOrder = () => {
 
 const findData = async() => {
 
+
+	
+
 	await getTrip(route.params.id);
 
 	arrStages.value = trip.value.stages;
 
-	console.log({...trip.value.stages});
+	//console.log({...trip.value});
+	//console.log("Cantidad de stages: " , trip.value.stages.length);
 
 	formData.trip_priority_id = trip.value.trip_priority_id.toString();
 	formData.driver_id = trip.value.driver_id.toString();
 	formData.vehicle_id = trip.value.vehicle_id.toString();
-	formData.tow_id = trip.value.tows[0].tow.id.toString();
+	formData.trip_status_id = trip.value.trip_status_id.toString();
+	
 	formData.reference_number = trip.value.reference_number;
 	formData.name = trip.value.name;
 	formData.execution_at = trip.value.execution_at;
@@ -1528,11 +1691,18 @@ const findData = async() => {
 	formData.finished_at = trip.value.finished_at;
 	formData.observations = trip.value.observations;
 
+
+	if(trip.value.tows.length > 0){
+		formData.trip_tow_id = trip.value.tows[0].tow.id.toString();
+	}
+
 }
 
 
 onMounted(async () => {
   
+	loading.value = true;
+
   // Vehicles
   await getVehicles();
   selectVehicles.value = vehicles.value;
@@ -1548,20 +1718,21 @@ onMounted(async () => {
   selectDrivers.value = drivers.value;
 
 
-  //TODO Tows trip
+  //Trip Statuses
+  await getTripStatuses();
+  selectTripStatuses.value = tripStatuses.value;
 
+
+  //Tows trip
   await getTows();
-
-  selectTows.value = tows.value;
-
-
+  selectTripTows.value = tows.value;
+  
+  
   await findData();
 
+  loading.value = false;
 
 }); 
-
-
-
 
 
 </script>

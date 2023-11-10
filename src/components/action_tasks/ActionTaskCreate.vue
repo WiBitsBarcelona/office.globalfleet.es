@@ -21,7 +21,7 @@
 						class="form-control w-full"
 						:class="{ 'border-danger': validate.action_type_id.$error }"
 					>
-
+						<option :value="0"></option>
 						<option v-for="item in selectActionTypes" :value="item.id">
 							{{ item.name }}
 						</option>
@@ -57,6 +57,7 @@
 						@change="onChangeSelectActionModel"	
 					>
 
+						<option :value="0"></option>
 						<option v-for="item in selectActionTypeModel" :value="item.id">
 							{{ item.name }}
 						</option>
@@ -112,6 +113,7 @@
 						class="form-control w-full"
 						:class="{ 'border-danger': validate.action_form_field_id.$error }">
 
+						<option :value="0"></option>
 						<option v-for="item in selectActionFormFields" :value="item.id">
 							{{ item.name }}
 						</option>

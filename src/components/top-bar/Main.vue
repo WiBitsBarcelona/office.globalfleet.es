@@ -41,7 +41,7 @@
           role="button"
           class="zoom-in"
         >
-          <ProfileAvatar :username="useAuthentication.user.name" bg-color="#d0d0d0" border-color="#d0d0d0"></ProfileAvatar>
+        <ProfileAvatar :username="useAuthentication.user.name" bg-color="#d0d0d0" border-color="#d0d0d0"></ProfileAvatar>
         </DropdownToggle>
         <DropdownMenu class="w-56">
           <DropdownContent

@@ -279,6 +279,11 @@ watchEffect(() => {
     bg_trip.value = 'bg-green-100';
   }
 
+  if (trip.value.trip_status_id === enumTrip.TRIP_CANCELED_ID) {
+    bg_trip.value = 'bg-red-100';
+  }
+
+
 
   driver_name.value = trip.value.driver.name + ' ' + trip.value.driver.surname;
 

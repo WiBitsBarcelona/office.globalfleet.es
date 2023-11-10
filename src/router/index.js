@@ -173,7 +173,7 @@ const routes = [
   },
   {
     path: "/trip/:id",
-    name: "Detalle Viaje",
+    name: "Detalle-Viaje",
     beforeEnter: requireAuth,
     component: () => import('@/views/trips/TripDetailsWithOutComponents.vue'),
   },

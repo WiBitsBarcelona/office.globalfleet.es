@@ -1,5 +1,4 @@
 import { ref } from 'vue';
-import axios from 'axios';
 import { useI18n } from 'vue-i18n';
 
 
@@ -19,41 +18,41 @@ export default function useActionTaskScanner() {
 
 	const getActionTaskScanners = async () => {
 		actionTaskScannerErrors.value = [];
-		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-task-scanners/list`, config);
-			actionTaskScanners.value = response.data.data;
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				actionTaskScannerErrors.value.push(t("errors.error_internal"));
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-task-scanners/list`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionTaskScannerErrors.value = res.errors;
+			}else{
+				actionTaskScanners.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionTaskScannerErrors.value = key
-				}
-			}
-		}
+		})
+		.catch((e) => {
+			actionTaskScannerErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
 	const getActionTaskScanner = async (id) => {
 		actionTaskScannerErrors.value = [];
-		try {
-			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-task-scanners/show/${id}`, config);
-			actionTaskScanner.value = response.data.data;
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				actionTaskScannerErrors.value.push(t("errors.error_internal"));
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-task-scanners/show/${id}`,{
+			method: 'GET',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionTaskScannerErrors.value = res.errors;
+			}else{
+				actionTaskScanner.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionTaskScannerErrors.value = key
-				}
-			}
-		}
+		})
+		.catch((e) => {
+			actionTaskScannerErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 
@@ -66,19 +65,14 @@ export default function useActionTaskScanner() {
 		})
 		.then(res => res.json())
 		.then((res) => {
-			actionTaskScanner.value = res.data;
+			if (!res.success) {
+				actionTaskScannerErrors.value = res.errors;
+			}else{
+				actionTaskScanner.value = res.data;
+			}
 		})
 		.catch((e) => {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				actionTaskScannerErrors.value.push(t("errors.error_internal"));
-			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionTaskScannerErrors.value = key
-				}
-			}
+			actionTaskScannerErrors.value.push(t("errors.error_internal"));
 		});
 	}
 
@@ -92,39 +86,35 @@ export default function useActionTaskScanner() {
 		})
 		.then(res => res.json())
 		.then((res) => {
-			actionTaskScanner.value = res.data;
+			if (!res.success) {
+				actionTaskScannerErrors.value = res.errors;
+			}else{
+				actionTaskScanner.value = res.data;
+			}
 		})
 		.catch((e) => {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				actionTaskScannerErrors.value.push(t("errors.error_internal"));
-			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionTaskScannerErrors.value = key
-				}
-			}
+			actionTaskScannerErrors.value.push(t("errors.error_internal"));
 		});
 	}
 
 
 	const destroyActionTaskScanner = async (id) => {
 		actionTaskScannerErrors.value = [];
-		try {
-			await axios.delete(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-task-scanners/delete/${id}`, config);
-		} catch (e) {
-			// Errors 500
-			if (e.response.status >= 500 &&  e.response.status <= 599) {
-				errors.value.push(t("errors.error_internal"));
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-task-scanners/delete/${id}`,{
+			method: 'DELETE',
+			headers: config.headers,
+		})
+		.then(res => res.json())
+		.then((res) => {
+			if (!res.success) {
+				actionTaskScannerErrors.value = res.errors;
+			}else{
+				actionTaskScanner.value = res.data;
 			}
-			// Errors 400
-			if (e.response.status_code === 422) {
-				for (const key in e.response.data.errors) {
-					actionTaskScannerErrors.value = key
-				}
-			}
-		}
+		})
+		.catch((e) => {
+			actionTaskScannerErrors.value.push(t("errors.error_internal"));
+		});
 	}
 
 

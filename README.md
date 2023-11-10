@@ -92,8 +92,6 @@ Pass: Fleet2022
 
 
 
-
-
 ## Message Toast:
 
 ```sh 
@@ -127,11 +125,11 @@ Example to implement:
 
         Swal.fire({
 			icon: 'warning',
-			title: t("documents.swal.are_you_sure"),
-			html: '<span class="font-medium">' + t("delete_user_title") + '</span><br /><div class="mt-2 text-sm italic"> ' + name + ' ' + surname + '</div>',
+			title: t("message.record_will_be_deleted"),
+			html: '<span class="font-medium">' + t("delete_user_title") + '</span><br /><div class="mt-2 text-sm italic"> ' + name + '</div>',
 			showCancelButton: true,
-			confirmButtonText: t("documents.swal.yes"),
-			cancelButtonText: t("documents.swal.no"),
+			confirmButtonText: t("message.yes"),
+			cancelButtonText: t("message.yes"),
 			confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
 		}).then(async(result) => {
 			if (result.isConfirmed) {
@@ -147,7 +145,7 @@ Example to implement:
 					});
 
 
-					Swal.fire(t("message.error"), e, 'error');
+					Swal.fire(t("message.error"), e + ' error');
 					
 				}else{
 					tableData.value = await findData();
@@ -162,6 +160,35 @@ Example to implement:
 
 
 ```
+
+
+
+## Message LocalStorage:
+
+```sh 
+
+With redirection:
+
+...
+
+//Success
+localStorage.setItem('message_success', t('message.record_saved'));
+await router.push('/trips');
+
+
+//Error
+localStorage.setItem('message_error', t('message.error'));
+await router.push('/trips');
+
+...
+
+
+
+```
+
+
+
+
 
 ### Tootilps
 

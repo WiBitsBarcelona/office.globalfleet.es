@@ -1,5 +1,6 @@
 <template>
   <div class="py-5 md:py-0">
+
     <!-- <FleetModeSwitcher /> -->
     <MobileMenu />
     <TopBar class="top-bar-boxed--simple-menu" />
@@ -110,6 +111,7 @@
 </template>
 
 <script setup>
+
 import { computed, onMounted, provide, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useSimpleMenuStore } from "@/stores/simple-menu";
@@ -127,6 +129,8 @@ import useChat from "@/composables/chat";
 import enumRoles from '@/enums/enum_roles.js';
 import FleetFooter from "@/components/fleet-footer/Main.vue";
 import { useI18n } from "vue-i18n";
+import { Toast } from '@/utils/toast';
+
 
 const { unreadMessageCount, checkUnreadMessages, getCometChatCredentials } = useChat();
 
@@ -159,6 +163,7 @@ onMounted(async () => {
   //formattedMenu.value = $h.toRaw(simpleMenu.value);
   await formattedMenuList();
 
+
   //TODO
   // pendiente por revisar: cuando no tiene cometchat activo igualmente falla 
   // por que un setInterval cada vez que se recarga un menu. ¿El setInterval se reemplaza?
@@ -169,8 +174,6 @@ onMounted(async () => {
   if (response != false) {
     if (!localStorage.getItem("token") || useAuthenticationStore().user.employee !== null) {
       await checkUnreadMessages();
-
-      await checkUnreadMessages
     }
   }
 
@@ -181,10 +184,8 @@ setInterval(async () => {
 
   if (response != false) {
     if (!localStorage.getItem("token") || useAuthenticationStore().user.employee !== null) {
-      await checkUnreadMessages();
-
       setTimeout(async () => {
-        await checkUnreadMessages
+        await checkUnreadMessages();
       }, 4000);
     }
   }
@@ -193,7 +194,14 @@ setInterval(async () => {
 
 
 
+/**
+ * Formatted menu && LocalStorage Messages
+ */
 const formattedMenuList = async () => {
+  
+  /************************
+   * formattedMenu
+   ************************/
   //formattedMenu.value = $h.toRaw(simpleMenu.value);
   const menuFormat = $h.toRaw(simpleMenu.value);
 
@@ -205,6 +213,24 @@ const formattedMenuList = async () => {
   }
 
   formattedMenu.value = menuNew;
+
+
+
+  
+
+  /************************
+   * LocalStorage Messages
+   ************************/
+  if(localStorage.getItem('message_success')){
+    await Toast(localStorage.getItem('message_success'), 'success');
+    localStorage.removeItem('message_success');
+  }
+
+  if(localStorage.getItem('message_error')){
+    //await Toast(t('message.error'), 'error');
+    await Toast(localStorage.getItem('message_error'), 'error');
+    localStorage.removeItem('message_error');
+  }
 
 }
 

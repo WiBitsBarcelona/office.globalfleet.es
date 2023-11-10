@@ -13,6 +13,7 @@
                 <FileTextIcon class="w-8 h-8 ml-auto hover:cursor-pointer" :class="trip_documents_class" />
               </Tippy>
             </div> -->
+          
             <div v-for="trip_incidences in total_trip_incidences_array" :key="trip_incidences.index"
               class="flex absolute top-5 right-5 left-auto mt-6 mr-5 hover:cursor-pointer">
               <Tippy v-if="trip_incidences.total == total_trip_incidences_array.length" tag="icon" variant="primary"
@@ -26,6 +27,7 @@
             <div class="w-full text-center">
               <h2 class="p-5 m-0 bg-primary rounded text-white font-bold text-2xl">{{ trip_name }}</h2>
             </div>
+          
             <div class="grid grid-cols-6 gap-2 mb-5 border-b-[1px] p-5 border-slate-200">
               <div class="col-span-2 px-2">
                 <h5 class="text-xs font-light text-gray-400">{{ $t("trip") }}:</h5>
@@ -42,16 +44,30 @@
                   {{ gps_position }}
                 </p>
               </div>
-              <div class="col-span-2 px-2">
+              <div class="px-2">
                 <h5 class="text-xs font-light text-gray-400">{{ $t("trip_status") }}:</h5>
                 <span :class="trip_status_class">{{ trip_status }}</span>
               </div>
+              <div class="intro-y mt-2 mb-5 justify-self-end">
+                <div class="form-check form-switch">
+                  <input
+                    id="checkbox-auto-refresh"
+                    class="form-check-input"
+                    type="checkbox"
+                    v-model="toggle"
+                  />
+                  <label class="form-check-label" for="checkbox-auto-refresh"
+                    >{{ $t("auto_refresh_title") }}</label
+                  >
+                </div>
+            </div>
               <div class="col-span-2 px-2">
                 <h5 class="text-xs font-light text-gray-400">{{ $t("driver") }}:</h5>
                 <p class="text-md font-normal leading-6 text-gray-500">
                   {{ trip_driver }}
                 </p>
               </div>
+
               <div class="px-2">
                 <h5 class="text-xs font-light text-gray-400">{{ $t("plate") }}:</h5>
                 <p class="text-md font-normal leading-6 text-gray-500">
@@ -518,7 +534,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, reactive } from "vue";
+import { watch, ref, onMounted, onUnmounted, reactive } from "vue";
 import dom from "@left4code/tw-starter/dist/js/dom";
 import DarkModeSwitcher from "@/components/dark-mode-switcher/Main.vue";
 import { useRoute } from 'vue-router';
@@ -533,10 +549,12 @@ import useTripIncidentImage from "@/composables/trip_incident_images";
 import useStageIncidentImage from "@/composables/stage_incident_images";
 import useTaskIncidentImage from "@/composables/task_incident_images";
 import useDownloadDocument from "@/composables/download_documents";
+import { Toast } from '@/utils/toast';
 
 const { getTrip, trip } = useTrips();
 const { t } = useI18n();
 const route = useRoute();
+const toggle = ref(false);
 
 const { updateTripIncident } = useTripIncident();
 const { updateStageIncident } = useStageIncident();
@@ -576,6 +594,7 @@ let trip_incidences_class = 'text-gray-300';
 let icon_pending_class = 'flex items-center justify-center w-10 h-10 rounded-full bg-white border border-gray-300 shadow md:order-1 dark:bg-darkmode-600 dark:border-gray-700';
 let icon_active_class = 'flex items-center justify-center w-10 h-10 rounded-full bg-white border-4 border-info shadow md:order-1 dark:bg-darkmode-600 dark:border-info';
 let icon_success_class = 'flex items-center justify-center w-10 h-10 rounded-full bg-green-100 border border-success shadow md:order-1 dark:bg-darkmode-600 dark:border-success';
+let icon_canceled_class = 'flex items-center justify-center w-10 h-10 rounded-full bg-red-100 border border-alert shadow md:order-1 dark:bg-darkmode-600 dark:border-alert';
 let current_element_icon_class = '';
 let has_check_icon = 0;
 let box_size = '';
@@ -583,6 +602,7 @@ let status_pending_class = 'inline-flex items-center py-1.5 px-1.5 rounded-lg te
 let status_not_confirmed_class = 'inline-flex items-center py-1.5 px-1.5 rounded-lg text-xs font-medium bg-orange-100 border border-orange-300 dark:border-orange-500 dark:text-white dark:bg-transparent';
 let status_active_class = 'inline-flex items-center py-1.5 px-1.5 rounded-lg text-xs font-medium bg-blue-100 border border-primary dark:border-primary dark:text-white dark:bg-transparent';
 let status_success_class = 'inline-flex items-center py-1.5 px-1.5 rounded-lg text-xs font-medium bg-green-100 border border-green-500 dark:border-green-500 dark:text-white dark:bg-transparent';
+let status_canceled_class = 'inline-flex items-center py-1.5 px-1.5 rounded-lg text-xs font-medium bg-red-100 border border-red-500 dark:border-red-500 dark:text-white dark:bg-transparent';
 let current_element_status_class = '';
 let element_value = '--';
 let element_activity = '';
@@ -640,6 +660,7 @@ let currentTask = [];
 let element_status = '';
 let arrived_at = '';
 let departure_at = '';
+const autoRefresh = ref();
 
 const TripDetails = async (id) => {
   countStage = 0;
@@ -666,6 +687,9 @@ const TripDetails = async (id) => {
       break;
     case 6:
       trip_status_class = status_success_class;
+      break;
+    case 7:
+      trip_status_class = status_canceled_class;
       break;
   }
   if(trip.value.driver.position){
@@ -817,6 +841,12 @@ const TripDetails = async (id) => {
         current_element_icon_class = icon_success_class;
         current_element_status_class = status_success_class;
         has_check_icon = 1;
+        break;
+      case 7:
+        element_status = element.status.name;
+        current_element_icon_class = icon_canceled_class;
+        current_element_status_class = status_canceled_class;
+        has_check_icon = 0;
         break;
     }
     let element_name = element.name;
@@ -1546,16 +1576,27 @@ const openTaskFile = async (path, file_name, action) => {
   }
 }
 
-//Function to refresh data every time asigned on ENV file.
-const autoRefresh = setInterval(() => {
-  TripDetails(route.params.id);
-  //console.log("Actualizado");
-}, auto_refresh);
+watch(toggle, () => {
+  console.log(toggle.value);
+  if (toggle.value == true) {
+    Toast(t("auto_refresh_on_3_toast"), 'info');
+    autoRefresh.value = setInterval(() => {
+      TripDetails(route.params.id);
+    }, auto_refresh);
+  } else {
+    Toast(t("auto_refresh_off_toast"), 'info');
+    //TODO - CANCEL TIMEOUT
+    clearInterval(autoRefresh.value);
+  }
+})
+
+
+
+
 
 onMounted(() => {
   dom("body").removeClass("main").removeClass("login").addClass("error-page");
   TripDetails(route.params.id);
-  //autoRefresh;
 });
 
 onUnmounted(() => {

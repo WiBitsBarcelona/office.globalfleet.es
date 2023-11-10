@@ -255,7 +255,8 @@
                   <div class="flex flex-row justify-between">
 
                     <p class="text-md font-normal leading-6 text-gray-500">
-                      <span class="text-xs font-light text-gray-400">{{ $t("stage") }}
+                      <span class="text-xs font-light text-gray-400">
+                        ({{ stage.order_number }}) {{ $t("stage") }}
                       </span> {{ stage.name }}
                     </p>
 
@@ -346,20 +347,19 @@
                         </div>
                       </div>
                       <div class="w-full p-4 rounded border border-slate-200 text-slate-500 shadow ml-14 md:ml-44">
-                        <div class="grid grid-cols-4 gap-2 mb-5pb-2">
+                        <div class="grid grid-cols-6 gap-2 mb-5">
 
-                          <div class="col-span-4">
+                          <div class="col-span-6">
 
                             <div class="flex flex-row justify-between">
 
                               <p class="text-md font-normal leading-6 text-gray-500 mt-2"><span
                                   class="text-xs font-light text-gray-400">{{ $t("task") }}:
                                 </span>
-                                {{ task.name }}
+                                {{ task.name }} 
                               </p>
 
-                              <div class="col-span-12 text-right">
-
+                              <div class="text-right">
                                 <a href="#" @click.prevent="showActionTaskForm(stage, task)"
                                   class="btn btn-outline-primary w-1/2 sm:w-auto mr-2">
                                   <PlusCircleIcon class="w-4 h-4" /> {{ t("add_action_task") }}
@@ -375,22 +375,21 @@
                           </div>
 
 
-
                           <!-- Action Tasks -->
-                          <div v-for="action_task in task.action_tasks" :key="action_task.id">
+                          <div class="col-span-6" v-for="action_task in task.action_tasks" :key="action_task.id">
 
-                            <div class="grid grid-cols-6 gap-2">
+                              <div class="grid grid-cols-6">
 
-                              <div class="col-span-3">
-                                <h5 class="text-xs font-light text-gray-400">{{ $t("action") }}:</h5>
-                                <p class="text-xs font-normal leading-6 text-gray-500">
-                                  {{ action_task.action_type_name }}
-                                </p>
-                              </div>
+                                <div class="col-span-2">
+                                  <h5 class="text-xs font-light text-gray-400">{{ $t("action") }}:</h5>
+                                  <p class="text-xs font-normal leading-6 text-gray-500">
+                                    {{ action_task.action_type_name }}
+                                  </p>
+                                </div>
 
+                               
 
-
-                              <!-- Action Cameras -->
+                                <!-- Action Cameras -->
                               <div class="col-span-2" v-if="parseInt(action_task.action_type_model) === enumActionTask.CAMERA_ID">
                                 <div v-for="camera in action_task.cameras" :key="camera.id">
 
@@ -408,7 +407,7 @@
 
 
                               <!-- Action Scanner -->
-                              <div class="col-span-3" v-if="parseInt(action_task.action_type_model) === enumActionTask.SCANNER_ID">
+                              <div class="col-span-2" v-if="parseInt(action_task.action_type_model) === enumActionTask.SCANNER_ID">
                                 <div v-for="scanner in action_task.scanners" :key="scanner.id">
 
 
@@ -427,19 +426,19 @@
 
 
                               <!-- Action Form -->
-                              <div class="col-span-3" v-if="parseInt(action_task.action_type_model) === enumActionTask.FORM_ID">
+                              <div class="col-span-4" v-if="parseInt(action_task.action_type_model) === enumActionTask.FORM_ID">
                                 <div v-for="form in action_task.forms" :key="form.id">
 
-                                  <div class="grid grid-cols-6 gap-2">
+                                  <div class="grid grid-cols-2 gap-2">
 
-                                    <div class="col-span-3">
-                                      <h5 class="text-xs font-light text-gray-400">{{ $t("type") }}:</h5>
+                                    <div class="col-span-1">
+                                      <h5 class="text-xs font-light text-gray-400">{{ $t("action") }}:</h5>
                                       <p class="text-xs font-normal leading-6 text-gray-500">
                                         {{ form.name }}
                                       </p>
                                     </div>
 
-                                    <div class="col-span-3">
+                                    <div class="col-span-1">
                                       <h5 class="text-xs font-light text-gray-400">{{ $t("name") }}:</h5>
                                       <p class="text-xs font-normal leading-6 text-gray-500">
                                         {{ form.action_form_field_name }}
@@ -452,8 +451,17 @@
                               <!-- End of Action Form -->
 
 
-                            </div>
+                              </div>
+
+
+
+
+
+                              
+
+
                           </div>
+                         
 
                         </div>
                         <!-- End Action Tasks -->
@@ -500,7 +508,8 @@
                     <div class="flex flex-row justify-between">
 
                       <p class="text-md font-normal leading-6 text-gray-500">
-                        <span class="text-xs font-light text-gray-400">{{ $t("action") }}
+                        <span class="text-xs font-light text-gray-400">
+                          ({{ stage.order_number }}) {{ $t("action") }}
                         </span> {{ action_stage.action_type_name }} 
                       </p>
 
@@ -798,7 +807,7 @@ const rules = {
 };
 
 
-
+// Only test
 // const formData = reactive({
 //   vehicle_id: "",
 //   trip_priority_id: "",
@@ -863,15 +872,15 @@ const save = async () => {
 
 
 
-    /**
-     * Trip tows
-     */
-    const dataTripTow = {
-      trip_id: trip.value.id,
-      tow_id: formData.tow_id
-    }
-    await storeTripTow(dataTripTow);
-    console.log({...tripTow});
+    // /**
+    //  * Trip tows
+    //  */
+    // const dataTripTow = {
+    //   trip_id: trip.value.id,
+    //   tow_id: formData.tow_id
+    // }
+    // await storeTripTow(dataTripTow);
+    // console.log({...tripTow});
 
 
 
@@ -896,20 +905,20 @@ const save = async () => {
 
 
 
-      /**
-       * Stage Tow TODOO:.............
-       */
-       if (eleStage.tow_id) {
+      // /**
+      //  * Stage Tow TODOO:.............
+      //  */
+      //  if (eleStage.tow_id) {
 
-        towObj = {
-          stage_id: stage.value.id,
-          tow_id: eleStage.tow_id
-        }
+      //   towObj = {
+      //     stage_id: stage.value.id,
+      //     tow_id: eleStage.tow_id
+      //   }
 
-        await storeStageTow(towObj);
-        console.log({ ...stageTow.value });
+      //   await storeStageTow(towObj);
+      //   console.log({ ...stageTow.value });
 
-      }
+      // }
 
 
 
@@ -1079,6 +1088,7 @@ const save = async () => {
 
     loading.value = false;
     await Toast(t("message.record_saved"), 'success');
+    
     setTimeout(() => location.reload(), 3000);
 
   }
@@ -1119,11 +1129,27 @@ const addStageForm = async (stage) => {
 }
 
 const deleteStageForm = (uuid) => {
-  arrStages.value.forEach((ele, index) => {
-    if (ele.uuid === uuid) {
-      arrStages.value.splice(index, 1);
+
+  Swal.fire({
+    icon: 'warning',
+    title: t("message.record_will_be_deleted"),
+    showCancelButton: true,
+    confirmButtonText: t("message.yes"),
+    cancelButtonText: t("message.no"),
+    confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+
+      arrStages.value.forEach((ele, index) => {
+        if (ele.uuid === uuid) {
+          arrStages.value.splice(index, 1);
+        }
+      });
+
     }
+
   });
+  
 }
 
 /**
@@ -1170,20 +1196,35 @@ const addTaskForm = (stage, data) => {
 
 const deleteTaskForm = (stageUuid, taskUuid) => {
 
-  arrStages.value.forEach((stage) => {
+  Swal.fire({
+    icon: 'warning',
+    title: t("message.record_will_be_deleted"),
+    showCancelButton: true,
+    confirmButtonText: t("message.yes"),
+    cancelButtonText: t("message.no"),
+    confirmButtonColor: import.meta.env.VITE_SWEETALERT_COLOR_BTN_SUCCESS,
+  }).then(async (result) => {
+    if (result.isConfirmed) {
 
-    if (stage.uuid === stageUuid) {
+      arrStages.value.forEach((stage) => {
 
-      stage.tasks.forEach((task, index) => {
+        if (stage.uuid === stageUuid) {
 
-        if (task.uuid === taskUuid) {
-          stage.tasks.splice(index, 1);
+          stage.tasks.forEach((task, index) => {
+
+            if (task.uuid === taskUuid) {
+              stage.tasks.splice(index, 1);
+            }
+
+          });
         }
 
       });
+
     }
 
   });
+  
 
 }
 
