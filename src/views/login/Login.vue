@@ -229,15 +229,12 @@ onMounted(() => {
   overflow: hidden;
   transition: all 0.2s;
   cursor: pointer; */
-
-
   display: flex;
   align-items: center;
   overflow: hidden;
   transition: all 0.2s;
   cursor: pointer;
   padding-left: 1.9em;
-
 
 }
 
