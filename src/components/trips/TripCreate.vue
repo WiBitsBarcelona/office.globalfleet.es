@@ -870,19 +870,6 @@ const save = async () => {
 
 
 
-    // /**
-    //  * Trip tows
-    //  */
-    // const dataTripTow = {
-    //   trip_id: trip.value.id,
-    //   tow_id: formData.tow_id
-    // }
-    // await storeTripTow(dataTripTow);
-    // console.log({...tripTow});
-
-
-
-
     /**
      * Stages
      */
@@ -900,23 +887,6 @@ const save = async () => {
       console.log({ ...stage.value });
 
 
-
-
-
-      // /**
-      //  * Stage Tow TODOO:.............
-      //  */
-      //  if (eleStage.tow_id) {
-
-      //   towObj = {
-      //     stage_id: stage.value.id,
-      //     tow_id: eleStage.tow_id
-      //   }
-
-      //   await storeStageTow(towObj);
-      //   console.log({ ...stageTow.value });
-
-      // }
 
 
 
@@ -1087,7 +1057,7 @@ const save = async () => {
     loading.value = false;
     await Toast(t("message.record_saved"), 'success');
     
-    //setTimeout(() => location.reload(), 3000);
+    setTimeout(() => location.reload(), 3000);
 
   }
 };
