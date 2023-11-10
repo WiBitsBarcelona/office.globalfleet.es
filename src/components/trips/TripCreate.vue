@@ -1087,7 +1087,7 @@ const save = async () => {
     loading.value = false;
     await Toast(t("message.record_saved"), 'success');
     
-    setTimeout(() => location.reload(), 3000);
+    //setTimeout(() => location.reload(), 3000);
 
   }
 };
