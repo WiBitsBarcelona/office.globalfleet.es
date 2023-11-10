@@ -4,7 +4,8 @@
 
             <div class="flex flex-col h-[80vh] justify-between items-center box overflow-hidden">
                 <!-- Header -->
-                <div class="bg-white w-full p2 pt-3 pb-3 flex items-center" id="chat-header">
+                <div class="bg-white w-full p2 pt-3 pb-3 flex items-center" id="chat-header"
+                    @click="receiverType === 'group' ? viewParticipants() : ''">
                     <div v-if="nameConversation" class="ml-4 flex items-center gap-4">
                         <div v-if="receiverType === 'user'">
                             <img class="w-14 h-14 rounded-full"
@@ -18,6 +19,12 @@
                     </div>
                 </div>
 
+                <!-- Modal Participants -->
+                <!-- <div v-if="viewModalParticipants == true" class="absolute left-0 top-0 flex flex-end justify-end">
+                    <div class="p-1 intro-x h-[680px] overflow-y-auto w-[250px] bg-white">
+                        <p class="text-black">HOLA</p>
+                    </div>
+                </div> -->
                 <!-- Chat -->
                 <div class="overflow-scroll scrollbar-hidden w-full h-full p-4 bg-white" id="chat" @scroll="detectScroll">
 
@@ -207,7 +214,8 @@
                                                             <div v-if="itemGM.Lang == myLang">
                                                                 <div style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; 
                                                                 align-items: end;">
-                                                                    <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">
+                                                                    <p class="txtMensajes"
+                                                                        style="padding-right: 4px; white-space: pre-line;">
                                                                         {{ itemGM.TextTranslate }}</p>
                                                                     <p class="txtHora">
                                                                         {{ convertStringToDate(mensaje.sentAt) }}
@@ -222,16 +230,20 @@
                                                         gap: 8px;max-width: 253px">
 
                                                         <div>
-                                                            <p style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px; font-style: italic;">
+                                                            <p
+                                                                style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px; font-style: italic;">
                                                                 {{ mensaje.data.customData.titleText }}
                                                             </p>
-                                                            <p style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px; white-space: pre-line;">
+                                                            <p
+                                                                style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px; white-space: pre-line;">
                                                                 {{ mensaje.data.text }}
                                                             </p>
                                                         </div>
 
-                                                        <div style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; align-items: end;">
-                                                            <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">
+                                                        <div
+                                                            style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; align-items: end;">
+                                                            <p class="txtMensajes"
+                                                                style="padding-right: 4px; white-space: pre-line;">
                                                                 {{ mensaje.data.customData.translateText }}
                                                             </p>
                                                             <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
@@ -241,7 +253,8 @@
                                             </div>
                                             <div v-else>
                                                 <div class="contMensajeRecibido">
-                                                    <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">
+                                                    <p class="txtMensajes"
+                                                        style="padding-right: 4px; white-space: pre-line;">
                                                         {{ mensaje.data.text }}
                                                     </p>
                                                     <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
@@ -457,7 +470,6 @@
                 </div>
                 <!-- Fin Modal Checkmark -->
             </div>
-
         </div>
 
     </div>
@@ -677,7 +689,7 @@ const initialize = async () => {
                     }
 
                     // Si mi usuario recibe los mensajes y esta en el ultimo mensaje
-                    console.log(textMessage.conversationId)
+                    //console.log(textMessage.conversationId)
                     if (textMessage.conversationId == idConversation.value) {
                         //markUserConversationAsRead(myUid.value, ChatId.value)
                         if (isMoving == true) {
@@ -1089,6 +1101,11 @@ const getUidxGroup = async () => {
     // Convertir el conjunto nuevamente a un array si es necesario
     membersLang = Array.from(uniqueMembersLang);
 }
+
+const viewModalParticipants = ref(false)
+const viewParticipants = async () => {
+    viewModalParticipants.value = !viewModalParticipants.value
+}
 </script>
 <style>
 .contMensajeRecibido {
@@ -1157,4 +1174,5 @@ const getUidxGroup = async () => {
     display: flex;
     align-items: flex-end;
     text-align: right;
-}</style>
+}
+</style>
