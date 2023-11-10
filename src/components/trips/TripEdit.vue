@@ -588,7 +588,7 @@
 												</span> {{ stage.name }}
 											</p>
 
-											<div class="text-right">
+											<div class="text-right" v-show="idTripEnabled()">
 
 												<!-- <a href="#" @click.prevent="arrStageItemUp(stage.id)"
 													class="btn btn-outline-primary w-1/2 sm:w-auto mr-2"
