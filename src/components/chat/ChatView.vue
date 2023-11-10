@@ -30,116 +30,116 @@
         </div>
       </div>
     </div>
+
     <div class="w-full relative mr-auto mt-3 sm:mt-0">
       <SearchIcon class="w-4 h-4 absolute my-auto inset-y-0 ml-3 left-0 z-10 text-slate-500" />
       <input id="search-conversation" type="text" class="form-control w-full box px-10"
-        :placeholder="$t('chat.searchTitle')" v-on:input="conversationList.length == 0 ? '' : searchConversationByName"
+        :placeholder="$t('chat.searchTitle')" @input="conversationList.length == 0 ? '' : searchConversationByName()"
         :class="conversationList.length == 0 ? 'opacity-60 cursor-not-allowed' : ''" />
     </div>
 
-    <!-- Llista de xats -->
-    <div id="group-list" class="flex flex-col gap-[6px] h-full overflow-y-scroll scrollbar-hidden">
-      <!-- Per cada xat farem un botó -->
-      <button v-if="!inNewChat" v-for="conversation in conversationList" @click="enviarVariable(conversation.conversationId,
-        conversation.conversationWith.uid ? conversation.conversationWith.uid : conversation.conversationWith.guid,
-        conversation.conversationType, conversation.conversationWith.name)"
-        :id="conversation.conversationWith.uid ? conversation.conversationWith.uid : conversation.conversationWith.guid"
-        :key="conversation.conversationWith"
-        class="flex gap-3 p-3 pl-2 h-16 box cursor-pointer border-b bg-white items-center conversations-list-item">
-        <!-- En cas de ser un xat amb un usuari -->
-        <!-- <p>{{conversation.conversationId}} - {{ conversation.conversationWith.uid}} - {{conversation.conversationType}} - 
-        {{ conversation.conversationWith.name}}</p> -->
+    <div class="box p-1 intro-x h-[638px] overflow-y-auto">
+      <!-- Llista de xats -->
+      <div id="group-list" class="bg-white flex flex-col gap-[6px] h-full overflow-y-scroll scrollbar-hidden">
+        <!-- Lista Chat -->
+        <button v-if="!inNewChat" v-for="conversation in conversationList" @click="enviarVariable(conversation.conversationId,
+          conversation.conversationWith.uid ? conversation.conversationWith.uid : conversation.conversationWith.guid,
+          conversation.conversationType, conversation.conversationWith.name)"
+          :id="conversation.conversationWith.uid ? conversation.conversationWith.uid : conversation.conversationWith.guid"
+          :key="conversation.conversationWith"
+          class="flex gap-3 p-3 pl-2 h-16 border-b-2 border-gray-100 cursor-pointer bg-white items-center conversations-list-item">
+          <!-- En cas de ser un xat amb un usuari -->
+          <!-- <p>{{conversation.conversationId}} - {{ conversation.conversationWith.uid}} - {{conversation.conversationType}} - 
+          {{ conversation.conversationWith.name}}</p> -->
 
-        <img v-if="conversation.conversationType === 'user'" class="w-14 h-14 rounded-full" :src="conversation.conversationWith.avatar
-          ? conversation.conversationWith.avatar
-          : `https://ui-avatars.com/api/?name=${chatsTitle(conversation.conversationWith.name)}&color=FFFFFF&background=4EDDFF&font-size=0.38`
-          " />
-        <!-- En cas de ser un grup -->
-        <img v-if="conversation.conversationType === 'group'" class="w-14 h-14 rounded-full" :src="conversation.conversationWith.icon
-          ? conversation.conversationWith.icon
-          : `https://ui-avatars.com/api/?name=${chatsTitle(conversation.conversationWith.name)}&color=FFFFFF&background=BCBCBC&font-size=0.38`
-          " />
-        <div class="flex flex-col justify-between h-full w-full text-left gap-1">
-          <div class="flex w-full justify-between">
-            <h2 class="font-semibold">
-              {{ conversation.conversationWith.name }}
-            </h2>
-            <div v-if="conversation.unreadMessageCount != 0 &&
-              conversation.unreadMessageCount < 100
-              "
-              class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-[#FF9F46] text-white rounded-full inner-messages-balloon">
-              <p class="w-full text-center mt-[1px]">
-                {{ conversation.unreadMessageCount }}
-              </p>
+          <img v-if="conversation.conversationType === 'user'" class="w-14 h-14 rounded-full" :src="conversation.conversationWith.avatar
+            ? conversation.conversationWith.avatar
+            : `https://ui-avatars.com/api/?name=${chatsTitle(conversation.conversationWith.name)}&color=FFFFFF&background=4EDDFF&font-size=0.38`
+            " />
+          <!-- En cas de ser un grup -->
+          <img v-if="conversation.conversationType === 'group'" class="w-14 h-14 rounded-full" :src="conversation.conversationWith.icon
+            ? conversation.conversationWith.icon
+            : `https://ui-avatars.com/api/?name=${chatsTitle(conversation.conversationWith.name)}&color=FFFFFF&background=BCBCBC&font-size=0.38`
+            " />
+          <div class="flex flex-col justify-between h-full w-full text-left gap-1">
+            <div class="flex w-full justify-between">
+              <h2 class="font-semibold">
+                {{ $h.cutText(conversation.conversationWith.name, 40) }}
+              </h2>
+              <div v-if="conversation.unreadMessageCount != 0 &&
+                conversation.unreadMessageCount < 100
+                "
+                class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-[#FF9F46] text-white rounded-full inner-messages-balloon">
+                <p class="w-full text-center mt-[1px]">
+                  {{ conversation.unreadMessageCount }}
+                </p>
+              </div>
+              <div v-else-if="conversation.unreadMessageCount != 0 &&
+                conversation.unreadMessageCount > 100
+                "
+                class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-[#FF9F46] text-white rounded-full inner-messages-balloon">
+                <p class="w-full text-center mt-[1px]">+99</p>
+              </div>
             </div>
-            <div v-else-if="conversation.unreadMessageCount != 0 &&
-              conversation.unreadMessageCount > 100
-              "
-              class="flex items-center justify-between h-5 min-w-[1.25rem] p-1 bg-[#FF9F46] text-white rounded-full inner-messages-balloon">
-              <p class="w-full text-center mt-[1px]">+99</p>
-            </div>
-          </div>
-          <div class="flex w-full justify-between">
-            <p :id="'last-' + conversation.conversationId">
+            <div class="flex w-full justify-between">
+              <p :id="'last-' + conversation.conversationId">
 
-            <div v-if="conversation.conversationType == 'group'">
-              <div v-if="conversation.lastMessage.data.customData">
-                <div v-for="itemGM in conversation.lastMessage.data.customData.groupText">
-                  <div v-if="itemGM.Lang == myLang">
-                    {{ $h.cutText(itemGM.TextTranslate,30) }} 
+              <div v-if="conversation.conversationType == 'group'">
+                <div v-if="conversation.lastMessage.data.customData">
+                  <div v-for="itemGM in conversation.lastMessage.data.customData.groupText">
+                    <div v-if="itemGM.Lang == myLang">
+                      {{ $h.cutText(itemGM.TextTranslate, 30) }}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div v-else>
-              <div v-if="conversation.lastMessage.sender == userInfo.uid">
-                {{ $h.cutText(conversation.lastMessage.data.text,30) }} 
-              </div>
               <div v-else>
-                <div v-if="conversation.lastMessage.data.customData">
-                  {{ $h.cutText(conversation.lastMessage.data.customData.translateText,30)}} 
+                <div v-if="conversation.lastMessage.sender == userInfo.uid">
+                  {{ $h.cutText(conversation.lastMessage.data.text, 30) }}
                 </div>
                 <div v-else>
-                  {{ $h.cutText(conversation.lastMessage.data.text,30)}} 
+                  <div v-if="conversation.lastMessage.data.customData">
+                    {{ $h.cutText(conversation.lastMessage.data.customData.translateText, 30) }}
+                  </div>
+                  <div v-else>
+                    {{ $h.cutText(conversation.lastMessage.data.text, 30) }}
+                  </div>
                 </div>
               </div>
+              </p>
+              <!-- Hora del ultimo mensaje -->
+              <p> {{ convertStringToDates(conversation.lastMessage.sentAt) }} </p>
             </div>
-            </p>
-            <!-- Hora del ultimo mensaje -->
-            <p> {{ convertStringToDates(conversation.lastMessage.sentAt) }} </p>
           </div>
-        </div>
-      </button>
+        </button>
 
-      <!-- Per cada nou possible xat, farem un botó també -->
-      <button v-if="inNewChat" v-for="chatList in newChatsList"
-        class="flex gap-3 p-3 pl-2 h-16 box cursor-pointer border-b bg-white items-center"
-        @click="enviarVariable(chatList.conversationId, chatList.uid ? chatList.uid : chatList.guid, chatList.uid ? 'user' : 'group', chatList.name)">
+        <!-- Lista Nuevo Chat -->
+        <button v-if="inNewChat" v-for="chatList in newChatsList"
+          class="flex gap-3 p-3 pl-2 h-16 border-b-2 border-gray-100 cursor-pointer bg-white items-center"
+          @click="enviarVariable(chatList.conversationId, chatList.uid ? chatList.uid : chatList.guid, chatList.uid ? 'user' : 'group', chatList.name)">
 
-        <!-- <p>{{ chatList.conversationId }}</p> -->
-        <!-- En cas de ser un xat amb un usuari -->
-        <img v-if="chatList.uid" class="w-14 h-14 rounded-full" :src="chatList.avatar
-          ? chatList.avatar
-          : `https://ui-avatars.com/api/?name=${chatList.name.charAt(
-            0
-          )}&color=FFFFFF&background=4EDDFF&font-size=0.38`
-          " />
-        <!-- En cas de ser un grup -->
-        <img v-if="chatList.guid" class="w-14 h-14 rounded-full" :src="chatList.icon
-          ? chatList.icon
-          : `https://ui-avatars.com/api/?name=${chatList.name.charAt(
-            0
-          )}&color=FFFFFF&background=BCBCBC&font-size=0.38`
-          " />
-        <div class="flex flex-col justify-between h-full w-full text-left gap-1">
-          <div class="flex w-full justify-between">
-            <h2 class="font-semibold">
-              {{ chatList.name }}
-            </h2>
+          <!-- <p>{{ chatList.conversationId }}</p> -->
+          <!-- En cas de ser un xat amb un usuari -->
+          <img v-if="chatList.uid" class="w-14 h-14 rounded-full" :src="chatList.avatar
+            ? chatList.avatar
+            : `https://ui-avatars.com/api/?name=${chatsTitle(chatList.name)}&color=FFFFFF&background=4EDDFF&font-size=0.38`
+            " />
+          <!-- En cas de ser un grup -->
+          <img v-if="chatList.guid" class="w-14 h-14 rounded-full" :src="chatList.icon
+            ? chatList.icon
+            : `https://ui-avatars.com/api/?name=${chatsTitle(chatList.name)}&color=FFFFFF&background=BCBCBC&font-size=0.38`
+            " />
+          <div class="flex flex-col justify-between h-full w-full text-left gap-1">
+            <div class="flex w-full justify-between">
+              <h2 class="font-semibold">
+                {{ chatList.name }}
+              </h2>
+            </div>
           </div>
-        </div>
-      </button>
+        </button>
+      </div>
     </div>
+    
   </div>
 
   <!-- Cuadre de xat -->
@@ -605,20 +605,56 @@ const printTextMessage = async (textMessage) => {
   document.getElementById(propsChatId.value).classList.add("selected");
 };
 
+// Funcion para buscar Chat
 const searchConversationByName = async () => {
+
   const element = document.getElementById("search-conversation");
   const searchTerm = element.value.toString().toLowerCase();
 
-  const conversations = await getConversationsList(userInfo.uid);
+  // Si estamos dentro de Nuevo chat
+  if (inNewChat.value == true) {
 
-  const r = conversations.filter((conversation) => {
-    const name = conversation.conversationWith.name;
-    return name.toString().toLowerCase().includes(searchTerm);
-  });
+    // Filtraremos por el nombre de la conversacion
+    const result = newChatsList.value.filter((conversation) => {
+      const name = conversation.name;
+      return name.toString().toLowerCase().includes(searchTerm);
+    });
 
-  conversationList.value = r;
+    // si existe algun nombre se relistara el array
+    if (searchTerm != '') {
+      newChatsList.value = result;
+    } else {
+      // sino se volvera a listar todo los usuarios
+      const groups = await getUserGroups(userInfo.uid);
+      const otherUsers = [];
+
+      if (groups != undefined) {
+        for (const group of groups) {
+          otherUsers.push(group);
+          const members = await getGroupMembers(group.guid);
+          const otherMembers = members.filter((user) => user.uid !== userInfo.uid);
+          for (const member of otherMembers) {
+            otherUsers.push(member);
+          }
+        }
+      }
+
+      newChatsList.value = otherUsers;
+    }
+  } else {
+    // si no estamos en Nuevo chat buscaremos por los usuarios en los que tenemos conversacion
+    const conversations = await getConversationsList(userInfo.uid);
+
+    const result = conversations.filter((conversation) => {
+      const name = conversation.conversationWith.name;
+      return name.toString().toLowerCase().includes(searchTerm);
+    });
+
+    conversationList.value = result;
+  }
 };
 
+// Funcion para convertir Nombre del chat
 const chatsTitle = (value) => {
 
   const words = value.split(" ");
@@ -695,6 +731,7 @@ const isYesterday = (date, currentDate) => {
     date.getFullYear() === yesterday.getFullYear()
   );
 }
+
 </script>
 
 <style>

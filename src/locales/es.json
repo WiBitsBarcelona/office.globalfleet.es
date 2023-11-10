@@ -425,7 +425,7 @@
   "chat":{
     "chats": "Chats",
     "newChat" : "Nuevo Chat",
-    "searchTitle": "Buscar Conversacion",
+    "searchTitle": "Buscar",
     "confirmRead": "Confirmar Lectura",
     "messageInput": "Escribe el Mensaje...."
   },

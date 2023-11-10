@@ -407,7 +407,7 @@
   "chat":{
     "chats": "Chats",
     "newChat" : "New Chat",
-    "searchTitle": "Search Conversation",
+    "searchTitle": "Search",
     "confirmRead": "Confirm reading",
     "messageInput": "Write the message..."
   },
