@@ -6,7 +6,6 @@
 
   <Preloader v-if="loading" />
 
-
   <!-- BEGIN: Page Layout -->
   <div class="intro-y box p-5 mt-5" v-if="isCreateTrip">
     <!-- BEGIN: Form -->
@@ -217,7 +216,6 @@
 
     </form>
     <!-- END: Form -->
-
 
 
     <div class="grid grid-cols-12 gap-1 mt-10 mb-10">
