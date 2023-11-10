@@ -2,6 +2,9 @@
   <div>
     <!-- <LocaleSelect/> -->
     <AuthFooter/>
+
+    <Preloader v-if="loading" />
+
     <div class="container sm:px-10">
       <div class="block xl:grid grid-cols-2 gap-4">
         <!-- BEGIN: Login Info -->
@@ -81,7 +84,6 @@
               </div>
               <div class="intro-x mt-5 xl:mt-8 text-center xl:text-left">
                
-               
                 <button class="move-button btn btn-outline-primary py-3 px-4 w-full xl:w-32 xl:mr-3 align-top">
                 <div class="svg-wrapper-1">
                   <div class="svg-wrapper">
@@ -116,12 +118,6 @@
                   Register
                 </button> -->
 
-
-
-
-                
-
-
               </div>
             </form>
               <div
@@ -154,6 +150,7 @@ import LocaleSelect from "@/components/localeSelect/Main.vue";
 import { useAuthenticationStore } from '@/stores/auth/authentications';
 import { useRouter } from "vue-router";
 import { Toast } from '@/utils/toast';
+import Preloader from '@/components/preloader/Preloader.vue';
 
 
 const useAuthentication = useAuthenticationStore();
@@ -162,10 +159,14 @@ const router = useRouter();
 const email = ref('');
 const password = ref('');
 const submitted = ref(false);
-const errors = ref(null);
+const loading = ref(false);
+
 
 
 const handleSubmit = async() => {
+
+  loading.value = true; 
+  
   submitted.value = true;
   // stop here if form is invalid
   if (!(email && password) || email.value === '' || password.value === '') {
@@ -176,11 +177,11 @@ const handleSubmit = async() => {
   await useAuthentication.login(email.value, password.value);
 
   if(useAuthentication.user){
-      router.push('/dashboard');
+    loading.value = false; 
+    router.push('/dashboard');
   }
 
   if(useAuthentication.errors){
-
       if(parseInt(useAuthentication.errors.status_code) === 422){
           //console.log('No autorizado')
           useAuthentication.errors = null;
@@ -192,6 +193,7 @@ const handleSubmit = async() => {
 
       }
   }
+  loading.value = false; 
 }
 
 
