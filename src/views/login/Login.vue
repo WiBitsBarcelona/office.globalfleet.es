@@ -84,33 +84,12 @@
               </div>
               <div class="intro-x mt-5 xl:mt-8 text-center xl:text-left">
                
-                <button class="move-button btn btn-outline-primary py-3 px-4 w-full xl:w-32 xl:mr-3 align-top">
-                <div class="svg-wrapper-1">
-                  <div class="svg-wrapper">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      width="24"
-                      height="24"
-                    >
-                      <path fill="none" d="M0 0h24v24H0z"></path>
-                      <path
-                        fill="currentColor"
-                        d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
-                      ></path>
-                    </svg>
-                  </div>
-                </div>
-                <span>{{ $t("login.btn_login") }}</span>
-              </button>
-
-               
-                <!-- <button
+                <button
                   type="submit"
                   class="btn btn-outline-primary py-3 px-4 w-full xl:w-32 xl:mr-3 align-top"
                 >
                 {{ $t("login.btn_login") }}
-                </button> -->
+                </button>
 
   <!--               <button
                   class="btn btn-outline-secondary py-3 px-4 w-full xl:w-32 mt-3 xl:mt-0 align-top"
@@ -209,75 +188,6 @@ onMounted(() => {
 
 
 <style scoped>
-
-
-
-
-
-
-.move-button {
-  /* font-family: inherit;
-  font-size: 20px;
-  background: royalblue;
-  color: white;
-  padding: 0.7em 1em;
-  padding-left: 0.9em;
-  display: flex;
-  align-items: center;
-  border: none;
-  border-radius: 16px;
-  overflow: hidden;
-  transition: all 0.2s;
-  cursor: pointer; */
-
-
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  transition: all 0.2s;
-  cursor: pointer;
-  padding-left: 1.9em;
-
-
-}
-
-.move-button span {
-  display: block;
-  margin-left: 0.3em;
-  transition: all 0.3s ease-in-out;
-}
-
-.move-button svg {
-  display: block;
-  transform-origin: center center;
-  transition: transform 0.3s ease-in-out;
-}
-
-.move-button:hover .svg-wrapper {
-  animation: fly-1 0.6s ease-in-out infinite alternate;
-}
-
-.move-button:hover svg {
-  transform: translateX(1.2em) rotate(45deg) scale(1.1);
-}
-
-.move-button:hover span {
-  transform: translateX(5em);
-}
-
-.move-button:active {
-  transform: scale(0.95);
-}
-
-@keyframes fly-1 {
-  from {
-    transform: translateY(0.1em);
-  }
-
-  to {
-    transform: translateY(-0.1em);
-  }
-}
 
 
 </style>
