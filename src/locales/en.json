@@ -411,7 +411,8 @@
     "newChat" : "New Chat",
     "searchTitle": "Search",
     "confirmRead": "Confirm reading",
-    "messageInput": "Write the message..."
+    "messageInput": "Write the message...",
+    "participants" : "Participants"
   },
   "auto_refresh_title": "Automatic Refresh",
   "auto_refresh_on_toast": "Automatic Refresh every 5 minutes ACTIVATED.",
