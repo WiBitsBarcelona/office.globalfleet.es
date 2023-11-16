@@ -296,6 +296,18 @@ const deleteIcon = function (cell, formatterParams) {
   return "<i data-lucide='trash-2' class='w-6 h-6 mr-1 text-danger'></i>";
 };
 
+const confirmationIcon = function (cell, formatterParams) {
+  if(cell.getData().has_ask_confirm == 1){ 
+    return "<i data-lucide='alert-circle' class='w-6 h-6 mr-1 text-warning'></i>";
+  }else{
+    if(cell.getData().confirmed_at != null){ 
+      return "<i data-lucide='check-circle' class='w-6 h-6 mr-1 text-slate-400'></i>";
+    }else{
+      return "<i data-lucide='check-circle' class='w-6 h-6 mr-1 text-transparent'></i>";
+    }
+  }
+};
+
 const initDriverDocumentsTabulator = () => {
   tabulator.value = new Tabulator(tableRefDriverDocuments.value, {
     reactiveData: true,
@@ -318,18 +330,31 @@ const initDriverDocumentsTabulator = () => {
 		},
     rowFormatter:function(row){
         if(row.getData().readed_at == null){
+          //NARANJA. NI LEIDO NI CONFIRMADO SIN IMPORTAR EL CHECK DE CONFIRMACION
           row.getElement().style.backgroundColor = "rgba(245,158,11, 0.25)";
           row.getElement().style.borderRadius = "5px";
           row.getElement().style.marginTop = "3px";
           row.getElement().style.marginBottom = "3px";
         }
         if(row.getData().confirmed_at == null && row.getData().readed_at != null){
-          row.getElement().style.backgroundColor = "rgba(0,150,178, 0.25)";
-          row.getElement().style.borderRadius = "5px";
-          row.getElement().style.marginTop = "3px";
-          row.getElement().style.marginBottom = "3px";
+          if(row.getData().has_ask_confirm == 1){
+            //AZUL. LEIDO PERO NO CONFIRMADO Y EL CHECK DE CONFIRMACIÓN = 1
+            row.getElement().style.backgroundColor = "rgba(0,150,178, 0.25)";
+            row.getElement().style.borderRadius = "5px";
+            row.getElement().style.marginTop = "3px";
+            row.getElement().style.marginBottom = "3px";
+          }
+          if(row.getData().has_ask_confirm == 0){
+            //VERDE. LEIDO SI CHECK CONFIRMACION = 0
+            row.getElement().style.backgroundColor = "rgba(34,197,94, 0.25)";
+            row.getElement().style.borderRadius = "5px";
+            row.getElement().style.marginTop = "3px";
+            row.getElement().style.marginBottom = "3px";
+          }
         }
         if(row.getData().confirmed_at != null && row.getData().readed_at != null){
+          //VERDE. LEIDO Y CONFIRMADO SI CHECK CONFIRMACIÓN
+          //VERDE. LEIDO SI CHECK CONFIRMACION = 0
           row.getElement().style.backgroundColor = "rgba(34,197,94, 0.25)";
           row.getElement().style.borderRadius = "5px";
           row.getElement().style.marginTop = "3px";
@@ -355,6 +380,13 @@ const initDriverDocumentsTabulator = () => {
         visible: false,
         sorter: 'number',
 
+      },
+      {
+        formatter: confirmationIcon,
+        width: 50,
+        responsive: 0,
+        hozAlign: "center",
+        headerSort: false,
       },
       {
         title: t("Tabulator.Driver_documents_columns.document"),
@@ -768,3 +800,34 @@ onMounted(async () => {
 
 
 </script>
+
+<style>
+.upload_file_box {
+  text-align: center !important;
+  width: auto;
+  border: solid;
+  border-width: 1px;
+  border-color: rgb(0 150 178);
+  border-style: dashed;
+  border-radius: 5px;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  height: 200px;
+}
+
+.file_container {
+  text-align: left !important;
+  width: auto;
+  border: solid;
+  border-width: 1px;
+  border-color: rgba(0, 150, 178, 0.3);
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.fileSizeError {
+  z-index: 99999;
+}
+</style>

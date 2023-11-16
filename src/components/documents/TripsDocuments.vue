@@ -271,8 +271,8 @@ const stage_documents_filter = reactive({
   value: "",
 });
 const { trips, getTrips, errors } = useTrips();
-const { getTripDocuments, tripDocuments, tripDocumentData, downloadTripDocument, destroyTripDocument, storeTripDocument } = useTripDocument();
-const {stageDocuments, getStageDocuments, stageDocumentData, downloadStageDocument , destroyStageDocument, storeStageDocument} = useStageDocument();
+const { getTripDocuments, tripDocuments, tripDocumentData, downloadTripDocument, destroyTripDocument, storeTripDocument,tripDocumentserrors } = useTripDocument();
+const {stageDocuments, getStageDocuments, stageDocumentData, downloadStageDocument , destroyStageDocument, storeStageDocument,stageDocumentserrors} = useStageDocument();
 const tableTripsData = reactive([]);
 const tableTripDocumentsData = reactive([]);
 let dataTripsArr = [];
@@ -543,6 +543,7 @@ const findTripDocuments = async (id) => {
   trip_selected.value = id;
   dataTripDocumentsArr.length = 0;
   await getTripDocuments(id);
+  console.log(tripDocuments.value);
   const dataArrTmp = JSON.parse(JSON.stringify(tripDocuments.value));
 
   dataArrTmp.forEach(element => {
@@ -557,6 +558,7 @@ const findTripDocuments = async (id) => {
       confirmed_at: element.confirmed_at,
       readed_at: element.readed_at,
       has_seen: element.has_seen,
+      has_ask_confirm: element.has_ask_confirm,
     });
   });
   initTripDocumentsTabulator();
@@ -580,6 +582,7 @@ const findStageDocuments = async (id) => {
       confirmed_at: element.confirmed_at,
       readed_at: element.readed_at,
       has_seen: element.has_seen,
+      has_ask_confirm: element.has_ask_confirm,
     });
   });
   initStageDocumentsTabulator();
@@ -612,6 +615,18 @@ const deleteTripDocumentIcon = function (cell, formatterParams) {
   return "<i data-lucide='trash-2' class='w-6 h-6 mr-1 text-danger'></i>";
 };
 
+const confirmationIcon = function (cell, formatterParams) {
+  if(cell.getData().has_ask_confirm == 1){ 
+    return "<i data-lucide='alert-circle' class='w-6 h-6 mr-1 text-warning'></i>";
+  }else{
+    if(cell.getData().confirmed_at != null){ 
+      return "<i data-lucide='check-circle' class='w-6 h-6 mr-1 text-slate-400'></i>";
+    }else{
+      return "<i data-lucide='check-circle' class='w-6 h-6 mr-1 text-transparent'></i>";
+    }
+  }
+};
+
 const initTripDocumentsTabulator = async () => {
   tabulator_trip_documents.value = new Tabulator(tableTripDocumentsRef.value, {
     reactiveData: true,
@@ -635,18 +650,31 @@ const initTripDocumentsTabulator = async () => {
 		},
     rowFormatter:function(row){
         if(row.getData().readed_at == null){
+          //NARANJA. NI LEIDO NI CONFIRMADO SIN IMPORTAR EL CHECK DE CONFIRMACION
           row.getElement().style.backgroundColor = "rgba(245,158,11, 0.25)";
           row.getElement().style.borderRadius = "5px";
           row.getElement().style.marginTop = "3px";
           row.getElement().style.marginBottom = "3px";
         }
         if(row.getData().confirmed_at == null && row.getData().readed_at != null){
-          row.getElement().style.backgroundColor = "rgba(0,150,178, 0.25)";
-          row.getElement().style.borderRadius = "5px";
-          row.getElement().style.marginTop = "3px";
-          row.getElement().style.marginBottom = "3px";
+          if(row.getData().has_ask_confirm == 1){
+            //AZUL. LEIDO PERO NO CONFIRMADO Y EL CHECK DE CONFIRMACIÓN = 1
+            row.getElement().style.backgroundColor = "rgba(0,150,178, 0.25)";
+            row.getElement().style.borderRadius = "5px";
+            row.getElement().style.marginTop = "3px";
+            row.getElement().style.marginBottom = "3px";
+          }
+          if(row.getData().has_ask_confirm == 0){
+            //VERDE. LEIDO SI CHECK CONFIRMACION = 0
+            row.getElement().style.backgroundColor = "rgba(34,197,94, 0.25)";
+            row.getElement().style.borderRadius = "5px";
+            row.getElement().style.marginTop = "3px";
+            row.getElement().style.marginBottom = "3px";
+          }
         }
         if(row.getData().confirmed_at != null && row.getData().readed_at != null){
+          //VERDE. LEIDO Y CONFIRMADO SI CHECK CONFIRMACIÓN
+          //VERDE. LEIDO SI CHECK CONFIRMACION = 0
           row.getElement().style.backgroundColor = "rgba(34,197,94, 0.25)";
           row.getElement().style.borderRadius = "5px";
           row.getElement().style.marginTop = "3px";
@@ -671,6 +699,13 @@ const initTripDocumentsTabulator = async () => {
         visible: false,
         sorter: 'number',
 
+      },
+      {
+        formatter: confirmationIcon,
+        width: 50,
+        responsive: 0,
+        hozAlign: "center",
+        headerSort: false,
       },
       {
         title: t("Tabulator.Trip_documents_columns.document"),
@@ -879,7 +914,7 @@ const deleteTripDoc = async (id, filename, trip_id) => {
   }).then(async (result) => {
     if (result.isConfirmed) {
       await destroyTripDocument(id);
-      if (errors.value == 'Role not allowed') {
+      if (tripDocumentserrors.value == 'Role not allowed') {
         Swal.fire({
           icon: 'error',
           title: '',
@@ -969,7 +1004,7 @@ const dropZoneTripSendFiles = async (trip_id) => {
   tripState.tripFiles.length = 0;
   tripFileJson.length = 0;
   tripUploading.value = 0;
-  if (errors.value === '') {
+  if (tripDocumentserrors.value === '') {
     //ARCHIVO ENVIADO CORRECTAMENTE
     await findTripDocuments(trip_id);
     Swal.fire({
@@ -1066,19 +1101,32 @@ const initStageDocumentsTabulator = async () => {
 			}
 		},
     rowFormatter:function(row){
-        if(row.getData().readed_at == null){
+      if(row.getData().readed_at == null){
+          //NARANJA. NI LEIDO NI CONFIRMADO SIN IMPORTAR EL CHECK DE CONFIRMACION
           row.getElement().style.backgroundColor = "rgba(245,158,11, 0.25)";
           row.getElement().style.borderRadius = "5px";
           row.getElement().style.marginTop = "3px";
           row.getElement().style.marginBottom = "3px";
         }
         if(row.getData().confirmed_at == null && row.getData().readed_at != null){
-          row.getElement().style.backgroundColor = "rgba(0,150,178, 0.25)";
-          row.getElement().style.borderRadius = "5px";
-          row.getElement().style.marginTop = "3px";
-          row.getElement().style.marginBottom = "3px";
+          if(row.getData().has_ask_confirm == 1){
+            //AZUL. LEIDO PERO NO CONFIRMADO Y EL CHECK DE CONFIRMACIÓN = 1
+            row.getElement().style.backgroundColor = "rgba(0,150,178, 0.25)";
+            row.getElement().style.borderRadius = "5px";
+            row.getElement().style.marginTop = "3px";
+            row.getElement().style.marginBottom = "3px";
+          }
+          if(row.getData().has_ask_confirm == 0){
+            //VERDE. LEIDO SI CHECK CONFIRMACION = 0
+            row.getElement().style.backgroundColor = "rgba(34,197,94, 0.25)";
+            row.getElement().style.borderRadius = "5px";
+            row.getElement().style.marginTop = "3px";
+            row.getElement().style.marginBottom = "3px";
+          }
         }
         if(row.getData().confirmed_at != null && row.getData().readed_at != null){
+          //VERDE. LEIDO Y CONFIRMADO SI CHECK CONFIRMACIÓN
+          //VERDE. LEIDO SI CHECK CONFIRMACION = 0
           row.getElement().style.backgroundColor = "rgba(34,197,94, 0.25)";
           row.getElement().style.borderRadius = "5px";
           row.getElement().style.marginTop = "3px";
@@ -1103,6 +1151,13 @@ const initStageDocumentsTabulator = async () => {
         visible: false,
         sorter: 'number',
 
+      },
+      {
+        formatter: confirmationIcon,
+        width: 50,
+        responsive: 0,
+        hozAlign: "center",
+        headerSort: false,
       },
       {
         title: t("Tabulator.Trip_documents_columns.document"),
@@ -1394,7 +1449,7 @@ const dropZoneStageSendFiles = async (stage_id) => {
   stageState.stageFiles.length = 0;
   stageFileJson.length = 0;
   stageUploading.value = 0;
-  if (errors.value === '') {
+  if (stageDocumentserrors.value === '') {
     //ARCHIVO ENVIADO CORRECTAMENTE
     await findStageDocuments(stage_id);
     Swal.fire({
@@ -1450,3 +1505,34 @@ onMounted(async () => {
 });
 
 </script>
+
+<style>
+.upload_file_box {
+  text-align: center !important;
+  width: auto;
+  border: solid;
+  border-width: 1px;
+  border-color: rgb(0 150 178);
+  border-style: dashed;
+  border-radius: 5px;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  height: 200px;
+}
+
+.file_container {
+  text-align: left !important;
+  width: auto;
+  border: solid;
+  border-width: 1px;
+  border-color: rgba(0, 150, 178, 0.3);
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.fileSizeError {
+  z-index: 99999;
+}
+</style>

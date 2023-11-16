@@ -8,7 +8,7 @@ export default function useStageDocument() {
 
 	const stageDocument = ref([]);
 	const stageDocuments = ref([]);
-	const errors = ref('');
+	const stageDocumentserrors = ref('');
 	const stageDocumentData = ref([]);
 	//const router = useRouter();
 
@@ -22,7 +22,7 @@ export default function useStageDocument() {
 	}
 
 	const getStageDocuments = async (id) => {
-		errors.value = '';
+		stageDocumentserrors.value = '';
         const user = useAuthentication.user;
 		try {
 			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}stage-documents/${id}/list`, config);
@@ -39,7 +39,7 @@ export default function useStageDocument() {
 
 
 	const getStageDocument = async (id) => {
-		errors.value = '';
+		stageDocumentserrors.value = '';
 		try {
 			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}stage-documents/show/${id}`, config);
 			stageDocument.value = response.data.data;
@@ -55,7 +55,7 @@ export default function useStageDocument() {
 
 
 	const storeStageDocument = async (data) => {
-		errors.value = '';
+		stageDocumentserrors.value = '';
 		try {
 			await axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}stage-documents/store`, data, config);
 		} catch (e) {
@@ -65,7 +65,7 @@ export default function useStageDocument() {
 
 
 	const updateStageDocument = async (id, data) => {
-		errors.value = '';
+		stageDocumentserrors.value = '';
 		try {
 			await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}stage-documents/update/${id}`, data, config);
 			//await router.push({ name: 'stageDocument.index' });
@@ -94,7 +94,7 @@ export default function useStageDocument() {
 	}
 
 	const downloadStageDocument = async (path) => {
-		errors.value = '';
+		stageDocumentserrors.value = '';
 		try {
 			const res = await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}downloads/document?p=${path}`, {
 				method: "GET",
@@ -112,7 +112,7 @@ export default function useStageDocument() {
 
 
 	return {
-		errors,
+		stageDocumentserrors,
 		stageDocument,
 		stageDocuments,
 		stageDocumentData,

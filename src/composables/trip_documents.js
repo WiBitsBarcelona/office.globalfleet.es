@@ -8,7 +8,7 @@ export default function useTripDocument() {
 
 	const tripDocument = ref([]);
 	const tripDocuments = ref([]);
-	const errors = ref('');
+	const tripDocumentserrors = ref('');
 	const tripDocumentData = ref([]);
 	//const router = useRouter();
 
@@ -21,7 +21,7 @@ export default function useTripDocument() {
 		}
 	}
 	const getTripDocuments = async (trip_id) => {
-		errors.value = '';
+		tripDocumentserrors.value = '';
         const user = useAuthentication.user;
 		try {
 			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-documents/${trip_id}/list`, config);
@@ -33,7 +33,7 @@ export default function useTripDocument() {
 
 
 	const getTripDocument = async (id) => {
-		errors.value = '';
+		tripDocumentserrors.value = '';
 		try {
 			let response = await axios.get(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-documents/show/${id}`, config);
 			tripDocument.value = response.data.data;
@@ -49,7 +49,7 @@ export default function useTripDocument() {
 
 
 	const storeTripDocument = async (data) => {
-		errors.value = '';
+		tripDocumentserrors.value = '';
 		try {
 			await axios.post(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-documents/store`, data, config);
 		} catch (e) {
@@ -59,7 +59,7 @@ export default function useTripDocument() {
 
 
 	const updateTripDocument = async (id, data) => {
-		errors.value = '';
+		tripDocumentserrors.value = '';
 		try {
 			await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}trip-documents/update/${id}`, data, config);
 			//await router.push({ name: 'tripDocument.index' });
@@ -81,14 +81,14 @@ export default function useTripDocument() {
 			console.log(e);
 			if (e.response.status === 422) {
 				for (const key in e.response.data.errors) {
-			    	errors.value = e.response.data.errors
+			    	tripDocumentserrors.value = e.response.data.errors
 			    }
 			}
 		}
 	}
 
 	const downloadTripDocument = async (path) => {
-		errors.value = '';
+		tripDocumentserrors.value = '';
 		try {
 			const res = await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}downloads/document?p=${path}`, {
 				method: "GET",
@@ -105,7 +105,7 @@ export default function useTripDocument() {
 	}
 
 	return {
-		errors,
+		tripDocumentserrors,
 		tripDocument,
 		tripDocuments,
 		tripDocumentData,
