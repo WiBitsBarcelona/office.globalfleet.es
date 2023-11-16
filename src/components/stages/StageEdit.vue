@@ -82,7 +82,7 @@
             <div class="col-span-12 md:col-span-4 lg:col-span-4">
                 <div class="input-form">
                     <label for="stage_status_id" class="form-label w-full">
-                        {{ $t("stage_status") }}
+                        {{ $t("status") }}
                     </label>
 
                     <TomSelect 
