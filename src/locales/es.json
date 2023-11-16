@@ -430,9 +430,10 @@
   "chat":{
     "chats": "Chats",
     "newChat" : "Nuevo Chat",
-    "searchTitle": "Buscar Conversacion",
+    "searchTitle": "Buscar",
     "confirmRead": "Confirmar Lectura",
-    "messageInput": "Escribe el Mensaje...."
+    "messageInput": "Escribe el Mensaje....",
+    "participants" : "Participantes"
   },
   "auto_refresh_title": "Refresco automático",
   "auto_refresh_on_toast": "Refresco automático cada 5 minutos ACTIVADO.",

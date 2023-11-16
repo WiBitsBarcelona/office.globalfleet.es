@@ -6,7 +6,6 @@
 
   <Preloader v-if="loading" />
 
-
   <!-- BEGIN: Page Layout -->
   <div class="intro-y box p-5 mt-5" v-if="isCreateTrip">
     <!-- BEGIN: Form -->
@@ -217,7 +216,6 @@
 
     </form>
     <!-- END: Form -->
-
 
 
     <div class="grid grid-cols-12 gap-1 mt-10 mb-10">
@@ -873,19 +871,6 @@ const save = async () => {
 
 
     /**
-     * Trip tows
-     */
-    const dataTripTow = {
-      trip_id: trip.value.id,
-      tow_id: formData.tow_id
-    }
-    await storeTripTow(dataTripTow);
-    console.log({...tripTow});
-
-
-
-
-    /**
      * Stages
      */
      for (const eleStage of arrStages.value) {
@@ -902,23 +887,6 @@ const save = async () => {
       console.log({ ...stage.value });
 
 
-
-
-
-      /**
-       * Stage Tow TODOO:.............
-       */
-       if (eleStage.tow_id) {
-
-        towObj = {
-          stage_id: stage.value.id,
-          tow_id: eleStage.tow_id
-        }
-
-        await storeStageTow(towObj);
-        console.log({ ...stageTow.value });
-
-      }
 
 
 

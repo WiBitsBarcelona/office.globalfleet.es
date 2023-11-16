@@ -1,349 +1,396 @@
 <template>
-    <div class="w-full">
+    <div class="w-full flex flex-col bg-white rounded">
         <div v-if="nameConversation && receiverType">
 
-            <div class="flex flex-col h-[80vh] justify-between items-center box overflow-hidden">
-                <!-- Header -->
-                <div class="bg-white w-full p2 pt-3 pb-3 flex items-center" id="chat-header">
-                    <div v-if="nameConversation" class="ml-4 flex items-center gap-4">
-                        <div v-if="receiverType === 'user'">
-                            <img class="w-14 h-14 rounded-full"
-                                :src="`https://ui-avatars.com/api/?name=${chatsTitle(nameConversation)}&color=FFFFFF&background=4EDDFF&font-size=0.38`" />
-                        </div>
-                        <div v-if="receiverType === 'group'">
-                            <img class="w-14 h-14 rounded-full"
-                                :src="`https://ui-avatars.com/api/?name=${chatsTitle(nameConversation)}&color=FFFFFF&background=BCBCBC&font-size=0.38`" />
-                        </div>
-                        <p class="text-xl">{{ nameConversation }}</p>
-                    </div>
-                </div>
-
-                <!-- Chat -->
-                <div class="overflow-scroll scrollbar-hidden w-full h-full p-4 bg-white" id="chat" @scroll="detectScroll">
-
-                    <div v-for="(mensaje, index) in mensajes" :key="mensaje.id">
-
-                        <!-- Verificar si la fecha actual es diferente a la fecha anterior -->
-                        <div style="width: 100%; display: flex; justify-content: center; padding: 20px;"
-                            v-if="index === 0 || convertStringToDates(mensaje.sentAt) !== convertStringToDates(mensajes[index - 1].sentAt)">
-                            <div style="display: flex; align-items: center; justify-content: center; 
-                                background-color: #EFEFEF; border-radius: 5px; padding: 8px 12px;">
-                                {{ convertStringToDates(mensaje.sentAt) }}
+            <div class="flex w-full">
+                <div class="flex flex-col w-full">
+                    <!-- Header -->
+                    <div class="bg-white w-full p2 pt-3 pb-3 flex items-center justify-between rounded-t" id="chat-header">
+                        <div v-if="nameConversation" class="ml-4 flex items-center gap-4">
+                            <div v-if="receiverType === 'user'">
+                                <img class="w-14 h-14 rounded-full"
+                                    :src="`https://ui-avatars.com/api/?name=${chatsTitle(nameConversation)}&color=FFFFFF&background=4EDDFF&font-size=0.38`" />
                             </div>
+                            <div v-if="receiverType === 'group'">
+                                <img class="w-14 h-14 rounded-full"
+                                    :src="`https://ui-avatars.com/api/?name=${chatsTitle(nameConversation)}&color=FFFFFF&background=BCBCBC&font-size=0.38`" />
+                            </div>
+                            <p class="text-xl">{{ nameConversation }}</p>
                         </div>
 
-                        <div style="display: flex;">
-                            <!-- MENSAJES ENVIADOS -->
-                            <div style="flex: 1px;" v-if="mensaje.data.entities.sender.entity.uid === myUid">
-                                <div style="display: flex; float: right;">
-                                    <div v-if="mensaje.data.metadata">
-                                        <div v-if="mensaje.data.metadata['reader'] == 0">
-                                            <div
-                                                style="display: flex; margin-top: 25%; margin-bottom: 50%; margin-right: 5px;">
-                                                <img src="../../assets/images/alertCircle.svg"
-                                                    style="width: 25px; height: 25px;" />
+                        <div v-if="receiverType != 'user'" @click="receiverType === 'group' ? viewParticipants() : ''">
+                            <img src="https://api.iconify.design/system-uicons:menu-vertical.svg" class="w-11 h-11">
+                        </div>
+                    </div>
+
+                    <div class="flex w-full h-[600px]">
+                        <!-- Chat -->
+                        <div class="overflow-scroll scrollbar-hidden w-full h-full p-4 bg-white" id="chat"
+                            @scroll="detectScroll" @click="chageModalParticipants()">
+
+                            <div v-for="(mensaje, index) in mensajes" :key="mensaje.id">
+
+                                <!-- Verificar si la fecha actual es diferente a la fecha anterior -->
+                                <div style="width: 100%; display: flex; justify-content: center; padding: 20px;"
+                                    v-if="index === 0 || convertStringToDates(mensaje.sentAt) !== convertStringToDates(mensajes[index - 1].sentAt)">
+                                    <div style="display: flex; align-items: center; justify-content: center; 
+                                            background-color: #EFEFEF; border-radius: 5px; padding: 8px 12px;">
+                                        {{ convertStringToDates(mensaje.sentAt) }}
+                                    </div>
+                                </div>
+
+                                <div style="display: flex;">
+                                    <!-- MENSAJES ENVIADOS -->
+                                    <div style="flex: 1px;" v-if="mensaje.data.entities.sender.entity.uid === myUid">
+                                        <div style="display: flex; float: right;">
+                                            <div v-if="mensaje.data.metadata">
+                                                <div v-if="mensaje.data.metadata['reader'] == 0">
+                                                    <div
+                                                        style="display: flex; margin-top: 25%; margin-bottom: 50%; margin-right: 5px;">
+                                                        <img src="../../assets/images/alertCircle.svg"
+                                                            style="width: 25px; height: 25px;" />
+                                                    </div>
+                                                </div>
+                                                <div v-else>
+                                                    <div
+                                                        style="display: flex; margin-top: 25%; margin-bottom: 50%; margin-right: 5px;">
+                                                        <img src="../../assets/images/checkCircle.svg"
+                                                            style="width: 25px; height: 25px;" />
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div v-else>
-                                            <div
-                                                style="display: flex; margin-top: 25%; margin-bottom: 50%; margin-right: 5px;">
-                                                <img src="../../assets/images/checkCircle.svg"
-                                                    style="width: 25px; height: 25px;" />
+                                            <!-- MENSAJES ENVIADO CON FICHEROS -->
+                                            <div v-if="mensaje.data.attachments">
+                                                <div class="contMensajeEnviado">
+                                                    <div class="contMensajeEnviadoArchivos">
+                                                        <div v-for="item in mensaje.data.attachments" :key="item.id">
+                                                            <div
+                                                                v-if="item.extension == 'jpg' || item.extension == 'jpeg' || item.extension == 'png'">
+                                                                <button style="width: 100%; align-items: center; display: flex; background: rgba(223, 242, 245, 0.1); 
+                                                                            padding: 8px; border-radius: 8px;"
+                                                                    @click="openDriverFile(item.url)">
+                                                                    <img src="../../assets/images/file.svg"
+                                                                        style="width: 30px; height: 30px;" />
+                                                                    <div style="display: grid;">
+                                                                        <p
+                                                                            style="font-size: 16px; margin: 0px; margin-right: 8px; display: flex; color: white; margin-left: 10px;">
+                                                                            {{ item.name.length > 15 ? item.name.substring(0,
+                                                                                15) +
+                                                                                "..." : item.name }}</p>
+                                                                    </div>
+                                                                </button>
+                                                            </div>
+                                                            <div v-else-if="item.extension == 'pdf'">
+                                                                <button style="width: 100%; align-items: center; display: flex; background: rgba(223, 242, 245, 0.1);
+                                                                            padding: 8px; border-radius: 8px;"
+                                                                    @click="openDriverFile(item.url)">
+                                                                    <img src="../../assets/images/pdf.svg"
+                                                                        style="width: 30px; height: 30px;" />
+                                                                    <div style="display: grid;">
+                                                                        <p
+                                                                            style="font-size: 16px; margin: 0px; margin-right: 8px; display: flex; color: white; margin-left: 10px;">
+                                                                            {{ item.name.length > 15 ? item.name.substring(0,
+                                                                                15) +
+                                                                                "..." : item.name }}</p>
+                                                                    </div>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div style="display: flex; margin-top: 8px;"
+                                                            @click="showModal(true), infoTrip(mensaje.sentAt, mensaje.deliveredAt, mensaje.readAt,
+                                                                !mensaje.data.metadata ? null : mensaje.data.metadata['confirmetAt'])">
+                                                            <p class="txtMensajesEnviado"
+                                                                style="margin: 0px; margin-right: 5px;">{{
+                                                                    mensaje.data.text }}</p>
+                                                            <p class="txtHoraEnviado" style="margin: 0px ;margin-left: 5px">{{
+                                                                convertStringToDate(mensaje.sentAt) }}</p>
+                                                            <div
+                                                                style="display: flex; align-items: flex-end; text-align: right;">
+
+                                                                <p style="margin-left: 5px;"
+                                                                    v-if="mensaje.sentAt > 0 && mensaje.deliveredAt == null && mensaje.readAt == null">
+                                                                    <img src="../../assets/images/checkmark.svg" alt="Checkmark"
+                                                                        style="width: 15px; height: 15px; margin-left: 5px;" />
+                                                                </p>
+
+                                                                <p style="margin-left: 5px"
+                                                                    v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt == null">
+                                                                    <img src="../../assets/images/allcheckmark.svg"
+                                                                        alt="Checkmark"
+                                                                        style="width: 15px; height: 15px; margin-left: 5px;" />
+                                                                </p>
+
+                                                                <p style="margin-left: 5px"
+                                                                    v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt > 0">
+                                                                    <img src="../../assets/images/checkallmark.svg"
+                                                                        alt="Checkmark"
+                                                                        style="width: 15px; height: 15px; margin-left: 5px;" />
+                                                                </p>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- MENSAJES ENVIADO NORMAL -->
+                                            <div v-else>
+                                                <div
+                                                    @click="showModal(true),
+                                                        infoTrip(mensaje.sentAt, mensaje.deliveredAt, mensaje.readAt,
+                                                            !mensaje.data.metadata ? null : mensaje.data.metadata['confirmetAt'])">
+
+                                                    <div class="contMensajeEnviado">
+                                                        <p class="txtMensajesEnviado"
+                                                            style="padding-right: 4px; white-space: pre-line;">
+                                                            {{ mensaje.data.text }}</p>
+                                                        <p class="txtHoraEnviado">{{ convertStringToDate(mensaje.sentAt) }}</p>
+
+                                                        <div style="display: flex; align-items: flex-end; text-align: right;">
+
+                                                            <p
+                                                                v-if="mensaje.sentAt > 0 && mensaje.deliveredAt == null && mensaje.readAt == null">
+                                                                <img src="../../assets/images/checkmark.svg" alt="Checkmark"
+                                                                    style="width: 15px; height: 15px; margin-left: 5px;" />
+                                                            </p>
+
+                                                            <p
+                                                                v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt == null">
+                                                                <img src="../../assets/images/allcheckmark.svg" alt="Checkmark"
+                                                                    style="width: 15px; height: 15px; margin-left: 5px;" />
+                                                            </p>
+
+                                                            <p
+                                                                v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt > 0">
+                                                                <img src="../../assets/images/checkallmark.svg" alt="Checkmark"
+                                                                    style="width: 15px; height: 15px; margin-left: 5px;" />
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- MENSAJES ENVIADO CON FICHEROS -->
-                                    <div v-if="mensaje.data.attachments">
-                                        <div class="contMensajeEnviado">
-                                            <div class="contMensajeEnviadoArchivos">
+                                    <!-- MENSAJES RECIBIDOS -->
+                                    <div v-else>
+                                        <!-- MENSAJES RECIBIDOS CON FICHEROS -->
+                                        <div v-if="mensaje.data.attachments">
+                                            <div style="padding: 8px;" class="contMensajeRecibidoArchivos">
                                                 <div v-for="item in mensaje.data.attachments" :key="item.id">
                                                     <div
                                                         v-if="item.extension == 'jpg' || item.extension == 'jpeg' || item.extension == 'png'">
-                                                        <button style="width: 100%; align-items: center; display: flex; background: rgba(223, 242, 245, 0.1); 
+                                                        <button style="width: 100%; align-items: center; display: flex; background: rgba(146, 148, 156, 0.1); 
                                                                 padding: 8px; border-radius: 8px;"
                                                             @click="openDriverFile(item.url)">
                                                             <img src="../../assets/images/file.svg"
                                                                 style="width: 30px; height: 30px;" />
                                                             <div style="display: grid;">
                                                                 <p
-                                                                    style="font-size: 16px; margin: 0px; margin-right: 8px; display: flex; color: white; margin-left: 10px;">
+                                                                    style="font-size: 16px; margin: 0px; margin-right: 8px; display: flex; color: #545454; margin-left: 10px;">
                                                                     {{ item.name.length > 15 ? item.name.substring(0, 15) +
-                                                                        "..." : item.name }}</p>
+                                                                        "..." :
+                                                                        item.name }}</p>
                                                             </div>
                                                         </button>
                                                     </div>
                                                     <div v-else-if="item.extension == 'pdf'">
-                                                        <button style="width: 100%; align-items: center; display: flex; background: rgba(223, 242, 245, 0.1);
+                                                        <button style="width: 100%; align-items: center; display: flex; background: rgba(146, 148, 156, 0.1); 
                                                                 padding: 8px; border-radius: 8px;"
                                                             @click="openDriverFile(item.url)">
                                                             <img src="../../assets/images/pdf.svg"
                                                                 style="width: 30px; height: 30px;" />
                                                             <div style="display: grid;">
                                                                 <p
-                                                                    style="font-size: 16px; margin: 0px; margin-right: 8px; display: flex; color: white; margin-left: 10px;">
+                                                                    style="font-size: 16px; margin: 0px; margin-right: 8px; display: flex; color: #545454; margin-left: 10px;">
                                                                     {{ item.name.length > 15 ? item.name.substring(0, 15) +
-                                                                        "..." : item.name }}</p>
+                                                                        "..." :
+                                                                        item.name }}</p>
+                                                                <p
+                                                                    style="font-size: 12px; margin: 0px; display: flex; color: #545454; margin-left: 10px;">
+                                                                    {{ item.extension }} · {{ item.size }}</p>
                                                             </div>
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <div style="display: flex; margin-top: 8px;"
-                                                    @click="showModal(true), infoTrip(mensaje.sentAt, mensaje.deliveredAt, mensaje.readAt,
-                                                        !mensaje.data.metadata ? null : mensaje.data.metadata['confirmetAt'])">
-                                                    <p class="txtMensajesEnviado" style="margin: 0px; margin-right: 5px;">{{
-                                                        mensaje.data.text }}</p>
-                                                    <p class="txtHoraEnviado" style="margin: 0px ;margin-left: 5px">{{
-                                                        convertStringToDate(mensaje.sentAt) }}</p>
-                                                    <div style="display: flex; align-items: flex-end; text-align: right;">
+                                                <!-- Cuando el mensaje tiene un texto traducido -->
+                                                <div v-if="mensaje.data.customData">
+                                                    <div v-if="mensaje.data.customData.senderLang != myLang">
 
-                                                        <p style="margin-left: 5px;"
-                                                            v-if="mensaje.sentAt > 0 && mensaje.deliveredAt == null && mensaje.readAt == null">
-                                                            <img src="../../assets/images/checkmark.svg" alt="Checkmark"
-                                                                style="width: 15px; height: 15px; margin-left: 5px;" />
-                                                        </p>
+                                                        <!-- Si el chat es typo grupo -->
+                                                        <div v-if="receiverType == 'group'">
+                                                            <div style="background: #E5E7EB; padding: 8px; border-radius: 2px 8px 8px 8px; 
+                                                                    gap: 8px; max-width: 253px">
+                                                                <div v-for="itemGM in mensaje.data.customData.groupText">
+                                                                    <div v-if="itemGM.Lang == myLang">
+                                                                        <div style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; 
+                                                                            align-items: end;">
+                                                                            <p class="txtMensajes"
+                                                                                style="padding-right: 4px; white-space: pre-line;">
+                                                                                {{ itemGM.TextTranslate }}</p>
+                                                                            <p class="txtHora">
+                                                                                {{ convertStringToDate(mensaje.sentAt) }}
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div v-else>
+                                                            <div style="background: #E5E7EB; padding: 8px; border-radius: 2px 8px 8px 8px; 
+                                                                    gap: 8px;max-width: 253px">
 
-                                                        <p style="margin-left: 5px"
-                                                            v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt == null">
-                                                            <img src="../../assets/images/allcheckmark.svg" alt="Checkmark"
-                                                                style="width: 15px; height: 15px; margin-left: 5px;" />
-                                                        </p>
+                                                                <div>
+                                                                    <p
+                                                                        style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px; font-style: italic;">
+                                                                        {{ mensaje.data.customData.titleText }}
+                                                                    </p>
+                                                                    <p
+                                                                        style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px; white-space: pre-line;">
+                                                                        {{ mensaje.data.text }}
+                                                                    </p>
+                                                                </div>
 
-                                                        <p style="margin-left: 5px"
-                                                            v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt > 0">
-                                                            <img src="../../assets/images/checkallmark.svg" alt="Checkmark"
-                                                                style="width: 15px; height: 15px; margin-left: 5px;" />
-                                                        </p>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- MENSAJES ENVIADO NORMAL -->
-                                    <div v-else>
-                                        <div @click="showModal(true),
-                                            infoTrip(mensaje.sentAt, mensaje.deliveredAt, mensaje.readAt,
-                                                !mensaje.data.metadata ? null : mensaje.data.metadata['confirmetAt'])">
-
-                                            <div class="contMensajeEnviado">
-                                                <p class="txtMensajesEnviado"
-                                                    style="padding-right: 4px; white-space: pre-line;">
-                                                    {{ mensaje.data.text }}</p>
-                                                <p class="txtHoraEnviado">{{ convertStringToDate(mensaje.sentAt) }}</p>
-
-                                                <div style="display: flex; align-items: flex-end; text-align: right;">
-
-                                                    <p
-                                                        v-if="mensaje.sentAt > 0 && mensaje.deliveredAt == null && mensaje.readAt == null">
-                                                        <img src="../../assets/images/checkmark.svg" alt="Checkmark"
-                                                            style="width: 15px; height: 15px; margin-left: 5px;" />
-                                                    </p>
-
-                                                    <p
-                                                        v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt == null">
-                                                        <img src="../../assets/images/allcheckmark.svg" alt="Checkmark"
-                                                            style="width: 15px; height: 15px; margin-left: 5px;" />
-                                                    </p>
-
-                                                    <p
-                                                        v-if="mensaje.sentAt > 0 && mensaje.deliveredAt > 0 && mensaje.readAt > 0">
-                                                        <img src="../../assets/images/checkallmark.svg" alt="Checkmark"
-                                                            style="width: 15px; height: 15px; margin-left: 5px;" />
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- MENSAJES RECIBIDOS -->
-                            <div v-else>
-                                <!-- MENSAJES RECIBIDOS CON FICHEROS -->
-                                <div v-if="mensaje.data.attachments">
-                                    <div style="padding: 8px;" class="contMensajeRecibidoArchivos">
-                                        <div v-for="item in mensaje.data.attachments" :key="item.id">
-                                            <div
-                                                v-if="item.extension == 'jpg' || item.extension == 'jpeg' || item.extension == 'png'">
-                                                <button style="width: 100%; align-items: center; display: flex; background: rgba(146, 148, 156, 0.1); 
-                                                    padding: 8px; border-radius: 8px;"
-                                                    @click="openDriverFile(item.url)">
-                                                    <img src="../../assets/images/file.svg"
-                                                        style="width: 30px; height: 30px;" />
-                                                    <div style="display: grid;">
-                                                        <p
-                                                            style="font-size: 16px; margin: 0px; margin-right: 8px; display: flex; color: #545454; margin-left: 10px;">
-                                                            {{ item.name.length > 15 ? item.name.substring(0, 15) + "..." :
-                                                                item.name }}</p>
-                                                    </div>
-                                                </button>
-                                            </div>
-                                            <div v-else-if="item.extension == 'pdf'">
-                                                <button style="width: 100%; align-items: center; display: flex; background: rgba(146, 148, 156, 0.1); 
-                                                    padding: 8px; border-radius: 8px;"
-                                                    @click="openDriverFile(item.url)">
-                                                    <img src="../../assets/images/pdf.svg"
-                                                        style="width: 30px; height: 30px;" />
-                                                    <div style="display: grid;">
-                                                        <p
-                                                            style="font-size: 16px; margin: 0px; margin-right: 8px; display: flex; color: #545454; margin-left: 10px;">
-                                                            {{ item.name.length > 15 ? item.name.substring(0, 15) + "..." :
-                                                                item.name }}</p>
-                                                        <p
-                                                            style="font-size: 12px; margin: 0px; display: flex; color: #545454; margin-left: 10px;">
-                                                            {{ item.extension }} · {{ item.size }}</p>
-                                                    </div>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <!-- Cuando el mensaje tiene un texto traducido -->
-                                        <div v-if="mensaje.data.customData">
-                                            <div v-if="mensaje.data.customData.senderLang != myLang">
-
-                                                <!-- Si el chat es typo grupo -->
-                                                <div v-if="receiverType == 'group'">
-                                                    <div style="background: #E5E7EB; padding: 8px; border-radius: 2px 8px 8px 8px; 
-                                                        gap: 8px; max-width: 253px">
-                                                        <div v-for="itemGM in mensaje.data.customData.groupText">
-                                                            <div v-if="itemGM.Lang == myLang">
-                                                                <div style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; 
-                                                                align-items: end;">
-                                                                    <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">
-                                                                        {{ itemGM.TextTranslate }}</p>
-                                                                    <p class="txtHora">
-                                                                        {{ convertStringToDate(mensaje.sentAt) }}
+                                                                <div
+                                                                    style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; align-items: end;">
+                                                                    <p class="txtMensajes"
+                                                                        style="padding-right: 4px; white-space: pre-line;">
+                                                                        {{ mensaje.data.customData.translateText }}
+                                                                    </p>
+                                                                    <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}
                                                                     </p>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div v-else>
-                                                    <div style="background: #E5E7EB; padding: 8px; border-radius: 2px 8px 8px 8px; 
-                                                        gap: 8px;max-width: 253px">
-
-                                                        <div>
-                                                            <p style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px; font-style: italic;">
-                                                                {{ mensaje.data.customData.titleText }}
-                                                            </p>
-                                                            <p style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px; white-space: pre-line;">
+                                                    <div v-else>
+                                                        <div class="contMensajeRecibido">
+                                                            <p class="txtMensajes"
+                                                                style="padding-right: 4px; white-space: pre-line;">
                                                                 {{ mensaje.data.text }}
-                                                            </p>
-                                                        </div>
-
-                                                        <div style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; align-items: end;">
-                                                            <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">
-                                                                {{ mensaje.data.customData.translateText }}
                                                             </p>
                                                             <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div v-else>
+                                            <!-- MENSAJES RECIBIDOS NORMAL -->
+
+                                            <!-- Cuando el mensaje tiene un texto traducido -->
+                                            <div v-if="mensaje.data.customData">
+                                                <div v-if="mensaje.data.customData.senderLang != myLang">
+
+                                                    <!-- Si el chat es typo grupo -->
+                                                    <div v-if="receiverType == 'group'">
+                                                        <div style="background: #E5E7EB; padding: 8px; border-radius: 2px 8px 8px 8px; 
+                                                                gap: 8px; margin-bottom: 8px;max-width: 253px">
+                                                            <div v-for="itemGM in mensaje.data.customData.groupText">
+                                                                <div v-if="itemGM.Lang == myLang">
+                                                                    <div style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; 
+                                                                            align-items: end;">
+                                                                        <p class="txtMensajes"
+                                                                            style="padding-right: 4px; white-space: pre-line;">
+                                                                            {{
+                                                                                itemGM.TextTranslate }}</p>
+                                                                        <p class="txtHora">{{
+                                                                            convertStringToDate(mensaje.sentAt) }}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div v-else>
+                                                        <div style="background: #E5E7EB; padding: 8px; border-radius: 2px 8px 8px 8px; 
+                                                                gap: 8px; margin-bottom: 8px;max-width: 253px">
+
+                                                            <div>
+                                                                <p
+                                                                    style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px; font-style: italic;">
+                                                                    {{ mensaje.data.customData.titleText }}
+                                                                </p>
+                                                                <p
+                                                                    style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px; white-space: pre-line;">
+                                                                    {{ mensaje.data.text }}
+                                                                </p>
+                                                            </div>
+
+                                                            <div
+                                                                style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; align-items: end;">
+                                                                <p class="txtMensajes"
+                                                                    style="padding-right: 4px; white-space: pre-line;">{{
+                                                                        mensaje.data.customData.translateText }}</p>
+                                                                <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div v-else>
+                                                    <div class="contMensajeRecibido">
+                                                        <p class="txtMensajes"
+                                                            style="padding-right: 4px; white-space: pre-line;">{{
+                                                                mensaje.data.text }}
+                                                        </p>
+                                                        <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- cuando solo es texto normal sin traducir -->
                                             <div v-else>
                                                 <div class="contMensajeRecibido">
-                                                    <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">
-                                                        {{ mensaje.data.text }}
-                                                    </p>
+                                                    <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">{{
+                                                        mensaje.data.text }}</p>
                                                     <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div v-else>
-                                    <!-- MENSAJES RECIBIDOS NORMAL -->
 
-                                    <!-- Cuando el mensaje tiene un texto traducido -->
-                                    <div v-if="mensaje.data.customData">
-                                        <div v-if="mensaje.data.customData.senderLang != myLang">
+                                <!-- Botón "Ir al último mensaje" fuera del bucle -->
+                                <button @click="scrollToLast" class="hidden items-center justify-center absolute z-10 w-12 h-12 bg-white rounded-full 
+                                        shadow-lg right-10 bottom-[20%] shadow-gray-500" id="btnScroll">
 
-                                            <!-- Si el chat es typo grupo -->
-                                            <div v-if="receiverType == 'group'">
-                                                <div style="background: #E5E7EB; padding: 8px; border-radius: 2px 8px 8px 8px; 
-                                                    gap: 8px; margin-bottom: 8px;max-width: 253px">
-                                                    <div v-for="itemGM in mensaje.data.customData.groupText">
-                                                        <div v-if="itemGM.Lang == myLang">
-                                                            <div style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; 
-                                                                align-items: end;">
-                                                                <p class="txtMensajes"
-                                                                    style="padding-right: 4px; white-space: pre-line;">{{
-                                                                        itemGM.TextTranslate }}</p>
-                                                                <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div v-else>
-                                                <div style="background: #E5E7EB; padding: 8px; border-radius: 2px 8px 8px 8px; 
-                                                    gap: 8px; margin-bottom: 8px;max-width: 253px">
-
-                                                    <div>
-                                                        <p
-                                                            style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px; font-style: italic;">
-                                                            {{ mensaje.data.customData.titleText }}
-                                                        </p>
-                                                        <p
-                                                            style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px; white-space: pre-line;">
-                                                            {{ mensaje.data.text }}
-                                                        </p>
-                                                    </div>
-
-                                                    <div
-                                                        style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; align-items: end;">
-                                                        <p class="txtMensajes"
-                                                            style="padding-right: 4px; white-space: pre-line;">{{
-                                                                mensaje.data.customData.translateText }}</p>
-                                                        <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div v-else>
-                                            <div class="contMensajeRecibido">
-                                                <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">{{
-                                                    mensaje.data.text }}
-                                                </p>
-                                                <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
-                                            </div>
-                                        </div>
+                                    <div v-if="countUnreadMessage > 0">
+                                        <p class="absolute -top-1 -right-1 rounded-full bg-amber-500 text-white"
+                                            style="width: 20px;">
+                                            {{ countUnreadMessage }}
+                                        </p>
                                     </div>
-                                    <!-- cuando solo es texto normal sin traducir -->
-                                    <div v-else>
-                                        <div class="contMensajeRecibido">
-                                            <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">{{
-                                                mensaje.data.text }}</p>
-                                            <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
-                                        </div>
-                                    </div>
-                                </div>
+
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 21 21">
+                                        <path fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"
+                                            d="m14.5 8.5l-4 4l-4-4" />
+                                    </svg>
+                                </button>
+
                             </div>
                         </div>
-
-                        <!-- Botón "Ir al último mensaje" fuera del bucle -->
-                        <button @click="scrollToLast" style="position: absolute; bottom: 13%; right: 1%; width: 50px; height: 50px; 
-                            background-color: white; border-radius: 50px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);"
-                            class="hidden items-center justify-center" id="btnScroll">
-
-                            <div v-if="countUnreadMessage > 0">
-                                <p class="absolute -top-1 -right-1 rounded-full bg-amber-500 text-white"
-                                    style="width: 20px;">
-                                    {{ countUnreadMessage }}
-                                </p>
-                            </div>
-
-
-                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 21 21">
-                                <path fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"
-                                    d="m14.5 8.5l-4 4l-4-4" />
-                            </svg>
-                        </button>
-
                     </div>
                 </div>
+                <!-- Modal Participants -->
+                <div v-if="viewModalParticipants == true" class="flex flex-end justify-end">
+                    <div class="px-2 intro-x overflow-y-auto scrollbar-hidden h-[680px] w-[250px] bg-white border-l-2 border-gray-200">
+                        <div class="sticky top-0 bg-white py-2 -pt-5">
+                            <span class="flex items-center justify-center py-2 w-full bg-[#0096b2] text-white text-base rounded-lg">
+                                {{ $t("chat.participants") }}
+                            </span>
+                        </div>
 
-                <!-- BARRA DE ENVIO -->
+                        <div v-for="members in groupMembers" :key="members">
+                            <div class="flex items-center gap-2 py-0.5">
+                                <img class="w-10 h-10 rounded-full"
+                                    :src="`https://ui-avatars.com/api/?name=${chatsTitle(members.name)}&color=FFFFFF&background=4EDDFF&font-size=0.38`" />
+                                <p class="text-sm">{{ members.name }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BARRA DE ENVIO -->
+            <div class="box">
                 <div v-if="mediaSource != null" class="flex w-full bg-[#F1F5F9] p-4 border-gray-200 border-2 rounded">
                     <div class="flex items-center gap-2">
                         <img src="../../assets/images/file.svg" style="width: 30px; height: 30px;" />
@@ -356,7 +403,7 @@
 
                 <div class="pt-4 sm:py-4 flex items-center border-t-8 border-slate-200/60 dark:border-darkmode-400 w-full">
                     <textarea @keydown="handleKeyDown" id="message" @click="onpresskey" class="overflow-y-scroll scrollbar-hidden chat__box__input form-control dark:bg-darkmode-600 h-11 resize-none border-transparent 
-                        px-5 py-3 shadow-none focus:border-transparent focus:ring-0"
+                            px-5 py-3 shadow-none focus:border-transparent focus:ring-0"
                         :placeholder="$t('chat.messageInput')"></textarea>
 
                     <div
@@ -392,71 +439,71 @@
 
                     </button>
                 </div>
-                <!-- FIN BARRA DE ENVIO -->
+            </div>
+            <!-- FIN BARRA DE ENVIO -->
+            <!-- </div> -->
 
-                <!-- Modal Checkmark -->
-                <div v-if="modalMessage == true"
-                    style="position: absolute; display: flex; justify-content: center; align-items: center; background-color: rgb(0 0 0 / 40%); width: 100%; height: 100%;">
+            <!-- Modal Checkmark -->
+            <!-- style="position: absolute; display: flex; justify-content: center; align-items: center; background-color: rgb(0 0 0 / 40%); width: 100%; height: 100%;" -->
+            <div v-if="modalMessage == true"
+                class="absolute z-50 w-[67.6vw] h-[80vh] bg-gray-900/50 top-24 flex justify-center items-center mt-1 rounded-md">
+                <div style="position: relative; background: white; border-radius: 10px; padding: 16px;">
 
-                    <div style="position: relative; background: white; border-radius: 10px; padding: 16px;">
+                    <!-- boton modal -->
+                    <button v-on:click="showModal(false)"
+                        style="position: absolute; top: -13px; right: -15px; background-color: rgb(0 150 178); border-radius: 100%; padding: 5px 10px;">
+                        <h1 style="color: white; margin: 0;">X</h1>
+                    </button>
 
-                        <!-- boton modal -->
-                        <button v-on:click="showModal(false)"
-                            style="position: absolute; top: -13px; right: -15px; background-color: rgb(0 150 178); border-radius: 100%; padding: 5px 10px;">
-                            <h1 style="color: white; margin: 0;">X</h1>
-                        </button>
+                    <div style="padding: 10px;">
+                        <h2 style="font-size: 20px; font-style: normal; font-weight: 500; line-height: normal;">Info del
+                            Mensaje</h2>
+                        <div style="display: block; margin-top: 8px;">
 
-                        <div style="padding: 10px;">
-                            <h2 style="font-size: 20px; font-style: normal; font-weight: 500; line-height: normal;">Info del
-                                Mensaje</h2>
-                            <div style="display: block; margin-top: 8px;">
+                            <p style="font-size: 16px;">Enviado</p>
+                            <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
+                                <img src="../../assets/images/checkmark.svg" alt="Checkmark"
+                                    style="width: 25px; height: 25px; margin-left: 5px;" />
+                                <p style="font-size: 18px; margin-left: 5px;" v-if="sentAt">{{
+                                    convertirAFecha(sentAt) }}</p>
+                            </div>
 
-                                <p style="font-size: 16px;">Enviado</p>
-                                <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
-                                    <img src="../../assets/images/checkmark.svg" alt="Checkmark"
-                                        style="width: 25px; height: 25px; margin-left: 5px;" />
-                                    <p style="font-size: 18px; margin-left: 5px;" v-if="sentAt">{{
-                                        convertirAFecha(sentAt) }}</p>
-                                </div>
+                            <p style="font-size: 16px;">Entregado</p>
+                            <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
+                                <img src="../../assets/images/allcheckmark.svg" alt="Checkmark"
+                                    style="width: 25px; height: 25px; margin-left: 5px;" />
+                                <p style="font-size: 18px; margin-left: 5px;" v-if="deliveredAt">{{
+                                    convertirAFecha(deliveredAt) }}</p>
+                            </div>
 
-                                <p style="font-size: 16px;">Entregado</p>
-                                <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
-                                    <img src="../../assets/images/allcheckmark.svg" alt="Checkmark"
-                                        style="width: 25px; height: 25px; margin-left: 5px;" />
-                                    <p style="font-size: 18px; margin-left: 5px;" v-if="deliveredAt">{{
-                                        convertirAFecha(deliveredAt) }}</p>
-                                </div>
+                            <p style="font-size: 16px;">Leido</p>
+                            <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
+                                <img src="../../assets/images/checkallmark.svg" alt="Checkmark"
+                                    style="width: 25px; height: 25px; margin-left: 5px;" />
+                                <p style="font-size: 18px; margin-left: 5px;" v-if="readAt">{{
+                                    convertirAFecha(readAt) }}</p>
+                            </div>
 
-                                <p style="font-size: 16px;">Leido</p>
-                                <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
-                                    <img src="../../assets/images/checkallmark.svg" alt="Checkmark"
-                                        style="width: 25px; height: 25px; margin-left: 5px;" />
-                                    <p style="font-size: 18px; margin-left: 5px;" v-if="readAt">{{
-                                        convertirAFecha(readAt) }}</p>
-                                </div>
-
-                                <!-- Confirmacion de Lectura -->
-                                <div style="margin-top: 5px; margin-bottom: 5px;">
-                                    <div v-if="confirmetAt">
-                                        <p style="font-size: 16px;">Confirmado</p>
-                                        <div
-                                            style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
-                                            <img src="../../assets/images/checkmarkCircleSky.svg" alt="Checkmark"
-                                                style="width: 25px; height: 25px; margin-left: 5px;" />
-                                            <p style="font-size: 18px; margin-left: 5px;" v-if="confirmetAt != 'undefined'">
-                                                {{ convertirAFecha(confirmetAt) }}
-                                            </p>
-                                        </div>
+                            <!-- Confirmacion de Lectura -->
+                            <div style="margin-top: 5px; margin-bottom: 5px;">
+                                <div v-if="confirmetAt">
+                                    <p style="font-size: 16px;">Confirmado</p>
+                                    <div style="display: flex; align-items: center; margin-top: 5px; margin-bottom: 5px;">
+                                        <img src="../../assets/images/checkmarkCircleSky.svg" alt="Checkmark"
+                                            style="width: 25px; height: 25px; margin-left: 5px;" />
+                                        <p style="font-size: 18px; margin-left: 5px;" v-if="confirmetAt != 'undefined'">
+                                            {{ convertirAFecha(confirmetAt) }}
+                                        </p>
                                     </div>
                                 </div>
-
                             </div>
-                        </div>
 
+                        </div>
                     </div>
+
                 </div>
-                <!-- Fin Modal Checkmark -->
             </div>
+            <!-- Fin Modal Checkmark -->
 
         </div>
 
@@ -537,7 +584,7 @@ const { storeDriverDocumentV2, downloadDriverDocument, driverDocumentData } = us
 const { translateText } = translateApi()
 const { t } = useI18n();
 
-const chatContainer = ref(null);
+//const chatContainer = ref(null);
 
 let userInfo;
 const isChecked = ref(false);
@@ -564,6 +611,9 @@ let myLang;
 
 let membersLang = []
 
+const viewModalParticipants = ref(false)
+const groupMembers = ref([])
+
 const emit = defineEmits();
 
 const props = defineProps({
@@ -580,6 +630,8 @@ watch(
         ChatId.value = newChatId;
         receiverType.value = newReceiverType;
         nameConversation.value = newNameConversation;
+
+        viewModalParticipants.value = false
 
         if (receiverType.value == 'group') {
             getUidxGroup()
@@ -677,7 +729,7 @@ const initialize = async () => {
                     }
 
                     // Si mi usuario recibe los mensajes y esta en el ultimo mensaje
-                    console.log(textMessage.conversationId)
+                    //console.log(textMessage.conversationId)
                     if (textMessage.conversationId == idConversation.value) {
                         //markUserConversationAsRead(myUid.value, ChatId.value)
                         if (isMoving == true) {
@@ -1089,6 +1141,20 @@ const getUidxGroup = async () => {
     // Convertir el conjunto nuevamente a un array si es necesario
     membersLang = Array.from(uniqueMembersLang);
 }
+
+// funcion para abrir el modal
+const viewParticipants = async () => {
+    viewModalParticipants.value = !viewModalParticipants.value
+
+    const group = await getGroupMembers(ChatId.value);
+    groupMembers.value = group
+}
+
+// funcion para cerrar el modal
+const chageModalParticipants = () => {
+    viewModalParticipants.value = false;
+}
+
 </script>
 <style>
 .contMensajeRecibido {
