@@ -323,11 +323,13 @@
       "Trip_documents_columns": {
           "document": "DOCUMENT",
           "type": "TYPE",
+          "size": "Size",
           "created_by": "CREATED BY",
           "created_at": "Date sent",
           "receptioned_at": "Date received",
           "confirmed_at": "Date confirmed",
-          "readed_at": "Date read"
+          "readed_at": "Date read",
+          "last_readed_at": "Last date read"
       },
       "ToolTips": {
           "View": "See Document",

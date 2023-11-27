@@ -319,11 +319,13 @@
     "Driver_documents_columns": {
       "document": "DOCUMENTO",
       "type": "TIPO",
+      "size": "Tamaño",
       "created_by": "CREADO POR",
       "created_at": "Fecha envío",
       "receptioned_at": "Fecha recepción",
       "confirmed_at": "Fecha confirmación",
-      "readed_at": "Fecha lectura"
+      "readed_at": "Fecha lectura",
+      "last_readed_at": "Última lectura"
     },
     "Trips_columns": {
       "trip": "VIAJE",

@@ -202,6 +202,7 @@ const findData = async () => {
 const findDriverDocuments = async (id) => {
   await getDriverDocuments(id);
   const dataDriverDocuments = JSON.parse(JSON.stringify(driverDocuments.value));
+  console.log(dataDriverDocuments);
   initDriverDocumentsTabulator();
 }
 
@@ -390,6 +391,7 @@ const initDriverDocumentsTabulator = () => {
       },
       {
         title: t("Tabulator.Driver_documents_columns.document"),
+        minWidth: 200,
         responsive: 0,
         field: "file_name",
         vertAlign: "middle",
@@ -408,6 +410,19 @@ const initDriverDocumentsTabulator = () => {
         download: false,
         formatter: function (cell, formatterParams, onRendered) {
           return "<span class='uppercase'>" + cell.getValue() + "</span>"
+        },
+      },
+      {
+        title: t("Tabulator.Driver_documents_columns.size"),
+        minWidth: 100,
+        responsive: 1,
+        field: "size",
+        hozAlign: "center",
+        vertAlign: "middle",
+        print: false,
+        download: false,
+        formatter: function (cell, formatterParams, onRendered) {
+          return $h.formatBytes(cell.getValue(),2);
         },
       },
       {
@@ -466,6 +481,25 @@ const initDriverDocumentsTabulator = () => {
         minWidth: 200,
         responsive: 1,
         field: "readed_at",
+        hozAlign: "center",
+        vertAlign: "middle",
+        print: false,
+        download: false,
+        formatter: function (cell) {
+          let data = '';
+          if (cell.getValue()) {
+            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm');
+          } else {
+            data = '--';
+          }
+          return data;
+        },
+      },
+      {
+        title: t("Tabulator.Driver_documents_columns.last_readed_at"),
+        minWidth: 200,
+        responsive: 1,
+        field: "last_readed_at",
         hozAlign: "center",
         vertAlign: "middle",
         print: false,
@@ -707,9 +741,24 @@ const dropZoneDriverAddFiles = async (event) => {
     const fileExtension = computed(() => fileName.value?.substr(fileName.value?.lastIndexOf(".") + 1));
     const fileMimeType = computed(() => driverFile.value?.type);
     const fileSize = computed(() => driverFile.value?.size);
+    //FUNCION PARA VER EL NÚMERO DE PÁGINAS SI ES UN PDF
+    let pages_count;
+    if(fileExtension.value == 'pdf'){
+      let reader = new FileReader();
+      reader.readAsBinaryString(event.target.files[0]);
+      reader.onloadend = function(){
+        pages_count = reader.result.match(/\/Type[\s]*\/Page[^s]/g).length;
+        console.log('Number of Pages:',pages_count );
+      }
+    }else{
+      pages_count = '--';
+    }
+  
+
     await toBase64(driverFile.value).then(fileData => {
       driverFileJson.push({ driver_id: driver_selected.value, file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData, has_ask_confirm: 0 });
     });
+    console.log(driverFileJson);
   }
 }
 

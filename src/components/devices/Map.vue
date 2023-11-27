@@ -8,78 +8,39 @@
     </div>
     <div class="box p-1 intro-x h-[650px] overflow-y-auto">
       <div>
-
-        <!--         <div class="inline-flex w-full mb-3" role="group">
-  <button type="button" class="px-4 py-2 text-sm content-center font-medium text-gray-500 bg-transparent hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-600 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
-    <span class="text-xl">2</span>
-    <span class="flex text-xs">Todos</span>
-    
-  </button>
-  <button type="button" class="px-4 py-2 text-sm font-medium text-gray-500 bg-transparent hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
-    <span class="text-xl">2</span>
-    <span class="flex text-xs">Parados</span>
-  </button>
-  <button type="button" class="px-4 py-2 text-sm font-medium text-gray-500 bg-transparent hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
-    <span class="text-xl">0</span>
-    <span class="flex text-xs">Conduciendo</span>
-  </button>
-</div> -->
-
-<!--         <table id="drivers" class="table table-hover hover:cursor-pointer overflow-scroll w-full">
-          <tbody v-for="driver in searchedDrivers" :key="driver" class="overflow-y-auto">
-            <template v-if="driver.position">
-
-              <tr>
-                <td :id="driver.id" class="text-sm leading-6 text-gray-500 !p-1" @click="zoomDriver(driver.id)">
-                  <span class="font-bold">{{ driver.name }} {{ driver.surname }}</span><br />
-                  <span class="text-xs">{{  driver.position.fleet_version }}</span><br />
-                  <span class="text-xs">{{ $h.formatDate(driver.position.captured_at, 'DD/MM/YYYY HH:mm') }}</span>
-                </td>
-                <td class="text-right !p-1">
-                  <Tippy v-if="$h.toKmsHour(driver.position.speed) >= 5" tag="button" class="tooltip primary ml-4 mr-2"
-                    :content="$t('tooltips.driving')" :options="{ theme: 'dark' }">
-                    <img src="/src/assets/images/markers/driving-status-icon-green.svg" class="w-5 h-5">
-                  </Tippy>
-                  <Tippy v-else tag="button" class="tooltip primary ml-4 mr-2" :content="$t('tooltips.stopped')"
-                    :options="{ theme: 'dark' }">
-                    <img src="/src/assets/images/markers/driving-status-icon-red.svg" class="w-5 h-5">
-                  </Tippy>
-                </td>
-              </tr>
-            </template>
-          </tbody>
-        </table> -->
-        
         <ul v-for="driver in searchedDrivers" :key="driver" class="text-sm text-gray-500 hover:cursor-pointer">
-          <template v-if="driver.position">
-        <li class="border-b-[1px] border-inherit px-2 py-3 hover:bg-gray-50" @click="zoomDriver(driver.id)">
-          <div class="flex flex-row items-center text-gray-500">
-            <p class="basis-1/2 font-bold">{{ driver.name }} {{ driver.surname }}</p>
-            <p class="basis-1/2 text-right text-sm">{{ $h.formatDate(driver.position.captured_at, 'DD/MM/YYYY HH:mm') }}</p>
-          </div>
-          <div class="flex flex-row pt-3">
-            <div class="flex basis-3/6 items-center gap-1">
-              <SmartphoneIcon class="w-4 h-4" />
-              <p>
-                <span class="capitalize">{{ driver.position.manufacturer }} {{ driver.position.model }}</span>
+          <li class="border-b-[1px] border-inherit px-2 py-3 hover:bg-gray-50" @click="zoomDriver(driver.id)">
+            <div class="flex flex-row items-center text-gray-500">
+              <p class="basis-1/2 font-bold">{{ driver.name }} {{ driver.surname }}</p>
+              <p class="basis-1/2 text-right text-sm">{{ $h.formatDate(driver.position.captured_at, 'DD/MM/YYYY HH:mm') }}
               </p>
             </div>
-            <div class="flex basis-2/6">
-              <div class="flex basis-1/2 items-center gap-0.5">
-                <svg width="20" height="20" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <g id="android">
-                    <mask id="mask0_103_447" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="13" height="13">
-                      <rect id="Bounding box" width="13" height="13" fill="#D9D9D9" />
-                    </mask>
-                    <g mask="url(#mask0_103_447)">
-                      <path id="android_2" d="M0.541504 9.74997C0.622754 8.784 0.918414 7.89476 1.42848 7.08226C1.93855 6.26976 2.61789 5.62428 3.4665 5.1458L2.46442 3.41247C2.41025 3.33122 2.39671 3.24546 2.4238 3.15518C2.45088 3.0649 2.50956 2.99719 2.59984 2.95205C2.67206 2.90692 2.75331 2.89789 2.84359 2.92497C2.93387 2.95205 3.00609 3.00622 3.06025 3.08747L4.06234 4.8208C4.83873 4.4958 5.65123 4.3333 6.49984 4.3333C7.34845 4.3333 8.16095 4.4958 8.93734 4.8208L9.93942 3.08747C9.99359 3.00622 10.0658 2.95205 10.1561 2.92497C10.2464 2.89789 10.3276 2.90692 10.3998 2.95205C10.4901 2.99719 10.5488 3.0649 10.5759 3.15518C10.603 3.24546 10.5894 3.33122 10.5353 3.41247L9.53317 5.1458C10.3818 5.62428 11.0611 6.26976 11.5712 7.08226C12.0813 7.89476 12.3769 8.784 12.4582 9.74997H0.541504ZM3.7915 8.26039C3.98109 8.26039 4.14133 8.19494 4.27223 8.06403C4.40314 7.93313 4.46859 7.77289 4.46859 7.58331C4.46859 7.39372 4.40314 7.23348 4.27223 7.10258C4.14133 6.97167 3.98109 6.90622 3.7915 6.90622C3.60192 6.90622 3.44168 6.97167 3.31078 7.10258C3.17987 7.23348 3.11442 7.39372 3.11442 7.58331C3.11442 7.77289 3.17987 7.93313 3.31078 8.06403C3.44168 8.19494 3.60192 8.26039 3.7915 8.26039ZM9.20817 8.26039C9.39776 8.26039 9.558 8.19494 9.6889 8.06403C9.8198 7.93313 9.88526 7.77289 9.88526 7.58331C9.88526 7.39372 9.8198 7.23348 9.6889 7.10258C9.558 6.97167 9.39776 6.90622 9.20817 6.90622C9.01859 6.90622 8.85835 6.97167 8.72744 7.10258C8.59654 7.23348 8.53109 7.39372 8.53109 7.58331C8.53109 7.77289 8.59654 7.93313 8.72744 8.06403C8.85835 8.19494 9.01859 8.26039 9.20817 8.26039Z" fill="#5F6E86" />
-                    </g>
-                  </g>
-                </svg>
-                <sup>{{  driver.position.os_version }}</sup>
+            <div class="flex flex-row pt-3">
+              <div class="flex basis-3/6 items-center gap-1">
+                <SmartphoneIcon class="w-4 h-4" />
+                <p>
+                  <span class="capitalize">{{ driver.position.manufacturer }} {{ driver.position.model }}</span>
+                </p>
               </div>
-              <div class="flex basis-1/2 items-center gap-1">
-                <Tippy v-if="$h.toKmsHour(driver.position.speed) >= 5" tag="button" class="tooltip primary"
+              <div class="flex basis-2/6">
+                <div class="flex basis-1/2 items-center gap-0.5">
+                  <svg width="20" height="20" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g id="android">
+                      <mask id="mask0_103_447" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="13"
+                        height="13">
+                        <rect id="Bounding box" width="13" height="13" fill="#D9D9D9" />
+                      </mask>
+                      <g mask="url(#mask0_103_447)">
+                        <path id="android_2"
+                          d="M0.541504 9.74997C0.622754 8.784 0.918414 7.89476 1.42848 7.08226C1.93855 6.26976 2.61789 5.62428 3.4665 5.1458L2.46442 3.41247C2.41025 3.33122 2.39671 3.24546 2.4238 3.15518C2.45088 3.0649 2.50956 2.99719 2.59984 2.95205C2.67206 2.90692 2.75331 2.89789 2.84359 2.92497C2.93387 2.95205 3.00609 3.00622 3.06025 3.08747L4.06234 4.8208C4.83873 4.4958 5.65123 4.3333 6.49984 4.3333C7.34845 4.3333 8.16095 4.4958 8.93734 4.8208L9.93942 3.08747C9.99359 3.00622 10.0658 2.95205 10.1561 2.92497C10.2464 2.89789 10.3276 2.90692 10.3998 2.95205C10.4901 2.99719 10.5488 3.0649 10.5759 3.15518C10.603 3.24546 10.5894 3.33122 10.5353 3.41247L9.53317 5.1458C10.3818 5.62428 11.0611 6.26976 11.5712 7.08226C12.0813 7.89476 12.3769 8.784 12.4582 9.74997H0.541504ZM3.7915 8.26039C3.98109 8.26039 4.14133 8.19494 4.27223 8.06403C4.40314 7.93313 4.46859 7.77289 4.46859 7.58331C4.46859 7.39372 4.40314 7.23348 4.27223 7.10258C4.14133 6.97167 3.98109 6.90622 3.7915 6.90622C3.60192 6.90622 3.44168 6.97167 3.31078 7.10258C3.17987 7.23348 3.11442 7.39372 3.11442 7.58331C3.11442 7.77289 3.17987 7.93313 3.31078 8.06403C3.44168 8.19494 3.60192 8.26039 3.7915 8.26039ZM9.20817 8.26039C9.39776 8.26039 9.558 8.19494 9.6889 8.06403C9.8198 7.93313 9.88526 7.77289 9.88526 7.58331C9.88526 7.39372 9.8198 7.23348 9.6889 7.10258C9.558 6.97167 9.39776 6.90622 9.20817 6.90622C9.01859 6.90622 8.85835 6.97167 8.72744 7.10258C8.59654 7.23348 8.53109 7.39372 8.53109 7.58331C8.53109 7.77289 8.59654 7.93313 8.72744 8.06403C8.85835 8.19494 9.01859 8.26039 9.20817 8.26039Z"
+                          fill="#5F6E86" />
+                      </g>
+                    </g>
+                  </svg>
+                  <sup>{{ driver.position.os_version }}</sup>
+                </div>
+                <div class="flex basis-1/2 items-center gap-1">
+                  <Tippy v-if="$h.toKmsHour(driver.position.speed) >= 5" tag="button" class="tooltip primary"
                     :content="$t('tooltips.driving')" :options="{ theme: 'dark' }">
                     <img src="/src/assets/images/markers/driving-status-icon-green.svg" class="w-18 h-18">
                   </Tippy>
@@ -87,37 +48,41 @@
                     :options="{ theme: 'dark' }">
                     <img src="/src/assets/images/markers/driving-status-icon-red.svg" class="w-18 h-18">
                   </Tippy>
-                <sup>{{  driver.position.fleet_version }}</sup>
+                  <sup>{{ driver.position.fleet_version }}</sup>
+                </div>
+              </div>
+              <div class="flex basis-1/6 justify-end">
+                <div v-if="driver.position.is_charging == 1"
+                  class="flex items-center gap-2 rounded-full bg-green-100 px-3 py-0">
+                  <BatteryChargingIcon class="w-4 h-4" />
+                  <p>{{ driver.position.battery_level }}%</p>
+                </div>
+                <template v-else>
+                  <div v-if="driver.position.battery_level <= 10"
+                    class="flex items-center gap-2 rounded-full bg-red-100 px-3 py-0">
+                    <BatteryWarningIcon class="w-4 h-4" />
+                    <p>{{ driver.position.battery_level }}%</p>
+                  </div>
+                  <div v-if="driver.position.battery_level > 10 && driver.position.battery_level <= 25"
+                    class="flex items-center gap-2 px-3 py-0">
+                    <BatteryLowIcon class="w-4 h-4" />
+                    <p>{{ driver.position.battery_level }}%</p>
+                  </div>
+                  <div v-if="driver.position.battery_level > 25 && driver.position.battery_level <= 50"
+                    class="flex items-center gap-2 px-3 py-0">
+                    <BatteryMediumIcon class="w-4 h-4" />
+                    <p>{{ driver.position.battery_level }}%</p>
+                  </div>
+                  <div v-if="driver.position.battery_level > 50 && driver.position.battery_level <= 100"
+                    class="flex items-center gap-2 px-3 py-0">
+                    <BatteryFullIcon class="w-4 h-4" />
+                    <p>{{ driver.position.battery_level }}%</p>
+                  </div>
+                </template>
               </div>
             </div>
-            <div class="flex basis-1/6 justify-end">
-              <div v-if="driver.position.is_charging == 1" class="flex items-center gap-2 rounded-full bg-green-100 px-3 py-0">
-                <BatteryChargingIcon class="w-4 h-4" />
-                <p>{{ driver.position.battery_level }}%</p>
-              </div>
-              <template v-else>
-                <div v-if="driver.position.battery_level <= 10" class="flex items-center gap-2 rounded-full bg-red-100 px-3 py-0">
-                <BatteryWarningIcon class="w-4 h-4" />
-                <p>{{ driver.position.battery_level }}%</p>
-              </div>
-              <div v-if="driver.position.battery_level > 10 && driver.position.battery_level <= 25" class="flex items-center gap-2 px-3 py-0">
-                <BatteryLowIcon class="w-4 h-4" />
-                <p>{{ driver.position.battery_level }}%</p>
-              </div>
-              <div v-if="driver.position.battery_level > 25 && driver.position.battery_level <= 50" class="flex items-center gap-2 px-3 py-0">
-                <BatteryMediumIcon class="w-4 h-4" />
-                <p>{{ driver.position.battery_level }}%</p>
-              </div>
-              <div v-if="driver.position.battery_level > 50 && driver.position.battery_level <= 100" class="flex items-center gap-2 px-3 py-0">
-                <BatteryFullIcon class="w-4 h-4" />
-                <p>{{ driver.position.battery_level }}%</p>
-              </div>
-              </template>
-            </div>
-          </div>
-        </li>
-      </template>
-      </ul>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
@@ -164,16 +129,12 @@ watch(toggle, () => {
   console.log(toggle.value);
   if (toggle.value == true) {
     Toast(t("auto_refresh_on_toast"), 'info');
-    //TODO - CALL GET DRIVERS TO REFRESH DATA. AN CREATE TIMEOUT 5 mins = 300000ms 
     autoRefresh.value = setInterval(() => {
-      console.log("Actualizado");
       refreshData();
     }, auto_refresh);
   } else {
     Toast(t("auto_refresh_off_toast"), 'info');
-    //TODO - CANCEL TIMEOUT
     clearInterval(autoRefresh.value);
-    console.log("Cancelado");
   }
 })
 
@@ -182,6 +143,7 @@ let mapa;
 //ARRAY TO SAVE ALL MAKERS ID'S
 let driversArr = [];
 let markersArr = [];
+const positionsArr = ref([]);
 //VARIABLE TO SET BG ON INFOWINDOW
 let bg_trip = 'bg-gray-100';
 //VARIABLE TO SET MARKER
@@ -207,15 +169,17 @@ let refreshData = ref();
 const init = async (initializeMap) => {
 
   await getDrivers();
-  console.log(drivers.value);
+
   markersArr = [];
   drivers.value.forEach((d) => {
     if (d.position) {
       totalDevices.value++;
       markersArr.push(d);
+      positionsArr.value.push(d);
     }
   });
 
+  positionsArr.value.sort((a, b) => new Date(b.position.captured_at) - new Date(a.position.captured_at));
 
   const markers = JSON.parse(JSON.stringify(markersArr));
 
@@ -1047,9 +1011,8 @@ function additionalInfoWindowData(data) {
 }
 
 const searchDrivers = ref("");
-
 const searchedDrivers = computed(() => {
-  return drivers.value.filter((driver) => {
+  return positionsArr.value.filter((driver) => {
     let fullname = driver.name + ' ' + driver.surname;
     return (
       fullname
@@ -1085,5 +1048,4 @@ onUnmounted(() => {
   padding: 6px;
   border-radius: 5px;
   box-shadow: 2px 2px 4px #000000;
-}
-</style>
+}</style>
