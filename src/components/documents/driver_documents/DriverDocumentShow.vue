@@ -184,7 +184,6 @@ let allFilesChecked = false;
 const findData = async (id) => {
   await getDriverDocuments(id);
   const dataDriverDocuments = JSON.parse(JSON.stringify(driverDocuments.value));
-  console.log(dataDriverDocuments);
   initTabulator();
 }
 
@@ -617,7 +616,7 @@ const deleteDriverDoc = async (id, filename, driver_id) => {
         });
       } else {
         await getDriverDocuments(driver_id);
-        initDriverDocumentsTabulator();
+        initTabulator();
         Swal.fire({
           icon: 'success',
           title: '',
@@ -718,7 +717,6 @@ const dropZoneDriverAddFiles = async (event) => {
       reader.readAsBinaryString(event.target.files[0]);
       reader.onloadend = function(){
         pages_count = reader.result.match(/\/Type[\s]*\/Page[^s]/g).length;
-        console.log('Number of Pages:',pages_count );
       }
     }else{
       pages_count = 0;
@@ -763,7 +761,7 @@ const dropZoneDriverSendFiles = async () => {
   if (errors.value === '') {
     //ARCHIVO ENVIADO CORRECTAMENTE
     await getDriverDocuments(driver_selected.value);
-    initDriverDocumentsTabulator();
+    initTabulator();
     Swal.fire({
       icon: 'success',
       title: '',
@@ -811,9 +809,7 @@ const updateJson = async () => {
 }
 
 onMounted(async () => {
-
-  //console.log(route.params.id);
-
+  driver_selected.value = route.params.id;
   tableData.value = await findData(route.params.id);
   initTabulator();
   reInitOnResizeWindow();
