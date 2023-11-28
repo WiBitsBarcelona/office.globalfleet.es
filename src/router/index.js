@@ -169,6 +169,12 @@ const routes = [
         beforeEnter: checkManager,
         component: () => import('@/views/tows/TowList.vue'),
       },
+      {
+        path: "session-log",
+        name: "session-log",
+        beforeEnter: checkManager,
+        component: () => import('@/views/logs/SessionLogList.vue'),
+      },
     ],
   },
   {

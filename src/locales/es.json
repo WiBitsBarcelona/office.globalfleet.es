@@ -58,7 +58,10 @@
     "employees": "Usuarios Office",
     "drivers": "Conductores Driver",
     "plates": "Tractoras",
-    "tows": "Remolques"
+    "tows": "Remolques",
+    "logs": "Logs",
+    "session_logs": "Logs de Sesión",
+    "driver_logs": "Logs del Conductor"
   },
   "dashboard": {
     "title": "Visión General de ",
@@ -318,14 +321,19 @@
     },
     "Driver_documents_columns": {
       "document": "DOCUMENTO",
+      "name": "Nombre",
       "type": "TIPO",
       "size": "Tamaño",
-      "created_by": "CREADO POR",
-      "created_at": "Fecha envío",
-      "receptioned_at": "Fecha recepción",
-      "confirmed_at": "Fecha confirmación",
-      "readed_at": "Fecha lectura",
-      "last_readed_at": "Última lectura"
+      "created_by": "Usuario",
+      "dates": "FECHAS",
+      "created_at": "Envío",
+      "receptioned_at": "Recepción",
+      "confirmed_at": "Confirmación",
+      "readed_at": "Lectura",
+      "last_readed_at": "Últ. lectura",
+      "pages": "Pág.",
+      "ER": "E/R",
+      "actions": "ACCIONES"
     },
     "Trips_columns": {
       "trip": "VIAJE",
@@ -428,7 +436,8 @@
   "btn_create_tow": "Nuevo Remolque",
   "tow_manager":"Gestor del Remolque",
   "select_tow_manager": "Selecciona el Gestor del Remolque...",
-  "delete_tow_title":"Eliminar el remolque:",
+  "delete_tow_title": "Eliminar el remolque:",
+  "session_logs_of": "Log de Sesiones de ",
   "chat":{
     "chats": "Chats",
     "newChat" : "Nuevo Chat",

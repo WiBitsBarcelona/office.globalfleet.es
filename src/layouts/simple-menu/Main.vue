@@ -39,7 +39,7 @@
               <transition @enter="enter" @leave="leave">
                 <ul v-if="menu.subMenu && menu.activeDropdown">
                   <li v-for="(subMenu, subMenuKey) in menu.subMenu" :key="subMenuKey">
-                    <Tippy tag="a" :content="subMenu.title" :options="{
+                    <Tippy tag="a" :content="t(subMenu.title)" :options="{
                       placement: 'left',
                     }" :href="subMenu.subMenu
   ? 'javascript:;'
@@ -63,7 +63,7 @@
                         <li v-for="(
                             lastSubMenu, lastSubMenuKey
                           ) in subMenu.subMenu" :key="lastSubMenuKey">
-                          <Tippy tag="a" :content="lastSubMenu.title" :options="{
+                          <Tippy tag="a" :content="t(lastSubMenu.title)" :options="{
                             placement: 'left',
                           }" :href="lastSubMenu.subMenu
   ? 'javascript:;'
