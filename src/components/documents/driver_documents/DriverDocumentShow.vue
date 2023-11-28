@@ -148,7 +148,7 @@ const addDriverFilesModal = ref(false);
 const showNoFileError = ref(false);
 const tableData = reactive([]);
 
-const { drivers, getDrivers } = useDriver();
+//const { drivers, getDrivers } = useDriver();
 const { driverDocuments, getDriverDocuments, driverDocumentData, downloadDriverDocument, destroyDriverDocument, storeDriverDocument, errors } = useDriverDocument();
 const tableRef = ref();
 const tabulator = ref();
@@ -183,7 +183,7 @@ let allFilesChecked = false;
 
 const findData = async (id) => {
   await getDriverDocuments(id);
-  const dataDriverDocuments = JSON.parse(JSON.stringify(driverDocuments.value));
+  //const dataDriverDocuments = JSON.parse(JSON.stringify(driverDocuments.value));
   initTabulator();
 }
 
@@ -716,7 +716,14 @@ const dropZoneDriverAddFiles = async (event) => {
       let reader = new FileReader();
       reader.readAsBinaryString(event.target.files[0]);
       reader.onloadend = function(){
-        pages_count = reader.result.match(/\/Type[\s]*\/Page[^s]/g).length;
+
+        //console.log("***", reader.result.match(/\/Type[\s]*\/Page[^s]/g)?.length);
+
+        if(reader.result.match(/\/Type[\s]*\/Page[^s]/g)?.length === undefined){
+          pages_count = 0;
+        }else{
+          pages_count = reader.result.match(/\/Type[\s]*\/Page[^s]/g).length;
+        }
       }
     }else{
       pages_count = 0;
