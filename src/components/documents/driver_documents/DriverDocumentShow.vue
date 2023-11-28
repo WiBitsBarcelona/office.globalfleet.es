@@ -1,22 +1,7 @@
 <template>
-  <div class="intro-y box p-5 mt-0 {}" :class="{ 'hidden': !driver_selected == 0 }">
-    <div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
-      <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
-        <div class="relative sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
-          <input id="tabulator-html-filter-value" v-model="filter.value" type="text"
-            class="w-full xl:w-[600px] form-control mt-2 sm:mt-0"
-            :placeholder="$t('documents.filters.search_driver_placeholder')" @keyup="onFilter" />
-          <XCircleIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer"
-            @click="onResetFilter" />
-        </div>
-      </form>
-    </div>
-    <div class="overflow-x-auto scrollbar-hidden">
-      <div id="tabulator" ref="tableRef" class="mt-5 table-report table-report--tabulator"></div>
-    </div>
-  </div>
+  
   <!-- END: HTML Table Data -->
-  <div class="intro-y box p-5 mt-0 {}" :class="{ 'hidden': driver_selected == 0 }">
+  <div class="intro-y box p-5 mt-0">
     <div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
       <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
         <div class="relative sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
@@ -40,9 +25,11 @@
             </button>
           </div>
         </div>
-        <button id="tabulator-print" class="btn btn-outline-danger w-1/2 sm:w-auto mr-2" @click="returnDrivers">
+
+        <button id="tabulator-print" class="btn btn-outline-danger w-1/2 sm:w-auto mr-2" @click="backToRoute">
           <CornerUpLeftIcon class="w-4 h-4 mr-2" /> {{ $t("documents.return") }}
         </button>
+
       </div>
     </div>
 
@@ -125,6 +112,8 @@
             </button>
           </div>
         </template>
+
+        
       </div>
 
       <input type="file" id="input_driver_files" ref="file_driver_selected" accept="application/pdf, image/*"
@@ -145,7 +134,13 @@ import useDriverDocument from "@/composables/driver_documents";
 import { useI18n } from 'vue-i18n';
 import { helper as $h } from "@/utils/helper";
 import Swal from "sweetalert2";
+import { useRoute, useRouter } from 'vue-router';
 
+
+
+
+const route = useRoute();
+const router = useRouter();
 
 const { t } = useI18n();
 const addFileModal = ref(false);
@@ -158,7 +153,7 @@ const { driverDocuments, getDriverDocuments, driverDocumentData, downloadDriverD
 const tableRef = ref();
 const tabulator = ref();
 const tableRefDriverDocuments = ref();
-const tabulator_driver_documents = ref();
+//const tabulator_driver_documents = ref();
 const filter = reactive({
   field: "name",
   type: "like",
@@ -171,12 +166,12 @@ const driver_docs_filter = reactive({
   value: "",
 })
 
-const file_selected = ref('');
+//const file_selected = ref('');
 const driver_selected = ref(0);
 const driver_name_selected = ref('');
 let driver_selected_file = ref('');
 const driverFile = ref(null);
-let dataArr = [];
+//let dataArr = [];
 
 let driverFiles = [];
 const driverState = reactive({ driverFiles });
@@ -185,130 +180,45 @@ let driverFileJson = [];
 let checkedFiles = ref([]);
 let allFilesChecked = false;
 
-const findData = async () => {
-  await getDrivers();
-  const dataArrTmp = JSON.parse(JSON.stringify(drivers.value));
-  dataArrTmp.forEach(element => {
-    const full_name = element.name + ' ' + element.surname;
-    dataArr.push({
-      id: element.id,
-      name: full_name
-    });
-  });
 
-  return dataArr;
-}
-
-const findDriverDocuments = async (id) => {
+const findData = async (id) => {
   await getDriverDocuments(id);
   const dataDriverDocuments = JSON.parse(JSON.stringify(driverDocuments.value));
-  initDriverDocumentsTabulator();
+  console.log(dataDriverDocuments);
+  initTabulator();
 }
 
 const imageAssets = import.meta.globEager(
   `/src/assets/images/*.{jpg,jpeg,png,svg}`
 );
 
-const initTabulator = () => {
-  tabulator.value = new Tabulator(tableRef.value, {
-    reactiveData: true,
-    data: tableData.value,
-    printAsHtml: true,
-    printStyled: true,
-    pagination: "local",
-    paginationSize: 15,
-    paginationSizeSelector: [15, 30, 45, 60],
-    layout: "fitColumns",
-    responsiveLayout: "collapse",
-    placeholder: t("message.no_matching_records_found"),
-    locale:true,
-    langs:{
-			"es-es":{
-				"pagination":{
-          "page_size":"", 
-				}
-			}
-		},
-    initialSort: [
-      { column: "id", dir: "desc" }
-    ],
-    columns: [
-      {
-        formatter: "responsiveCollapse",
-        width: 40,
-        minWidth: 30,
-        hozAlign: "left",
-        resizable: false,
-        headerSort: false,
-      },
 
-      // For HTML table
-      {
-        title: t("Tabulator.General_columns.id"),
-        field: "id",
-        visible: false,
-        sorter: 'number',
-
-      },
-      {
-        title: t("Tabulator.Driver_columns.driver"),
-        responsive: 0,
-        field: "name",
-        vertAlign: "middle",
-        hozAlign: "left",
-        print: false,
-        download: false,
-        formatter: function (cell, formatterParams, onRendered) {
-          const a = dom(`
-            <a id="select_driver" href="javascript:;" class='w-full flex flex-inline hover:ml-3 hover:font-medium'>
-              <i data-lucide='folder' class='w-5 h-5 mr-2 text-primary'></i>` + cell.getValue() + `</a>`);
-          dom(a).on("click", function (event) {
-            if (event.target.id == 'select_driver') {
-              event.preventDefault();
-              driver_selected.value = cell.getData().id;
-              driver_name_selected.value = cell.getValue();
-              findDriverDocuments(cell.getData().id);
-            }
-          });
-          return a[0];
-        },
-      },
-    ],
-    renderComplete() {
-      createIcons({
-        icons,
-        "stroke-width": 1.5,
-        nameAttr: "data-lucide",
-      });
-    },
-  });
-};
 
 const viewIcon = function (cell, formatterParams) {
-  return "<i data-lucide='eye' class='w-6 h-6 mr-1 text-primary'></i>";
+  return "<i data-lucide='eye' class='w-5 h-5 text-primary'></i>";
 };
 
 const downloadIcon = function (cell, formatterParams) {
-  return "<i data-lucide='download' class='w-6 h-6 mr-1 text-success'></i>";
+  return "<i data-lucide='download' class='w-5 h-5 text-success'></i>";
 };
 
 const deleteIcon = function (cell, formatterParams) {
-  return "<i data-lucide='trash-2' class='w-6 h-6 mr-1 text-danger'></i>";
+  return "<i data-lucide='trash-2' class='w-5 h-5 text-danger'></i>";
 };
 
 const confirmationIcon = function (cell, formatterParams) {
   if(cell.getData().has_ask_confirm == 1){ 
-    return "<i data-lucide='alert-circle' class='w-6 h-6 mr-1 text-warning'></i>";
+    return "<i data-lucide='alert-circle' class='w-4 h-4 text-warning'></i>";
   }else{
     if(cell.getData().confirmed_at != null){ 
-      return "<i data-lucide='check-circle' class='w-6 h-6 mr-1 text-slate-400'></i>";
+      return "<i data-lucide='check-circle' class='w-4 h-4 text-slate-400'></i>";
     }else{
-      return "<i data-lucide='check-circle' class='w-6 h-6 mr-1 text-transparent'></i>";
+      return "<i data-lucide='check-circle' class='w-4 h-4 text-transparent'></i>";
     }
   }
 };
 
-const initDriverDocumentsTabulator = () => {
+const initTabulator = () => {
   tabulator.value = new Tabulator(tableRefDriverDocuments.value, {
     reactiveData: true,
     data: driverDocuments.value,
@@ -318,6 +228,7 @@ const initDriverDocumentsTabulator = () => {
     paginationSize: 15,
     paginationSizeSelector: [15, 30, 45, 60],
     layout: "fitColumns",
+    columnHeaderVertAlign:"bottom",
     responsiveLayout: "collapse",
     placeholder: t("message.no_matching_records_found"),
     locale:true,
@@ -368,7 +279,7 @@ const initDriverDocumentsTabulator = () => {
       {
         formatter: "responsiveCollapse",
         width: 40,
-        minWidth: 30,
+        minWidth: 40,
         hozAlign: "left",
         resizable: false,
         headerSort: false,
@@ -382,137 +293,234 @@ const initDriverDocumentsTabulator = () => {
 
       },
       {
-        formatter: confirmationIcon,
-        width: 50,
-        responsive: 0,
+        title:t("Tabulator.Driver_documents_columns.document"),
         hozAlign: "center",
-        headerSort: false,
-      },
-      {
-        title: t("Tabulator.Driver_documents_columns.document"),
-        responsive: 0,
-        field: "file_name",
-        vertAlign: "middle",
-        hozAlign: "left",
-        print: false,
-        download: false,
-      },
-      {
-        title: t("Tabulator.Driver_documents_columns.type"),
-        minWidth: 100,
-        responsive: 1,
-        field: "type",
-        hozAlign: "center",
-        vertAlign: "middle",
-        print: false,
-        download: false,
-        formatter: function (cell, formatterParams, onRendered) {
-          return "<span class='uppercase'>" + cell.getValue() + "</span>"
-        },
-      },
-      {
-        title: t("Tabulator.Driver_documents_columns.created_at"),
-        minWidth: 200,
-        responsive: 1,
-        field: "created_at",
-        hozAlign: "center",
-        vertAlign: "middle",
-        print: false,
-        download: false,
-        formatter: function (cell) {
-          return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm')
-        },
-      },
-      {
-        title: t("Tabulator.Driver_documents_columns.receptioned_at"),
-        minWidth: 200,
-        responsive: 1,
-        field: "receptioned_at",
-        hozAlign: "center",
-        vertAlign: "middle",
-        print: false,
-        download: false,
-        formatter: function (cell) {
-          let data = '';
-          if (cell.getValue()) {
-            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm');
-          } else {
-            data = '--';
+        columns:[
+          {
+            formatter: confirmationIcon,
+            width: 40,
+            responsive: 0,
+            hozAlign: "center",
+            headerSort: false,
+          },
+          {
+            title: t("Tabulator.Driver_documents_columns.name"),
+            width: 250,
+            responsive: 0,
+            field: "file_name",
+            vertAlign: "middle",
+            hozAlign: "left",
+            print: false,
+            download: false,
+          },
+          {
+            title: t("Tabulator.Driver_documents_columns.type"),
+            responsive: 0,
+            field: "type",
+            hozAlign: "center",
+            vertAlign: "middle",
+            print: false,
+            download: false,
+            formatter: function (cell, formatterParams, onRendered) {
+              return "<span class='uppercase'>" + cell.getValue() + "</span>"
+            },
+          },
+          {
+            title: t("Tabulator.Driver_documents_columns.size"),
+            minWidth: 100,
+            responsive: 0,
+            field: "size",
+            hozAlign: "center",
+            vertAlign: "middle",
+            print: false,
+            download: false,
+            formatter: function (cell, formatterParams, onRendered) {
+              return $h.formatBytes(cell.getValue(),2);
+            },
+          },
+          {
+            title: t("Tabulator.Driver_documents_columns.pages"),
+            width: 50,
+            responsive: 0,
+            field: "pages",
+            vertAlign: "middle",
+            hozAlign: "left",
+            headerSort: false,
+            print: false,
+            download: false,
+            formatter: function (cell) {
+              let data = '';
+              if (cell.getValue() != 0) {
+                data = cell.getValue();
+              } else {
+                data = '--';
+              }
+              return data;
+            },
+          },
+          {
+            title: t("Tabulator.Driver_documents_columns.ER"),
+            width: 50,
+            responsive: 0,
+            field: "has_from_employe",
+            vertAlign: "middle",
+            hozAlign: "left",
+            headerSort: false,
+            print: false,
+            download: false,
+            formatter: function (cell) {
+              let data = '';
+              if (cell.getValue() != 0) {
+                data = "E";
+              } else {
+                data = 'R';
+              }
+              return data;
+            },
+          },
+          {
+            title: t("Tabulator.Driver_documents_columns.created_by"),
+            responsive: 0,
+            field: "has_from_employe",
+            vertAlign: "middle",
+            hozAlign: "left",
+            print: false,
+            download: false,
+            formatter: function (cell) {
+              let data = '';
+              if (cell.getValue() != 0) {
+                data = cell.getData().employee.name + ' ' +  cell.getData().employee.surname;
+              } else {
+                data = cell.getData().driver.name + ' ' +  cell.getData().driver.surname;
+              }
+              return data;
+            },
           }
-          return data;
-        },
+        ],
       },
       {
-        title: t("Tabulator.Driver_documents_columns.confirmed_at"),
-        minWidth: 200,
-        responsive: 1,
-        field: "confirmed_at",
+        title:t("Tabulator.Driver_documents_columns.dates"),
         hozAlign: "center",
-        vertAlign: "middle",
-        print: false,
-        download: false,
-        formatter: function (cell) {
-          let data = '';
-          if (cell.getValue()) {
-            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm');
-          } else {
-            data = '--';
-          }
-          return data;
-        },
+        columns:[
+          {
+            title: t("Tabulator.Driver_documents_columns.created_at"),
+            field: "created_at",
+            hozAlign: "center",
+            vertAlign: "middle",
+            print: false,
+            download: false,
+            formatter: function (cell) {
+              return $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm')
+            },
+          },
+          {
+            title: t("Tabulator.Driver_documents_columns.receptioned_at"),
+            field: "receptioned_at",
+            hozAlign: "center",
+            vertAlign: "middle",
+            print: false,
+            download: false,
+            formatter: function (cell) {
+              let data = '';
+              if (cell.getValue()) {
+                data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm');
+              } else {
+                data = '--';
+              }
+              return data;
+            },
+          },
+          {
+            title: t("Tabulator.Driver_documents_columns.confirmed_at"),
+            field: "confirmed_at",
+            hozAlign: "center",
+            vertAlign: "middle",
+            print: false,
+            download: false,
+            formatter: function (cell) {
+              let data = '';
+              if (cell.getValue()) {
+                data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm');
+              } else {
+                data = '--';
+              }
+              return data;
+            },
+          },
+          {
+            title: t("Tabulator.Driver_documents_columns.readed_at"),
+            field: "readed_at",
+            hozAlign: "center",
+            vertAlign: "middle",
+            print: false,
+            download: false,
+            formatter: function (cell) {
+              let data = '';
+              if (cell.getValue()) {
+                data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm');
+              } else {
+                data = '--';
+              }
+              return data;
+            },
+          },
+          {
+            title: t("Tabulator.Driver_documents_columns.last_readed_at"),
+            field: "last_readed_at",
+            hozAlign: "center",
+            vertAlign: "middle",
+            print: false,
+            download: false,
+            formatter: function (cell) {
+              let data = '';
+              if (cell.getValue()) {
+                data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm');
+              } else {
+                data = '--';
+              }
+              return data;
+            },
+          },
+        ],
       },
       {
-        title: t("Tabulator.Driver_documents_columns.readed_at"),
-        minWidth: 200,
-        responsive: 1,
-        field: "readed_at",
+        title:t("Tabulator.Driver_documents_columns.actions"),
         hozAlign: "center",
-        vertAlign: "middle",
-        print: false,
-        download: false,
-        formatter: function (cell) {
-          let data = '';
-          if (cell.getValue()) {
-            data = $h.formatDate(cell.getValue(), 'DD/MM/YYYY HH:mm');
-          } else {
-            data = '--';
-          }
-          return data;
-        },
-      },
-      {
-        formatter: viewIcon,
-        width: 50,
-        responsive: 0,
-        hozAlign: "center",
-        headerSort: false,
-        tooltip: t("tooltips.view"),
-        cellClick: function (e, cell) {
-          openDriverFile(cell.getData().path);
-        }
-      },
-      {
-        formatter: downloadIcon,
-        width: 50,
-        responsive: 0,
-        hozAlign: "center",
-        headerSort: false,
-        tooltip: t("tooltips.download"),
-        cellClick: function (e, cell) {
-          downloadDriverFile(cell.getData().path, cell.getData().file_name);
-        }
-      },
-      {
-        formatter:
-          deleteIcon,
-        width: 50,
-        responsive: 0,
-        hozAlign: "center",
-        headerSort: false,
-        tooltip: t("tooltips.delete"),
-        cellClick: function (e, cell) {
-          deleteDriverDoc(cell.getData().id, cell.getData().file_name, driver_selected.value);
-        }
+        columns:[
+          {
+            formatter: viewIcon,
+            width: 40,
+            responsive: 0,
+            hozAlign: "center",
+            headerSort: false,
+            tooltip: t("tooltips.view"),
+            cellClick: function (e, cell) {
+              openDriverFile(cell.getData().path);
+            }
+          },
+          {
+            formatter: downloadIcon,
+            width: 40,
+            responsive: 0,
+            hozAlign: "center",
+            headerSort: false,
+            tooltip: t("tooltips.download"),
+            cellClick: function (e, cell) {
+              downloadDriverFile(cell.getData().path, cell.getData().file_name);
+            }
+          },
+          {
+            formatter: deleteIcon,
+            width: 50,
+            responsive: 0,
+            hozAlign: "center",
+            headerSort: false,
+            tooltip: t("tooltips.delete"),
+            cellClick: function (e, cell) {
+              deleteDriverDoc(cell.getData().id, cell.getData().file_name, driver_selected.value);
+            }
+          },
+        ]
       },
     ],
     renderComplete() {
@@ -662,14 +670,10 @@ const onDriverDocumentsResetFilter = () => {
   onDriverDocumentsFilter();
 };
 
-const returnDrivers = () => {
-  driver_selected.value = 0;
-  tabulator.value.redraw();
-  createIcons({
-    icons,
-    "stroke-width": 1.5,
-    nameAttr: "data-lucide",
-  });
+const backToRoute = () => {
+  
+  router.push({'name':'documents-drivers'});
+
 }
 
 const hideDriverModal = async () => {
@@ -707,8 +711,22 @@ const dropZoneDriverAddFiles = async (event) => {
     const fileExtension = computed(() => fileName.value?.substr(fileName.value?.lastIndexOf(".") + 1));
     const fileMimeType = computed(() => driverFile.value?.type);
     const fileSize = computed(() => driverFile.value?.size);
+    //FUNCION PARA VER EL NÚMERO DE PÁGINAS SI ES UN PDF
+    let pages_count;
+    if(fileExtension.value == 'pdf'){
+      let reader = new FileReader();
+      reader.readAsBinaryString(event.target.files[0]);
+      reader.onloadend = function(){
+        pages_count = reader.result.match(/\/Type[\s]*\/Page[^s]/g).length;
+        console.log('Number of Pages:',pages_count );
+      }
+    }else{
+      pages_count = 0;
+    }
+  
+
     await toBase64(driverFile.value).then(fileData => {
-      driverFileJson.push({ driver_id: driver_selected.value, file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData, has_ask_confirm: 0 });
+      driverFileJson.push({ driver_id: driver_selected.value, file_name: fileName.value, size: fileSize.value, type: fileExtension.value, data: fileData, has_ask_confirm: 0, pages: pages_count});
     });
   }
 }
@@ -793,7 +811,10 @@ const updateJson = async () => {
 }
 
 onMounted(async () => {
-  tableData.value = await findData();
+
+  //console.log(route.params.id);
+
+  tableData.value = await findData(route.params.id);
   initTabulator();
   reInitOnResizeWindow();
 });

@@ -54,7 +54,10 @@
       "employees": "Office Users",
       "drivers": "Drivers",
       "plates": "Tractors",
-      "tows": "Trailers"
+      "tows": "Trailers",
+      "logs": "Logs",
+      "session_logs": "Session Logs",
+      "driver_logs": "Driver Logs"
   },
   "dashboard": {
       "title": "Overview of ",
@@ -306,13 +309,20 @@
           "driver": "Select the Driver"
       },
       "Driver_documents_columns": {
-          "document": "DOCUMENT",
-          "type": "TYPE",
-          "created_by": "CREATED BY",
-          "created_at": "Date sent",
-          "receptioned_at": "Date received",
-          "confirmed_at": "Date confirmed",
-          "readed_at": "Date read"
+        "document": "DOCUMENT",
+        "name": "Name",
+        "type": "TYPE",
+        "size": "Size",
+        "created_by": "User",
+        "dates": "DATES",
+        "created_at": "Sent",
+        "receptioned_at": "Received",
+        "confirmed_at": "Confirmed",
+        "readed_at": "Readed",
+        "last_readed_at": "Last readed",
+        "pages": "Pag.",
+        "ER": "S/R",
+        "actions": "ACTIONS"
       },
       "Trips_columns": {
           "trip": "TRIP",
@@ -322,12 +332,19 @@
       },
       "Trip_documents_columns": {
           "document": "DOCUMENT",
+          "name": "Name",
           "type": "TYPE",
-          "created_by": "CREATED BY",
-          "created_at": "Date sent",
-          "receptioned_at": "Date received",
-          "confirmed_at": "Date confirmed",
-          "readed_at": "Date read"
+          "size": "Size",
+          "created_by": "User",
+          "dates": "DATES",
+          "created_at": "Sent",
+          "receptioned_at": "Received",
+          "confirmed_at": "Confirmed",
+          "readed_at": "Readed",
+          "last_readed_at": "Last readed",
+          "pages": "Pag.",
+          "ER": "S/R",
+          "actions": "ACTIONS"
       },
       "ToolTips": {
           "View": "See Document",
@@ -406,6 +423,17 @@
   "delete_user_title": "Delete user:",
   "users_of": "Office Users of ",
   "drivers_of": "Driver Users of ",
+  "vehicles_of": "Tractoras de ",
+  "btn_create_vehicle": "Nueva Tractora",
+  "tractor_manager": "Gestor de la Tractora",
+  "select_tractor_manager": "Selecciona el Gestor de la Tractora...",
+  "delete_plate_title": "Eliminar la matrícula:",
+  "tows_of": "Remolques de ",
+  "btn_create_tow": "Nuevo Remolque",
+  "tow_manager":"Gestor del Remolque",
+  "select_tow_manager": "Selecciona el Gestor del Remolque...",
+  "delete_tow_title": "Eliminar el remolque:",
+  "session_logs_of": "Sessions Log of ",
   "chat":{
     "chats": "Chats",
     "newChat" : "New Chat",

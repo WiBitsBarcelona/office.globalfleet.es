@@ -11,7 +11,11 @@
 
         <div>
 
-            <router-link :to="`/drivers-documents`" class="btn btn-gray shadow-md rounded-md w-full font-medium" :class="{'btn-primary' : route.name == 'drivers-documents'}">
+            <router-link 
+                :to="`/documents/drivers`" 
+                class="btn btn-gray shadow-md rounded-md w-full font-medium" 
+                :class="{'btn-primary' : route.name == 'documents-drivers' || route.name == 'documents-driver-show'}"
+            >
                 {{ $t("documents.driver_files") }}
             </router-link>
 

@@ -63,6 +63,24 @@ export const useSimpleMenuStore = defineStore("simpleMenu", {
         title: "menu.tows",
         isManager: true,
       },
+      {
+        icon: "ActivitySquareIcon",
+        pageName: "tows",
+        title: "menu.logs",
+        isManager: true,
+        subMenu: [
+          {
+            icon: "Activity",
+            pageName: "session-log",
+            title: "menu.session_logs",
+          },
+          {
+            icon: "Activity",
+            pageName: "tows",
+            title: "menu.driver_logs",
+          },
+        ],
+      },
     ],
   }),
 });

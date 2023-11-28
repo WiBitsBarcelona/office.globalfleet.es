@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-    import DriversDocuments from "@/components/documents/DriversDocuments.vue";
+    import DriversDocuments from "@/components/documents/driver_documents/DriverDocumentList.vue";
     import DocumentButtons from '@/components/documents/DocumentButtons.vue';
     import { useAuthenticationStore } from '@/stores/auth/authentications';
 
