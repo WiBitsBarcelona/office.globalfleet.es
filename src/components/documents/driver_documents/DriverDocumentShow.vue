@@ -1,22 +1,7 @@
 <template>
-  <div class="intro-y box p-5 mt-0 {}" :class="{ 'hidden': !driver_selected == 0 }">
-    <div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
-      <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
-        <div class="relative sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
-          <input id="tabulator-html-filter-value" v-model="filter.value" type="text"
-            class="w-full xl:w-[600px] form-control mt-2 sm:mt-0"
-            :placeholder="$t('documents.filters.search_driver_placeholder')" @keyup="onFilter" />
-          <XCircleIcon class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-400 hover:cursor-pointer"
-            @click="onResetFilter" />
-        </div>
-      </form>
-    </div>
-    <div class="overflow-x-auto scrollbar-hidden">
-      <div id="tabulator" ref="tableRef" class="mt-5 table-report table-report--tabulator"></div>
-    </div>
-  </div>
+  
   <!-- END: HTML Table Data -->
-  <div class="intro-y box p-5 mt-0 {}" :class="{ 'hidden': driver_selected == 0 }">
+  <div class="intro-y box p-5 mt-0">
     <div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
       <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
         <div class="relative sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
@@ -40,9 +25,11 @@
             </button>
           </div>
         </div>
-        <button id="tabulator-print" class="btn btn-outline-danger w-1/2 sm:w-auto mr-2" @click="returnDrivers">
+
+        <button id="tabulator-print" class="btn btn-outline-danger w-1/2 sm:w-auto mr-2" @click="backToRoute">
           <CornerUpLeftIcon class="w-4 h-4 mr-2" /> {{ $t("documents.return") }}
         </button>
+
       </div>
     </div>
 
@@ -125,6 +112,8 @@
             </button>
           </div>
         </template>
+
+        
       </div>
 
       <input type="file" id="input_driver_files" ref="file_driver_selected" accept="application/pdf, image/*"
@@ -145,7 +134,13 @@ import useDriverDocument from "@/composables/driver_documents";
 import { useI18n } from 'vue-i18n';
 import { helper as $h } from "@/utils/helper";
 import Swal from "sweetalert2";
+import { useRoute, useRouter } from 'vue-router';
 
+
+
+
+const route = useRoute();
+const router = useRouter();
 
 const { t } = useI18n();
 const addFileModal = ref(false);
@@ -158,7 +153,7 @@ const { driverDocuments, getDriverDocuments, driverDocumentData, downloadDriverD
 const tableRef = ref();
 const tabulator = ref();
 const tableRefDriverDocuments = ref();
-const tabulator_driver_documents = ref();
+//const tabulator_driver_documents = ref();
 const filter = reactive({
   field: "name",
   type: "like",
@@ -171,12 +166,12 @@ const driver_docs_filter = reactive({
   value: "",
 })
 
-const file_selected = ref('');
+//const file_selected = ref('');
 const driver_selected = ref(0);
 const driver_name_selected = ref('');
 let driver_selected_file = ref('');
 const driverFile = ref(null);
-let dataArr = [];
+//let dataArr = [];
 
 let driverFiles = [];
 const driverState = reactive({ driverFiles });
@@ -185,105 +180,19 @@ let driverFileJson = [];
 let checkedFiles = ref([]);
 let allFilesChecked = false;
 
-const findData = async () => {
-  await getDrivers();
-  const dataArrTmp = JSON.parse(JSON.stringify(drivers.value));
-  dataArrTmp.forEach(element => {
-    const full_name = element.name + ' ' + element.surname;
-    dataArr.push({
-      id: element.id,
-      name: full_name
-    });
-  });
 
-  return dataArr;
-}
-
-const findDriverDocuments = async (id) => {
+const findData = async (id) => {
   await getDriverDocuments(id);
   const dataDriverDocuments = JSON.parse(JSON.stringify(driverDocuments.value));
   console.log(dataDriverDocuments);
-  initDriverDocumentsTabulator();
+  initTabulator();
 }
 
 const imageAssets = import.meta.globEager(
   `/src/assets/images/*.{jpg,jpeg,png,svg}`
 );
 
-const initTabulator = () => {
-  tabulator.value = new Tabulator(tableRef.value, {
-    reactiveData: true,
-    data: tableData.value,
-    printAsHtml: true,
-    printStyled: true,
-    pagination: "local",
-    paginationSize: 15,
-    paginationSizeSelector: [15, 30, 45, 60],
-    layout: "fitColumns",
-    responsiveLayout: "collapse",
-    placeholder: t("message.no_matching_records_found"),
-    locale:true,
-    langs:{
-			"es-es":{
-				"pagination":{
-          "page_size":"", 
-				}
-			}
-		},
-    initialSort: [
-      { column: "id", dir: "desc" }
-    ],
-    columns: [
-      {
-        formatter: "responsiveCollapse",
-        width: 40,
-        minWidth: 30,
-        hozAlign: "left",
-        resizable: false,
-        headerSort: false,
-      },
 
-      // For HTML table
-      {
-        title: t("Tabulator.General_columns.id"),
-        field: "id",
-        visible: false,
-        sorter: 'number',
-
-      },
-      {
-        title: t("Tabulator.Driver_columns.driver"),
-        responsive: 0,
-        field: "name",
-        vertAlign: "middle",
-        hozAlign: "left",
-        print: false,
-        download: false,
-        formatter: function (cell, formatterParams, onRendered) {
-          const a = dom(`
-            <a id="select_driver" href="javascript:;" class='w-full flex flex-inline hover:ml-3 hover:font-medium'>
-              <i data-lucide='folder' class='w-5 h-5 mr-2 text-primary'></i>` + cell.getValue() + `</a>`);
-          dom(a).on("click", function (event) {
-            if (event.target.id == 'select_driver') {
-              event.preventDefault();
-              driver_selected.value = cell.getData().id;
-              driver_name_selected.value = cell.getValue();
-              findDriverDocuments(cell.getData().id);
-            }
-          });
-          return a[0];
-        },
-      },
-    ],
-    renderComplete() {
-      createIcons({
-        icons,
-        "stroke-width": 1.5,
-        nameAttr: "data-lucide",
-      });
-    },
-  });
-};
 
 const viewIcon = function (cell, formatterParams) {
   return "<i data-lucide='eye' class='w-5 h-5 text-primary'></i>";
@@ -309,7 +218,7 @@ const confirmationIcon = function (cell, formatterParams) {
   }
 };
 
-const initDriverDocumentsTabulator = () => {
+const initTabulator = () => {
   tabulator.value = new Tabulator(tableRefDriverDocuments.value, {
     reactiveData: true,
     data: driverDocuments.value,
@@ -761,14 +670,10 @@ const onDriverDocumentsResetFilter = () => {
   onDriverDocumentsFilter();
 };
 
-const returnDrivers = () => {
-  driver_selected.value = 0;
-  tabulator.value.redraw();
-  createIcons({
-    icons,
-    "stroke-width": 1.5,
-    nameAttr: "data-lucide",
-  });
+const backToRoute = () => {
+  
+  router.push({'name':'documents-drivers'});
+
 }
 
 const hideDriverModal = async () => {
@@ -906,7 +811,10 @@ const updateJson = async () => {
 }
 
 onMounted(async () => {
-  tableData.value = await findData();
+
+  //console.log(route.params.id);
+
+  tableData.value = await findData(route.params.id);
   initTabulator();
   reInitOnResizeWindow();
 });

@@ -121,13 +121,18 @@ const routes = [
         component: () => import('@/views/documents/general/GeneralDocumentView.vue'),
       },
       {
-        path: "drivers-documents",
-        name: "drivers-documents",
-        component: () => import('@/views/documents/drivers/DriverDocumentView.vue'),
+        path: "documents/drivers",
+        name: "documents-drivers",
+        component: () => import('@/views/documents/drivers/DriverDocumentList.vue'),
+      },
+      {
+        path: "documents/driver/show/:id",
+        name: "documents-driver-show",
+        component: () => import('@/views/documents/drivers/DriverDocumentShow.vue'),
       },
       {
         path: "driver_documents/:id",
-        name: "Driver Documents",
+        name: "driver-documents",
         component: () => import('@/views/documents/drivers/General.vue'),
       },
       {
