@@ -190,7 +190,6 @@
                     headerHozAlign:"left",
                     formatter(cell) {
 						if(cell.getData().manager){
-							console.log({...cell.getData().manager.name});
 							return `${cell.getData().manager.name} ${cell.getData().manager.surname}`;
 						}else{
 							return t('--');
