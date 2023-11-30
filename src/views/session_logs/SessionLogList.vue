@@ -194,12 +194,14 @@ const loading = ref(false);
 let dataArr = [];
 const radio_order_by = ref('all');
 
-const daterange = ref("");
+
 const today = ref("");
 const startDate = ref("");
 const endDate = ref("");
-const time_from = ref("00:00");
-const time_at = ref("23:59");
+
+const daterange = ref("");
+const time_from = "00:00";
+const time_at ="23:59";
 const currentLocale = ref("es-ES");
 
 //VARIABLES FOR MODAL
@@ -229,16 +231,16 @@ switch (localStorage.getItem('locale')) {
 		break;
 }
 
-const findData = async () => {
+const findData = async (dateRangeNew) => {
+	let rangeArray = dateRangeNew.split('-');
 
-	let rangeArray = daterange.value.split('-');
     let [dayfrom, monthfrom, yearfrom] = rangeArray[0].trim().split('/');
-    let timeFromArray = time_from.value.split(':');
+    let timeFromArray = time_from.split(':');
     let hourfrom = timeFromArray[0];
     let minutesfrom = timeFromArray[1];
     let secondsfrom = '00';
     let [dayto, monthto, yearto] = rangeArray[1].trim().split('/');
-    let timeAtArray = time_at.value.split(':');
+    let timeAtArray = time_at.split(':');
     let hourat = timeAtArray[0];
     let minutesat = timeAtArray[1];
     let secondsat = '59';
@@ -250,12 +252,8 @@ const findData = async () => {
 
     let currentData =  `?from_at=${dateFrom}&to_at=${dateTo}` ;
 
-
 	await getSessionLogs(currentData);
-	sessionLogs.value.forEach((elem) => {
-		dataArr.push(toRaw(elem));
-	});
-	return dataArr;
+	return sessionLogs.value;
 }
 
 // Table
@@ -483,16 +481,16 @@ const hidePositioningModal = () => {
 };
 
 const updateData = async () => {
-	console.log(daterange.value);
-	 
-	//tableData.value = await findData();
-	//initTabulator();
+	//console.log(daterange.value);
+	console.log("set data");
+	tableData.value = await findData(daterange.value);
+	tabulator.value.setData(tableData.value);
 }
 
 // Init table
 onMounted(async () => {
-	tableData.value = await findData();
-	console.log(daterange.value);
+	//console.log(daterange.value);
+	tableData.value = await findData(daterange.value);
 	initTabulator();
 	reInitOnResizeWindow();
 });
