@@ -179,6 +179,7 @@ const routes = [
         name: "session-log",
         beforeEnter: checkManager,
         component: () => import('@/views/logs/SessionLogList.vue'),
+        
       },
     ],
   },

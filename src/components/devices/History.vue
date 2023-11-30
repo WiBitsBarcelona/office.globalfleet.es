@@ -46,13 +46,13 @@
                   <div>
                     <div class="text-xs">{{ $t("from") }}</div>
                     <TomSelect v-model="time_from" class="form-control">
-                      <option v-for="(time, index) in times" :value="time">{{ time }}</option>
+                      <option v-for="(time, index) in times" :value="time" :key="index">{{ time }}</option>
                     </TomSelect>
                   </div>
                   <div class="mt-3">
                     <div class="text-xs">{{ $t("to") }}</div>
                     <TomSelect v-model="time_at" class="form-control">
-                      <option v-for="(time, index) in times.slice().reverse()" :value="time">{{ time }}</option>
+                      <option v-for="(time, index) in times.slice().reverse()" :value="time" :key="index">{{ time }}</option>
                     </TomSelect>
                   </div>
                   <div class="flex items-center mt-3">
@@ -314,7 +314,7 @@ const getData = async () => {
     
 
 
-    let currentData = { from_at: dateFrom, to_at: dateTo };;
+    let currentData = { from_at: dateFrom, to_at: dateTo };
     await getDriverPositions(selected_driver.value, currentData);
 
     if (driverPositions.value.length == 0) {

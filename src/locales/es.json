@@ -569,5 +569,21 @@
         "intro_text_3": "En la parte superior derecha tenemos un botón para acceder a la pantalla de histórico de dispositivos."
       }
     }
+  },
+  "session_log": {
+    "filter_by": "Ver:",
+    "filter_all": "Todos",
+    "filter_erp": "ERP",
+    "filter_office": "Office",
+    "filter_driver": "Driver",
+    "date": "Fecha",
+    "user": "Usuario",
+    "event": "Evento",
+    "origin": "Origen",
+    "position": "Posición GPS",
+    "position_id": "Id posicionamiento",
+    "modal": {
+      "title": "Detalles Posicionamiento"
+    }
   }
 }
