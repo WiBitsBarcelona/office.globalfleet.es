@@ -46,13 +46,13 @@
                   <div>
                     <div class="text-xs">{{ $t("from") }}</div>
                     <TomSelect v-model="time_from" class="form-control">
-                      <option v-for="(time, index) in times" :value="time">{{ time }}</option>
+                      <option v-for="(time, index) in times" :value="time" :key="index">{{ time }}</option>
                     </TomSelect>
                   </div>
                   <div class="mt-3">
                     <div class="text-xs">{{ $t("to") }}</div>
                     <TomSelect v-model="time_at" class="form-control">
-                      <option v-for="(time, index) in times.slice().reverse()" :value="time">{{ time }}</option>
+                      <option v-for="(time, index) in times.slice().reverse()" :value="time" :key="index">{{ time }}</option>
                     </TomSelect>
                   </div>
                   <div class="flex items-center mt-3">
