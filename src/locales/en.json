@@ -211,6 +211,7 @@
   "description": "Description",
   "task": "Task",
   "history": "Position history",
+  "boss": "Supervisor",
   "infowindow": {
       "trip": "Trip:",
       "status": "Status:",

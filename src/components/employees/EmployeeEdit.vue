@@ -4,10 +4,11 @@
 	<form class="validate-form" @submit.prevent="save">
 
 
+
 		<!-- BEGIN: container -->
 		<div class="grid grid-cols-12 gap-6">
 
-			<div class="col-span-12 md:col-span-12 lg:col-span-3">
+			<div class="col-span-12 md:col-span-12 lg:col-span-4">
 				<div class="input-form">
 					<label for="role_id" class="form-label w-full">
 						{{ $t("role") }}
@@ -35,6 +36,54 @@
 					</template>
 				</div>
 			</div>
+
+
+			<div class="col-span-12 md:col-span-12 lg:col-span-4">
+				<div class="input-form">
+					<label for="manager_id" class="form-label w-full">
+						{{ $t("boss") }}
+					</label>
+					<TomSelect v-model.trim="validate.manager_id.$model" id="manager_id" name="manager_id" :options="{
+						placeholder: $t('select_role'),
+					}" class="form-control w-full"
+						:class="{ 'border-danger': validate.manager_id.$error }">
+
+						<option value="-">No tiene</option>
+						<option v-for="item in selectManagers" :value="item.id">
+							{{ item.name }} {{ item.surname }} 
+						</option>
+
+					</TomSelect>
+					<template v-if="validate.manager_id.$error">
+						<div v-for="(error, index) in validate.manager_id.$errors" :key="index" class="text-danger mt-2">
+							{{ error.$message }}
+						</div>
+					</template>
+				</div>
+			</div>
+
+
+			<div class="col-span-12 md:col-span-6 lg:col-span-4">
+				<div class="input-form">
+					<label for="fiscal_identification" class="form-label w-full">
+						{{ $t("fiscal_identification") }}
+					</label>
+					<input
+						v-model.trim="validate.fiscal_identification.$model"
+						id="fiscal_identification"
+						type="text"
+						name="fiscal_identification"
+						class="form-control"
+						:class="{ 'border-danger': validate.fiscal_identification.$error }"
+					/>
+					<template v-if="validate.fiscal_identification.$error">
+						<div v-for="(error, index) in validate.fiscal_identification.$errors" :key="index" class="text-danger mt-2">
+							{{ error.$message }}
+						</div>
+					</template>
+				</div>
+			</div>
+
 
 			<div class="col-span-12 md:col-span-6 lg:col-span-4">
 				<div class="input-form">
@@ -79,30 +128,32 @@
 				</div>
 			</div>
 
-
-			<div class="col-span-12 md:col-span-6 lg:col-span-3">
+			<div class="col-span-12 md:col-span-12 lg:col-span-3">
 				<div class="input-form">
-					<label for="fiscal_identification" class="form-label w-full">
-						{{ $t("fiscal_identification") }}
+					<label for="language_id" class="form-label w-full">
+						{{ $t("language") }}<InfoIcon class="inline-flex ml-1 -mt-2 w-4 h-4 text-primary"></InfoIcon>
 					</label>
-					<input
-						v-model.trim="validate.fiscal_identification.$model"
-						id="fiscal_identification"
-						type="text"
-						name="fiscal_identification"
-						class="form-control"
-						:class="{ 'border-danger': validate.fiscal_identification.$error }"
-					/>
-					<template v-if="validate.fiscal_identification.$error">
-						<div v-for="(error, index) in validate.fiscal_identification.$errors" :key="index" class="text-danger mt-2">
+					<TomSelect v-model.trim="validate.language_id.$model" id="language_id" name="language_id" :options="{
+						placeholder: $t('select_lang'),
+					}" class="form-control w-full"
+						:class="{ 'border-danger': validate.language_id.$error }">
+
+						<option v-for="lang in selectLangs" :value="lang.id">
+							{{ lang.name }}
+						</option>
+					</TomSelect>
+					<template v-if="validate.language_id.$error">
+						<div v-for="(error, index) in validate.language_id.$errors" :key="index" class="text-danger mt-2">
 							{{ error.$message }}
 						</div>
 					</template>
 				</div>
 			</div>
 
+			
 
-			<div class="col-span-12 md:col-span-6 lg:col-span-5">
+
+			<div class="col-span-12 md:col-span-6 lg:col-span-8">
 				<div class="input-form">
 					<label for="email" class="form-label w-full">
 						{{ $t("email") }}
@@ -124,7 +175,7 @@
 			</div>
 
 
-			<div class="col-span-12 md:col-span-6 lg:col-span-2">
+			<div class="col-span-12 md:col-span-6 lg:col-span-4">
 				<div class="input-form">
 					<label for="password" class="form-label w-full">
 						{{ $t("password") }}
@@ -150,34 +201,14 @@
 				</div>
 			</div>
 
-			<div class="col-span-12 md:col-span-12 lg:col-span-2">
-				<div class="input-form">
-					<label for="language_id" class="form-label w-full">
-						{{ $t("language") }}<InfoIcon class="inline-flex ml-1 -mt-2 w-4 h-4 text-primary"></InfoIcon>
-					</label>
-					<TomSelect v-model.trim="validate.language_id.$model" id="language_id" name="language_id" :options="{
-						placeholder: $t('select_lang'),
-					}" class="form-control w-full"
-						:class="{ 'border-danger': validate.language_id.$error }">
-
-						<option v-for="lang in selectLangs" :value="lang.id">
-							{{ lang.name }}
-						</option>
-					</TomSelect>
-					<template v-if="validate.language_id.$error">
-						<div v-for="(error, index) in validate.language_id.$errors" :key="index" class="text-danger mt-2">
-							{{ error.$message }}
-						</div>
-					</template>
-				</div>
-			</div>
+			
 
 			<div class="col-span-12 flex p-5 bg-primary text-white self-stretch rounded-md">
             <div class="col-span-1 mr-2">
               <InfoIcon></InfoIcon>
             </div>
             <div class="col-span-11 text-left">
-              {{ $t("employee_lang_info") }} 
+              {{ $t("employee_lang_info") }}
             </div>
           </div>
 
@@ -213,7 +244,7 @@
 	import enumRoles from '@/enums/enum_roles.js';
 	import useLanguage from '@/composables/languages';
 
-	const { employee, getEmployee } = useEmployees();
+	const { employee, employees, getEmployee, getEmployees } = useEmployees();
 	const { languages, getLanguages } = useLanguage();
 	const { roles, getRoles } = useRoles();
 	const { t } = useI18n();
@@ -224,6 +255,8 @@
 
 	const selectRoles = ref();
 	const selectLangs = ref();
+	const selectManagers = ref();
+
 
 	const passwordFieldType = ref("password");
 	const switchVisibility = () => {
@@ -234,6 +267,9 @@
 
 	const rules = {
 		role_id: {
+			required: helpers.withMessage(t("form.required"), required),
+		},
+		manager_id: {
 			required: helpers.withMessage(t("form.required"), required),
 		},
 		name: {
@@ -259,6 +295,7 @@
 
 	const formData = reactive({
 		role_id: "",
+		manager_id: "",
 		name: "",
 		surname: "",
 		fiscal_identification: "",
@@ -274,6 +311,11 @@
 		if (validate.value.$invalid) {
 			//TODO
 		} else {
+
+			if(formData.manager_id === '-'){
+				formData.manager_id = 0;
+			}
+
 			emit('updateEmployeeForm', employee.value.id, formData);
 		}
 	};
@@ -305,6 +347,17 @@
 		//select.value = employee.value.user.roles[0].id.toString();
 		//Select Languages
 		selectLangs.value = languages.value;
+
+
+		await getEmployees();
+		selectManagers.value = employees.value;
+
+
+
+		console.log(employee.value.manager.id.toString());
+
+		formData.manager_id = employee.value.manager.id.toString();
+
 
 	});
 

@@ -182,6 +182,22 @@
                     }
                 },
 				{
+                    title: t("boss"),
+                    minWidth: 200,
+                    responsive: 0,
+                    field: "",
+                    vertAlign: "middle",
+                    headerHozAlign:"left",
+                    formatter(cell) {
+						if(cell.getData().manager){
+							console.log({...cell.getData().manager.name});
+							return `${cell.getData().manager.name} ${cell.getData().manager.surname}`;
+						}else{
+							return t('--');
+						}
+                    }
+                },
+				{
                     title: t("language"),
                     minWidth: 200,
                     responsive: 0,
