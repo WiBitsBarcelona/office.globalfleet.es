@@ -314,7 +314,7 @@ const getData = async () => {
     
 
 
-    let currentData = { from_at: dateFrom, to_at: dateTo };;
+    let currentData = { from_at: dateFrom, to_at: dateTo };
     await getDriverPositions(selected_driver.value, currentData);
 
     if (driverPositions.value.length == 0) {

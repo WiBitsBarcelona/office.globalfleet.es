@@ -16,9 +16,9 @@ export default function useSessionLog() {
 		}
 	}
 
-	const getSessionLogs = async () => {
+	const getSessionLogs = async (params = null) => {
 		sessionLogErrors.value = [];
-		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}session-logs/list`,{
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}session-logs/list`+ params,{
 			method: 'GET',
 			headers: config.headers,
 		})
