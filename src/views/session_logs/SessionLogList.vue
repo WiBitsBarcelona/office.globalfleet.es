@@ -482,7 +482,6 @@ const hidePositioningModal = () => {
 
 const updateData = async () => {
 	//console.log(daterange.value);
-	console.log("set data");
 	tableData.value = await findData(daterange.value);
 	tabulator.value.setData(tableData.value);
 }
