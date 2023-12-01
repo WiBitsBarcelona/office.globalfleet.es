@@ -22,32 +22,37 @@
 			</form>
 
 			<div class="flex flex-row mr-auto">
-				<Litepicker v-model="daterange" :options="{
-					autoApply: false,
-					singleMode: false,
-					numberOfColumns: 2,
-					numberOfMonths: 2,
-					lang: currentLocale,
-					showWeekNumbers: false,
-					dropdowns: {
-						minYear: 2000,
-						maxYear: null,
-						months: true,
-						years: true,
-					},
-					buttonText: {
-						apply: t('btn_accept'),
-						cancel: t('btn_cancel')
-					},
-					tooltipText: {
-						one: t('day'),
-						other: t('days')
-					},
-				}" class="form-control" />
+				<Litepicker 
+					v-model="daterange" 
+					:options="{
+						autoApply: false,
+						singleMode: false,
+						numberOfColumns: 2,
+						numberOfMonths: 2,
+						lang: currentLocale,
+						showWeekNumbers: false,
+						dropdowns: {
+							minYear: 2000,
+							maxYear: null,
+							months: true,
+							years: true,
+						},
+						buttonText: {
+							apply: t('btn_accept'),
+							cancel: t('btn_cancel')
+						},
+						tooltipText: {
+							one: t('day'),
+							other: t('days')
+						},
+					}" 
+					class="form-control" 
+				/>
 				<button @click="updateData" class="btn btn-outline-primary w-32 ml-3">
           <CheckIcon class="w-4 h-4 mr-2" /> {{ $t('btn_accept') }}
         </button>
 			</div>
+
 			<div class="flex sm:mt-0">
 				<div class="flex items-center sm:flex-row">
 					<div class="ml-2 mr-5 font-light text-gray-600">{{ $t("session_log.filter_by") }}</div>
@@ -78,6 +83,7 @@
 					</div>
 				</div>
 			</div>
+			
 		</div>
 		<div class="overflow-x-auto scrollbar-hidden">
 			<div id="tabulator" ref="tableRef" class="mt-5 table-report table-report--tabulator"></div>
@@ -230,6 +236,12 @@ switch (localStorage.getItem('locale')) {
 		currentLocale.value = "es-ES";
 		break;
 }
+
+
+const onClickRange = () => {
+	console.log("pasa desde FOCUS");
+}
+
 
 const findData = async (dateRangeNew) => {
 	let rangeArray = dateRangeNew.split('-');
