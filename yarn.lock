@@ -422,6 +422,11 @@
   resolved "https://registry.npmjs.org/@cometchat-pro/chat/-/chat-3.0.12.tgz"
   integrity sha512-WS8lwdV4OHDEFwez6QaDtWgU1g6YsouOdHsHJla7CaNBiH0CqOrqEHPRQ0vY9GzIMyM+I4W3uuXS88aP9JjdpQ==
 
+"@cometchat/chat-sdk-javascript@^4.0.2":
+  version "4.0.2"
+  resolved "https://registry.npmjs.org/@cometchat/chat-sdk-javascript/-/chat-sdk-javascript-4.0.2.tgz"
+  integrity sha512-vQBlnDgLZvkAk+qW/LlBIgz1M+D8nc/euvCAWRAfM2fyt+ENLl1ayHjV+Z3RVE/D/V/9wrP1nDIdagbVg7aDKw==
+
 "@csstools/sass-import-resolve@^1.0.0":
   version "1.0.0"
   resolved "https://registry.npmjs.org/@csstools/sass-import-resolve/-/sass-import-resolve-1.0.0.tgz"
