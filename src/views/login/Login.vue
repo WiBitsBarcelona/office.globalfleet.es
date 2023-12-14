@@ -131,6 +131,11 @@ import { useRouter } from "vue-router";
 import { Toast } from '@/utils/toast';
 import Preloader from '@/components/preloader/Preloader.vue';
 
+//Firebase & CometchatSDK
+import { cometchatLogin } from '@/models/cometchat/CometchatSDK';
+
+
+
 
 const useAuthentication = useAuthenticationStore();
 const router = useRouter();
@@ -156,7 +161,11 @@ const handleSubmit = async() => {
   await useAuthentication.login(email.value, password.value);
 
   if(useAuthentication.user){
-    loading.value = false; 
+    loading.value = false;
+    
+    //Firebase & CometchatSDK
+    await cometchatLogin();
+
     router.push('/dashboard');
   }
 
