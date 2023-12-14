@@ -87,6 +87,9 @@
   import localeSelect from '@/components/localeSelect/Main.vue';
   import { useI18n } from 'vue-i18n';
 
+  //Firebase & CometchatSDK
+import { cometchatLogout } from '@/models/cometchat/CometchatSDK';
+
   
   const { t } = useI18n();
 
@@ -103,8 +106,13 @@
   };
 
   const logout = async() => {    
+
+    await cometchatLogout();
+
     await useAuthentication.logout();
-    route.push({name:'login'});
+
+    route.push( {name:'login'} );
+    
   }
 
   
