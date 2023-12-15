@@ -100,9 +100,6 @@ export default function cometchatSDKModel() {
     
     const login = async () => {
     
-    
-        
-    
         const user = useAuthentication.getUser;
     
         if (!user.employee.company.firebase || !user.employee.company.cometchat) {
@@ -161,9 +158,7 @@ export default function cometchatSDKModel() {
     
     }
     
-    
-    
-    
+
     
     const cometchatLogin = async () => {
     
@@ -197,7 +192,7 @@ export default function cometchatSDKModel() {
 
             updateEmployee(user.employee.id, {firebase_token: '-'});
 
-            console.log('5. Logged out');
+            console.log('4. Logged out');
     
         } catch (error) {
             console.error(error);
