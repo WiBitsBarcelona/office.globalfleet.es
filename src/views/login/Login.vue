@@ -164,7 +164,7 @@ const handleSubmit = async() => {
     
     
     //Firebase & CometchatSDK
-    await cometchatLogin();
+    //await cometchatLogin();
 
     loading.value = false;
     router.push('/dashboard');

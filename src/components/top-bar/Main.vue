@@ -118,7 +118,8 @@
 
     loading.value = true; 
 
-    await cometchatLogout();
+    //Firebase & CometchatSDK
+    //await cometchatLogout();
 
     await useAuthentication.logout();
 
