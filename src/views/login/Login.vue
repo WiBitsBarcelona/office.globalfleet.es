@@ -161,12 +161,14 @@ const handleSubmit = async() => {
   await useAuthentication.login(email.value, password.value);
 
   if(useAuthentication.user){
-    loading.value = false;
+    
     
     //Firebase & CometchatSDK
     await cometchatLogin();
 
+    loading.value = false;
     router.push('/dashboard');
+
   }
 
   if(useAuthentication.errors){

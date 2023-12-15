@@ -1,4 +1,7 @@
 <template>
+
+  <Preloader v-if="loading" />
+
   <!-- BEGIN: Top Bar -->
   <div
     class="top-bar-boxed h-[70px] md:h-[65px] z-[51] border-b border-white/[0.08] mt-12 md:mt-0 -mx-3 sm:-mx-8 md:-mx-0 px-3 md:border-b-0 relative md:fixed md:inset-x-0 md:top-0 sm:px-8 md:px-10 md:pt-10 md:bg-gradient-to-b md:from-slate-100 md:to-transparent dark:md:from-darkmode-700"
@@ -87,14 +90,20 @@
   import localeSelect from '@/components/localeSelect/Main.vue';
   import { useI18n } from 'vue-i18n';
 
+  import Preloader from '@/components/preloader/Preloader.vue'; 
+
   //Firebase & CometchatSDK
-import { cometchatLogout } from '@/models/cometchat/CometchatSDK';
+  import { cometchatLogout } from '@/models/cometchat/CometchatSDK';
 
   
   const { t } = useI18n();
 
   const useAuthentication = useAuthenticationStore();
   const route = useRouter();
+
+  const loading = ref(false);
+
+
 
   const searchDropdown = ref(false);
   const showSearchDropdown = () => {
@@ -107,9 +116,13 @@ import { cometchatLogout } from '@/models/cometchat/CometchatSDK';
 
   const logout = async() => {    
 
+    loading.value = true; 
+
     await cometchatLogout();
 
     await useAuthentication.logout();
+
+    loading.value = false; 
 
     route.push( {name:'login'} );
     

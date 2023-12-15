@@ -12,28 +12,79 @@ const useAuthentication = useAuthenticationStore();
 
 
 
-const firebaseConfig = {
-    apiKey: "AIzaSyAnqeT7eqxzObiyOLJ_aGgVIf_5CDSVmQU",
-    authDomain: "globalfleet-cometchat.firebaseapp.com",
-    projectId: "globalfleet-cometchat",
-    storageBucket: "globalfleet-cometchat.appspot.com",
-    messagingSenderId: "767180935601",
-    appId: "1:767180935601:web:add4c6e5364aa7c40fad90",
-    measurementId: "G-9YTMREBTS7"
-};
+
+let firebaseConfig;
 
 // Initialize Firebase
-const firebase = initializeApp(firebaseConfig);
-const messaging = getMessaging(firebase);
+let firebase;
+let messaging;
 
-const APP_ID = "231046aa8ee568e3";
-const REGION = "eu";
-const AUTH_KEY = "f588a52d5487c195325e84aee5b610d0647a43bf";
+let vapidKeyDB;
 
-const APP_SETTING = new CometChat.AppSettingsBuilder().subscribePresenceForAllUsers().setRegion(REGION).build();
+
+let APP_ID;
+let REGION;
+let AUTH_KEY;
+
+let APP_SETTING;
 let FCM_TOKEN = '';
 
-let UID = 'emp_67'; //GEstor de trafico
+let UID; //GEstor de trafico
+
+
+
+
+const loadData = async(user) => {
+
+    //console.log(user);
+    
+    // firebaseConfig = {
+    //     apiKey: "AIzaSyAnqeT7eqxzObiyOLJ_aGgVIf_5CDSVmQU",
+    //     authDomain: "globalfleet-cometchat.firebaseapp.com",
+    //     projectId: "globalfleet-cometchat",
+    //     storageBucket: "globalfleet-cometchat.appspot.com",
+    //     messagingSenderId: "767180935601",
+    //     appId: "1:767180935601:web:add4c6e5364aa7c40fad90",
+    //     measurementId: "G-9YTMREBTS7"
+    // };
+    // vapidKeyDB = 'BJubSjGb5alNAd9ebq7JWHKHVd5ui52dFcQjpQ-FEJMkaQ9thIv0d9qb_867gf1iDXniQf-Wfn3ksLcI1OrZnRk';
+    // APP_ID = "231046aa8ee568e3";
+    // REGION = "eu";
+    // AUTH_KEY = "f588a52d5487c195325e84aee5b610d0647a43bf";
+    // UID = 'emp_67';
+
+    firebaseConfig = {
+        apiKey: user.employee.company.firebase.api_key,
+        authDomain: user.employee.company.firebase.auth_domain,
+        projectId: user.employee.company.firebase.project_id,
+        storageBucket: user.employee.company.firebase.storage_bucket,
+        messagingSenderId: user.employee.company.firebase.messaging_sender_id,
+        appId: user.employee.company.firebase.app_id,
+        measurementId: user.employee.company.firebase.measurement_id
+    };
+
+    vapidKeyDB = user.employee.company.firebase.vapid_key;
+
+
+    firebase = initializeApp(firebaseConfig);
+    messaging = getMessaging(firebase);
+
+
+    APP_ID = user.employee.company.cometchat.app_id;
+    REGION = user.employee.company.cometchat.region;
+    AUTH_KEY = user.employee.company.cometchat.auth_key;
+
+    APP_SETTING = new CometChat.AppSettingsBuilder().subscribePresenceForAllUsers().setRegion(REGION).build();
+
+
+    UID = user.employee.cometchat_uid;
+
+
+
+
+}
+
+
 
 
 
@@ -48,7 +99,9 @@ const login = async() => {
 
 
     //TODO implementar esto:
-    //console.log(useAuthentication.getUser);
+    await loadData(useAuthentication.getUser);
+
+
 
     try {
       // CC init
@@ -59,11 +112,11 @@ const login = async() => {
       const loginResponse = await CometChat.login(UID, AUTH_KEY);
       console.log('1. User login complete', loginResponse);
   
-      CometChat.getLoggedinUser().then(user => console.log(user.name));
+      await CometChat.getLoggedinUser().then(user => console.log(user.name));
   
   
       //Fetch the FCM Token
-      getToken(messaging, { vapidKey: 'BJubSjGb5alNAd9ebq7JWHKHVd5ui52dFcQjpQ-FEJMkaQ9thIv0d9qb_867gf1iDXniQf-Wfn3ksLcI1OrZnRk' }).then((currentToken) => {
+      await getToken(messaging, { vapidKey: vapidKeyDB }).then((currentToken) => {
         if (currentToken) {
           // Send the token to your server and update the UI if necessary
           console.log("TOKEN is: " + currentToken);
@@ -111,6 +164,10 @@ const cometchatLogin = async() => {
 const cometchatLogout = async () => {
 
     console.log("Logout");
+
+    console.log("User: ", useAuthentication.getUser);
+
+    await loadData(useAuthentication.getUser);
 
     try {
         // CC init
