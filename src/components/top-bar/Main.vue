@@ -81,6 +81,7 @@
   <!-- END: Top Bar -->
 </template>
 
+
 <script setup>
   import { ref } from "vue";
   import { useRouter } from "vue-router";
@@ -95,6 +96,10 @@
   //Firebase & CometchatSDK
   import cometchatSDKModel from '@/models/cometchat/CometchatSDK';
 
+
+  defineOptions({
+    inheritAttrs: false
+  })
   
   const {cometchatLogout } = cometchatSDKModel();
 
