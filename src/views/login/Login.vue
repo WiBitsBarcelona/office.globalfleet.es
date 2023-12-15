@@ -132,9 +132,12 @@ import { Toast } from '@/utils/toast';
 import Preloader from '@/components/preloader/Preloader.vue';
 
 //Firebase & CometchatSDK
-import { cometchatLogin } from '@/models/cometchat/CometchatSDK';
+import cometchatSDKModel from '@/models/cometchat/CometchatSDK';
 
 
+
+
+const {cometchatLogin} = cometchatSDKModel();
 
 
 const useAuthentication = useAuthenticationStore();
@@ -164,7 +167,7 @@ const handleSubmit = async() => {
     
     
     //Firebase & CometchatSDK
-    //await cometchatLogin();
+    await cometchatLogin();
 
     loading.value = false;
     router.push('/dashboard');

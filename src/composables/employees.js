@@ -78,7 +78,17 @@ export default function useEmployee() {
 	const updateEmployee = async (id, data) => {
 		errors.value = [];
 		try {
-			await axios.put(`${import.meta.env.VITE_API_URL_GLOBALFLEET}employees/update/${id}`, data, config);
+			
+			await axios.put(
+				`${import.meta.env.VITE_API_URL_GLOBALFLEET}employees/update/${id}`, 
+				data, 
+				{
+					headers: {
+						"Content-Type": "application/json",
+						"Authorization": `Bearer ${localStorage.getItem('token')}`
+					}
+				}
+			);
 		} catch (e) {
 			// Errors 500
 			if (e.response.status >= 500 &&  e.response.status <= 599) {

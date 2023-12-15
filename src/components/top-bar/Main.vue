@@ -44,7 +44,7 @@
           role="button"
           class="zoom-in"
         >
-        <ProfileAvatar :username="useAuthentication.user.name" bg-color="#d0d0d0" border-color="#d0d0d0"></ProfileAvatar>
+        <ProfileAvatar :username="useAuthentication.user?.name" bg-color="#d0d0d0" border-color="#d0d0d0"></ProfileAvatar>
         </DropdownToggle>
         <DropdownMenu class="w-56">
           <DropdownContent
@@ -52,8 +52,8 @@
           >
             <DropdownHeader tag="div" class="!font-normal">
               <div class="font-medium">
-                {{ useAuthentication.getUser.employee.name }} {{ useAuthentication.getUser.employee.surname }} <br/>
-                <span class="font-light">{{ useAuthentication.getUser.roles[0].description }}</span>
+                {{ useAuthentication.getUser?.employee.name }} {{ useAuthentication.getUser?.employee.surname }} <br/>
+                <span class="font-light">{{ useAuthentication.getUser?.roles[0].description }}</span>
               </div>
             </DropdownHeader>
             <DropdownDivider class="border-white/[0.08]" />
@@ -93,9 +93,11 @@
   import Preloader from '@/components/preloader/Preloader.vue'; 
 
   //Firebase & CometchatSDK
-  import { cometchatLogout } from '@/models/cometchat/CometchatSDK';
+  import cometchatSDKModel from '@/models/cometchat/CometchatSDK';
 
   
+  const {cometchatLogout } = cometchatSDKModel();
+
   const { t } = useI18n();
 
   const useAuthentication = useAuthenticationStore();
@@ -119,7 +121,7 @@
     loading.value = true; 
 
     //Firebase & CometchatSDK
-    //await cometchatLogout();
+    await cometchatLogout();
 
     await useAuthentication.logout();
 
