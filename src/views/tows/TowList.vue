@@ -5,7 +5,7 @@
 	<!-- BEGIN: Page Layout Table -->
 	<div class="grid grid-cols-12 gap-6 mt-8">
     	<div class="col-span-12 intro-y">
-        	<h2 class="text-lg font-medium truncate mr-5">{{ $t('tows_of') }}<span class="text-xl font-bold">{{ useAuthentication.getUser.employee.company.name }}</span></h2>
+        	<h2 class="text-lg font-medium truncate mr-5">{{ $t('tows_of') }}<span class="text-xl font-bold">{{ useAuthentication.getUser?.employee.company.name }}</span></h2>
         </div>
 	</div>
 	<div class="intro-y box p-5 mt-5" id="div_table">

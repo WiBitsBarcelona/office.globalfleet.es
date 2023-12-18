@@ -1,4 +1,7 @@
 <template>
+
+  <Preloader v-if="loading" />
+
   <!-- BEGIN: Top Bar -->
   <div
     class="top-bar-boxed h-[70px] md:h-[65px] z-[51] border-b border-white/[0.08] mt-12 md:mt-0 -mx-3 sm:-mx-8 md:-mx-0 px-3 md:border-b-0 relative md:fixed md:inset-x-0 md:top-0 sm:px-8 md:px-10 md:pt-10 md:bg-gradient-to-b md:from-slate-100 md:to-transparent dark:md:from-darkmode-700"
@@ -41,7 +44,7 @@
           role="button"
           class="zoom-in"
         >
-        <ProfileAvatar :username="useAuthentication.user.name" bg-color="#d0d0d0" border-color="#d0d0d0"></ProfileAvatar>
+        <ProfileAvatar :username="useAuthentication.user?.name" bg-color="#d0d0d0" border-color="#d0d0d0"></ProfileAvatar>
         </DropdownToggle>
         <DropdownMenu class="w-56">
           <DropdownContent
@@ -49,8 +52,8 @@
           >
             <DropdownHeader tag="div" class="!font-normal">
               <div class="font-medium">
-                {{ useAuthentication.getUser.employee.name }} {{ useAuthentication.getUser.employee.surname }} <br/>
-                <span class="font-light">{{ useAuthentication.getUser.roles[0].description }}</span>
+                {{ useAuthentication.getUser?.employee.name }} {{ useAuthentication.getUser?.employee.surname }} <br/>
+                <span class="font-light">{{ useAuthentication.getUser?.roles[0].description }}</span>
               </div>
             </DropdownHeader>
             <DropdownDivider class="border-white/[0.08]" />
@@ -78,6 +81,7 @@
   <!-- END: Top Bar -->
 </template>
 
+
 <script setup>
   import { ref } from "vue";
   import { useRouter } from "vue-router";
@@ -87,11 +91,26 @@
   import localeSelect from '@/components/localeSelect/Main.vue';
   import { useI18n } from 'vue-i18n';
 
+  import Preloader from '@/components/preloader/Preloader.vue'; 
+
+  //Firebase & CometchatSDK
+  import cometchatSDKModel from '@/models/cometchat/CometchatSDK';
+
+
+  defineOptions({
+    inheritAttrs: false
+  })
   
+  const {cometchatLogout } = cometchatSDKModel();
+
   const { t } = useI18n();
 
   const useAuthentication = useAuthenticationStore();
   const route = useRouter();
+
+  const loading = ref(false);
+
+
 
   const searchDropdown = ref(false);
   const showSearchDropdown = () => {
@@ -103,8 +122,18 @@
   };
 
   const logout = async() => {    
+
+    loading.value = true; 
+
+    //Firebase & CometchatSDK
+    await cometchatLogout();
+
     await useAuthentication.logout();
-    route.push({name:'login'});
+
+    loading.value = false; 
+
+    route.push( {name:'login'} );
+    
   }
 
   

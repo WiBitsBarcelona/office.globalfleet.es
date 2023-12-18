@@ -132,6 +132,8 @@ import { useI18n } from "vue-i18n";
 import { Toast } from '@/utils/toast';
 
 
+
+
 const { unreadMessageCount, checkUnreadMessages, getCometChatCredentials } = useChat();
 
 const route = useRoute();
@@ -142,6 +144,7 @@ const simpleMenu = computed(() => nestedMenu(simpleMenuStore.menu, route));
 const useAuthentication = useAuthenticationStore();
 
 const { t } = useI18n();
+
 
 
 provide("forceActiveMenu", (pageName) => {
@@ -155,6 +158,7 @@ watch(
     delete route.forceActiveMenu;
     //formattedMenu.value = $h.toRaw(simpleMenu.value);
     await formattedMenuList();
+
   }
 );
 
@@ -215,7 +219,6 @@ const formattedMenuList = async () => {
   formattedMenu.value = menuNew;
 
 
-
   
 
   /************************
@@ -233,5 +236,7 @@ const formattedMenuList = async () => {
   }
 
 }
+
+
 
 </script>

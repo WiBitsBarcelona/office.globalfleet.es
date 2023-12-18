@@ -71,22 +71,22 @@ const routes = [
     beforeEnter: requireAuth,
     children: [
       {
-        path: "dashboard",
+        path: "/dashboard",
         name: "dashboard",
         component: () => import('@/views/dashboard/Dashboard.vue'),
       },
       {
-        path: "profile",
+        path: "/profile",
         name: "profile",
         component: () => import('@/views/profiles/Profile.vue'),
       },
       {
-        path: "help",
+        path: "/help",
         name: "help",
         component: () => import('@/views/help/Help.vue'),
       },
       {
-        path: "trips",
+        path: "/trips",
         name: "trips",
         component: () => import('@/views/trips/TripGrid.vue'),
       },

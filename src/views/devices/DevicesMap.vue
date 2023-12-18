@@ -2,7 +2,7 @@
     <div class="relative">
         <div class="grid grid-cols-12 gap-1 mt-8">
             <div class="col-span-7 intro-y mb-5">
-                <h2 class="text-lg font-medium truncate mr-5">{{ $t("devices_of") }} <span class="text-xl font-bold">{{ useAuthentication.getUser.employee.company.name }}</span></h2>
+                <h2 class="text-lg font-medium truncate mr-5">{{ $t("devices_of") }} <span class="text-xl font-bold">{{ useAuthentication.getUser?.employee.company.name }}</span></h2>
             </div>
             <div class="col-span-3 intro-y mt-2 mb-5 justify-self-end">
                 <div class="form-check form-switch">

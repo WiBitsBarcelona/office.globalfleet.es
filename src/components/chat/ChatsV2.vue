@@ -843,8 +843,10 @@ const sendMessage = async () => {
 
         if (receiverType.value == 'user') {
 
-            const chatUserLang = await getLangxuid(ChatId.value)
+            // obtenemos el lenguaje del usuario con el que hablamos 
+            const chatUserLang = await getLangxuid(ChatId.value);
 
+            // traducimos los mensajes 
             let textTranslateA = '';
             if (message.value == '') {
                 textTranslateA = await translateText('Documento Adjunto', chatUserLang, myLang)
@@ -852,10 +854,31 @@ const sendMessage = async () => {
                 textTranslateA = await translateText(message.value, chatUserLang, myLang)
             }
 
+            // guardamos el idioma del usuario que envia el mensaje
             const chatsLang = { sender: myLang, received: chatUserLang }
 
+            //Enviamos el mensaje
             await sendTextMessage(myUid.value, message.value == '' ? 'Documento Adjunto' : message.value, ChatId.value, receiverType.value, isChecked.value, arrayMedia, textTranslateA, chatsLang, '');
             isChecked.value = false
+            mediaSource.value = null
+        } else {
+            const groupTextTranslate = [];
+
+            // recorremos el array de los miembros del grupo y traducimos los mensajes 
+            // de acuerdo al idioma de cada uno y lo almacenamos en un array groupTextTranslate
+            for (let i = 0; i < membersLang.length; i++) {
+                let element = membersLang[i];
+                const translatedText = await translateText(message.value, element, myLang);
+                const arrayText = { Lang: element, TextTranslate: translatedText[0].text, TitleTranslate: translatedText[1].text };
+                groupTextTranslate.push(arrayText);
+            }
+
+            // guardamos el idioma del usuario que envia el mensaje
+            const chatsLang = { sender: myLang };
+
+            //Enviamos el mensaje
+            await sendTextMessage(myUid.value, message.value == '' ? 'Documento Adjunto' : message.value, ChatId.value, receiverType.value, isChecked.value, arrayMedia, '', chatsLang, groupTextTranslate);
+            isChecked.value = false;
             mediaSource.value = null
         }
 
@@ -980,7 +1003,7 @@ const onFileChange = async (event) => {
     let driver_id = ChatId.value.substr(ChatId.value?.lastIndexOf("_") + 1);
     let fileType = fileData.type.substr(fileData.type?.lastIndexOf("/") + 1);
 
-    const arrayFile = { driver_id: driver_id, file_name: fileData.name, size: fileData.size, type: fileType, data: data64, has_ask_confirm: 0, }
+    const arrayFile = { driver_id: driver_id, file_name: fileData.name, size: fileData.size, type: fileType, data: data64, has_ask_confirm: 0, pages: 0}
 
     mediaAttachments.value = arrayFile
 }
@@ -1000,6 +1023,8 @@ const toBase64 = file => new Promise((resolve, reject) => {
 
 // abrir pdf o imagenes
 const openDriverFile = async (path) => {
+
+console.log(path)
     /*Swal.fire({
         icon: 'info',
         title: '',

@@ -3,7 +3,10 @@
     <!-- <LocaleSelect/> -->
     <AuthFooter/>
 
-    <Preloader v-if="loading" />
+    <div>
+      <Preloader v-if="loading" />
+    </div>
+    
 
     <div class="container sm:px-10">
       <div class="block xl:grid grid-cols-2 gap-4">
@@ -131,6 +134,14 @@ import { useRouter } from "vue-router";
 import { Toast } from '@/utils/toast';
 import Preloader from '@/components/preloader/Preloader.vue';
 
+//Firebase & CometchatSDK
+import cometchatSDKModel from '@/models/cometchat/CometchatSDK';
+
+
+
+
+const {cometchatLogin} = cometchatSDKModel();
+
 
 const useAuthentication = useAuthenticationStore();
 const router = useRouter();
@@ -156,8 +167,14 @@ const handleSubmit = async() => {
   await useAuthentication.login(email.value, password.value);
 
   if(useAuthentication.user){
-    loading.value = false; 
+    
+    
+    //Firebase & CometchatSDK
+    await cometchatLogin();
+
+    loading.value = false;
     router.push('/dashboard');
+
   }
 
   if(useAuthentication.errors){

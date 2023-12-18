@@ -7,7 +7,7 @@
         <div class="grid grid-cols-12 gap-1 mt-8">
 
           <div class="col-span-10 intro-y mb-5">
-            <h2 class="text-lg font-medium truncate mr-5 mb-5">{{ $t("trips") }} <span class="text-xl font-bold">{{ useAuthentication.getUser.employee.company.name }}</span></h2>
+            <h2 class="text-lg font-medium truncate mr-5 mb-5">{{ $t("trips") }} <span class="text-xl font-bold">{{ useAuthentication.getUser?.employee.company.name }}</span></h2>
           </div>
           
           <div class="col-span-2 intro-y mb-5 text-end">
