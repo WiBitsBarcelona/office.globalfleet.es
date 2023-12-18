@@ -438,6 +438,7 @@
   "select_tow_manager": "Selecciona el Gestor del Remolque...",
   "delete_tow_title": "Eliminar el remolque:",
   "session_logs_of": "Log de Sesiones de ",
+  "driver_logs_of": "Log de Conductores de ",
   "chat":{
     "chats": "Chats",
     "newChat" : "Nuevo Chat",
@@ -584,6 +585,23 @@
     "position_id": "Id posicionamiento",
     "modal": {
       "title": "Detalles Posicionamiento"
+    }
+  },
+  "driver_log": {
+    "filter_by": "Ver:",
+    "filter_all": "Todos",
+    "filter_trip": "Viajes",
+    "filter_stage": "Etapas",
+    "filter_task": "Tareas",
+    "filter_action": "Acciones",
+    "date": "Fecha",
+    "user": "Usuario",
+    "model_id": "Id",
+    "origin": "Origen",
+    "position": "Posición GPS",
+    "position_id": "Id Pos.",
+    "modal": {
+      "title": "Detalles Modelo de Datos"
     }
   }
 }
