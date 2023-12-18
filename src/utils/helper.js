@@ -9,6 +9,11 @@ const iconsAssets = import.meta.globEager(
 
 const helpers = {
   cutText(text, length) {
+
+    if(text.length <= 0){
+      return;
+    }
+
     if (text.split(" ").length > 1) {
       const string = text.substring(0, length);
       const splitText = string.split(" ");
