@@ -6,12 +6,20 @@
       "trips": "Trips",
       "devices": "Devices",
       "devices-history": "History of Devices",
-      "documents": "Documents",
+      "documents": "Company Documents",
+      "documents-drivers": "Drivers Documents",
+      "trip-documents": "Trips Documents",
       "incidents": "Incidents",
       "chat": "Messages",
       "users": "Users",
       "drivers": "Drivers",
-      "help": "Help"
+      "help": "Help",
+      "vehicles": "Vehicles",
+      "tows": "Tows",
+      "trips-create": "Create Trip",
+      "trips-edit": "Edit Trip",
+      "session-log": "Sessions Log",
+      "driver-log": "Drivers Log"
   },
   "auth_footer": {
       "all_rights": "All rights reserved.",

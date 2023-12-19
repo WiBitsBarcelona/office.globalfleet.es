@@ -46,7 +46,8 @@
   : router.resolve({ name: subMenu.pageName }).path
   " class="side-menu" :class="{ 'side-menu--active': subMenu.active }" @click="linkTo(subMenu, router, $event)">
                       <div class="side-menu__icon">
-                        <ActivityIcon />
+                        <!-- <ActivityIcon /> -->
+                        <component :is="subMenu.icon" />
                       </div>
                       <div class="side-menu__title">
                         {{ subMenu.title }}

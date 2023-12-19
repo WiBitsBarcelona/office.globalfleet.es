@@ -122,7 +122,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
 import xlsx from "xlsx";
-import { createIcons, icons } from "lucide";
+import { createIcons, icons, Target } from "lucide";
 import Tabulator from "tabulator-tables";
 import { useI18n } from 'vue-i18n';
 import { helper as $h } from "@/utils/helper";

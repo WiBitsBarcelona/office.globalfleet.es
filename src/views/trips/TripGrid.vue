@@ -191,6 +191,15 @@ import { useI18n } from 'vue-i18n';
 import { useAuthenticationStore } from '@/stores/auth/authentications';
 
 
+import { useNotificationStore } from '@/stores/notifications/notification';
+
+// const notificationStore = useNotificationStore();
+// notificationStore.setNDocument(notificationStore.getNDocument + 1);
+// console.log(notificationStore.getNDocument);
+
+
+
+
 const { trips, getTrips, getTrip, trip } = useTrips();
 const { t } = useI18n();
 
@@ -227,6 +236,8 @@ const trip_created = ref(0);
 const trip_pending = ref(0);
 const trip_progress = ref(0);
 const trip_all = ref(0);
+
+
 
 
 
@@ -412,6 +423,7 @@ const find = async() => {
   });
 
   trip_all.value = trips.value.length;
+
 }
 
 
