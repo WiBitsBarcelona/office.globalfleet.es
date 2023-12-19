@@ -95,12 +95,22 @@
               </div>
               <div v-else>
                 <div v-if="conversation.lastMessage.sender == userInfo.uid">
-                  {{ $h.cutText(conversation.lastMessage.data.text, 30) }}
+                  <!-- {{ conversation.lastMessage.data.text }} -->
+                  <!-- Texto Normal -->
+                  <div v-if="conversation.lastMessage.data.text">
+                    {{ $h.cutText(conversation.lastMessage.data.text, 30) }}
+                  </div>
+                  <!-- Texto editado con confirmacion -->
+                  <div v-else>
+                    {{ $h.cutText(conversation.lastMessage.data.entities.on.entity.data.text, 30) }}
+                  </div>
                 </div>
                 <div v-else>
+                  <!-- Si tiene un texto traducido -->
                   <div v-if="conversation.lastMessage.data.customData">
                     {{ $h.cutText(conversation.lastMessage.data.customData.translateText, 30) }}
                   </div>
+                  <!-- Texto Normal -->
                   <div v-else>
                     {{ $h.cutText(conversation.lastMessage.data.text, 30) }}
                   </div>
@@ -139,7 +149,7 @@
         </button>
       </div>
     </div>
-    
+
   </div>
 
   <!-- Cuadre de xat -->
@@ -174,6 +184,8 @@ const {
   loadChatMessages,
   markUserConversationAsRead,
   markGroupConversationAsRead,
+  mark_group_conversation_as_delivered,
+  mark_user_conversation_as_delivered,
   getUserGroups,
   getGroupMembers,
   checkUnreadMessages,
@@ -302,6 +314,7 @@ const initialize = async () => {
       onTextMessageReceived: (textMessage) => {
         //console.log("Text message received successfully", textMessage);
         printTextMessage(textMessage);
+        markDeliveredMessage(textMessage)
       },
 
       onMediaMessageReceived: (mediaMessage) => {
@@ -730,6 +743,17 @@ const isYesterday = (date, currentDate) => {
     date.getMonth() === yesterday.getMonth() &&
     date.getFullYear() === yesterday.getFullYear()
   );
+}
+
+const markDeliveredMessage = async (message) => {
+
+  if (message.receiverId == userInfo.uid) {
+    if (message.receiverType == 'user') {
+      await mark_user_conversation_as_delivered(message.rawMessage.sender, message.rawMessage.receiver)
+    } else {
+      await mark_group_conversation_as_delivered(message.rawMessage.sender, message.rawMessage.receiver)
+    }
+  }
 }
 
 </script>

@@ -63,37 +63,38 @@
                                             <div v-if="mensaje.data.attachments">
                                                 <div class="contMensajeEnviado">
                                                     <div class="contMensajeEnviadoArchivos">
-                                                        <div v-for="item in mensaje.data.attachments" :key="item.id">
-                                                            <div
-                                                                v-if="item.extension == 'jpg' || item.extension == 'jpeg' || item.extension == 'png'">
-                                                                <button style="width: 100%; align-items: center; display: flex; background: rgba(223, 242, 245, 0.1); 
-                                                                            padding: 8px; border-radius: 8px;"
-                                                                    @click="openDriverFile(item.url)">
-                                                                    <img src="../../assets/images/file.svg"
-                                                                        style="width: 30px; height: 30px;" />
-                                                                    <div style="display: grid;">
-                                                                        <p
-                                                                            style="font-size: 16px; margin: 0px; margin-right: 8px; display: flex; color: white; margin-left: 10px;">
-                                                                            {{ item.name.length > 15 ? item.name.substring(0,
-                                                                                15) +
-                                                                                "..." : item.name }}</p>
-                                                                    </div>
-                                                                </button>
-                                                            </div>
-                                                            <div v-else-if="item.extension == 'pdf'">
-                                                                <button style="width: 100%; align-items: center; display: flex; background: rgba(223, 242, 245, 0.1);
-                                                                            padding: 8px; border-radius: 8px;"
-                                                                    @click="openDriverFile(item.url)">
-                                                                    <img src="../../assets/images/pdf.svg"
-                                                                        style="width: 30px; height: 30px;" />
-                                                                    <div style="display: grid;">
-                                                                        <p
-                                                                            style="font-size: 16px; margin: 0px; margin-right: 8px; display: flex; color: white; margin-left: 10px;">
-                                                                            {{ item.name.length > 15 ? item.name.substring(0,
-                                                                                15) +
-                                                                                "..." : item.name }}</p>
-                                                                    </div>
-                                                                </button>
+                                                        <div v-for="(item,index) in mensaje.data.attachments" :key="item.id">
+                                                            <div v-if="index == 0">
+                                                                <div v-if="item.extension == 'jpg' || item.extension == 'jpeg' || item.extension == 'png'">
+                                                                    <button style="width: 100%; align-items: center; display: flex; background: rgba(223, 242, 245, 0.1); 
+                                                                                padding: 8px; border-radius: 8px;"
+                                                                        @click="openDriverFile(item.url)">
+                                                                        <img src="../../assets/images/file.svg"
+                                                                            style="width: 30px; height: 30px;" />
+                                                                        <div style="display: grid;">
+                                                                            <p
+                                                                                style="font-size: 16px; margin: 0px; margin-right: 8px; display: flex; color: white; margin-left: 10px;">
+                                                                                {{ item.name.length > 15 ? item.name.substring(0,
+                                                                                    15) +
+                                                                                    "..." : item.name }}</p>
+                                                                        </div>
+                                                                    </button>
+                                                                </div>
+                                                                <div v-else-if="item.extension == 'pdf'">
+                                                                    <button style="width: 100%; align-items: center; display: flex; background: rgba(223, 242, 245, 0.1);
+                                                                                padding: 8px; border-radius: 8px;"
+                                                                        @click="openDriverFile(item.url)">
+                                                                        <img src="../../assets/images/pdf.svg"
+                                                                            style="width: 30px; height: 30px;" />
+                                                                        <div style="display: grid;">
+                                                                            <p
+                                                                                style="font-size: 16px; margin: 0px; margin-right: 8px; display: flex; color: white; margin-left: 10px;">
+                                                                                {{ item.name.length > 15 ? item.name.substring(0,
+                                                                                    15) +
+                                                                                    "..." : item.name }}</p>
+                                                                        </div>
+                                                                    </button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         <div style="display: flex; margin-top: 8px;"
@@ -610,6 +611,7 @@ const mensajes = ref([]);
 let myLang;
 
 let membersLang = []
+let membersUid = []
 
 const viewModalParticipants = ref(false)
 const groupMembers = ref([])
@@ -776,11 +778,11 @@ const loadMessages = async () => {
     if (mensajes.value.length > 0) {
         //Para leer los mensajes
         //markUserConversationAsRead(myUid.value, ChatId.value);
-        if (receiverType.value == 'user') {
+        /*if (receiverType.value == 'user') {
             await mark_user_conversation_as_delivered(myUid.value, ChatId.value)
         } else {
             await mark_group_conversation_as_delivered(myUid.value, ChatId.value)
-        }
+        }*/
 
     }
 }
@@ -833,15 +835,15 @@ const sendMessage = async () => {
     // Controlamos que el mensaje no esté vacio
     const valueText = message.value.trim();
 
-    // Envio de mensjae con archivos
+    // Envio de mensaje con archivos
     if (mediaSource.value != null) {
 
-        const mediaPath = await storeDriverDocumentV2(mediaAttachments.value);
-
-        // creamos un array con los datos
-        let arrayMedia = { url: mediaPath.data.path, name: mediaAttachments.value.file_name, extension: mediaAttachments.value.type }
-
         if (receiverType.value == 'user') {
+
+            // Obtenemos el Path del archivo en cuestion
+            const mediaPath = await storeDriverDocumentV2(mediaAttachments.value);
+            // creamos un array con los datos
+            let arrayMedia = { url: mediaPath.data.path, name: mediaAttachments.value.file_name, extension: mediaAttachments.value.type, idDoc: mediaPath.data.id }
 
             // obtenemos el lenguaje del usuario con el que hablamos 
             const chatUserLang = await getLangxuid(ChatId.value);
@@ -862,22 +864,35 @@ const sendMessage = async () => {
             isChecked.value = false
             mediaSource.value = null
         } else {
+            const pathGroup = []
+
+            for (let i = 0; i < mediaAttachments.value.length; i++) {
+                const element = mediaAttachments.value[i];
+                // Obtenemos el Path del archivo en cuestion
+                const mediaPath = await storeDriverDocumentV2(element);   
+                console.log(mediaPath)
+                // creamos un array con los datos
+                let arrayMedia = { url: mediaPath.data.path, name: element.file_name, extension: element.type, idDoc: mediaPath.data.id , driver_id : element.driver_id}
+
+                pathGroup.push(arrayMedia);
+            }
+
             const groupTextTranslate = [];
 
             // recorremos el array de los miembros del grupo y traducimos los mensajes 
             // de acuerdo al idioma de cada uno y lo almacenamos en un array groupTextTranslate
             for (let i = 0; i < membersLang.length; i++) {
                 let element = membersLang[i];
-                const translatedText = await translateText(message.value, element, myLang);
+                const translatedText = await translateText(message.value == '' ? 'Documento Adjunto' : message.value, element, myLang);
                 const arrayText = { Lang: element, TextTranslate: translatedText[0].text, TitleTranslate: translatedText[1].text };
                 groupTextTranslate.push(arrayText);
             }
 
             // guardamos el idioma del usuario que envia el mensaje
             const chatsLang = { sender: myLang };
-
+            
             //Enviamos el mensaje
-            await sendTextMessage(myUid.value, message.value == '' ? 'Documento Adjunto' : message.value, ChatId.value, receiverType.value, isChecked.value, arrayMedia, '', chatsLang, groupTextTranslate);
+            await sendTextMessage(myUid.value, message.value == '' ? 'Documento Adjunto' : message.value, ChatId.value, receiverType.value, isChecked.value, pathGroup, '', chatsLang, groupTextTranslate);
             isChecked.value = false;
             mediaSource.value = null
         }
@@ -999,13 +1014,24 @@ const onFileChange = async (event) => {
     //console.log(filePath); // Muestra el web path en la consola
 
     let data64 = await toBase64(fileData)
+    let driver_id;
 
-    let driver_id = ChatId.value.substr(ChatId.value?.lastIndexOf("_") + 1);
-    let fileType = fileData.type.substr(fileData.type?.lastIndexOf("/") + 1);
+    if (receiverType.value == 'user') {
+        driver_id = ChatId.value.substr(ChatId.value?.lastIndexOf("_") + 1); 
+        let fileType = fileData.type.substr(fileData.type?.lastIndexOf("/") + 1);
+        const arrayFile = { driver_id: driver_id, file_name: fileData.name, size: fileData.size, type: fileType, data: data64, has_ask_confirm: 0, pages: 0}
+        mediaAttachments.value = arrayFile
+    } else {
+        let arrayFileGroup = []
+        let fileType = fileData.type.substr(fileData.type?.lastIndexOf("/") + 1);   
+        for (let i = 0; i < membersUid.length; i++) {
+            const idDriver = membersUid[i];
+            const arrayFile = { driver_id: idDriver, file_name: fileData.name, size: fileData.size, type: fileType, data: data64, has_ask_confirm: 0, pages: 0}
+            arrayFileGroup.push(arrayFile)
+        }
+        mediaAttachments.value = arrayFileGroup
+    }
 
-    const arrayFile = { driver_id: driver_id, file_name: fileData.name, size: fileData.size, type: fileType, data: data64, has_ask_confirm: 0, pages: 0}
-
-    mediaAttachments.value = arrayFile
 }
 
 // eliminar archivo que se subira
@@ -1151,20 +1177,29 @@ const unreadMessageCount = async () => {
     });
 }
 
+
+
 // Obtener los uid de los usuarios del grupo
 const getUidxGroup = async () => {
     const uids = await getGroupMembers(ChatId.value);
 
     const uniqueMembersLang = new Set();
+    const uniqueMenbersUid = new Set()
 
     for (let i = 0; i < uids.length; i++) {
         const element = uids[i];
         const uid_lang = await getLangxuid(element.uid);
         uniqueMembersLang.add(uid_lang); // Agregar elementos al conjunto
+        // Verifica si el valor no comienza con "emp"
+        if (!element.uid.startsWith("emp")) {
+            // Agrega el elemento al conjunto uniqueMembersUid
+            uniqueMenbersUid.add(element.uid.substr(element.uid?.lastIndexOf("_") + 1));
+        }
     }
 
     // Convertir el conjunto nuevamente a un array si es necesario
     membersLang = Array.from(uniqueMembersLang);
+    membersUid = Array.from(uniqueMenbersUid)
 }
 
 // funcion para abrir el modal

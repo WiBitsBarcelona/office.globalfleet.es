@@ -235,15 +235,15 @@ export default function useChat() {
   };
 
   // Marcar mensajes como enviado una conversacion entre 2 usuarios
-  const mark_user_conversation_as_delivered = async (user, conversationWith) => {
+  const mark_user_conversation_as_delivered = async (conversationWith, user) => {
     try {
       const response = await fetch(
-        `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/users/${user}/conversation/delivered`,
+        `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/users/${conversationWith}/conversation/delivered`,
         {
           method: "POST",
           headers: {
             accept: "application/json",
-            onBehalfOf: conversationWith,
+            onBehalfOf: user,
             apikey: cometData.value.company.cometchat.rest_api_key,
           },
         }
@@ -259,7 +259,7 @@ export default function useChat() {
   }
 
   // Funcion para marcar como leida una conversacion en un grupo
-  const mark_group_conversation_as_delivered = (user, conversationWith) => {
+  const mark_group_conversation_as_delivered = (conversationWith, user) => {
     const options = {
       method: "POST",
       headers: {
@@ -307,15 +307,18 @@ export default function useChat() {
               }
             }
           ),
-          ...(arrayMedia
+          ...(arrayMedia && receiverType == 'user'
             ? {
               attachments: [{
                 url: arrayMedia.url,
                 name: arrayMedia.name,
-                extension: arrayMedia.extension
+                extension: arrayMedia.extension,
+                idDoc: arrayMedia.idDoc
               }],
             }
-            : ''),
+            : {
+              attachments: arrayMedia
+            }),
           ...(isMetadata
             ? {
               metadata: {
@@ -329,7 +332,6 @@ export default function useChat() {
         receiverType: receiverType,
       }),
     };
-
     fetch(
       `https://${cometData.value.company.cometchat.app_id}.api-eu.cometchat.io/v3/messages`,
       options
