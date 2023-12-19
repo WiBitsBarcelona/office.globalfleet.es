@@ -176,40 +176,41 @@
                                         <!-- MENSAJES RECIBIDOS CON FICHEROS -->
                                         <div v-if="mensaje.data.attachments">
                                             <div style="padding: 8px;" class="contMensajeRecibidoArchivos">
-                                                <div v-for="item in mensaje.data.attachments" :key="item.id">
-                                                    <div
-                                                        v-if="item.extension == 'jpg' || item.extension == 'jpeg' || item.extension == 'png'">
-                                                        <button style="width: 100%; align-items: center; display: flex; background: rgba(146, 148, 156, 0.1); 
-                                                                padding: 8px; border-radius: 8px;"
-                                                            @click="openDriverFile(item.url)">
-                                                            <img src="../../assets/images/file.svg"
-                                                                style="width: 30px; height: 30px;" />
-                                                            <div style="display: grid;">
-                                                                <p
-                                                                    style="font-size: 16px; margin: 0px; margin-right: 8px; display: flex; color: #545454; margin-left: 10px;">
-                                                                    {{ item.name.length > 15 ? item.name.substring(0, 15) +
-                                                                        "..." :
-                                                                        item.name }}</p>
-                                                            </div>
-                                                        </button>
-                                                    </div>
-                                                    <div v-else-if="item.extension == 'pdf'">
-                                                        <button style="width: 100%; align-items: center; display: flex; background: rgba(146, 148, 156, 0.1); 
-                                                                padding: 8px; border-radius: 8px;"
-                                                            @click="openDriverFile(item.url)">
-                                                            <img src="../../assets/images/pdf.svg"
-                                                                style="width: 30px; height: 30px;" />
-                                                            <div style="display: grid;">
-                                                                <p
-                                                                    style="font-size: 16px; margin: 0px; margin-right: 8px; display: flex; color: #545454; margin-left: 10px;">
-                                                                    {{ item.name.length > 15 ? item.name.substring(0, 15) +
-                                                                        "..." :
-                                                                        item.name }}</p>
-                                                                <p
-                                                                    style="font-size: 12px; margin: 0px; display: flex; color: #545454; margin-left: 10px;">
-                                                                    {{ item.extension }} · {{ item.size }}</p>
-                                                            </div>
-                                                        </button>
+                                                <div v-for="(item, index) in mensaje.data.attachments" :key="item.id">
+                                                    <div v-if="index == 0">
+                                                        <div v-if="item.extension == 'jpg' || item.extension == 'jpeg' || item.extension == 'png'">
+                                                            <button style="width: 100%; align-items: center; display: flex; background: rgba(146, 148, 156, 0.1); 
+                                                                    padding: 8px; border-radius: 8px;"
+                                                                @click="openDriverFile(item.url)">
+                                                                <img src="../../assets/images/file.svg"
+                                                                    style="width: 30px; height: 30px;" />
+                                                                <div style="display: grid;">
+                                                                    <p
+                                                                        style="font-size: 16px; margin: 0px; margin-right: 8px; display: flex; color: #545454; margin-left: 10px;">
+                                                                        {{ item.name.length > 15 ? item.name.substring(0, 15) +
+                                                                            "..." :
+                                                                            item.name }}</p>
+                                                                </div>
+                                                            </button>
+                                                        </div>
+                                                        <div v-else-if="item.extension == 'pdf'">
+                                                            <button style="width: 100%; align-items: center; display: flex; background: rgba(146, 148, 156, 0.1); 
+                                                                    padding: 8px; border-radius: 8px;"
+                                                                @click="openDriverFile(item.url)">
+                                                                <img src="../../assets/images/pdf.svg"
+                                                                    style="width: 30px; height: 30px;" />
+                                                                <div style="display: grid;">
+                                                                    <p
+                                                                        style="font-size: 16px; margin: 0px; margin-right: 8px; display: flex; color: #545454; margin-left: 10px;">
+                                                                        {{ item.name.length > 15 ? item.name.substring(0, 15) +
+                                                                            "..." :
+                                                                            item.name }}</p>
+                                                                    <p
+                                                                        style="font-size: 12px; margin: 0px; display: flex; color: #545454; margin-left: 10px;">
+                                                                        {{ item.extension }} · {{ item.size }}</p>
+                                                                </div>
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <!-- Cuando el mensaje tiene un texto traducido -->
@@ -869,8 +870,7 @@ const sendMessage = async () => {
             for (let i = 0; i < mediaAttachments.value.length; i++) {
                 const element = mediaAttachments.value[i];
                 // Obtenemos el Path del archivo en cuestion
-                const mediaPath = await storeDriverDocumentV2(element);   
-                console.log(mediaPath)
+                const mediaPath = await storeDriverDocumentV2(element);  
                 // creamos un array con los datos
                 let arrayMedia = { url: mediaPath.data.path, name: element.file_name, extension: element.type, idDoc: mediaPath.data.id , driver_id : element.driver_id}
 
