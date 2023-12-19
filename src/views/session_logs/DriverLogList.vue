@@ -602,7 +602,6 @@ const hidePositioningModal = () => {
 };
 
 const showModelModal = async (id, model, event) => {
-	console.log(id, model, event);
 	switch(model){
 		case enumModels.TRIP_MODEL:
 			//Search Trip Data
@@ -621,6 +620,7 @@ const showModelModal = async (id, model, event) => {
 			tow = trip.value.tows[0].tow.plate;
 			break;
 		case enumModels.STAGE_MODEL:
+			//Search Stage Data
 			event_model = " ETAPA";
 			await getStage(id);
 			console.log(stage.value);
@@ -639,6 +639,13 @@ const showModelModal = async (id, model, event) => {
 
 const hideModelModal = async (id) => {
 	event_description = "";
+	reference = "";
+	status = "";
+	name = "";
+	driver ="";
+	stages = 0;
+	vehicle = "";
+	tow = "";
 	modelModal.value = false;
 }
 

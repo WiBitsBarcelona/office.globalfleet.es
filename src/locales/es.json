@@ -6,7 +6,9 @@
     "trips": "Viajes",
     "devices": "Dispositivos",
     "devices-history": "Histórico de dispositivos",
-    "documents": "Documentos",
+    "documents": "Documentos Empresa",
+    "documents-drivers": "Documentos de Conductores",
+    "trip-documents": "Documentos de Viajes",
     "incidents": "Incidencias",
     "chat": "Mensajes",
     "users": "Usuarios",
@@ -15,7 +17,9 @@
     "vehicles": "Tractoras",
     "tows": "Remolques",
     "trips-create": "Crear Viaje",
-    "trips-edit": "Editar Viaje"
+    "trips-edit": "Editar Viaje",
+    "session-log": "Log de Sesiones",
+    "driver-log": "Log de Conductores"
   },
   "auth_footer":{
     "all_rights": "Todos los derechos reservados.",

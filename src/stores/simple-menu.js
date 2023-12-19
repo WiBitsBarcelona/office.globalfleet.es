@@ -70,12 +70,12 @@ export const useSimpleMenuStore = defineStore("simpleMenu", {
         isManager: true,
         subMenu: [
           {
-            icon: "BookUser",
+            icon: "UserCogIcon",
             pageName: "session-log",
             title: "menu.session_logs",
           },
           {
-            icon: "SmartphoneNfc",
+            icon: "SmartphoneNfcIcon",
             pageName: "driver-log",
             title: "menu.driver_logs",
           },
