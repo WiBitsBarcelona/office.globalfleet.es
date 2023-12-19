@@ -5,7 +5,7 @@
 	<!-- BEGIN: Page Layout Table -->
 	<div class="grid grid-cols-12 gap-6 mt-8">
 		<div class="col-span-12 intro-y">
-			<h2 class="text-lg font-medium truncate mr-5">{{ $t('session_logs_of') }}<span class="text-xl font-bold">{{
+			<h2 class="text-lg font-medium truncate mr-5">{{ $t('driver_logs_of') }}<span class="text-xl font-bold">{{
 				useAuthentication.getUser.employee.company.name }}</span></h2>
 		</div>
 	</div>
@@ -22,37 +22,32 @@
 			</form>
 
 			<div class="flex flex-row mr-auto">
-				<Litepicker 
-					v-model="daterange" 
-					:options="{
-						autoApply: false,
-						singleMode: false,
-						numberOfColumns: 2,
-						numberOfMonths: 2,
-						lang: currentLocale,
-						showWeekNumbers: false,
-						dropdowns: {
-							minYear: 2000,
-							maxYear: null,
-							months: true,
-							years: true,
-						},
-						buttonText: {
-							apply: t('btn_accept'),
-							cancel: t('btn_cancel')
-						},
-						tooltipText: {
-							one: t('day'),
-							other: t('days')
-						},
-					}" 
-					class="form-control" 
-				/>
+				<Litepicker v-model="daterange" :options="{
+					autoApply: false,
+					singleMode: false,
+					numberOfColumns: 2,
+					numberOfMonths: 2,
+					lang: currentLocale,
+					showWeekNumbers: false,
+					dropdowns: {
+						minYear: 2000,
+						maxYear: null,
+						months: true,
+						years: true,
+					},
+					buttonText: {
+						apply: t('btn_accept'),
+						cancel: t('btn_cancel')
+					},
+					tooltipText: {
+						one: t('day'),
+						other: t('days')
+					},
+				}" class="form-control" />
 				<button @click="updateData" class="btn btn-outline-primary w-32 ml-3">
           <CheckIcon class="w-4 h-4 mr-2" /> {{ $t('btn_accept') }}
         </button>
 			</div>
-
 			<div class="flex sm:mt-0">
 				<div class="flex items-center sm:flex-row">
 					<div class="ml-2 mr-5 font-light text-gray-600">{{ $t("session_log.filter_by") }}</div>
@@ -60,30 +55,35 @@
 						<input v-model="radio_order_by" id="radio-all" class="form-check-input" type="radio" checked
 							value="all" @change="onClickRadio" />
 						<label class="form-check-label font-normal text-gray-600" for="radio-trip-date">{{
-							$t('session_log.filter_all')
+							$t('driver_log.filter_all')
 						}}</label>
 					</div>
 					<div class="form-check mr-2">
-						<input v-model="radio_order_by" id="radio-erp" class="form-check-input" type="radio" value="erp"
+						<input v-model="radio_order_by" id="radio-trip" class="form-check-input" type="radio" value="trip"
 							@change="onClickRadio" />
 						<label class="form-check-label font-normal text-gray-600" for="radio-trip-id">{{
-							$t('session_log.filter_erp') }}</label>
+							$t('driver_log.filter_trip') }}</label>
 					</div>
 					<div class="form-check mr-2">
-						<input v-model="radio_order_by" id="radio-office" class="form-check-input" type="radio"
-							value="office" @change="onClickRadio" />
+						<input v-model="radio_order_by" id="radio-stage" class="form-check-input" type="radio"
+							value="stage" @change="onClickRadio" />
 						<label class="form-check-label font-normal text-gray-600" for="radio-trip-id">{{
-							$t('session_log.filter_office') }}</label>
+							$t('driver_log.filter_stage') }}</label>
 					</div>
 					<div class="form-check mr-2 mt-2 sm:mt-0">
-						<input v-model="radio_order_by" id="radio-driver" class="form-check-input" type="radio"
-							value="driver" @change="onClickRadio" />
+						<input v-model="radio_order_by" id="radio-task" class="form-check-input" type="radio"
+							value="task" @change="onClickRadio" />
 						<label class="form-check-label font-normal text-gray-600" for="radio-vehicle">{{
-							$t('session_log.filter_driver') }}</label>
+							$t('driver_log.filter_task') }}</label>
+					</div>
+					<div class="form-check mr-2 mt-2 sm:mt-0">
+						<input v-model="radio_order_by" id="radio-action" class="form-check-input" type="radio"
+							value="action" @change="onClickRadio" />
+						<label class="form-check-label font-normal text-gray-600" for="radio-vehicle">{{
+							$t('driver_log.filter_action') }}</label>
 					</div>
 				</div>
 			</div>
-			
 		</div>
 		<div class="overflow-x-auto scrollbar-hidden">
 			<div id="tabulator" ref="tableRef" class="mt-5 table-report table-report--tabulator"></div>
@@ -92,8 +92,8 @@
 		<!-- END: HTML Table Data -->
 	</div>
 
-	  <!-- BEGIN: Postioning Modal Content -->
-	  <Modal backdrop="static" :show="positioningModal" @hidden="positioningModal = false">
+	  <!-- BEGIN: Positioning Modal Content -->
+	<Modal backdrop="static" :show="positioningModal" @hidden="positioningModal = false">
 		<ModalHeader>
 			<h2 class="text-lg font-medium text-left ml-5">{{ $t("session_log.modal.title") }}</h2>
 		</ModalHeader>
@@ -163,8 +163,110 @@
               </div>
 
     	</ModalBody>
-  </Modal>
-  <!-- END: Modal Content -->
+  	</Modal>
+  	<!-- END: Modal Content -->
+
+		  <!-- BEGIN: Model Modal Content -->
+		  <Modal backdrop="static" :show="modelModal" @hidden="modelModal = false">
+		<ModalHeader>
+			<h2 class="text-lg font-medium text-left ml-5">{{ $t("driver_log.modal.title") + event_model }}</h2>
+		</ModalHeader>
+    	<ModalBody class="px-2 py-5">
+      		<XIcon class="absolute top-0 right-0 mt-3 mr-3 w-8 h-8 text-slate-400 hover:cursor-pointer" @click="hideModelModal">
+      		</XIcon>
+
+			  <div class="grid gap-y-8">
+                <div class="grid grid-cols-2 gap-x-1 gap-y-1 text-left sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12">
+					<div class="col-span-6 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">Referencia</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">{{ reference }}</p>
+                  </div>
+				  <div class="col-span-6 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">Estado</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">{{ status }}</p>
+                  </div>
+				  <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">Nombre</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">{{ name }}</p>
+                  </div>
+				  <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">Descripción Evento</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">{{ event_description }}</p>
+                  </div>
+				  <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">Conductor</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">{{ driver }}</p>
+                  </div>
+				  <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">Etapas</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">{{ stages }}</p>
+                  </div>
+				  <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">Matrícula</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">{{ vehicle }}</p>
+                  </div>
+				  <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">Remolque</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">{{ tow }}</p>
+                  </div>
+<!--                   <div class="col-span-6 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">Longitud</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">{{ lng }}</p>
+                  </div>
+				  <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">Posición GPS</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">{{ gps_positioning }}</p>
+                  </div>
+				  <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">Exactitud</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">{{ accuracy }}</p>
+                  </div>
+				  <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">Velocidad</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">{{ speed }}</p>
+                  </div>
+				  <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">Dirección</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">{{ direction }}</p>
+                  </div>
+				  <div class="col-span-12 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">Fecha Captura</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">{{ date }}</p>
+                  </div>
+				  <div class="col-span-12 mt-3">
+					<p>Información del dispositivo:</p>
+				  </div>
+				  <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">Fabricante</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">{{ manufacturer }}</p>
+                  </div>
+				  <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">Modelo</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">{{ model }}</p>
+                  </div>
+				  <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">Plataforma</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">{{ platform }}</p>
+                  </div>
+				  <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">Nivel Batería</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">{{ battery }}</p>
+                  </div>
+				  <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">Cargando</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">{{ is_charging }}</p>
+                  </div>
+				  <div class="col-span-4 rounded-md bg-gray-100 p-1 pb-1 dark:bg-gray-800 dark:text-gray-400">
+                    <h5 class="text-xs font-light text-gray-400">Versión App.</h5>
+                    <p class="text-md font-normal leading-4 text-gray-500">{{ driver_app }}</p> 
+                  </div> -->
+
+                </div>
+              </div>
+
+    	</ModalBody>
+  	</Modal>
+  	<!-- END: Modal Content -->
 
 </template>
 <script setup>
@@ -174,16 +276,20 @@ import { useI18n } from "vue-i18n";
 import { createIcons, icons } from "lucide";
 import Tabulator from "tabulator-tables";
 import { helper as $h } from "@/utils/helper";
-import useSessionLog from "@/composables/session_log"
+import useDriverEventLog from "@/composables/driver_event_log";
 import { useAuthenticationStore } from '@/stores/auth/authentications';
 import useDriverPosition from "@/composables/driver_positions";
+import useTrip from "@/composables/trips";
+import useStage from "@/composables/stages";
 import Preloader from '@/components/preloader/Preloader.vue';
-
-//const { vehicles, getVehicles, storeVehicle, updateVehicle, destroyVehicle} = useTow();
-const { sessionLogs, getSessionLogs } = useSessionLog();
+import enumModels from '@/enums/enum_models.js';
+const { driverEventLogs, getDriverEventLogs} = useDriverEventLog();
 const { driverPosition, getDriverPosition } = useDriverPosition();
+const { trip, getTrip} = useTrip();
+const { stage, getStage} = useStage();
 const { t } = useI18n();
 const positioningModal = ref(false);
+const modelModal = ref(false);
 
 // Tabulator
 const tableData = reactive([]); //data for table to display
@@ -210,7 +316,7 @@ const time_from = "00:00";
 const time_at ="23:59";
 const currentLocale = ref("es-ES");
 
-//VARIABLES FOR MODAL
+//VARIABLES FOR POSITIONING MODAL
 let lat = "";
 let lng = "";
 let gps_positioning = "";
@@ -225,6 +331,17 @@ let battery = "";
 let is_charging = "";
 let driver_app = "";
 
+//VARIABLE FOR MODEL MODAL
+let event_description = "";
+let reference = "";
+let name = "";
+let status = "";
+let event_model = "";
+let stages = 0;
+let vehicle = "";
+let tow = "";
+let driver = "";
+
 switch (localStorage.getItem('locale')) {
 	case 'es':
 		currentLocale.value = "es-ES";
@@ -236,12 +353,6 @@ switch (localStorage.getItem('locale')) {
 		currentLocale.value = "es-ES";
 		break;
 }
-
-
-const onClickRange = () => {
-	console.log("pasa desde FOCUS");
-}
-
 
 const findData = async (dateRangeNew) => {
 	let rangeArray = dateRangeNew.split('-');
@@ -264,8 +375,8 @@ const findData = async (dateRangeNew) => {
 
     let currentData =  `?from_at=${dateFrom}&to_at=${dateTo}` ;
 
-	await getSessionLogs(currentData);
-	return sessionLogs.value;
+	await getDriverEventLogs(currentData);
+	return driverEventLogs.value;
 }
 
 // Table
@@ -302,54 +413,48 @@ const initTabulator = () => {
 			{
 				title: t("session_log.user"),
 				responsive: 0,
-				field: "employee.name",
+				width: 200,
+				field: "driver.name",
 				vertAlign: "middle",
 				headerHozAlign: "left",
-				formatter: (cell, formatterParams) => {
-					if (cell.getData().employee_id != null) {
-						return cell.getData().employee.name + ' ' + cell.getData().employee.surname;
-					} else {
-						return cell.getData().driver.name + ' ' + cell.getData().driver.surname;
-					}
-
-				},
-			},
-			{
-				field: "employee.name",
-				visible: false,
-			},
-			{
-				field: "employee.surname",
-				visible: false,
-			},
-			{
-				field: "driver.name",
-				visible: false,
-			},
-			{
-				field: "driver.surname",
-				visible: false,
+				formatter: function (cell) {
+              		let data = '';
+                	data = cell.getData().driver.name + ' ' +  cell.getData().driver.surname;
+              		return data;
+            	},
 			},
 			{
 				title: t("session_log.origin"),
 				responsive: 0,
-				width: 100,
-				field: "origin_from",
+				visible: false,
+				field: "loggable_type",
 				vertAlign: "middle",
 				headerHozAlign: "left",
+			},
+			{
+				title: t("driver_log.model_id"),
+				responsive: 0,
+				width: 100,
+				field: "loggable_id",
+				vertAlign: "middle",
+				headerHozAlign: "left",
+				cellClick: function (e, cell) {
+					if (cell.getValue() != null) {
+						showModelModal(cell.getValue(), cell.getData().loggable_type, cell.getData().description);
+					}
+            	}
 			},
 			{
 				title: t("session_log.event"),
 				responsive: 0,
-				width: 150,
-				field: "type",
+				field: "description",
 				vertAlign: "middle",
 				headerHozAlign: "left",
 			},
 			{
-				title: t("session_log.position_id"),
+				title: t("driver_log.position_id"),
 				responsive: 0,
-				width: 200,
+				width: 100,
 				field: "driver_position_id",
 				vertAlign: "middle",
 				headerHozAlign: "left",
@@ -366,13 +471,13 @@ const initTabulator = () => {
 					}
             	}
 			},
-			{
+/* 			{
 				title: t("session_log.position"),
 				responsive: 0,
 				field: "gps_positioning",
 				vertAlign: "middle",
 				headerHozAlign: "left",
-			},
+			}, */
 		],
 		renderComplete() {
 			createIcons({
@@ -403,21 +508,22 @@ const onFilter = () => {
 		case "all":
 			filter_value = "";
 			break;
-		case "erp":
-			filter_value = "ERP";
+		case "trip":
+			filter_value = enumModels.TRIP_MODEL;
 			break;
-		case "office":
-			filter_value = "OFFICE";
+		case "stage":
+			filter_value = enumModels.STAGE_MODEL;
 			break;
-		case "driver":
-			filter_value = "DRIVER";
+		case "task":
+			filter_value = enumModels.TASK_MODEL;
 			break;
+		case "action":
+			filter_value = enumModels.ACTION_MODEL;
+			break;	
 	};
 	tabulator.value.setFilter([
-		{field: "origin_from", type: "like", value: filter_value},
+		{field: "loggable_type", type: "like", value: filter_value},
 		[
-			{ field: "employee.name", type: "like", value: filter.value },
-			{ field: "employee.surname", type: "like", value: filter.value },
 			{ field: "driver.name", type: "like", value: filter.value },
 			{ field: "driver.surname", type: "like", value: filter.value },
 		]
@@ -426,7 +532,7 @@ const onFilter = () => {
 };
 
 const onRadio = (value) => {
-	tabulator.value.setFilter("origin_from", "like", value);
+	tabulator.value.setFilter("loggable_type", "like", value);
 }
 
 const onClickRadio = () => {
@@ -434,14 +540,17 @@ const onClickRadio = () => {
 		case "all":
 			onRadio("");
 			break;
-		case "erp":
-			onRadio("ERP");
+		case "trip":
+			onRadio(enumModels.TRIP_MODEL);
 			break;
-		case "office":
-			onRadio("OFFICE");
+		case "stage":
+			onRadio(enumModels.STAGE_MODEL);
 			break;
-		case "driver":
-			onRadio("DRIVER");
+		case "task":
+			onRadio(enumModels.TASK_MODEL);
+			break;
+		case "action":
+			onRadio(enumModels.ACTION_MODEL);
 			break;
 	};
 }
@@ -491,6 +600,54 @@ const hidePositioningModal = () => {
 	driver_app = "";
 	positioningModal.value = false;
 };
+
+const showModelModal = async (id, model, event) => {
+	switch(model){
+		case enumModels.TRIP_MODEL:
+			//Search Trip Data
+			await getTrip(id);
+			event_model = " VIAJE";
+			reference = trip.value.reference_number;
+			status = trip.value.status.name;
+			name = trip.value.name;
+			driver = trip.value.driver.name + ' ' + trip.value.driver.surname;
+			trip.value.stages.forEach(element => {
+      			if (element.activity !== null) {
+        			stages++;
+      			}
+    		});
+			vehicle = trip.value.vehicle.plate;
+			tow = trip.value.tows[0].tow.plate;
+			break;
+		case enumModels.STAGE_MODEL:
+			//Search Stage Data
+			event_model = " ETAPA";
+			await getStage(id);
+			console.log(stage.value);
+			reference = stage.value.reference_number;
+			break;
+		case enumModels.TASK_MODEL:
+			console.log("tarea");
+			break;
+		case enumModels.ACTION_MODEL:
+			console.log("accion");
+			break;
+	};
+	event_description = event;
+	modelModal.value = true;
+}
+
+const hideModelModal = async (id) => {
+	event_description = "";
+	reference = "";
+	status = "";
+	name = "";
+	driver ="";
+	stages = 0;
+	vehicle = "";
+	tow = "";
+	modelModal.value = false;
+}
 
 const updateData = async () => {
 	tableData.value = await findData(daterange.value);

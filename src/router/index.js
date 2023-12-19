@@ -181,6 +181,13 @@ const routes = [
         component: () => import('@/views/session_logs/SessionLogList.vue'),
         
       },
+      {
+        path: "driver-log",
+        name: "driver-log",
+        beforeEnter: checkManager,
+        component: () => import('@/views/session_logs/DriverLogList.vue'),
+        
+      },
     ],
   },
   {

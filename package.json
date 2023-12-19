@@ -1,6 +1,6 @@
 {
-  "name": "enigma-vue",
-  "version": "0.0.0",
+  "name": "globalfleet",
+  "version": "1.0.1",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

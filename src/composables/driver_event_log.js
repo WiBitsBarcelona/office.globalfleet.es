@@ -16,9 +16,9 @@ export default function useDriverEventLog() {
 		}
 	}
 
-	const getDriverEventLogs = async () => {
+	const getDriverEventLogs = async (params = null) => {
 		driverEventLogErrors.value = [];
-		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}driver-event-logs/list`,{
+		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}driver-event-logs/list`+ params,{
 			method: 'GET',
 			headers: config.headers,
 		})
