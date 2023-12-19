@@ -83,6 +83,13 @@ import DevicesMap from "@/components/dashboard-map/Main.vue";
 import useDashboard from '@/composables/dashboard.js';
 import { useAuthenticationStore } from '@/stores/auth/authentications';
 
+
+// import { useNotificationStore } from '@/stores/notifications/notification';
+// const notificationStore = useNotificationStore();
+// console.log(notificationStore.getNDocument);
+
+
+
 const { dashboard, getDashboard } = useDashboard();
 const useAuthentication = useAuthenticationStore();
 
