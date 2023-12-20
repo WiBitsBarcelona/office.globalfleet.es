@@ -314,7 +314,7 @@ const initialize = async () => {
       onTextMessageReceived: (textMessage) => {
         //console.log("Text message received successfully", textMessage);
         printTextMessage(textMessage);
-        markDeliveredMessage(textMessage)
+        //markDeliveredMessage(textMessage)
       },
 
       onMediaMessageReceived: (mediaMessage) => {
@@ -745,7 +745,7 @@ const isYesterday = (date, currentDate) => {
   );
 }
 
-const markDeliveredMessage = async (message) => {
+/*const markDeliveredMessage = async (message) => {
 
   if (message.receiverId == userInfo.uid) {
     if (message.receiverType == 'user') {
@@ -754,7 +754,7 @@ const markDeliveredMessage = async (message) => {
       await mark_group_conversation_as_delivered(message.rawMessage.sender, message.rawMessage.receiver)
     }
   }
-}
+}*/
 
 </script>
 

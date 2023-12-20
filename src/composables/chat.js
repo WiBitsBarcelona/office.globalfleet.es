@@ -397,6 +397,12 @@ export default function useChat() {
       return false;
     } else {
       const values = response.reduce((total, conversation) => {
+
+        if (conversation.conversationType == 'group') {
+          mark_group_conversation_as_delivered(conversation.conversationWith.guid,user_uid)
+        } else {
+          mark_user_conversation_as_delivered(conversation.conversationWith.uid,user_uid)
+        }
         return total + parseInt(conversation.unreadMessageCount);
       }, 0);
 
