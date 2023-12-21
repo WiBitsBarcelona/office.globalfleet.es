@@ -221,16 +221,37 @@
                                                         <div v-if="receiverType == 'group'">
                                                             <div style="background: #E5E7EB; padding: 8px; border-radius: 2px 8px 8px 8px; 
                                                                     gap: 8px; max-width: 253px">
-                                                                <div v-for="itemGM in mensaje.data.customData.groupText">
-                                                                    <div v-if="itemGM.Lang == myLang">
+
+                                                                <!-- Si EL MENSAJE tiene traduccion -->
+                                                                <div v-if="mensaje.data.customData.groupText.length != 0 ">
+                                                                    <div v-for="itemGM in mensaje.data.customData.groupText">
+                                                                        <div v-if="itemGM.Lang == myLang">
+                                                                            <div style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; 
+                                                                                align-items: end;">
+                                                                                <p class="txtMensajes"
+                                                                                    style="padding-right: 4px; white-space: pre-line;">
+                                                                                    {{ itemGM.TextTranslate }}</p>
+                                                                                <p class="txtHora">
+                                                                                    {{ convertStringToDate(mensaje.sentAt) }}
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- Si EL MENSAJE no ha sido traducido se mostrara el original -->
+                                                                <div v-else>
+                                                                    <div class="flex flex-col gap-2">
+                                                                        <div>
+                                                                            <p style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px; font-style: italic;">
+                                                                                Mensaje Original Error en la traduccion</p>
+                                                                        </div>
+                                                                        
                                                                         <div style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; 
                                                                             align-items: end;">
-                                                                            <p class="txtMensajes"
-                                                                                style="padding-right: 4px; white-space: pre-line;">
-                                                                                {{ itemGM.TextTranslate }}</p>
-                                                                            <p class="txtHora">
-                                                                                {{ convertStringToDate(mensaje.sentAt) }}
-                                                                            </p>
+                                                                            <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">
+                                                                                {{ mensaje.data.text }}</p>
+                                                                            <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -307,12 +328,18 @@
 
                                                             <!-- Si EL MENSAJE no ha sido traducido se mostrara el original -->
                                                             <div v-else>
-                                                                <div class="flex gap-2">
-                                                                    <p class="txtMensajes"
-                                                                        style="padding-right: 4px; white-space: pre-line;">{{
-                                                                            mensaje.data.text }}
-                                                                    </p>
-                                                                    <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
+                                                                <div class="flex flex-col gap-2">
+                                                                    <div>
+                                                                        <p style="color: #92949C; font-size: 16px; margin: 8px 0px 0px 0px; font-style: italic;">
+                                                                            Mensaje Original Error en la traduccion</p>
+                                                                    </div>
+                                                                    
+                                                                    <div style="margin-top: 8px; display: flex; flex-direction: row; justify-content: space-between; 
+                                                                        align-items: end;">
+                                                                        <p class="txtMensajes" style="padding-right: 4px; white-space: pre-line;">
+                                                                            {{ mensaje.data.text }}</p>
+                                                                        <p class="txtHora">{{ convertStringToDate(mensaje.sentAt) }}</p>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
