@@ -85,12 +85,24 @@
               <p :id="'last-' + conversation.conversationId">
 
               <div v-if="conversation.conversationType == 'group'">
-                <div v-if="conversation.lastMessage.data.customData">
-                  <div v-for="itemGM in conversation.lastMessage.data.customData.groupText">
-                    <div v-if="itemGM.Lang == myLang">
-                      {{ $h.cutText(itemGM.TextTranslate, 30) }}
+                <!-- <p class="text-black">{{ conversation }}</p> -->
+                <!-- Si tiene el array de ultimo mensaje -->
+                <div v-if="conversation.lastMessage">
+                  <!--  Si lleva un mensaje traducido -->
+                  <div v-if="conversation.lastMessage.data.customData.length > 0">
+                    <div v-for="itemGM in conversation.lastMessage.data.customData.groupText">
+                      <div v-if="itemGM.Lang == myLang">
+                        {{ $h.cutText(itemGM.TextTranslate, 30) }}
+                      </div>
                     </div>
                   </div>
+                  <div v-else>
+                    <p class="text-black">{{ conversation.lastMessage.data.text }}</p>
+                  </div>
+                </div>
+                <!-- Si por algun motivo no lo tiene -->
+                <div v-else>
+                  <p class="text-black">...</p>
                 </div>
               </div>
               <div v-else>
@@ -118,7 +130,10 @@
               </div>
               </p>
               <!-- Hora del ultimo mensaje -->
-              <p> {{ convertStringToDates(conversation.lastMessage.sentAt) }} </p>
+              <!-- Si tiene el array de ultimo mensaje -->
+              <div v-if="conversation.lastMessage">
+                <p> {{ convertStringToDates(conversation.lastMessage.sentAt) }} </p>
+              </div>
             </div>
           </div>
         </button>
