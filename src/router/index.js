@@ -140,11 +140,33 @@ const routes = [
         name: "trip-documents",
         component: () => import('@/views/documents/trips/TripDocumentView.vue'),
       },
+      //TODO.....
+
       {
         path: "incidents/drivers",
         name: "incidents-drivers",
-        component: () => import('@/views/incidences/Incidences.vue'),
+        component: () => import('@/views/incidences/drivers/IncidencesDrivers.vue'),
       },
+      {
+        path: "incidents/trips",
+        name: "incidents-trips",
+        component: () => import('@/views/incidences/trips/IncidencesTrips.vue'),
+      },
+      {
+        path: "incidents/stages",
+        name: "incidents-stages",
+        component: () => import('@/views/incidences/stages/IncidencesStages.vue'),
+      },
+      {
+        path: "incidents/tasks",
+        name: "incidents-tasks",
+        component: () => import('@/views/incidences/tasks/IncidencesTasks.vue'),
+      },
+
+      //TODO END.....
+
+
+
       {
         path: "chat",
         name: "chat",

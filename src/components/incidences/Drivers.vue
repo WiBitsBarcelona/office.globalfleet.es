@@ -16,7 +16,8 @@
         </button>
         <Dropdown class="w-1/2 sm:w-auto">
           <DropdownToggle class="btn btn-outline-secondary w-full sm:w-auto">
-            <FileTextIcon class="w-4 h-4 mr-2" /> {{ $t("documents.export") }}
+            <FileTextIcon class="w-4 h-4 mr-2" /> 
+            {{ $t("documents.export") }}
             <ChevronDownIcon class="w-4 h-4 ml-auto sm:ml-2" />
           </DropdownToggle>
           <DropdownMenu class="w-40">
@@ -46,7 +47,7 @@
   
 
 <!-- BEGIN: View Incidence Modal Content -->
-<Modal backdrop="static" :show="viewDriverIncidenceModal" @hidden="viewDriverIncidenceModal = false">
+<Modal backdrop="static" :show="viewDriverIncidenceModal"     @hidden="viewDriverIncidenceModal = false">
     <ModalBody class="px-2 py-5 text-center">
       <h2 class="text-lg font-medium text-left ml-5">{{ $t("incidences.Modal.title") }}</h2>
       <XIcon class="absolute top-0 right-0 mt-3 mr-3 w-8 h-8 text-slate-400 hover:cursor-pointer" @click="hideDriverModal" >
@@ -113,11 +114,12 @@
         </div>
       </div>
     </ModalBody>
-  </Modal>
+</Modal>
   <!-- END: Modal Content -->
 
 
 </template>
+
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
@@ -130,6 +132,7 @@ import Swal from "sweetalert2";
 import useDriverIncident from "@/composables/driver_incidents";
 import useDownloadDocument from "@/composables/download_documents";
 import useDriverIncidentImage from "@/composables/driver_incident_images";
+
 
 const { getDriverIncidents, driverIncidents, updateDriverIncident, getDriverIncident, driverIncident } = useDriverIncident();
 const { downloadDocument, documentData } = useDownloadDocument();
@@ -344,7 +347,9 @@ let driver_incidence_selected_sended_at = ref('');
 let driver_incidence_selected_received_at = ref('');
 let driver_incidence_selected_readed_at = ref('');
 
-const emit = defineEmits(['totalNewDriverIncidences']);
+
+//const emit = defineEmits(['totalNewDriverIncidences']);
+
 const newDriverIncidences = reactive({
   value: 0
 });
@@ -476,6 +481,7 @@ const setReadedDriverIncidence = async (id) => {
 };
 
 const findDriversIncidencesData = async () => {
+
   dataArr.length = 0;
   let totalIncidences = 0;
   await getDriverIncidents();
@@ -516,7 +522,7 @@ const findDriversIncidencesData = async () => {
     });
   });
   newDriverIncidences.value = totalIncidences;
-  emit('totalNewDriverIncidences',newDriverIncidences.value);
+  //emit('totalNewDriverIncidences',newDriverIncidences.value);
   initDriverTabulator();
 }
 
@@ -642,7 +648,6 @@ const openDriverIncidenceFile = async (path, file_name, action) => {
 
 onMounted(async () => {
   await findDriversIncidencesData();
-  
   reInitOnResizeWindow();
 });
 
