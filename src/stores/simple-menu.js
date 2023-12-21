@@ -29,7 +29,7 @@ export const useSimpleMenuStore = defineStore("simpleMenu", {
       },
       {
         icon: "AlertTriangleIcon",
-        pageName: "incidents",
+        pageName: "incidents-drivers",
         title: "menu.incidents",
         isManager: false,
       },
