@@ -141,8 +141,8 @@ const routes = [
         component: () => import('@/views/documents/trips/TripDocumentView.vue'),
       },
       {
-        path: "incidents",
-        name: "incidents",
+        path: "incidents/drivers",
+        name: "incidents-drivers",
         component: () => import('@/views/incidences/Incidences.vue'),
       },
       {
