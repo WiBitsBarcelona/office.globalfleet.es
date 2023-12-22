@@ -1,5 +1,21 @@
 <template>
-  <div class="intro-y box p-5 mt-0">
+
+  <div class="grid grid-cols-12 gap-6 mt-8">
+    <div class="col-span-12 intro-y">
+      <h2 class="text-lg font-medium truncate mr-5">
+        {{ $t("incidences.title") }} 
+        <span class="text-xl font-bold">
+        {{ useAuthentication.getUser?.employee.company.name }}
+        </span>
+      </h2>
+    </div>
+  </div>
+
+
+  <div class="intro-y box p-5 mt-5">
+
+    <IncidentButtons />
+
     <div class="flex flex-col sm:flex-row sm:items-end xl:items-start">
       <form id="tabulator-html-filter-form" class="xl:flex sm:mr-auto">
         <div class="relative sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
@@ -133,11 +149,21 @@ import useDriverIncident from "@/composables/driver_incidents";
 import useDownloadDocument from "@/composables/download_documents";
 import useDriverIncidentImage from "@/composables/driver_incident_images";
 
+import IncidentButtons from '@/components/incidences/IncidentButtons.vue';
+
+import { useAuthenticationStore } from '@/stores/auth/authentications';
+
+
+
 
 const { getDriverIncidents, driverIncidents, updateDriverIncident, getDriverIncident, driverIncident } = useDriverIncident();
 const { downloadDocument, documentData } = useDownloadDocument();
 const { updateDriverIncidentImage } = useDriverIncidentImage();
 const { t } = useI18n();
+
+const useAuthentication = useAuthenticationStore();
+
+
 
 const tableDriverRef = ref();
 const driver_tabulator = ref();
