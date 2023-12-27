@@ -46,8 +46,8 @@
 					}" class="form-control w-full"
 						:class="{ 'border-danger': validate.manager_id.$error }">
 
-						<option value="-">No tiene</option>
 						<option value=""></option>
+						<option value="-">No tiene</option>
 						<option v-for="item in selectManagers" :value="item.id">
 							{{ item.name }} {{ item.surname }} 
 						</option>
