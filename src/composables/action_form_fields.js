@@ -9,18 +9,15 @@ export default function useActionFormField() {
 	const actionFormFieldErrors = ref([]);
 	const { t } = useI18n();
 
-	let config = {
-		headers: {
-			"Content-Type": "application/json",
-			"Authorization": `Bearer ${localStorage.getItem('token')}`
-		}
-	}
-
+	
 	const getActionFormFields = async () => {
 		actionFormFieldErrors.value = [];
 		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-form-fields/list`,{
 			method: 'GET',
-			headers: config.headers,
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": `Bearer ${localStorage.getItem('token')}`
+			},
 		})
 		.then(res => res.json())
 		.then((res) => {
@@ -40,7 +37,10 @@ export default function useActionFormField() {
 		actionFormFieldErrors.value = [];
 		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-form-fields/show/${id}`,{
 			method: 'GET',
-			headers: config.headers,
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": `Bearer ${localStorage.getItem('token')}`
+			},
 		})
 		.then(res => res.json())
 		.then((res) => {
@@ -60,7 +60,10 @@ export default function useActionFormField() {
 		actionFormFieldErrors.value = [];
 		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-form-fields/store`,{
 			method: 'POST',
-			headers: config.headers,
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": `Bearer ${localStorage.getItem('token')}`
+			},
 			body: JSON.stringify(data),
 		})
 		.then(res => res.json())
@@ -81,7 +84,10 @@ export default function useActionFormField() {
 		actionFormFieldErrors.value = [];
 		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-form-fields/update/${id}`,{
 			method: 'PUT',
-			headers: config.headers,
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": `Bearer ${localStorage.getItem('token')}`
+			},
 			body: JSON.stringify(data),
 		})
 		.then(res => res.json())
@@ -102,7 +108,10 @@ export default function useActionFormField() {
 		actionFormFieldErrors.value = [];
 		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}action-form-fields/delete/${id}`,{
 			method: 'DELETE',
-			headers: config.headers,
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": `Bearer ${localStorage.getItem('token')}`
+			},
 		})
 		.then(res => res.json())
 		.then((res) => {

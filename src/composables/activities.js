@@ -9,18 +9,16 @@ export default function useActivity() {
 	const activityErrors = ref([]);
 	const { t } = useI18n();
 
-	let config = {
-		headers: {
-			"Content-Type": "application/json",
-			"Authorization": `Bearer ${localStorage.getItem('token')}`
-		}
-	}
+	
 
 	const getActivities = async () => {
 		activityErrors.value = [];
 		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}activities/list`,{
 			method: 'GET',
-			headers: config.headers,
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": `Bearer ${localStorage.getItem('token')}`
+			},
 		})
 		.then(res => res.json())
 		.then((res) => {
@@ -40,7 +38,10 @@ export default function useActivity() {
 		activityErrors.value = [];
 		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}activities/show/${id}`,{
 			method: 'GET',
-			headers: config.headers,
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": `Bearer ${localStorage.getItem('token')}`
+			},
 		})
 		.then(res => res.json())
 		.then((res) => {
@@ -60,7 +61,10 @@ export default function useActivity() {
 		activityErrors.value = [];
 		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}activities/store`,{
 			method: 'POST',
-			headers: config.headers,
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": `Bearer ${localStorage.getItem('token')}`
+			},
 			body: JSON.stringify(data),
 		})
 		.then(res => res.json())
@@ -81,7 +85,10 @@ export default function useActivity() {
 		activityErrors.value = [];
 		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}activities/update/${id}`,{
 			method: 'PUT',
-			headers: config.headers,
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": `Bearer ${localStorage.getItem('token')}`
+			},
 			body: JSON.stringify(data),
 		})
 		.then(res => res.json())
@@ -102,7 +109,10 @@ export default function useActivity() {
 		activityErrors.value = [];
 		await fetch(`${import.meta.env.VITE_API_URL_GLOBALFLEET}activities/delete/${id}`,{
 			method: 'DELETE',
-			headers: config.headers,
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": `Bearer ${localStorage.getItem('token')}`
+			},
 		})
 		.then(res => res.json())
 		.then((res) => {
