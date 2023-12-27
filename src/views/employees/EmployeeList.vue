@@ -5,7 +5,7 @@
 	<!-- BEGIN: Page Layout Table -->
 	<div class="grid grid-cols-12 gap-6 mt-8">
     	<div class="col-span-12 intro-y">
-        	<h2 class="text-lg font-medium truncate mr-5">{{ $t('users_of') }}<span class="text-xl font-bold">{{ useAuthentication.getUser.employee.company.name }}</span></h2>
+        	<h2 class="text-lg font-medium truncate mr-5">{{ $t('users_of') }}<span class="text-xl font-bold">{{ useAuthentication.getUser?.employee.company.name }}</span></h2>
         </div>
 	</div>
 	<div class="intro-y box p-5 mt-5" id="div_table">
@@ -94,7 +94,7 @@
 
 	const useAuthentication = useAuthenticationStore();
 
-	const { employees, getEmployees, storeEmployee, updateEmployee, destroyEmployee, errors} = useEmployees();
+	const { employee, employees, getEmployees, storeEmployee, updateEmployee, destroyEmployee, employeeErrors } = useEmployees();
 	const { t } = useI18n();
 	const isCreate = ref(false);
 	const isEdit = ref(false);
@@ -192,7 +192,7 @@
 						if(cell.getData().manager){
 							return `${cell.getData().manager.name} ${cell.getData().manager.surname}`;
 						}else{
-							return t('--');
+							return '--';
 						}
                     }
                 },
@@ -330,12 +330,22 @@
 		div_table.style.display = 'block';
 		loading.value = true;
 
-		await storeEmployee({ ...form });
+		const algo = await storeEmployee({ ...form });
+		
 		tableData.value = await findData();
 		tabulator.value.setData(tableData.value);
 
-		loading.value = false;
-		await Toast(t("message.record_saved"), 'success');
+
+		// TODO...
+		console.log(algo);
+
+		if(employeeErrors.value.length === 0){
+			loading.value = false;
+			await Toast(t("message.record_saved"), 'success');
+		}else{
+			Swal.fire(t("message.error"), e, 'error');
+		}
+
 
 	}
 

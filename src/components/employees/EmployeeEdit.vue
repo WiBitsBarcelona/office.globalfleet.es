@@ -3,8 +3,6 @@
 	<!-- BEGIN: Form -->
 	<form class="validate-form" @submit.prevent="save">
 
-
-
 		<!-- BEGIN: container -->
 		<div class="grid grid-cols-12 gap-6">
 
@@ -48,6 +46,7 @@
 					}" class="form-control w-full"
 						:class="{ 'border-danger': validate.manager_id.$error }">
 
+						<option value=""></option>
 						<option value="-">No tiene</option>
 						<option v-for="item in selectManagers" :value="item.id">
 							{{ item.name }} {{ item.surname }} 
@@ -232,6 +231,9 @@
 	<!-- END: Form -->
 
 </template>
+
+
+
 <script setup>
 
 	import { onMounted, reactive, toRefs, ref } from 'vue';
@@ -352,12 +354,10 @@
 		await getEmployees();
 		selectManagers.value = employees.value;
 
-
-
-		console.log(employee.value.manager.id.toString());
-
-		formData.manager_id = employee.value.manager.id.toString();
-
+		if(employee.value.manager){
+			formData.manager_id = employee.value.manager?.id.toString();
+		}
+		
 
 	});
 

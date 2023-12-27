@@ -35,7 +35,7 @@
 						{{ $t("boss") }}
 					</label>
 					<TomSelect v-model.trim="validate.manager_id.$model" id="manager_id" name="manager_id" :options="{
-						placeholder: $t('select'),
+						placeholder: $t('message.select'),
 					}" class="form-control w-full"
 						:class="{ 'border-danger': validate.manager_id.$error }">
 
@@ -301,6 +301,7 @@
 		language_id: "1",
 	});
 
+	
 	const validate = useVuelidate(rules, toRefs(formData));
 
 	const save = () => {
@@ -310,17 +311,14 @@
 		} else {
 			
 			if(formData.manager_id === '-'){
-				formData.manager_id = 0;
+				//delete formData.manager_id;
 			}
-
 			emit('saveEmployeeForm', formData);
 		}
 	};
 
 	onMounted(async () => {
 
-
-		
 		await getRoles();
 		await getLanguages();
 
@@ -336,13 +334,8 @@
 		selectLangs.value = languages.value;
 
 
-
 		await getEmployees();
-		console.log({...employees});
-
 		selectManagers.value = employees.value;
-
-
 
 	});
 
