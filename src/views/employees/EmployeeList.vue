@@ -335,17 +335,12 @@
 		tableData.value = await findData();
 		tabulator.value.setData(tableData.value);
 
-
-		// TODO...
-		console.log(algo);
-
 		if(employeeErrors.value.length === 0){
 			loading.value = false;
 			await Toast(t("message.record_saved"), 'success');
 		}else{
 			Swal.fire(t("message.error"), e, 'error');
 		}
-
 
 	}
 

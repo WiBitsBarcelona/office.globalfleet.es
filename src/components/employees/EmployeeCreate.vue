@@ -39,8 +39,7 @@
 					}" class="form-control w-full"
 						:class="{ 'border-danger': validate.manager_id.$error }">
 
-						<option value=""></option>
-						<option value="-">No tiene</option>
+						<option value="99">No tiene</option>
 						<option v-for="item in selectManagers" :value="item.id">
 							{{ item.name }} {{ item.surname }} 
 						</option>
@@ -292,7 +291,7 @@
 
 	const formData = reactive({
 		role_id: "",
-		manager_id: "",
+		manager_id: "-",
 		name: "",
 		surname: "",
 		fiscal_identification: "",

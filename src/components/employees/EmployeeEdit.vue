@@ -297,7 +297,7 @@
 
 	const formData = reactive({
 		role_id: "",
-		manager_id: "",
+		manager_id: "-",
 		name: "",
 		surname: "",
 		fiscal_identification: "",
