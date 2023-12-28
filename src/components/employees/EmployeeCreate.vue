@@ -311,7 +311,7 @@
 		} else {
 			
 			if(formData.manager_id === '-'){
-				//delete formData.manager_id;
+				delete formData.manager_id;
 			}
 			emit('saveEmployeeForm', formData);
 		}
